@@ -40,7 +40,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T001
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Next.js foundation
 - **Goal:** Создать минимальное Next.js App Router приложение с TypeScript и проверяемым build.
 - **Why:** Все остальные production TASK требуют единой основы.
@@ -1573,4 +1573,3 @@ Gate проверяет только выполненную часть и её �
 - Подтвердить: Admin Auth до admin mutations; schema/RLS до Admin и публичного каталога; каталог и Admin используют одну модель SKU; order status не меняет исходный snapshot.
 - Убедиться, что P1 остаётся частью MVP, High назначен только security/data/state задачам, Astra — последнему review; дополнительных агентов нет.
 - M8 наступает после QA, production deployment не входит в этот план без отдельного разрешения.
-
