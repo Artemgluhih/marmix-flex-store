@@ -1,8 +1,31 @@
 # Marmix Flex Redesign v2 — Content Facts
 
-**T008 status: BLOCKED — требуется подтверждение владельца.** Проверка: **25.09.2026 (UTC)**. Это инвентаризация наблюдаемого текущего сайта, а не утверждённый launch assortment или прайс. Никаких данных prototype, будущего UI либо иных брендов здесь нет.
+**Актуальное состояние на 25.09.2026 (подтверждение владельца, Asia/Yekaterinburg): T008 BLOCKED только по [остаточным блокерам](CATALOG_OWNER_DECISIONS.md#remaining-blockers).** Построчный зафиксированный реестр `Legacy source ID → SKU`, исходные ссылки/цены и новые owner-confirmed поля находятся в [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv); правила и 20 исключений цены — в [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md). Ниже сохранён **архив инвентаризации до утверждения**, включая старые вопросы; его оценки `MISSING/NEEDS OWNER CONFIRMATION` отменены решениями владельца там, где они явно подтверждены, но исходные наблюдения не удалены.
 
-## Правила источника и статуса
+## Current owner-confirmed product facts
+
+| Поле | Текущее подтверждённое значение / граница |
+|---|---|
+| Launch scope | 251 × INCLUDE, 0 EXCLUDE, 0 UNDECIDED. |
+| Merchant SKU | 251 уникальный стабильный SKU: утверждённый формат `MF-<CATEGORY_CODE>-<NUMBER>`; номера присвоены по числовому Legacy source ID по возрастанию внутри каждой категории. Маппинг в CSV заморожен; не регенерировать, не считать старый ID SKU. |
+| Categories | Ровно 8 без переименования: Гибкий мрамор 163, Гибкая доска 14, Гибкая керамика 14, Травертин 12, Флюиды 18, Блоки 7, Гибкий камень 12, Сопутствующие материалы 11. «Хит продаж» = отдельный `featured / hit` у 7 SKU, не категория. |
+| Price | 231 фиксированная SOURCE PRICE подтверждена владельцем как актуальная на дату решения; строковые суммы перенесены без изменения. У 20 диапазонов OWNER CONFIRMED PRICE пуст — будущая fixed-price commerce для них BLOCKED. Для 11 сопутствующих материалов числовая сумма подтверждена, единица цены/продажи ещё нет. |
+| Seven surface categories (240 SKU) | OWNER CONFIRMED PRICE UNIT = `м²`; SALE UNIT / price basis = `м²`; MIN = `1 sheet`; STEP = `1 sheet`. Это два разных измерения: цена за площадь, заказ кратен листу. Без площади конкретного листа нельзя вычислить стоимость. |
+| Accessories (11 SKU) | OWNER CONFIRMED PRICE UNIT, SALE UNIT, MIN, STEP — пустые; никаких `м²` или `sheet` им не назначено. |
+| Dimensions | OWNER CONFIRMED DIMENSIONS = `MISSING / PENDING TECHNICAL DATA` для 251; опубликованные размеры/толщина/площадь двух «Калаката» остались только SOURCE VALUE, не доказаны для новой модели и не распространены на другие товары. |
+| Availability | Допустимые будущие значения: `in_stock` и `on_order`; у 251 SKU значение не назначено. `availability public display = hidden until admin assignment`. Не подменять неизвестность наличием. |
+| Identity | «Калаката» `489110024061` = `MF-MAR-0077`; «Калаката» `222208968332` = `MF-MAR-0030`; это **два разных товара**. Старый общий slug конфликтует и требует отдельного решения. |
+| Срок службы | Подтверждённое владельцем значение **30 лет**. Ранее опубликованное **25 лет** признано устаревшим/неподтверждённым и **не используется** для нового каталога. Область действия заявления по отдельным SKU не установлена, массовое свойство товара не заполняется. |
+
+**Commerce dependency:** `quantity (sheets) → sheet area (м²) → total at owner-confirmed ₽/м²` остаётся **BLOCKED** до появления проверенной площади продаваемого формата. Cart/Checkout не должны молча считать «1 sheet = 1 м²». Дополнительные блокеры: 20 диапазонов цен, единицы/шаг для 11 accessories, две группы совпадающих slug, назначения availability перед заказом. Расхождения 20 старых DOM/URL ID документированы ниже, но **не блокируют идентичность** новых товаров: каждому URL ID сопоставлен свой стабильный SKU.
+
+## Historical source inventory — pre-confirmation archive
+
+В дальнейших подразделах сохранён первоначальный полный срез S1/S2/S3 **как evidence**, без пересчёта фактов задним числом. Фразы об отсутствии SKU, неподтверждённом запуске/ценах/категориях и сроке «25 лет» относятся к состоянию **до решений D1–D10** и не являются актуальными инструкциями. При расхождении действует раздел **Current owner-confirmed product facts** выше, затем CSV; исходные карточки остаются ссылками для проверки происхождения.
+
+**Архивный срез до решений владельца (25.09.2026); статусы ниже не отражают подтверждения D1–D10.** Проверка: **25.09.2026 (UTC)**. Это инвентаризация наблюдаемого текущего сайта, а не утверждённый launch assortment или прайс. Никаких данных prototype, будущего UI либо иных брендов здесь нет.
+
+### Правила источника и статуса
 
 - **S1:** [действующий каталог Marmix Flex](https://marmixflex.ru/), DOM карточек после последовательного «Загрузить ещё» до исчезновения кнопки, 25.09.2026. Ссылка в последнем столбце каждой строки — текущая карточка-источник; текущее имя, группа, ценник и подпись цены сверены с S1. **CONFIRMED** относится только к факту их публикации в S1 на дату проверки, не к действительности условий продажи сегодня или будущего релиза.
 - **S2:** точечная проверка [Калаката № 489110024061](https://marmixflex.ru/tproduct/1706353951-489110024061-kalakata), [Калаката № 222208968332](https://marmixflex.ru/tproduct/1706353951-222208968332-kalakata), [Травертин 1 дот](https://marmixflex.ru/tproduct/1706353951-597127192572-travertin-1-dot) и [клей базовый 5.6 кг](https://marmixflex.ru/tproduct/1706353951-765138980211-klei-dlya-gibkogo-kamnya-bazovii-56-kg), 25.09.2026. Не распространено автоматически на остальные товары.
@@ -13,7 +36,7 @@
 - Общие для **каждой** строки поля, не подтверждённые S1: `SKU = MISSING`; `Series = MISSING`; `Sale unit = NEEDS OWNER CONFIRMATION`; `Min quantity = MISSING`; `Quantity step = MISSING`; `Dimensions / thickness / coverage = MISSING`; `Technical properties = MISSING`; `Color / pattern specification = MISSING`; `Applications = MISSING`; `Availability = NEEDS OWNER CONFIRMATION`; `Launch inclusion = NEEDS OWNER CONFIRMATION`. Названия цветов и размеров в **названии** сохраняются как текст S1, но не подтверждают измеряемую характеристику товара. Избирательные значения S2 вынесены в «Уточнения», они **не распространяются** на другие позиции.
 - **Verification status каждой строки: NEEDS OWNER CONFIRMATION** для использования в новом каталоге. Категории ниже — подтверждённые **группы текущего сайта**, но назначение категорий нового каталога остаётся на согласовании. Никто ещё не подписал launch SKU registry.
 
-## Category Review
+### Category Review
 
 | Группа, опубликованная в S1 | ID категории | Карточек | Оценка |
 |---|---:|---:|---|
@@ -29,11 +52,11 @@
 
 Всего **251** уникальная карточка по URL; принадлежность к восьми исходным товарным группам найдена для всех **251**. «Весь каталог» — вкладка всех товаров, а не отдельная категория; «Хит продаж» — дополнительная пометка у семи карточек, а не девятая товарная линия. Категорий или категорий для карточек без подтверждённой группировки не придумано. Все восемь групп требуют решения, включать ли их в launch; особенно сопутствующие материалы, гибкая доска/керамика и блоки. Ни одна новая гипотетическая категория не включена.
 
-## Product Registry
+### Product Registry
 
 **Как читать таблицы:** `SKU`, `Series`, `Sale unit`, `Min quantity`, `Quantity step`, `Dimensions/thickness/coverage`, `Properties/color/applications`, `Availability` и `Launch inclusion` **для каждой строки** имеют ровно статусы из общего набора выше. Таблица намеренно не превращает отсутствие сведений в 251 предположений. `Price` содержит только наблюдаемый текст S1 и статус «found YES; owner confirmation»; `/м²` в `Price label` отражает буквальную подпись сайта, не sale unit. Источник каждого наблюдаемого значения — ссылка `Source S1` в строке, проверено 25.09.2026. `Verification` не означает, что карточка согласована к запуску.
 
-### Гибкий мрамор — 163 карточек
+#### Гибкий мрамор — 163 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -201,7 +224,7 @@
 | `116357670261` | Циркон | Гибкий мрамор | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-116357670261-tsirkon) |
 | `777774729301` | Златолит | Гибкий мрамор | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-777774729301-zlatolit) |
 
-### Гибкая доска — 14 карточек
+#### Гибкая доска — 14 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -220,7 +243,7 @@
 | `426916158772` | Доска 10 | Гибкая доска | YES: 1 900 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-426916158772-doska-10) |
 | `124045043222` | Доска Микс | Гибкая доска | YES: 1 900 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-124045043222-doska-miks) |
 
-### Гибкая керамика — 14 карточек
+#### Гибкая керамика — 14 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -239,7 +262,7 @@
 | `190801713392` | Керамика 13 | Гибкая керамика | YES: 2 100—2 200 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-190801713392-keramika-13) |
 | `491045034702` | Керамика 14 | Гибкая керамика | YES: 2 100—2 200 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-491045034702-keramika-14) |
 
-### Травертин — 12 карточек
+#### Травертин — 12 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -256,7 +279,7 @@
 | `697053188552` | Травертин 6 дот | Травертин | YES: 2 200—2 400 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-697053188552-travertin-6-dot) |
 | `746579532042` | Травертин 6 | Травертин | YES: 2 100 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-746579532042-travertin-6) |
 
-### Флюиды — 18 карточек
+#### Флюиды — 18 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -279,7 +302,7 @@
 | `551693735641` | Флюид 17 | Флюиды | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-551693735641-flyuid-17) |
 | `168519278341` | Флюид 18 | Флюиды | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-168519278341-flyuid-18) |
 
-### Блоки — 7 карточек
+#### Блоки — 7 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -291,7 +314,7 @@
 | `199715758241` | Орион | Блоки | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-199715758241-orion) |
 | `415884610211` | Орфей | Блоки | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-415884610211-orfei) |
 
-### Гибкий камень — 12 карточек
+#### Гибкий камень — 12 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -308,7 +331,7 @@
 | `193631464151` | Аntique | Гибкий камень | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-193631464151-antique) |
 | `860504983541` | Золотая осень | Гибкий камень | YES: 2 000 — NEEDS OWNER CONFIRMATION | «цена за кв.м» — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-860504983541-zolotaya-osen) |
 
-### Сопутствующие материалы — 11 карточек
+#### Сопутствующие материалы — 11 карточек
 
 | Source ID (не SKU) | Name (S1) | Existing group | Price found / displayed (₽; S1) | Price label (S1) | Verification | Source S1 |
 |---|---|---|---|---|---|---|
@@ -324,7 +347,7 @@
 | `663328673881` | Финишное покрытие полиуретановое двухкомпонентное, 920гр | Сопутствующие материалы | YES: 4 000 — NEEDS OWNER CONFIRMATION | MISSING — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-663328673881-finishnoe-pokritie-poliuretanovoe-dvuhko) |
 | `429443750811` | Финишное покрытие полиуретановое. Без запаха, 850гр | Сопутствующие материалы | YES: 3 500 — NEEDS OWNER CONFIRMATION | MISSING — unit NEEDS OWNER CONFIRMATION | NEEDS OWNER CONFIRMATION | [карточка](https://marmixflex.ru/tproduct/1706353951-429443750811-finishnoe-pokritie-poliuretanovoe-bez-za) |
 
-## Уточнения и расхождения
+### Уточнения и расхождения
 
 1. **Калаката — возможный дубль имени/slug (CONFLICT идентичности):** `489110024061` и `222208968332` имеют одно опубликованное имя, один slug candidate `kalakata`, одну категорию и одинаковую видимую цену 2 000 ₽; это два разных URL. В S2 обе страницы показывают одинаковые спецификации, но порядок строк различается. Выяснить, это один товар/четыре полотна, два варианта либо разные SKU. Не объединять и не выбирать slug наугад. **Ценового конфликта у этих двух карточек нет.**
 2. **Ещё одна группа совпадающих URL slug (NEEDS OWNER CONFIRMATION):** три разных финишных акриловых покрытия `548873722801` (3 кг), `219454712061` (5.4 кг) и `236494209491` (10.7 кг) имеют одинаковый усечённый slug `finishnoe-pokritie-akrilovoe-dlya-gibkog`, различаются числовым URL ID и опубликованной ценой. На новом сайте нужны уникальные slug или явно оформленные варианты; не присваивать одинаковый URL slug трём товарам.
@@ -334,7 +357,7 @@
 6. **Свойства (NEEDS OWNER CONFIRMATION):** две карточки «Калаката» в S2 публикуют толщину листа 1.7–2 мм, вес 9–10 кг, покрытие 4.033 м², F70, −45…400 °C и «срок службы более 25 лет»; эти сведения — лишь заявления сайта, не паспорт производителя и не подтверждение для всей линии. CONTENT_AUDIT.md фиксировал на главной другое общее заявление о сроке не менее 30 лет; **CONFLICT общего срока**. До официального подтверждения технические обещания не переносятся в launch registry.
 7. **Сопутствующий материал:** S2 для базового клея 5.6 кг публикует состав/расход/условия, но нет документации производителя или owner sign-off; свойства этой карточки и остальных десяти остаются MISSING как утверждённые факты. Текст «универсальный», «акриловое» и «без запаха» в имени не служит самостоятельным сертификатом свойства.
 
-## Owner Confirmation Required
+### Owner Confirmation Required
 
 | Позиция / поле | Сейчас известно (источник, дата) | Чего не хватает | Ответ владельца для разблокирования |
 |---|---|---|---|
@@ -350,7 +373,7 @@
 | 6 «Травертин … дот» и 14 «Керамика …» — 20 ID discrepancies | Для каждой строки пара DOM/URL ID перечислена выше; диапазоны цен присутствуют в S1. | Какие ID/варианты авторитетны и почему различаются. | Прислать export исходного каталога с **URL ID ↔ DOM/variant ID ↔ SKU ↔ вариант ↔ цена**; подтвердить, что оба адреса указывают на нужный товар. |
 | «Яшма» `175383528681` и 11 товаров «Сопутствующие материалы» — единица цены | Эти 12 карточек не содержат подписи «цена за кв.м». | Корректная price unit и продажная упаковка, особенно для 3/5.6/10.7 кг и 850/920 г. | Заполнить **каждый source ID → цена за что → упаковка → min/step**, подтвердить отсутствие подписи намеренным. |
 
-## Required checks / result
+### Required checks / result
 
 - **Дубли SKU:** проверить невозможно: подтверждённых SKU **0**. Внутри source URL ID дублей **0**, внутри DOM ID дублей **0**; ID не считать SKU.
 - **Дубли slug candidates:** две группы коллизий опубликованного slug: `kalakata` (2 URL) и `finishnoe-pokritie-akrilovoe-dlya-gibkog` (3 URL). Полные старые URL уникальны благодаря числовому ID. Для новых slug кандидат предварителен, окончательные имена и маршруты утверждать после owner data.

@@ -1,5 +1,7 @@
 # Marmix Flex — Catalog Owner Review (T008)
 
+> **Архив инструкции до подтверждения D1–D10 (25.09.2026).** Ниже сохранена первоначальная форма с прежними вопросами и значениями `UNDECIDED`; она больше не описывает текущие owner-confirmed поля. Актуальный CSV: [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv); утверждённые правила и блокеры: [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md). T008 по-прежнему BLOCKED по конкретным незаполненным данным.
+
 **Статус T008: BLOCKED.** Это форма подтверждения владельцем, подготовленная из [CONTENT_FACTS.md](CONTENT_FACTS.md) без повторного аудита. Наблюдения исходного сайта датированы **25.09.2026**. Рабочая таблица: [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv). Источник каждой строки — отдельный Current source URL. Прототип и демонстрационные цены не используются.
 
 ## Owner summary
