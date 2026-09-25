@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001 и T002 — DONE, остальные TASK — TODO. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T003 — DONE, T004–T074 — TODO; M1 — PASS. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -31,6 +31,8 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 | M6 — Cart & Order flow operational | T055 | T047–T055: persistence, refresh цен, server validation, idempotency, одна приватная заявка и подтверждение; проверить вместе с M5. |
 | M7 — Admin order management operational | T059 | T056–T059: статус/заметка в Admin; original snapshot не изменяем через UI и прямой authenticated API; интеграция с M6. |
 | M8 — Production candidate | T074 | T060–T074: информационные страницы, SEO, Метрика, интеграционный QA и readiness; все M1–M7 пройдены, production не запущен. |
+
+**M1 status: PASS.** T001–T003 DONE; lint/typecheck/build PASS, branch HTTPS Preview READY, Prata/Manrope/tokens PASS, owner visual smoke 1440 × 900 и 390 × 844 PASS; ошибочный deployment нового проекта удалён, существующий production не изменён.
 
 Gate проверяет только выполненную часть и её интеграцию с предыдущими. Утверждённый визуал сохраняется при M2; owner review касается точности переноса. Content gate обязателен до коммерческой реализации; непройденный gate блокирует зависящую задачу. M8 — готовность к отдельному разрешению на production, не деплой.
 
@@ -72,6 +74,7 @@ Gate проверяет только выполненную часть и её �
 - **Acceptance criteria:** Токены и шрифты подключены к тестовой странице; lint/typecheck/build проходят. Визуальный smoke 1440/390 обязателен в T003 на HTTPS Preview.
 - **Required checks:** lint, typecheck, build, локальная проверка шрифтов.
 - **Note:** Visual smoke 1440/390 deferred to T003 HTTPS Preview due environment limitation; lint/typecheck/build passed.
+- **Resolution:** Owner visual smoke HTTPS Preview на 1440 × 900 и 390 × 844 PASS в T003; отложенная проверка закрыта.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
@@ -81,7 +84,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T003
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Preview и безопасный env baseline
 - **Goal:** Настроить GitHub branch Preview и шаблон переменных без значений.
 - **Why:** Каждый этап нуждается в проверяемой HTTPS среде и безопасном конфиге.
@@ -95,6 +98,7 @@ Gate проверяет только выполненную часть и её �
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
+- **Verification note:** Lint/typecheck/build PASS; безопасный .env.example и временный noindex. HTTPS Preview связан с redesign-v2; Prata/Manrope/CSS и отсутствие ошибок страницы проверены в браузере. Owner visual smoke 1440 × 900 и 390 × 844 PASS (включая кириллицу, палитру и отсутствие horizontal overflow). Случайно созданный Production deployment отдельного Preview-проекта удалён с разрешения владельца; существующий production не менялся.
 - **Suggested commit message:** task(T003): Preview и безопасный env baseline
 
 
