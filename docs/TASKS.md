@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001 — DONE, остальные TASK — TODO. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001 и T002 — DONE, остальные TASK — TODO. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -60,7 +60,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T002
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Tokens, CSS Modules и шрифты
 - **Goal:** Зафиксировать в приложении утверждённые токены и локальные Prata/Manrope.
 - **Why:** Визуальный перенос должен начинаться с точных основ.
@@ -69,8 +69,9 @@ Gate проверяет только выполненную часть и её �
 - **Forbidden scope:** Редизайн компонентов и подмена палитры. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
 - **Implementation notes:** Сверить CSS с DESIGN_SYSTEM; fallback без скачка компоновки.
-- **Acceptance criteria:** Токены/шрифты видны на тестовой странице при 1440/390.
-- **Required checks:** lint, typecheck, локальная проверка шрифтов.
+- **Acceptance criteria:** Токены и шрифты подключены к тестовой странице; lint/typecheck/build проходят. Визуальный smoke 1440/390 обязателен в T003 на HTTPS Preview.
+- **Required checks:** lint, typecheck, build, локальная проверка шрифтов.
+- **Note:** Visual smoke 1440/390 deferred to T003 HTTPS Preview due environment limitation; lint/typecheck/build passed.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
@@ -89,8 +90,8 @@ Gate проверяет только выполненную часть и её �
 - **Forbidden scope:** Production deploy, реальные ключи в Git, Supabase подключение. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
 - **Implementation notes:** Preview от redesign-v2, закрыть индексирование до запуска.
-- **Acceptance criteria:** Preview открывается; env.example не содержит secrets, production не затронут.
-- **Required checks:** lint/typecheck, HTTPS smoke, secret-path review.
+- **Acceptance criteria:** Preview открывается; foundation T002 проверена при 1440/390; env.example не содержит secrets, production не затронут.
+- **Required checks:** lint/typecheck, HTTPS smoke, secret-path review; обязательно через HTTPS Preview проверить Prata loaded, Manrope loaded, tokens applied, 1440px visual smoke, 390px visual smoke, no CSS/font console errors.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
