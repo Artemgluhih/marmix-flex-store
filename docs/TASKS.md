@@ -149,7 +149,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T006
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Home fragments и UI primitives
 - **Goal:** Перенести фрагмент каталога, Product Card, application block и CTA.
 - **Why:** Home должен быть целостным visual reference.
