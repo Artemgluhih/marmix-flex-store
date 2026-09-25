@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import { CatalogFragment } from "./CatalogFragment";
 import styles from "./page.module.css";
+import fragments from "./homeFragments.module.css";
 
 export default function HomePage() {
   return (
@@ -44,6 +46,32 @@ export default function HomePage() {
           </figure>
         </div>
         <p className={styles.showcaseNote}>Изображения этого прототипа — визуализации направления, не фотографии конкретных товаров Marmix Flex.</p>
+      </section>
+      <CatalogFragment />
+      <section className={fragments.interiors} id="interiors" aria-labelledby="interiors-title">
+        <div className={fragments.interiorImage}>
+          <Image src="/images/showroom/hero-room.webp" alt="" fill sizes="(max-width: 800px) 100vw, 55vw" />
+          <span>Визуализация / жилое пространство</span>
+        </div>
+        <div className={fragments.interiorCopy}>
+          <p className={styles.eyebrow}>03 / Применение</p>
+          <h2 id="interiors-title">Поверхность,<br />которая становится<br /><em>архитектурой.</em></h2>
+          <p>Материал работает не только в образце. Его масштаб, свет и окружение создают цельное впечатление от пространства.</p>
+          <a className={styles.textLink} href="#materials">Посмотреть материал <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+      <section className={fragments.closing} id="contact" aria-labelledby="closing-title">
+        <div className={fragments.closingText}>
+          <p className={styles.eyebrow}>Marmix Flex / Сургут</p>
+          <h2 id="closing-title">Начните с<br /><em>материала.</em></h2>
+          <p>Сравните фактуры, найдите свой оттенок и представьте новую поверхность в вашем пространстве.</p>
+          <a className={styles.primaryButton} href="#catalog">Вернуться к материалам <span aria-hidden="true">↗</span></a>
+        </div>
+        <div className={fragments.closingArt} aria-hidden="true">
+          <span className={fragments.artOutline} />
+          <span className={fragments.artStone} />
+          <span className={fragments.artLabel}>M / F</span>
+        </div>
       </section>
     </>
   );
