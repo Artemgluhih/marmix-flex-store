@@ -1,0 +1,31 @@
+.shell {
+  max-width: var(--content-max);
+  min-height: 100svh;
+  margin-inline: auto;
+  background: var(--color-page);
+}
+
+.main {
+  min-height: calc(100svh - 186px);
+}
+
+.skip {
+  position: absolute;
+  z-index: 100;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-gold);
+  color: var(--color-on-gold);
+  transform: translateY(-150%);
+}
+
+.skip:focus {
+  transform: translateY(0);
+}
+
+@media (max-width: 800px) {
+  .main {
+    min-height: calc(100svh - 172px);
+  }
+}
