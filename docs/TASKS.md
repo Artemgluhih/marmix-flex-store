@@ -129,7 +129,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T005
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Hero и Material Showcase
 - **Goal:** Перенести две ведущие сцены prototype в Next компоненты.
 - **Why:** Они задают утверждённый визуальный язык.
