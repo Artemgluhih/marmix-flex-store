@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T008 — DONE, T009–T074 — TODO; M1 — PASS; M2 — PASS; Content Gate — BLOCKED / pending T009, T010 and unresolved commercial blockers. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T009 — DONE, T010–T074 — TODO; M1 — PASS; M2 — PASS; Content Gate — BLOCKED / pending T010, unresolved commercial blockers and legal sign-off. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -24,7 +24,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 |---|---|---|
 | M1 — Foundation ready | T003 | Next scaffold, шрифты/tokens, lint/typecheck/build и HTTPS Preview работают; только placeholders в Git; проверить T001–T003. |
 | M2 — Public visual foundation approved | T007 | Header/Hero/Showcase/Card/CTA в Next визуально совпадают с утверждённым prototype на 1440/390, mobile menu и reduced-motion проходят; принимать перенос, не новое направление; проверить T004–T007. |
-| Content gate — **BLOCKED** | T010 | Pending T009, T010 and unresolved commercial blockers: формат гибкой доски (14 SKU), 20 price ranges, коммерческие поля 11 accessories, public slug collisions. T008 registry verification itself is DONE. Коммерческие/зависимые задачи остаются BLOCKED до закрытия gate. |
+| Content gate — **BLOCKED** | T010 | Pending T010, four unresolved commercial blockers (формат гибкой доски — 14 SKU; 20 price ranges; commercial fields — 11 accessories; public slug collisions) and owner/legal sign-off recorded in LEGAL_OWNER_DECISIONS.md. T008 registry verification and T009 documentation are DONE. Коммерческие/зависимые задачи остаются BLOCKED до закрытия gate. |
 | M3 — Supabase & Admin Auth secured | T022 | T011–T022: схемы, anon/RLS/Storage, закрытый signup, active membership, session/guard, негативные security проверки. |
 | M4 — Admin catalog management operational | T038 | T023–T038: dashboard, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
 | M5 — Public catalog operational | T046 | T039–T046: списки/поиск/категории/Product Detail на общих данных, только published, реальные цена/медиа. Подключение add-to-cart является T049 и входит в M6. |
@@ -34,7 +34,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **M1 status: PASS.** T001–T003 DONE; lint/typecheck/build PASS, branch HTTPS Preview READY, Prata/Manrope/tokens PASS, owner visual smoke 1440 × 900 и 390 × 844 PASS; ошибочный deployment нового проекта удалён, существующий production не изменён.
 
-**Content Gate status: BLOCKED / pending T009, T010 and unresolved commercial blockers.** T008 is DONE; this status does not close the overall content gate.
+**Content Gate status: BLOCKED / pending T010, four unresolved commercial blockers and owner/legal sign-off recorded in LEGAL_OWNER_DECISIONS.md.** T008 and T009 are DONE; this status does not close the overall content gate.
 
 Gate проверяет только выполненную часть и её интеграцию с предыдущими. Утверждённый визуал сохраняется при M2; owner review касается точности переноса. Content gate обязателен до коммерческой реализации; непройденный gate блокирует зависящую задачу. M8 — готовность к отдельному разрешению на production, не деплой.
 
@@ -208,14 +208,14 @@ Gate проверяет только выполненную часть и её �
 - **Recommended model:** GPT-6 Luna Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
-- **Verification note:** Acceptance criteria выполнены: владелец подтвердил 251 INCLUDE, 251 стабильный SKU, 8 категорий, 231 фиксированную цену, 226 панельных размеров 142 × 284 см / 4.0328 м², правила цены/количества для поверхностей, две разные «Калаката», срок службы 30 лет и availability policy. Четыре конкретных unresolved commercial/routing blocker оставлены в [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md#remaining-blockers) и блокируют общий Content Gate, но не T008 — здесь зафиксирован явный BLOCKED список. T009 остаётся TODO и не начинается автоматически.
+- **Verification note:** Acceptance criteria выполнены: владелец подтвердил 251 INCLUDE, 251 стабильный SKU, 8 категорий, 231 фиксированную цену, 226 панельных размеров 142 × 284 см / 4.0328 м², правила цены/количества для поверхностей, две разные «Калаката», срок службы 30 лет и availability policy. Четыре конкретных unresolved commercial/routing blocker оставлены в [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md#remaining-blockers) и блокируют общий Content Gate, но не T008 — здесь зафиксирован явный BLOCKED список. T009 documentation was subsequently completed; T010 remains TODO and is not started automatically.
 - **Suggested commit message:** task(T008): Подтверждение товарного справочника
 
 ### T009 — Условия заказа и юридический контент
 
 - **ID:** T009
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Условия заказа и юридический контент
 - **Goal:** Подтвердить контакты, доставку, возврат, цену/оплату, согласие.
 - **Why:** Checkout и публичные страницы требуют доказуемых условий.
