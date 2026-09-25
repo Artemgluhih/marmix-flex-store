@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T003 — DONE, T004–T074 — TODO; M1 — PASS. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T004 — DONE, T005–T074 — TODO; M1 — PASS. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -108,7 +108,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T004
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Public layout, Header и Footer
 - **Goal:** Перенести approved публичную оболочку, включая мобильное меню.
 - **Why:** Это общая композиция всех страниц.
@@ -122,6 +122,7 @@ Gate проверяет только выполненную часть и её �
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
+- **Verification note:** Implementation commit a166973c038834388c500c9e3d74d0fa86000eb5; lint/typecheck/build PASS, HTTPS branch Preview READY. Владелец проверил Chrome Responsive Mode: 1440 × 900, 768 × 900, 390 × 844 — PASS; Header/Footer, отсутствие overflow, mobile open/close, Escape, Tab, focus и ссылки — PASS. Console ошибок приложения не показала.
 - **Suggested commit message:** task(T004): Public layout, Header и Footer
 
 ### T005 — Hero и Material Showcase

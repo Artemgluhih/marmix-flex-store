@@ -1,19 +1,19 @@
 # Marmix Flex Redesign v2 — Current State
 
-**Current stage:** IMPLEMENTATION FOUNDATION COMPLETE — T001, T002, T003 DONE; M1 Foundation ready PASS. T004 не начата.
+**Current stage:** T001–T004 DONE; M1 Foundation ready PASS. T005 не начата.
 
 | Field | State |
 |---|---|
-| TASKS.md status | COMPLETE; 18 PHASE (0–17), 74 TASK (T001–T074); T001–T003 DONE, T004–T074 TODO. |
-| Milestone status | M1 — PASS; остальные milestone gates ожидают соответствующих TASK. |
-| Foundation | Next.js App Router, TypeScript, CSS Modules, утверждённые tokens и Prata/Manrope; lint, typecheck, build PASS. |
-| T002 deferred smoke | Владелец проверил HTTPS Preview в Chrome responsive mode: 1440 × 900 PASS, 390 × 844 PASS; кириллица, шрифты, фон, золото, spacing/layout и отсутствие horizontal overflow подтверждены. |
-| T003 Preview | Отдельный проект Vercel prj_2OI4vP4GIX3e99xbE7iF5NrBbdA2; READY Preview из Git branch redesign-v2: https://marmix-flex-redesign-v2-preview-k63fm3jwy.vercel.app (deployment dpl_J2WpLSrNdy7hZDsA3zJ61oJctCtp, source commit 260c9b972449d1d6ea430f1d0b32d3b4beba4689). Git updates создают новые Preview; актуальный URL/commit уточнять в Vercel. |
-| Security | .env.example содержит только пустые placeholders; реальные env и secrets в T003 commit отсутствуют; временные metadata содержат noindex. Страница Preview открыта, console без ошибок приложения, CSS/fonts работают. |
-| Deployment cleanup | С согласия владельца удалён только ошибочный Production deployment dpl_2fSQp2oNYgNeLhaTLFN1nCDLhDHu нового Preview-проекта. После удаления проверены отсутствие этого ID, работа branch Preview и неизменность отдельного существующего проекта marmix-store. |
-| Current branch | GitHub: redesign-v2; текущий remote HEAD — commit этого checkpoint после публикации, проверять по ref redesign-v2. Предыдущий проверенный HEAD: 260c9b972449d1d6ea430f1d0b32d3b4beba4689. main не изменять. |
-| Next TASK | T004 — Public layout, Header и Footer. Только после отдельного запроса владельца. |
-| Recommended model for T004 | GPT-6 Sol Medium; reasoning Medium; additional agent NO. |
-| Next concrete step | Остановиться после проверки remote T003/M1; не начинать T004 автоматически. |
+| TASKS.md status | COMPLETE; 18 PHASE (0–17), 74 TASK (T001–T074); T001–T004 DONE, T005–T074 TODO. |
+| Milestone status | M1 — PASS; M2 и последующие gates ожидают соответствующих TASK. |
+| T004 implementation | Public route group с Header, desktop/mobile navigation, Footer и прежней тестовой страницей foundation; implementation commit a166973c038834388c500c9e3d74d0fa86000eb5. Hero/Showcase/Product Card ещё не начаты. |
+| Checks | Lint, typecheck, build PASS; Next.js Preview из Git branch redesign-v2 READY и содержит implementation commit. Browser console без ошибок приложения. |
+| Owner verification T004 | Chrome Responsive Mode: 1440 × 900 PASS, 768 × 900 PASS, 390 × 844 PASS. Header/Footer и Dark Gold Showroom выглядят корректно; overflow NO. На mobile: открыть/закрыть кнопкой, Escape, Tab, видимый focus, usable navigation links — PASS. |
+| HTTPS Preview | https://marmix-flex-redesign-v2-preview-ntk66u1fr.vercel.app (deployment dpl_3SQsZE4BrS76ho8aDECyQrsGH2AG, source SHA a166973c038834388c500c9e3d74d0fa86000eb5). При следующих commits Vercel создаёт отдельные branch Preview; проверять актуальный deployment по redesign-v2. |
+| Security / production | .env.example только с пустыми placeholders, Preview noindex; ошибочный production deployment нового Preview-проекта удалён в T003; существующий production Marmix Flex и main не изменялись. |
+| Current branch / remote HEAD | redesign-v2; после публикации этого checkpoint его commit является remote HEAD (точный SHA проверять через GitHub ref). Предыдущий проверенный HEAD: a166973c038834388c500c9e3d74d0fa86000eb5. |
+| Next TASK | T005 — Hero и Material Showcase. Только после отдельного запроса владельца. |
+| Recommended model for T005 | GPT-6 Sol Medium; reasoning Medium; additional agent NO. |
+| Next concrete step | Остановиться после remote verification T004; T005 не начинать автоматически. |
 
-**Источники истины:** [TASKS.md](TASKS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). Утверждённый prototype — visual reference для T004.
+**Источники истины:** [TASKS.md](TASKS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). Утверждённый [prototype](../prototype/index.html) — visual reference для следующей TASK.
