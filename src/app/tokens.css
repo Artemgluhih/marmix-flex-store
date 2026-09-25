@@ -1,0 +1,65 @@
+:root {
+  /* Dark Gold Showroom: approved surfaces and semantic colors. */
+  --color-canvas: #090909;
+  --color-page: #10100f;
+  --color-stage: #171715;
+  --color-graphite: #1a1917;
+  --color-header: #151411;
+  --color-card: #201f1d;
+  --color-elevated: #22211e;
+  --color-editorial-panel: #24221e;
+  --color-text-primary: #f2eee6;
+  --color-text-secondary: #b8b2a8;
+  --color-text-quiet: #a9a399;
+  --color-ivory-warm: #e6d4b9;
+  --color-gold: #d4af7c;
+  --color-gold-hover: #e9cda7;
+  --color-on-gold: #181510;
+  --color-border: #474239;
+  --color-border-quiet: #34302b;
+  --color-border-warm: #574b38;
+  --color-success: #a5bda9;
+  --color-error: #dda195;
+  --color-disabled-text: #8b857c;
+  --color-disabled-surface: #34312c;
+
+  --font-display: var(--font-prata), Georgia, "Times New Roman", serif;
+  --font-ui: var(--font-manrope), Arial, sans-serif;
+  --font-display-italic: Georgia, "Times New Roman", serif;
+  --text-body: 1rem;
+  --text-body-line: 1.7;
+  --text-h1: clamp(52px, 5.2vw, 80px);
+  --text-h1-mobile: clamp(41px, 10.7vw, 53px);
+  --text-h1-line: 1.18;
+  --text-h1-tracking: -0.025em;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+  --content-max: 1800px;
+  --outer-desktop: clamp(22px, 5.4vw, 82px);
+  --outer-compact: 24px;
+  --outer-mobile: 20px;
+  --radius-control: 0;
+  --border-width: 1px;
+  --focus-width: 2px;
+  --focus-offset: 4px;
+  --motion-ease: ease;
+  --motion-product-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --motion-interaction: 250ms;
+  --motion-reveal: 650ms;
+  --motion-photo: 700ms;
+
+  /* Breakpoint references: 1120px / 800px / 620px / 370px.
+     CSS custom properties cannot be used in ordinary @media conditions. */
+}
