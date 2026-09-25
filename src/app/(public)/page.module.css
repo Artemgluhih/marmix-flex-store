@@ -1,45 +1,29 @@
-.page {
-  padding: var(--space-24) var(--outer-desktop);
-}
-
-.eyebrow {
-  margin: 0 0 var(--space-6);
-  color: var(--color-gold);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.2em;
-  line-height: 1.5;
-  text-transform: uppercase;
-}
-
-.heading {
-  max-width: 950px;
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: var(--text-h1);
-  font-weight: 400;
-  letter-spacing: var(--text-h1-tracking);
-  line-height: var(--text-h1-line);
-}
-
-.description {
-  max-width: 420px;
-  margin: var(--space-8) 0 0;
-  color: var(--color-text-secondary);
-}
-
-@media (max-width: 800px) {
-  .page {
-    padding-inline: var(--outer-compact);
-  }
-}
-
-@media (max-width: 620px) {
-  .page {
-    padding: var(--space-16) var(--outer-mobile);
-  }
-
-  .heading {
-    font-size: var(--text-h1-mobile);
-  }
-}
+.hero{position:relative;isolation:isolate;height:min(750px,calc(100svh - 86px));min-height:620px;background:#171310;overflow:hidden}
+.heroImage{z-index:-2;object-fit:cover;object-position:62% 50%;animation:heroReveal 1.1s both}
+.hero::before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgb(9 9 8 / 94%) 0%,rgb(9 9 8 / 70%) 28%,rgb(9 9 8 / 21%) 57%,transparent 78%),linear-gradient(0deg,rgb(9 9 8 / 50%),transparent 30%)}
+.heroContent{position:relative;max-width:700px;padding:clamp(90px,10vw,158px) 0 0 var(--outer-desktop);animation:heroCopy .85s .15s both}
+.eyebrow,.heroEyebrow{margin:0;color:var(--color-gold);font-size:11px;font-weight:600;letter-spacing:.2em;line-height:1.5;text-transform:uppercase}
+.heroEyebrow{display:flex;align-items:center;gap:15px;color:#e0c5a0}.eyebrowLine{width:30px;height:1px;background:var(--color-gold)}
+.hero h1{margin:29px 0 0;font:400 clamp(52px,5.2vw,80px)/1.17 var(--font-display);letter-spacing:-.025em;text-wrap:balance}
+.hero h1 em,.sectionHead h2 em{font-family:var(--font-display-italic);font-style:italic;font-weight:400;letter-spacing:-.04em}
+.heroDescription{max-width:420px;margin:29px 0 0;color:#ece6dd;font-size:15px;line-height:1.8}
+.heroActions{display:flex;align-items:center;gap:31px;margin-top:34px}
+.primaryButton{display:inline-flex;align-items:center;justify-content:space-between;gap:35px;min-height:52px;padding:0 23px;background:var(--color-gold);color:var(--color-on-gold);font-size:11px;font-weight:700;letter-spacing:.06em;text-decoration:none;transition:background .25s,transform .25s}
+.primaryButton:hover{background:var(--color-gold-hover);transform:translateY(-2px)}
+.primaryButton span,.textLink span{font-size:18px;font-weight:400;line-height:1}
+.textLink{display:inline-flex;align-items:center;gap:13px;padding:11px 0;border-bottom:1px solid #9e8c72;color:var(--color-text-primary);font-size:11px;font-weight:700;letter-spacing:.06em;text-decoration:none;transition:color .25s,border-color .25s}.textLink:hover{border-color:var(--color-gold)}
+.heroFoot{position:absolute;bottom:32px;left:var(--outer-desktop);right:var(--outer-desktop);display:flex;justify-content:space-between;gap:20px;color:#eee5d9;font-size:10px;letter-spacing:.16em;text-transform:uppercase}.heroFoot>span:last-child{color:#d9c8ae}
+.showcase{padding:122px var(--outer-desktop) 120px}.sectionHead{display:flex;justify-content:space-between;align-items:end;gap:56px;margin-bottom:48px}
+.sectionHead h2{margin:20px 0 0;font:400 clamp(40px,4.15vw,64px)/1.23 var(--font-display);letter-spacing:-.026em}
+.sectionLead{max-width:350px;margin:0;padding-bottom:9px;color:var(--color-text-secondary);font-size:14px;line-height:1.8}
+.showcaseGrid{display:grid;grid-template-columns:1.43fr 1fr;gap:20px;align-items:start}.showcaseGrid figure{min-width:0;margin:0}
+.imageFrame{position:relative;overflow:hidden;background:#282522}.imageFrame img{object-fit:cover;transition:transform .8s ease}.imageFrame:hover img{transform:scale(1.025)}
+.showcaseRoom .imageFrame{aspect-ratio:1.39}.showcaseDetail{padding-top:86px}.showcaseDetail .imageFrame{aspect-ratio:.95}
+.showcaseGrid figcaption{display:flex;justify-content:space-between;gap:15px;margin-top:13px;color:#c7bdb1;font-size:10px;letter-spacing:.09em;text-transform:uppercase}.showcaseGrid figcaption span:last-child{color:#8c867e;letter-spacing:0;text-transform:none}
+.showcaseNote{max-width:540px;margin:32px 0 0;color:#918b83;font-size:11px;line-height:1.65}
+@keyframes heroReveal{from{opacity:.3;transform:scale(1.025)}to{opacity:1;transform:scale(1)}}
+@keyframes heroCopy{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:800px){.hero{height:auto;min-height:0;padding-top:420px}.heroImage{bottom:auto!important;height:460px!important;object-position:66% center}.hero::before{bottom:auto;height:500px;background:linear-gradient(0deg,var(--color-page) 0%,transparent 31%)}.heroContent{max-width:none;padding:0 var(--outer-compact) 55px}.hero h1{margin-top:17px;font-size:clamp(47px,9vw,70px)}.heroDescription{margin-top:18px}.heroActions{margin-top:25px}.heroFoot{display:none}.showcase{padding:84px var(--outer-compact) 87px}.sectionHead{display:block;margin-bottom:34px}.sectionLead{max-width:520px;margin-top:22px}.showcaseGrid{gap:16px}.showcaseDetail{padding-top:40px}}
+@media(max-width:620px){.hero{padding-top:378px}.heroImage{height:430px!important;object-position:68% center}.hero::before{height:440px}.heroContent{padding-inline:var(--outer-mobile)}.heroEyebrow{font-size:9px}.hero h1{font-size:clamp(41px,10.7vw,53px);line-height:1.18}.heroDescription{font-size:14px;line-height:1.7}.heroActions{flex-wrap:wrap;gap:13px 23px}.primaryButton{min-width:217px}.showcase{padding-inline:var(--outer-mobile)}.sectionHead h2{font-size:clamp(37px,9vw,45px)}.sectionLead{font-size:13px}.showcaseGrid{grid-template-columns:1fr}.showcaseRoom .imageFrame{aspect-ratio:1.17}.showcaseDetail{padding-top:12px}.showcaseDetail .imageFrame{aspect-ratio:1.34}.showcaseGrid figcaption{font-size:9px}.showcaseNote{margin-top:24px}}
+@media(max-width:370px){.hero h1{font-size:39px}.primaryButton{width:100%}}
+@media(prefers-reduced-motion:reduce){.heroImage,.heroContent{animation:none}.primaryButton,.textLink,.imageFrame img{transition:none}.primaryButton:hover,.imageFrame:hover img{transform:none}}
