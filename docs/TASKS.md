@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T007 — DONE, T008–T074 — TODO; M1 — PASS; M2 — PASS. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T007 — DONE, T008 — BLOCKED, T009–T074 — TODO; M1 — PASS; M2 — PASS. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -192,7 +192,7 @@ Gate проверяет только выполненную часть и её �
 
 - **ID:** T008
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** BLOCKED
 - **Title:** Подтверждение товарного справочника
 - **Goal:** Сверить SKU, декоры, категории, единицы, шаг, размер, свойства и статусы.
 - **Why:** Нельзя строить продажу на демонстрационном прайсе.
@@ -206,6 +206,7 @@ Gate проверяет только выполненную часть и её �
 - **Recommended model:** GPT-6 Luna Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
+- **Verification note:** [CONTENT_FACTS.md](CONTENT_FACTS.md) фиксирует 251 наблюдаемую карточку текущего сайта, 8 групп, опубликованные цены только как неподтверждённый прайс, 20 расхождений DOM/URL ID и 2 группы коллизий slug. Подтверждённых merchant SKU — 0; launch inclusion, sale units/min/step, актуальные цены и availability требуют конкретного ответа владельца. T009 не начинать до снятия блокера и sign-off T008.
 - **Suggested commit message:** task(T008): Подтверждение товарного справочника
 
 ### T009 — Условия заказа и юридический контент
