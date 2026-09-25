@@ -49,14 +49,14 @@ export function CatalogFragment() {
 
   return (
     <section className={styles.catalog} id="catalog" aria-labelledby="catalog-title">
-      <div className={styles.sectionHead}>
+      <div className={styles.sectionHead} data-reveal>
         <div>
           <p className={base.eyebrow}>02 / Фрагмент каталога</p>
           <h2 id="catalog-title">Выберите характер<br /><em>поверхности.</em></h2>
         </div>
         <p className={styles.sectionLead}>Светлая глубина, графичный контраст или тёплый природный ритм — три демонстрационных образца для проверки языка каталога.</p>
       </div>
-      <div className={styles.catalogControls}>
+      <div className={styles.catalogControls} data-reveal>
         <div className={styles.filters} role="group" aria-label="Фильтр демонстрационных материалов">
           {FILTERS.map((item) => (
             <button key={item.id} type="button" aria-pressed={filter === item.id} onClick={() => setFilter(item.id)}>
@@ -66,7 +66,7 @@ export function CatalogFragment() {
         </div>
         <span className={styles.catalogCount} aria-live="polite">{String(visible.length).padStart(2, "0")} {visible.length === 1 ? "материал" : "материала"}</span>
       </div>
-      <div className={styles.productGrid}>
+      <div className={styles.productGrid} data-reveal>
         {visible.map((material) => (
           <article className={styles.productCard} key={material.id}>
             <button className={styles.productImage} type="button" onClick={() => openTexture(material)} aria-label={`Рассмотреть демонстрационную фактуру ${material.name} крупно`}>

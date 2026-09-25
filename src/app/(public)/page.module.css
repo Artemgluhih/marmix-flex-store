@@ -27,3 +27,14 @@
 @media(max-width:620px){.hero{padding-top:378px}.heroImage{height:430px!important;object-position:68% center}.hero::before{height:440px}.heroContent{padding-inline:var(--outer-mobile)}.heroEyebrow{font-size:9px}.hero h1{font-size:clamp(41px,10.7vw,53px);line-height:1.18}.heroDescription{font-size:14px;line-height:1.7}.heroActions{flex-wrap:wrap;gap:13px 23px}.primaryButton{min-width:217px}.showcase{padding-inline:var(--outer-mobile)}.sectionHead h2{font-size:clamp(37px,9vw,45px)}.sectionLead{font-size:13px}.showcaseGrid{grid-template-columns:1fr}.showcaseRoom .imageFrame{aspect-ratio:1.17}.showcaseDetail{padding-top:12px}.showcaseDetail .imageFrame{aspect-ratio:1.34}.showcaseGrid figcaption{font-size:9px}.showcaseNote{margin-top:24px}}
 @media(max-width:370px){.hero h1{font-size:39px}.primaryButton{width:100%}}
 @media(prefers-reduced-motion:reduce){.heroImage,.heroContent{animation:none}.primaryButton,.textLink,.imageFrame img{transition:none}.primaryButton:hover,.imageFrame:hover img{transform:none}}
+
+@media (prefers-reduced-motion: no-preference) {
+  :global(html.motion-ready [data-reveal]:not(.is-visible)) {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  :global(html.motion-ready [data-reveal]) {
+    transition: opacity 650ms ease, transform 650ms ease;
+  }
+}
