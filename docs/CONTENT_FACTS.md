@@ -2,7 +2,6 @@
 
 **Актуальное состояние на 26.09.2026:** T008–T010 DONE по своим acceptance criteria; M1 и M2 PASS. Общий Content Gate **BLOCKED**: 4 коммерческие группы T008 + 3 юридические группы T009; media blockers: 0. Owner-confirmed legal/order status и consolidated blockers — в [LEGAL_OWNER_DECISIONS.md](LEGAL_OWNER_DECISIONS.md). Визуальный owner review выбранных уникальных медиа остаётся pre-production check, не Content Gate blocker. Исторические данные ниже сохранены как evidence.
 
-**Актуальное состояние на 26.09.2026:** T008–T010 DONE по своим acceptance criteria; M1 и M2 PASS; общий Content Gate остаётся **BLOCKED** из-за четырёх товарно-коммерческих групп T008 и owner/legal sign-off T009. M1–M7 подтвердили все текущие media rights и mappings; media blockers для Content Gate: 0. Отдельный visual owner review выбранных уникальных медиа требуется перед production, но не блокирует Content Gate. Реестр SKU: [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv); медиа-реестр: [MEDIA_MANIFEST.csv](MEDIA_MANIFEST.csv); детали: [MEDIA_OWNER_DECISIONS.md](MEDIA_OWNER_DECISIONS.md). Исторические данные ниже сохранены как evidence.
 
 ## Current owner-confirmed product facts
 
