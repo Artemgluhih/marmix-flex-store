@@ -1,81 +1,64 @@
 # Marmix Flex — Media Owner Decisions
 
-**Проверено:** 2026-09-26.  
-**T010:** DONE — manifest и проверяемый BLOCKED list готовы.  
-**Content Gate:** BLOCKED. **T011 не начинать** до отдельного решения и закрытия gate.
+**Актуально на:** 26.09.2026 — owner confirmations M1–M7 applied.  
+**T010:** DONE. **T011:** не начинать.  
+**Content Gate:** BLOCKED из-за четырёх товарно-коммерческих групп T008 и owner/legal sign-off T009. Media rights/mapping blockers: 0.
 
-## Inventory result
+## Current media decision summary
 
-- 251/251 launch SKU сопоставлены с доступной source product page; у всех совпали legacy UID и название.
-- 808 опубликованных product-gallery references / 793 уникальных CDN URL; 0 SKU без image reference.
-- 230 unique first-gallery primary candidates; 21 SKU с неоднозначным shared primary в 7 URL groups.
-- 60 homepage gallery references (3 sampled; 57 not individually reviewed) + 31 other homepage media references. Only the three reviewed homepage frames receive an interior/application role; the others remain unknown unless the source establishes a role.
-- 5 approved-prototype files: 2 interior visualizations and 3 material-demo textures.
-- OWNER CONFIRMED RIGHT: 0. RIGHTS UNKNOWN: all 904 manifest usage rows. Production approved: 0.
-- Quality is separate: current assets are not individually quality-approved. The small sample review only identified likely interior/application scenes.
+- 904 usage rows: 808 product-gallery placements, 91 homepage references (60 mixed-gallery + 31 other homepage visuals), and 5 prototype assets.
+- 889 unique source references after deduplication; 793 unique product-gallery URLs.
+- 251/251 SKU have an owner-confirmed product-page gallery mapping and a primary candidate; 0 ambiguous primary SKU. The intentional shared-image assignments remain separate SKU identities.
+- Product-gallery roles: 251 `product_primary`, 549 `product_detail`, 8 `interior_application` placements. If an individual role is unclear, use `unknown` while retaining the source-page SKU mapping.
+- OWNER CONFIRMED RIGHT: 904/904 usage rows within the approved use scopes. RIGHTS UNKNOWN: 0. Rights/mapping gate cleared: 904/904. Full production approval remains 0 pending visual quality sign-off.
+- Homepage gallery is MIXED. Use neutral application wording; authorship/project status is not confirmed per image.
+- Prototype assets are approved presentation/design-system media, not SKU photos.
+- Quality status for the 889 unique references is `OWNER REVIEW REQUIRED`. The selected production set is not yet recorded; review each selected unique reference once before production. This is a production-readiness requirement, not a Content Gate media blocker.
 
-## Decision statuses
+## Owner confirmations applied
 
-Use OWNER CONFIRMED RIGHT only with explicit owner/source evidence of permitted use. Otherwise keep RIGHTS UNKNOWN; if there is evidence of third-party material, use THIRD-PARTY / REVIEW REQUIRED. A visible Tilda/CDN URL is only SOURCE IMAGE. No status in this review is a legal ownership conclusion.
+### M1 — Product-gallery reuse rights
 
-## Decisions Needed From Owner
+Owner authorizes the existing product-gallery source set on the new domain and in Supabase Storage, with responsive delivery, resize/crop, WebP/AVIF optimization, Catalog, Product Detail, Homepage, Open Graph/SEO previews and site marketing. This applies only to an image actually present in the confirmed source product/gallery. It records permission for the specified use, not a legal determination of underlying copyright ownership.
 
-### M1 — Rights for product-gallery photos
+### M2 — Shared first images
 
-**Known:** 808 gallery placements / 793 unique URLs appear on the old Tilda product pages. No license, photographer/source record, or owner permission for transfer was found in project documents.  
-**Need owner confirmation:** Who owns or licenses these files, and is reuse permitted on the new domain, in Supabase Storage, optimized/cropped derivatives, SEO previews and marketing?  
-**Impact:** Until evidence/scope is confirmed, every product image remains RIGHTS UNKNOWN and must not be imported or published on the new site. Provide a blanket rights confirmation with source/evidence, or mark exceptions in the manifest.
+The previously listed shared first-image assignments for accessories and Travertine are intentional. All 21 affected SKU may use the shared first image as a primary candidate. Keep the nine accessories and six Travertine pairs as separate SKU/product identities; do not merge or regenerate SKU.
 
-### M2 — Shared first-image groups
+### M3 — Product gallery mapping and roles
 
-**Known:** The Tilda page UID/title matches each SKU, but the same first image is used for multiple distinct SKU pages. A shared primary image is not an unambiguous SKU-specific candidate.
+The gallery placed on each legacy product page is the intended media set for the associated registry SKU. Page UID/title match was verified against the catalog owner registry. Mapping is confirmed for all 808 gallery placements. Use the first product frame as `product_primary`, other product frames as `product_detail`, obvious macro as `texture_macro`, and obvious interiors as `interior_application`. Where role cannot be confidently identified, `unknown` is allowed; SKU mapping remains confirmed.
 
-- Adhesive/coating family sharing one first image: MF-ACC-0001, 0002, 0003, 0005, 0006, 0007, 0008, 0009, 0011.
-- Travertine shared first-image pairs: MF-TRV-0007 / 0003; 0004 / 0011; 0001 / 0006; 0012 / 0002; 0008 / 0009; 0010 / 0005.
+### M4 — Homepage gallery
 
-**Need owner confirmation:** Are these shared image assignments intentional and visually valid for each product? If not, identify the correct source image per SKU or approve replacing them.  
-**Impact:** Primary candidate remains unset for these 21 SKU; do not merge SKU identities.
+The 60-image homepage gallery is MIXED: it may contain real work, visualizations and application/reference images. Customer-facing terms must be neutral: «Материал в интерьере», «Примеры применения», «В интерьере». Do not call an image «наш проект», «реализованный объект» or «работа Marmix Flex» without a separate per-image confirmation of authorship. Rights confirmation under M5 does not establish authorship.
 
-### M3 — Remaining product-gallery roles and SKU correspondence
+### M5 — Homepage visual assets
 
-**Known:** All gallery entries are embedded under a product page whose UID/title match the registry. 557 non-primary references remain visually unclassified; 8 filenames suggest interior images under two SKU galleries. Page association alone does not prove that every image shows the named decor.  
-**Need owner confirmation:** Can the source page gallery be treated as the intended image set for its SKU, subject to a visual pass? Mark only exceptions in the manifest. Confirm any image that is product_detail, texture_macro, or interior_application; leave unresolved images as unknown.  
-**Impact:** Wrong decor visuals can misrepresent catalog identity even where the page linkage is exact.
+Owner authorizes the confirmed 91-reference homepage source set on the new domain and in Supabase Storage, with resize/crop, optimization, responsive delivery, Homepage and appropriate SEO/OG use. This permission covers use in an appropriate homepage role; it does not assign a SKU or prove project authorship.
 
-### M4 — Existing homepage gallery provenance
+### M6 — Prototype/design-system assets
 
-**Known:** The old homepage has 60 slides in a section titled «Посмотрите какие работы мы выполняем». Only slides 1, 30 and 60 were visually sampled; they show interior/application or renovation contexts. The remaining 57 slides are not individually classified. No sampled image establishes that the object is a Marmix Flex customer project; a render, customer image or third-party source is also possible.  
-**Need owner confirmation:** For this group, are these actual Marmix Flex installations, customer-supplied photos, visualizations, third-party references, or mixed? If mixed, mark exceptions by slide number in the manifest and provide attribution/permission where relevant.  
-**Impact:** Until confirmed, do not call any slide «наш проект», «реализованный объект» or «работа Marmix Flex». Neutral application imagery still needs rights clearance.
+Retain `hero-room.webp`, `interior-room.webp`, `ivory-vein.webp`, `graphite-vein.webp` and `warm-strata.webp` in the approved visual-system roles. The room images are visualizations, not real Marmix Flex objects. Demo textures are presentation material only, not real product photography and not SKU-mapped. The manifest uses role `visualization/presentation` for these five assets.
 
-### M5 — Rights to homepage visual assets
+### M7 — Owner quality review
 
-**Known:** The manifest lists 60 gallery images and 31 other unique homepage media references, including decorative/editorial assets and two filename-suggested material images without SKU mapping.  
-**Need owner confirmation:** Confirm permitted reuse for this group in the new site, including resizing/cropping and public Storage delivery, or mark assets for replacement.  
-**Impact:** All remain RIGHTS UNKNOWN and Production approved = NO until confirmed.
+Owner is responsible for visual review of color, texture accuracy, crop, resolution and production suitability. Keep `Quality status = OWNER REVIEW REQUIRED` until sign-off. Before production, review the unique assets selected for launch, deduplicated by source reference. No need to review repeated manifest rows separately. No quality sign-off has been recorded yet.
 
-### M6 — Approved prototype assets
+## Current gate assessment
 
-**Known:** hero-room.webp and interior-room.webp are captioned as visualizations; ivory-vein.webp, graphite-vein.webp, and warm-strata.webp are explicitly demo textures. They have no production SKU mapping and their provenance/rights are absent.  
-**Need owner confirmation:** Is there documented permission/source provenance for any of the five files? If not, confirm they must be replaced before production.  
-**Impact:** These files remain temporary visual references; they must not be imported as actual product/project media by default.
+| Gate | Status |
+|---|---|
+| Product-gallery rights and SKU mapping | PASS — 808/808 placements |
+| Homepage rights and neutral mixed-gallery handling | PASS — 91/91 references |
+| Prototype role/use | PASS — 5/5 presentation assets, no SKU mapping |
+| Media blockers for Content Gate | 0 |
+| Owner visual quality review before production | REQUIRED — selected unique launch assets; not a Content Gate blocker |
+| Overall Content Gate | BLOCKED — 4 T008 product-commerce groups + T009 owner/legal sign-off |
 
-### M7 — Image quality and color accuracy
+## Historical pre-confirmation evidence
 
-**Known:** Individual sharpness, resolution, crop, product-color fidelity, and production suitability have not been checked. This is separate from rights; a licensed image can still fail product-quality requirements.  
-**Need owner confirmation:** Who can compare each selected product photo with the actual decor/sample, approve color fidelity and full-resolution original, and sign off the launch set?  
-**Impact:** Do not mark Quality status = APPROVED or publish product photos as accurate material samples before that check.
+The prior inventory reported 808 product-gallery placements / 793 unique URLs; 21 shared first-image placements across seven groups; 557 non-primary product references; 8 filename/sample-based interior candidates on MF-MAR-0016 «Доминикана» and MF-MAR-0146 «Крема»; 60 homepage gallery slides and 31 other homepage references; and 5 prototype files. These counts and row-level URLs are retained in [MEDIA_MANIFEST.csv](MEDIA_MANIFEST.csv).
 
-## Explicit media BLOCKED list
+Before M1/M5/M6, right-to-use status was recorded as unknown because the repository contained no owner confirmation. Before M2/M3, shared-primary and gallery-mapping uncertainty was recorded. Before M4, project provenance was unresolved. Owner decisions above supersede those blocker statuses; they do not erase the historical evidence. The three old homepage sample slides remain sample observations only, not authorship evidence.
 
-1. Rights for current product, homepage and prototype images have no OWNER CONFIRMED RIGHT evidence.
-2. 21 SKU primary assignments are ambiguous across 7 repeated first-image URL groups.
-3. The remaining product gallery roles/content fidelity and per-image quality are not individually approved.
-4. The 60-slide old-site “works” gallery has no confirmed authorship, project/render classification or use permission.
-5. Prototype files are temporary demo/visualization assets; rights and production quality are unconfirmed.
-
-These are grouped owner decisions (M1–M7), not one chat question per image. The row-level evidence and affected SKU references are in [MEDIA_MANIFEST.csv](MEDIA_MANIFEST.csv).
-
-## Content Gate after T010
-
-Overall Content Gate remains **BLOCKED**. T008 left four product-commerce blockers (flexible-board area for 14 SKU; fixed pricing for 20 range-price SKU; sale/price unit and quantity rules for 11 accessories; two groups of public-slug collisions). T009 left owner/legal confirmations for seller/contact identity, request effect, payment, delivery/pickup, returns/claims and privacy/consent. T010 now has its explicit media blocker list above. These blockers prevent T011; this document does not authorize T011.
