@@ -1,7 +1,18 @@
 # Marmix Flex Redesign v2 — Content Facts
 
-**Актуальное состояние на 26.09.2026:** T008–T010 DONE по своим acceptance criteria; M1 и M2 PASS. Общий Content Gate **BLOCKED**: 4 коммерческие группы T008 + 3 юридические группы T009; media blockers: 0. Owner-confirmed legal/order status и consolidated blockers — в [LEGAL_OWNER_DECISIONS.md](LEGAL_OWNER_DECISIONS.md). Визуальный owner review выбранных уникальных медиа остаётся pre-production check, не Content Gate blocker. Исторические данные ниже сохранены как evidence.
+**Актуальное состояние на 27.09.2026 после C1–C4:** T008–T010 DONE по своим acceptance criteria; M1 и M2 PASS. Общий Content Gate **BLOCKED**: 2 коммерческие группы T008 + 3 актуальные юридические группы T009; media blockers: 0. T011 не начата. Owner-confirmed legal/order status и consolidated blockers — в [LEGAL_OWNER_DECISIONS.md](LEGAL_OWNER_DECISIONS.md). Визуальный owner review выбранных уникальных медиа остаётся pre-production check, не Content Gate blocker. Исторические данные ниже сохранены как evidence.
 
+
+
+## Latest owner-confirmed commercial update — C1–C4 (2026-09-27)
+
+T008 remains **DONE**. Owner confirmations C1–C4 are applied in [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv) and [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md). T009/T010 remain DONE; T011 is not started.
+
+- **C1 — Flexible Board (14 SKU):** price basis `м²`, minimum `1 sheet`, step `1 sheet`; sale-format size/area remains unresolved. No panel dimensions or area are assigned; `sheets → m² → total` is blocked.
+- **C2 — Range prices (20 SKU):** 14 Flexible Ceramic source/display ranges `2 100—2 200 ₽/м²`; 6 Travertine `2 200—2 400 ₽/м²`. Variant-specific exact price/rule pending; fixed price remains blank and no fixed-price calculation/order flow is allowed.
+- **C3 — Accessories (11/11):** `price_unit = sale_unit = шт./упаковка`, minimum `1`, step `1`; no area or sheet conversion.
+- **C4 — Public routes:** `MF-MAR-0030 → kalakata-1`; `MF-MAR-0077 → kalakata-2`; acrylic coating slugs are assigned by package weight in the owner decisions table. Legacy shared slugs remain historical evidence. SKU identity is unchanged; all 251 approved public slugs are unique.
+- **Current Content Gate:** **BLOCKED** — 2 commercial T008 groups + 3 current legal T009 groups = 5 consolidated groups; media rights/mapping blockers = 0. Selected-media quality review remains a pre-production requirement.
 
 ## Current owner-confirmed product facts
 
@@ -10,12 +21,12 @@
 | Launch scope | 251 × INCLUDE, 0 EXCLUDE, 0 UNDECIDED. |
 | Merchant SKU | 251 уникальный стабильный SKU: утверждённый формат `MF-<CATEGORY_CODE>-<NUMBER>`; номера присвоены по числовому Legacy source ID по возрастанию внутри каждой категории. Маппинг в CSV заморожен; не регенерировать, не считать старый ID SKU. |
 | Categories | Ровно 8 без переименования: Гибкий мрамор 163, Гибкая доска 14, Гибкая керамика 14, Травертин 12, Флюиды 18, Блоки 7, Гибкий камень 12, Сопутствующие материалы 11. «Хит продаж» = отдельный `featured / hit` у 7 SKU, не категория. |
-| Price | 231 фиксированная SOURCE PRICE подтверждена владельцем как актуальная на дату решения; строковые суммы перенесены без изменения. У 20 диапазонов OWNER CONFIRMED PRICE пуст — будущая fixed-price commerce для них BLOCKED. Для 11 сопутствующих материалов числовая сумма подтверждена, единица цены/продажи ещё нет. |
+| Price | 231 фиксированная SOURCE PRICE подтверждена владельцем как актуальная на дату решения; строковые суммы перенесены без изменения. У 20 диапазонов OWNER CONFIRMED PRICE пуст — будущая fixed-price commerce для них BLOCKED. Для 11 сопутствующих материалов числовая сумма и единица/упаковка подтверждены; minimum/step = 1. |
 | Seven surface categories (240 SKU) | PRICE UNIT / sale basis = `м²`, MIN = `1 sheet`, STEP = `1 sheet`. **226 панельных SKU** имеют подтверждённый размер `142 × 284 см` (`1.42 × 2.84 м`) и точную площадь `4.0328 м²`; **14 гибких досок** без подтверждённой площади и без формулы конверсии. |
-| Accessories (11 SKU) | OWNER CONFIRMED PRICE UNIT, SALE UNIT, MIN, STEP — пустые; никаких `м²` или `sheet` им не назначено. |
-| Dimensions | `142 × 284 см` и **ровно `4.0328 м²`** утверждены владельцем для 6 категорий/226 SKU. Для 14 гибких досок — `MISSING / PENDING TECHNICAL DATA`. Для 11 сопутствующих panel dimensions не назначены. Старое SOURCE VALUE двух «Калаката» (4.033 м²) сохранено как исторический текст, не используется для расчёта и не обобщается. |
+| Accessories (11 SKU) | `OWNER CONFIRMED PRICE UNIT = SALE UNIT = шт./упаковка`; MIN = `1`; STEP = `1`; area/dimensions blank. No `м²` or `sheet`. |
+| Dimensions | `142 × 284 см` и **ровно `4.0328 м²`** утверждены владельцем для 6 категорий/226 SKU. Для 14 гибких досок — `UNRESOLVED / OWNER DATA REQUIRED`; confirmed dimensions/area остаются пустыми. Для 11 сопутствующих panel dimensions не назначены. Старое SOURCE VALUE двух «Калаката» (4.033 м²) сохранено как исторический текст, не используется для расчёта и не обобщается. |
 | Availability | Рабочие статусы `in_stock` / `on_order`; конкретным SKU пока не назначены. При пустом статусе товар **видим в каталоге и Product Detail**, публичный текст о наличии скрыт, **add-to-cart и order submit запрещены**. После назначения одного из статусов разрешение заказа зависит и от остальных заполненных коммерческих полей. Нужна повторная server-side validation перед созданием заявки; отсутствие статуса никогда не означает наличие. |
-| Identity | «Калаката» `489110024061` = `MF-MAR-0077`; «Калаката» `222208968332` = `MF-MAR-0030`; это **два разных товара**. Старый общий slug конфликтует и требует отдельного решения. |
+| Identity / public routes | «Калаката» `489110024061` = `MF-MAR-0077` → `kalakata-2`; `222208968332` = `MF-MAR-0030` → `kalakata-1`; это **два разных товара**. Acrylic coating slugs include package weight; see owner decisions. Legacy values are evidence. |
 | Срок службы | Подтверждённое владельцем значение **30 лет**. Ранее опубликованное **25 лет** признано устаревшим/неподтверждённым и **не используется** для нового каталога. Область действия заявления по отдельным SKU не установлена, массовое свойство товара не заполняется. |
 
 **Commerce dependency (подтверждение владельца 25.09.2026):** для 226 панельных SKU `quantity sheets × 4.0328 × price per m² = unrounded total`; `4.03` допустимо только для позднейшего отображения, не расчёта. Денежное округление устанавливается в будущей реализации. Формула **не применяется** к 14 гибким доскам без площади и 11 сопутствующим материалам. Из 226 панелей 20 ещё имеют диапазон вместо fixed price. Четыре актуальных блокера перечислены в [Owner Decisions](CATALOG_OWNER_DECISIONS.md#remaining-blockers); политика availability определена и не является отдельным блокером решения, но пока статус пуст, товар нельзя добавить в корзину/отправить в заказ. Расхождения 20 старых DOM/URL ID сохранены ниже как evidence и **не блокируют identity** после закрепления SKU.
@@ -34,11 +45,11 @@
 
 **Гибкая доска (14):** размер/площадь не подтверждены; `4.0328` не присваивать. **Сопутствующие материалы (11):** panel dimensions не назначены и панельная формула неприменима. Для всех шести групп значения предоставлены владельцем, а не получены из архивного числа 4.033. Все 251 позиции сохраняют свой SKU и Legacy source ID.
 
-**Availability server rule:** если `availability IS NULL`, публичная карточка и Product Detail допустимы без текста наличия, но add-to-cart / order submit запрещены. При `in_stock` либо `on_order` и выполненных остальных коммерческих условиях order flow допустим; перед созданием заявки сервер обязан проверить актуальный статус, цену и вычислимость суммы. Public slug не генерируется из SKU; два разных товара «Калаката» и группа трёх акриловых покрытий остаются routing exceptions.
+**Availability server rule:** если `availability IS NULL`, публичная карточка и Product Detail допустимы без текста наличия, но add-to-cart / order submit запрещены. При `in_stock` либо `on_order` и выполненных остальных коммерческих условиях order flow допустим; перед созданием заявки сервер обязан проверить актуальный статус, цену и вычислимость суммы. Public slug не генерируется из SKU; owner-approved unique public slugs now resolve the Kalakata and acrylic-coating routing conflicts. Legacy slugs remain historical evidence.
 
 ## Owner-confirmed order and legal facts
 
-**Owner confirmation applied:** 2026-09-26. T009 = **DONE**; this records confirmed business facts and explicit blockers, not legal approval. Content Gate remains **BLOCKED** by 4 T008 commercial groups and 3 T009 legal groups. T010 media blockers: **0**. The historical source inventory below is preserved and must not override current owner-confirmed facts.
+**Owner confirmation applied:** 2026-09-26. T009 = **DONE**; this records confirmed business facts and explicit blockers, not legal approval. Content Gate remains **BLOCKED** by 2 T008 commercial groups and 3 T009 legal groups after C1–C4. T010 media blockers: **0**. The historical source inventory below is preserved and must not override current owner-confirmed facts.
 
 ### Confirmed request and payment baseline
 
