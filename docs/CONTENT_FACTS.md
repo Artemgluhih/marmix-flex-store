@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Content Facts
 
-**Актуальное состояние на 25.09.2026 (последующие подтверждения владельца, Asia/Yekaterinburg): 226 panel dimensions и политика availability CONFIRMED; T008 и T009 DONE по acceptance criteria; общий Content Gate остаётся BLOCKED / pending T010, unresolved commercial blockers and owner/legal sign-off. Четыре blockers: [перечень](CATALOG_OWNER_DECISIONS.md#remaining-blockers).** Построчный зафиксированный реестр `Legacy source ID → SKU`, исходные ссылки/цены и новые owner-confirmed поля находятся в [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv); правила и 20 исключений цены — в [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md). Ниже сохранён **архив инвентаризации до утверждения**, включая старые вопросы; его оценки `MISSING/NEEDS OWNER CONFIRMATION` отменены решениями владельца там, где они явно подтверждены, но исходные наблюдения не удалены.
+**Актуальное состояние на 26.09.2026:** T008–T010 DONE по своим acceptance criteria; M1 и M2 PASS; общий Content Gate остаётся **BLOCKED**. Остаются четыре товарно-коммерческих blocker group, owner/legal sign-off из [LEGAL_OWNER_DECISIONS.md](LEGAL_OWNER_DECISIONS.md), и медиа-блокеры из [MEDIA_OWNER_DECISIONS.md](MEDIA_OWNER_DECISIONS.md). Реестр SKU и подтверждённых продуктовых полей: [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv); медиа-реестр: [MEDIA_MANIFEST.csv](MEDIA_MANIFEST.csv). Исторические наблюдения ниже сохранены как evidence и не заменяют актуальные owner-confirmed значения.
 
 ## Current owner-confirmed product facts
 
@@ -108,7 +108,34 @@ This is a discussion draft only, not the consent itself. The old site’s form l
 - **SOURCE FACT from content audit:** old site links [privacy policy](https://marmixflex.ru/privacy). Its current text and legal operator were not verified for this task.
 - **LEGAL REVIEW RECOMMENDED:** identify seller and operator; determine whether/how the request flow forms a distance-sale contract; ensure required pre-contract information; review privacy notice, legal basis and separately captured consent; establish returns/claims/warranty copy; verify that wording and process match applicable current law. Rospotrebnadzor materials describe consumer-information and return requirements for distance sales; applicability and final wording must be checked by counsel against the actual sales flow: [distance-sale information](https://zpp.rospotrebnadzor.ru/news/federal/574244), [returns for distance sales](https://zpp.rospotrebnadzor.ru/news/federal/572363).
 
-**Gate:** T009 may be marked DONE once these precise owner/legal blockers are recorded. Content Gate remains BLOCKED until T010, outstanding commercial blockers and required owner/legal approvals are resolved.
+**Gate:** T009 is DONE because these precise owner/legal blockers are recorded. Content Gate remains BLOCKED after T010 until outstanding commercial blockers, required owner/legal approvals, and media mapping/rights/quality blockers are resolved.
+
+## Media facts
+
+**Проверка:** 2026-09-26. **Источник:** публичная медиатека текущего Marmix Flex, [product sitemap](https://marmixflex.ru/sitemap-store.xml), 251 публичная товарная страница и утверждённые локальные файлы [prototype/assets](../prototype/assets/). Это инвентаризация источников, не подтверждение прав/авторства или разрешение на production.
+
+| Проверка | Результат |
+|---|---|
+| Launch SKU coverage | Все 251 SKU присутствуют в [MEDIA_MANIFEST.csv](MEDIA_MANIFEST.csv). По каждой source product URL: HTTP 200; встроенные Tilda product UID и title совпали с Legacy source ID и Current product name в owner CSV. |
+| Product gallery media | 251 из 251 страниц имеют галерею; всего 808 ссылок на кадры, 793 уникальных Tilda CDN URL. Ничего не скачивалось массово; читались product-page HTML и встроенные gallery references. |
+| Primary candidates | 230 SKU имеют уникальный первый кадр своей product gallery — только candidate, visual decor match и качество не утверждены. У 21 SKU первый кадр разделён между 7 URL groups; каждому из этих SKU primary не назначен. |
+| Missing product media | 0 SKU без опубликованной image reference на проверенной старой странице. Это не значит, что изображение достаточно качественное или подходит новому каталогу. |
+| Reused product media | 8 CDN URL повторяются суммарно в 23 SKU gallery references; 7 повторов находятся в first-gallery position (21 SKU). Shared usage не объединяет SKU и требует проверки назначений. |
+| Interior/application candidates | В галереях MF-MAR-0016 (Доминикана) и MF-MAR-0146 (Крема) есть 8 кадров с filenames containing “interer”; это candidate role по source naming, не подтверждение реального объекта или прав. На главной есть 60-слайдовая gallery в блоке работ: визуально просмотрены только слайды 1, 30 и 60; на них виден interior/application context. Остальные 57 слайдов не классифицированы по изображению. Ни для одного слайда не подтверждены авторство, статус проекта/визуализации или права. |
+| Homepage static media | Дополнительно внесены 31 уникальная source reference с главной страницы; для них SKU mapping отсутствует или не доказан. |
+| Prototype assets (visual reference only) | Все 5 файлов классифицированы отдельно: 2 интерьерные визуализации и 3 demonstration textures. Это presentation assets, не production media; provenance/rights неизвестны. |
+| Rights | OWNER CONFIRMED RIGHT: **0**. RIGHTS UNKNOWN: **904 manifest usage rows** (808 product-gallery references + 91 homepage references + 5 prototype assets). Все source Tilda и prototype изображения оставлены not approved; это отсутствие доказательства разрешения, а не вывод о незаконности. |
+| Quality | Product/homepage sources не проверялись поштучно на резкость, цветопередачу, crop и пригодность. Три homepage slides и один product-interior sample просмотрены только для грубой классификации; качество не утверждено. Quality status хранится отдельно от Rights status. |
+| Production approved | **0**. Prototype assets помечены временными и требуют доказанного разрешения и отдельного quality review либо замены. |
+
+### Media gate rules
+
+- Публичная доступность/наличие на старом сайте и Tilda CDN не доказывают право переноса на новый домен, загрузки в Supabase Storage, модификации, создания derivative sizes или использования в рекламе.
+- Два товара «Калаката» и все прочие SKU остаются отдельными catalog identities. Повторяющиеся кадры не меняют SKU и не разрешают объединить товары.
+- В manifest role product_primary означает только уникальную позицию 1 в старой source gallery; interior_application — тип кадра, не заявление о выполненном проекте. Роли остальных кадров оставлены unknown, если по источнику/выборочной проверке роль нельзя определить надёжно.
+- Final alt устанавливать после визуальной проверки конкретного кадра. Допускаются только подтверждённое название материала, тип кадра и категория; не приписывать проект/свойство/декор на основании имени файла.
+- T010 закрывает задачу инвентаризации: точный список unresolved mapping/rights/quality вопросов находится в [MEDIA_OWNER_DECISIONS.md](MEDIA_OWNER_DECISIONS.md). Это не закрывает общий gate.
+
 
 ## Historical source inventory — pre-confirmation archive
 

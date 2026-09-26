@@ -1,11 +1,11 @@
 # Marmix Flex Redesign v2 — Current State
 
-**Current stage:** T001–T009 DONE; M1 Foundation ready PASS; M2 Public visual foundation approved PASS; **T009 documentation complete; overall Content Gate BLOCKED pending T010, four product-commerce blockers and owner/legal sign-off.**
+**Current stage:** T001–T010 DONE; M1 Foundation ready PASS; M2 Public visual foundation approved PASS; **Content Gate BLOCKED after T010** pending commercial, owner/legal and media sign-off.
 
 | Field | State |
 |---|---|
-| TASKS.md status | 18 PHASE (0–17), 74 TASK; T001–T009 DONE, T010–T074 TODO. |
-| Milestone status | M1 PASS; M2 PASS; Content Gate BLOCKED / pending T010, four unresolved product-commerce blockers and legal/owner approval. |
+| TASKS.md status | 18 PHASE (0–17), 74 TASK; T001–T010 DONE, T011–T074 TODO. |
+| Milestone status | M1 PASS; M2 PASS; Content Gate BLOCKED after T010: four product-commerce blockers, owner/legal sign-off and five grouped media blockers remain. |
 | T008 owner confirmation (25.09.2026 Asia/Yekaterinburg) | D1–D10 применены к [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv): 251 INCLUDE и 251 уникальный закреплённый SKU, 8 категорий, 7 featured, 231 фиксированная опубликованная цена подтверждена без изменения; 20 диапазонов без fixed price. [CONTENT_FACTS.md](CONTENT_FACTS.md) содержит актуальные подтверждённые факты и отдельно архив прежних наблюдений; [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md) — текущие правила и blockers. |
 | Surface commerce rule | 240 SKU: price basis м², minimum/step 1 sheet; для 226 панелей из шести категорий подтверждено 142 × 284 см и точная площадь 4.0328 м². Формула sheets × 4.0328 × price/m² применима только к ним и при наличии fixed price; 14 гибких досок остаются без площади. Для 11 accessories panel dimensions не назначены. Денежное округление определить при реализации. |
 | Panel confirmation (25.09.2026 Asia/Yekaterinburg) | 163 MAR + 14 CER + 12 TRV + 18 FLD + 7 BLK + 12 STN = 226 SKU с owner-confirmed 142 × 284 см и точной area 4.0328 м². UI может позже показывать 4.03 м², расчёт обязан использовать 4.0328. CSV хранит numeric area отдельным полем. |
@@ -14,10 +14,11 @@
 | Identity/claims | Две «Калаката» подтверждены разными товарами с разными SKU; public slug конфликтует. Старое заявление 25 лет не использовать, owner-confirmed срок 30 лет, область применения для SKU отдельно не установлена. 20 расхождений старых DOM/URL IDs сохранены как evidence и не блокируют новые идентификаторы. |
 | Remaining product-commerce blockers | 4: 1) площадь/размер продаваемой гибкой доски (14 SKU); 2) fixed price/варианты 20 диапазонов; 3) price unit/sale unit/min/step для 11 accessories; 4) public slug коллизии двух групп. Availability policy утверждена. Подробности: [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md#remaining-blockers). |
 | T009 order/legal content | T009 DONE: старые опубликованные телефоны/адреса/формы и broad payment/delivery claims записаны только как SOURCE FACT. New-site flow — order request/inquiry, online payment не утверждён. Предлагаемый архитектурный минимум для заявки: name + phone + generated cart, optional comment; necessity of each field, seller identity/current contacts, payment, delivery, returns/claims, privacy operator and production consent/legal text still require owner/legal confirmation. Подробности и 9 конкретных owner decisions: [LEGAL_OWNER_DECISIONS.md](LEGAL_OWNER_DECISIONS.md). |
-| Content Gate | **BLOCKED**: T009 documentation is DONE, but legal terms are not signed off; T010 media/right-of-use review is pending; four product-commerce blockers above remain unresolved. No commercial Supabase/catalog/checkout implementation until the gate is explicitly cleared. |
-| Current branch / remote HEAD | redesign-v2; после публикации этого checkpoint точный SHA проверять через GitHub ref. Previous HEAD: cb0fc7e6cbc877eb2e0247bcd193ca30e8c85356. main remains unchanged. |
-| Next task | T010 — TODO. Do not start automatically beyond the requested task. |
-| Next owner action | Review [LEGAL_OWNER_DECISIONS.md](LEGAL_OWNER_DECISIONS.md) decisions L1–L9; resolve four product-commerce blockers in [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md#remaining-blockers); T010 then handles source mapping and media rights. |
-| Next task / recommended model | T010 — GPT-6 Luna Medium; Reasoning Medium; Additional agent NO. |
+| Content Gate | **BLOCKED after T010**: four product-commerce blockers above; owner/legal confirmations and production copy sign-off in LEGAL_OWNER_DECISIONS.md; five grouped media blockers in MEDIA_OWNER_DECISIONS.md. No commercial Supabase/catalog/checkout implementation until the gate is explicitly cleared. |
+| Current branch / remote HEAD | redesign-v2; this T010 commit is the current remote HEAD, verified after publication. main remains unchanged. |
+| Next task | T011 — TODO; blocked until Content Gate passes. Do not begin before separate instruction and gate clearance. |
+| Remaining Content Gate blockers | 10 grouped areas: 4 product-commerce; 1 owner/legal sign-off group; 5 media groups (current image rights; 21 ambiguous primary mappings; unreviewed gallery fidelity/quality; homepage work-gallery provenance/rights; prototype asset rights/quality). Availability policy is confirmed. |
+| Next owner action | Review [MEDIA_OWNER_DECISIONS.md](MEDIA_OWNER_DECISIONS.md) M1–M7; provide media rights/provenance and mapping/quality decisions, and resolve the documented commercial and legal blockers. |
+| Next task / recommended model | T011 — GPT-6 Sol High; Reasoning High; Additional agent NO. T011 remains blocked by Content Gate. |
 
-**Источники истины:** [TASKS.md](TASKS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), [CONTENT_FACTS.md](CONTENT_FACTS.md). Approved prototype — visual reference, не источник товарных или юридических фактов.
+**Источники истины:** [TASKS.md](TASKS.md), [ARCHITECTURE.md](ARCHITECTURE.md), [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md), [CONTENT_FACTS.md](CONTENT_FACTS.md), [MEDIA_MANIFEST.csv](MEDIA_MANIFEST.csv), [MEDIA_OWNER_DECISIONS.md](MEDIA_OWNER_DECISIONS.md). Approved prototype — visual reference, не источник товарных или юридических фактов.
