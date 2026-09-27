@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T010 — DONE, T011–T074 — TODO; M1 — PASS; M2 — PASS; Content Gate — BLOCKED after T010: four product-commerce groups and owner/legal sign-off remain. Owner-confirmed media rights/mapping are clear; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T010 — DONE, T011–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -24,7 +24,8 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 |---|---|---|
 | M1 — Foundation ready | T003 | Next scaffold, шрифты/tokens, lint/typecheck/build и HTTPS Preview работают; только placeholders в Git; проверить T001–T003. |
 | M2 — Public visual foundation approved | T007 | Header/Hero/Showcase/Card/CTA в Next визуально совпадают с утверждённым prototype на 1440/390, mobile menu и reduced-motion проходят; принимать перенос, не новое направление; проверить T004–T007. |
-| Content gate — **BLOCKED** | T010 | T010 and its media rights/mapping review are DONE. The gate remains blocked by four product-commerce groups (format for 14 flexible-board SKU; 20 range-price rules; commercial fields for 11 accessories; public slug collisions) and owner/legal sign-off in LEGAL_OWNER_DECISIONS.md. Selected-media quality review is a pre-production requirement, not a media rights/mapping blocker. Dependent commercial tasks remain blocked until gate clearance. |
+| Development Gate — **PASS** | T010 | T008–T010 DONE. T011 and subsequent technical tasks may proceed in isolated Preview under the TEST_ONLY/nullable commercial rules below. |
+| Production Content Gate — **BLOCKED** | T010; required before Phase 17 readiness | Two real commercial groups and three real legal groups remain unresolved. Production commerce, readiness and deployment are forbidden until this gate passes; selected-media quality review remains a separate pre-production check. |
 | M3 — Supabase & Admin Auth secured | T022 | T011–T022: схемы, anon/RLS/Storage, закрытый signup, active membership, session/guard, негативные security проверки. |
 | M4 — Admin catalog management operational | T038 | T023–T038: dashboard, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
 | M5 — Public catalog operational | T046 | T039–T046: списки/поиск/категории/Product Detail на общих данных, только published, реальные цена/медиа. Подключение add-to-cart является T049 и входит в M6. |
@@ -34,9 +35,13 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **M1 status: PASS.** T001–T003 DONE; lint/typecheck/build PASS, branch HTTPS Preview READY, Prata/Manrope/tokens PASS, owner visual smoke 1440 × 900 и 390 × 844 PASS; ошибочный deployment нового проекта удалён, существующий production не изменён.
 
-**Content Gate status: BLOCKED after T010.** T008, T009 and T010 are DONE. Four product-commerce groups and owner/legal confirmation/sign-off remain. Media rights/mapping blockers are resolved by M1–M6; owner visual review of selected unique assets is still required before production, outside this Content Gate.
+**Development Gate: PASS. Production Content Gate: BLOCKED.** T008, T009 и T010 остаются DONE; media blockers = 0. Development Gate разрешает T011+ как техническую Preview работу. Production Content Gate сохраняет пять сгруппированных blockers: **COMMERCIAL (2)** — площадь продаваемого формата для 14 SKU «Гибкая доска»; точные цены/правила вариантов для 20 range-price SKU. **LEGAL (3)** — seller/operator identity и Privacy/consent legal sign-off; returns/claims text и claims contact/legal review; подробные delivery/pickup условия. Это шесть отдельных типов недостающих реальных данных, сгруппированных в пять областей. Не считать их закрытыми от появления тестовых значений. Owner visual review выбранных уникальных медиа обязателен перед production отдельно от этого gate.
 
-Gate проверяет только выполненную часть и её интеграцию с предыдущими. Утверждённый визуал сохраняется при M2; owner review касается точности переноса. Content gate обязателен до коммерческой реализации; непройденный gate блокирует зависящую задачу. M8 — готовность к отдельному разрешению на production, не деплой.
+**Обязательное правило для всех следующих Preview TASK:** неизвестные реальные owner fields остаются `null`/unresolved; 251 реальный SKU не получает придуманных prices, dimensions, availability или legal facts. Опубликованный реальный SKU может отображаться в Catalog/Product Detail с медиа при неполных commercial data, но add-to-cart/order запрещены. `commercial_ready` (или эквивалент) вычисляется на сервере: нужны публикация, полный commercial набор, точная применимая цена, корректная конверсия количества и `in_stock` либо `on_order`. Отсутствие любого условия → non-orderable. UI disabled не заменяет серверную проверку при заявке.
+
+**TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
+
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T011 является следующей отдельной задачей и не начинается в этом обновлении документации.
 
 ## PHASE 0 — Project Foundation
 
@@ -139,7 +144,7 @@ Gate проверяет только выполненную часть и её �
 - **Allowed scope:** Hero/Showcase, утверждённые assets и image sizes.
 - **Forbidden scope:** Новые рендеры, вымышленные товарные свойства. Не начинать соседнюю TASK.
 - **Source of truth:** docs/DESIGN_SYSTEM.md; prototype/index.html, styles.css, script.js, assets; docs/ARCHITECTURE.md.
-- **Implementation notes:** Демо кадры пометить презентационными до content gate.
+- **Implementation notes:** Демо кадры сохранять презентационными; не выдавать за подтверждённые SKU photos при Preview или production.
 - **Acceptance criteria:** Композиция и кадрирование сопоставимы с prototype на 1440/390.
 - **Required checks:** lint, typecheck, визуальный smoke, assets loaded.
 - **Recommended model:** GPT-6 Sol Medium
@@ -208,7 +213,7 @@ Gate проверяет только выполненную часть и её �
 - **Recommended model:** GPT-6 Luna Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
-- **Verification note:** Acceptance criteria выполнены: владелец подтвердил 251 INCLUDE, 251 стабильный SKU, 8 категорий, 231 фиксированную цену, 226 панельных размеров 142 × 284 см / 4.0328 м², правила цены/количества для поверхностей, две разные «Калаката», срок службы 30 лет и availability policy. Четыре конкретных unresolved commercial/routing blocker оставлены в [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md#remaining-blockers) и блокируют общий Content Gate, но не T008 — здесь зафиксирован явный BLOCKED список. T009 documentation was subsequently completed; T010 remains TODO and is not started automatically.
+- **Verification note:** Acceptance criteria выполнены: владелец подтвердил 251 INCLUDE, 251 стабильный SKU, 8 категорий, 231 фиксированную цену, 226 панельных размеров 142 × 284 см / 4.0328 м², правила цены/количества для поверхностей, две разные «Калаката», срок службы 30 лет и availability policy. После owner decisions C1–C4 остаются две реальные commercial группы; accessory unit/minimum/step и public slug collisions разрешены. T009/T010 DONE, Development Gate PASS; Production Content Gate BLOCKED. T011 остаётся TODO.
 - **Suggested commit message:** task(T008): Подтверждение товарного справочника
 
 ### T009 — Условия заказа и юридический контент
@@ -262,11 +267,11 @@ Gate проверяет только выполненную часть и её �
 - **Title:** Supabase Preview environment
 - **Goal:** Подготовить изолированный тестовый проект и безопасные env.
 - **Why:** Schema и Auth требуют защищённого окружения.
-- **Dependencies:** T010; Content gate после T010.
+- **Dependencies:** T010; Development Gate PASS. Production Content Gate не требуется для Preview environment.
 - **Allowed scope:** Только Preview project, переменные в защищённом хранилище.
 - **Forbidden scope:** Production project, реальные секреты в Git, seed. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; утверждённый content gate docs/CONTENT_FACTS.md (T008–T010).
-- **Implementation notes:** Применить условия content gate; публичный URL и publishable key не secret.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
+- **Implementation notes:** Изолировать Preview от production; публичный URL и publishable key не secret. Ни seed, ни synthetic fixtures в T011 не создаются.
 - **Acceptance criteria:** Preview env доступен серверу, production изолирован.
 - **Required checks:** env exposure check, connection smoke без PII.
 - **Recommended model:** GPT-6 Sol High
@@ -285,9 +290,9 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T011.
 - **Allowed scope:** Миграция таблиц, checks/uniques/FK/indexes.
 - **Forbidden scope:** Order schema, seed, UI, Auth. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; утверждённый content gate docs/CONTENT_FACTS.md (T008–T010).
-- **Implementation notes:** Единица и шаг продажи по T008; slug/SKU уникальны, primary уникален.
-- **Acceptance criteria:** Миграция воспроизводима; ограничения отклоняют некорректный SKU/цену.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
+- **Implementation notes:** Реальные неполные commercial fields должны допускать null/unresolved и visible non-orderable SKU; уникальные slug/SKU и primary. Способ TEST_ONLY изоляции и constraints определить здесь, без присвоения synthetic значений реальным SKU.
+- **Acceptance criteria:** Миграция воспроизводима; ограничения отклоняют некорректные известные значения и допускают подтверждённые реальные SKU с пустыми обязательными для commerce полями.
 - **Required checks:** migration check, targeted DB constraints.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
@@ -305,7 +310,7 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T012.
 - **Allowed scope:** Таблица, idempotency uniqueness, updated_at, grants.
 - **Forbidden scope:** Checkout API, admin UI, order_items без нужды. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; утверждённый content gate docs/CONTENT_FACTS.md (T008–T010).
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
 - **Implementation notes:** Column UPDATE только status/internal_note; коммерческие поля immutable.
 - **Acceptance criteria:** DB отвергает изменение суммы/строк authenticated ролью.
 - **Required checks:** migration check, negative column privilege tests.
@@ -325,7 +330,7 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T013.
 - **Allowed scope:** RLS/grants для каталога и заказов.
 - **Forbidden scope:** Admin policies до membership, seed, frontend. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; утверждённый content gate docs/CONTENT_FACTS.md (T008–T010).
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
 - **Implementation notes:** Проверить связи продукт↔категория↔изображение.
 - **Acceptance criteria:** anon видит только опубликованное и не читает/меняет orders.
 - **Required checks:** targeted anon/authenticated denial tests.
@@ -345,7 +350,7 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T014.
 - **Allowed scope:** Bucket MIME/size, публичный read, запрет публичных mutations.
 - **Forbidden scope:** Admin upload UI и admin Storage write policies. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; утверждённый content gate docs/CONTENT_FACTS.md (T008–T010).
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
 - **Implementation notes:** Не загружать неподтверждённые кадры; ключи и префиксы фиксированы.
 - **Acceptance criteria:** anon может читать разрешённый asset, не может upload/delete.
 - **Required checks:** Storage policy negative tests.
@@ -365,7 +370,7 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T015.
 - **Allowed scope:** server-only clients, конфиг, типы ошибок, проверка env.
 - **Forbidden scope:** Order endpoint, auth, браузерный secret. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; утверждённый content gate docs/CONTENT_FACTS.md (T008–T010).
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
 - **Implementation notes:** Public read всегда без admin cookies; secret client не экспортировать в client.
 - **Acceptance criteria:** Build не включает secret; anon/secret boundaries проверены.
 - **Required checks:** typecheck, bundle boundary, targeted DB smoke.
@@ -815,10 +820,10 @@ Gate проверяет только выполненную часть и её �
 - **Goal:** Ввести небольшой проверочный набор утверждённых SKU через Admin Panel.
 - **Why:** M4 требует проверить реальные операции на настоящих данных.
 - **Dependencies:** T037.
-- **Allowed scope:** Небольшой проверочный набор из docs/CONTENT_FACTS.md через Admin в Preview; полный launch ассортимент сверять на T072.
+- **Allowed scope:** Небольшой набор реальных SKU из docs/CONTENT_FACTS.md с только подтверждёнными полями через Admin в Preview; проверка полного launch ассортимента — перед production readiness.
 - **Forbidden scope:** Прямой seed без причины, вымышленные цены. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008–T010).
-- **Implementation notes:** Использовать формы admin; полный ассортимент для запуска владелец вводит операционно, его полноту проверяет T072.
+- **Implementation notes:** Использовать формы admin; неполный реальный SKU может быть visible non-orderable. Отдельные TEST_ONLY fixtures для расчётов не смешивать с реестром. Полноту launch ассортимента проверять перед production readiness.
 - **Acceptance criteria:** Проверенный набор товаров доступен, публикация и media работают.
 - **Required checks:** выборочная сверка реестра↔admin↔public read.
 - **Recommended model:** GPT-6 Luna Medium
@@ -984,7 +989,7 @@ Gate проверяет только выполненную часть и её �
 - **Allowed scope:** Вычисление видимого итога, disabled если недоступно.
 - **Forbidden scope:** Фиктивное добавление до cart state и online payment. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008–T010).
-- **Implementation notes:** Интеграция add-to-cart запланирована в T049 после cart model.
+- **Implementation notes:** Для неполного реального SKU не показывать вычисленный итог, оставить действие disabled; add-to-cart запланирован в T049 после cart model.
 - **Acceptance criteria:** Шаг/минимум работают, действие до T049 честно недоступно.
 - **Required checks:** targeted quantity tests, viewport smoke.
 - **Recommended model:** GPT-6 Sol Medium
@@ -1047,7 +1052,7 @@ Gate проверяет только выполненную часть и её �
 - **Allowed scope:** Кнопки добавить/удалить/изменить, count в header.
 - **Forbidden scope:** Checkout API, analytics. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Учитывать шаг, статус и disabled; без hover dependence.
+- **Implementation notes:** Учитывать шаг, статус и commercial_ready; реальный non-orderable SKU не добавлять. UI guard не заменяет серверную проверку на order submit.
 - **Acceptance criteria:** Из товара можно добавить и удалить; count синхронен.
 - **Required checks:** interaction smoke 1440/390, typecheck.
 - **Recommended model:** GPT-6 Sol Medium
@@ -1067,7 +1072,7 @@ Gate проверяет только выполненную часть и её �
 - **Allowed scope:** Items, quantity, empty/unavailable/changed price states.
 - **Forbidden scope:** Создание order или backend cart. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** При расхождении явно подтверждать новую цену перед checkout.
+- **Implementation notes:** При расхождении явно подтверждать новую цену перед checkout; если real SKU стал non-orderable, не вычислять фиктивный итог и не допускать к заявке.
 - **Acceptance criteria:** Удалённый SKU отмечен, итог пересчитан по подтверждённым данным.
 - **Required checks:** targeted refresh tests, browser smoke.
 - **Recommended model:** GPT-6 Sol Medium
@@ -1087,11 +1092,11 @@ Gate проверяет только выполненную часть и её �
 - **Goal:** Сделать /checkout с минимальными контактными полями.
 - **Why:** Заявка должна быть простой и законной.
 - **Dependencies:** T050.
-- **Allowed scope:** Name/phone/consent, summary, client loading/errors.
+- **Allowed scope:** Preview форма для name/phone/city/email, optional comment, summary, client loading/errors; место для будущего юридически утверждённого согласия.
 - **Forbidden scope:** Оплата, лишние персональные поля, backend mutations. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; подтверждённые условия/consent T009.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts и pending legal review T009.
 - **Implementation notes:** При session/cart проблеме сохранить понятный путь назад.
-- **Acceptance criteria:** Форма доступна, неверные поля отмечены, consent обязателен.
+- **Acceptance criteria:** Preview форма доступна для TEST_ONLY сценариев, неверные поля отмечены; legal copy остаётся Pending owner/legal approval, без фиктивного текста consent и без production submit.
 - **Required checks:** form validation, a11y and browser smoke.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
@@ -1109,8 +1114,8 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T051.
 - **Allowed scope:** Schema parsing, allowed origin/type/body, limits.
 - **Forbidden scope:** DB insert, payment, admin API. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; подтверждённые условия/consent T009.
-- **Implementation notes:** Проверить quantity, step, consent, phone и SKU.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts и pending legal review T009.
+- **Implementation notes:** Проверить quantity, step, phone и SKU; production consent проверять лишь по юридически утверждённому тексту. Preview ограничить TEST_ONLY сценарием.
 - **Acceptance criteria:** Неверный payload не вызывает запись и возвращает безопасную ошибку.
 - **Required checks:** targeted invalid payload/security tests.
 - **Recommended model:** GPT-6 Sol High
@@ -1129,10 +1134,10 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T052.
 - **Allowed scope:** Uncached product read, canonical hash, unique key, 409.
 - **Forbidden scope:** Изменение commercial snapshot после записи. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; подтверждённые условия/consent T009.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts и pending legal review T009.
 - **Implementation notes:** Существующий ключ сначала сопоставить с payload hash.
 - **Acceptance criteria:** Changed price→409, identical retry→тот же номер, иной payload→conflict.
-- **Required checks:** race/idempotency/price targeted tests.
+- **Required checks:** race/idempotency/price targeted tests на TEST_ONLY fixtures и отрицательный тест real non-orderable SKU; актуальная серверная eligibility проверка.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
@@ -1149,8 +1154,8 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T053.
 - **Allowed scope:** Server-only secret insert, success/error/retry UI.
 - **Forbidden scope:** Public SELECT orders, order_items, payment. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; подтверждённые условия/consent T009.
-- **Implementation notes:** Secret не в bundle; ответ без контактов/internal note.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts и pending legal review T009.
+- **Implementation notes:** Secret не в bundle; ответ без контактов/internal note. В Preview создавать только TEST_ONLY заявки с синтетическими контактами; production commerce закрыт до Production Content Gate PASS.
 - **Acceptance criteria:** Заявка появляется только один раз, успех/сбой понятны.
 - **Required checks:** integration submit/RLS/bundle checks.
 - **Recommended model:** GPT-6 Sol High
@@ -1169,9 +1174,9 @@ Gate проверяет только выполненную часть и её �
 - **Dependencies:** T054.
 - **Allowed scope:** Сценарии нормальный, недоступный, changed price, retry.
 - **Forbidden scope:** Полный e2e всего сайта и новые функции. Не начинать соседнюю TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; подтверждённые условия/consent T009.
+- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts и pending legal review T009.
 - **Implementation notes:** Проверять 1440/390 и console/network этого flow.
-- **Acceptance criteria:** М6 принимает лишь подтверждённый, приватный и стабильный flow.
+- **Acceptance criteria:** M6 проверяет приватный и стабильный Preview flow на TEST_ONLY fixtures; реальные SKU без полного commercial набора отвергаются сервером. Production commerce остаётся заблокирован.
 - **Required checks:** targeted browser integration + security checks.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
@@ -1293,11 +1298,11 @@ Gate проверяет только выполненную часть и её �
 - **Goal:** Опубликовать проверенные условия и способы связи.
 - **Why:** Перед заявкой посетитель должен понимать получение товара.
 - **Dependencies:** T060.
-- **Allowed scope:** /delivery, /contacts, подтверждённые ссылки/адрес.
+- **Allowed scope:** Preview /delivery и /contacts с подтверждёнными телефонами и городами; нейтральное pending состояние для неутверждённых подробностей.
 - **Forbidden scope:** Непроверенная бесплатная доставка и устаревшие контакты. Не начинать соседнюю TASK.
 - **Source of truth:** docs/CONTENT_AUDIT.md; T008–T010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Условия Сургута и возврата только после бизнес sign-off.
-- **Acceptance criteria:** Телефон/адрес/условия совпадают с реестром T009.
+- **Implementation notes:** Условия доставки/самовывоза и адреса не придумывать; их production copy только после owner/legal sign-off.
+- **Acceptance criteria:** Preview показывает два подтверждённых телефона и города, без выдуманного адреса/сроков/стоимости; production copy остаётся pending.
 - **Required checks:** link/contact check, responsive smoke.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
@@ -1310,14 +1315,14 @@ Gate проверяет только выполненную часть и её �
 - **Priority:** P0
 - **Status:** TODO
 - **Title:** Privacy и Terms
-- **Goal:** Опубликовать согласованные правовые тексты.
+- **Goal:** Подготовить маршруты Privacy и Terms в Preview; production тексты только после legal sign-off.
 - **Why:** Форма заявки с PII требует корректных ссылок.
 - **Dependencies:** T061.
-- **Allowed scope:** /privacy, /terms с утверждённой редакцией.
+- **Allowed scope:** Preview routes /privacy и /terms с нейтральным pending state; будущая подстановка утверждённой редакции.
 - **Forbidden scope:** Самостоятельное сочинение юридических обещаний. Не начинать соседнюю TASK.
 - **Source of truth:** docs/CONTENT_AUDIT.md; T008–T010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Если условия не утверждены — BLOCKED, не подставлять шаблон.
-- **Acceptance criteria:** Checkout согласие ведёт на актуальную политику; обе страницы доступны.
+- **Implementation notes:** Пока тексты не утверждены, Preview показывает только Pending owner/legal approval; никакого вымышленного consent/return policy. Production content остаётся BLOCKED.
+- **Acceptance criteria:** Preview маршруты доступны с честным pending state; production checkout consent и legal pages не готовы без проверенной политики и sign-off.
 - **Required checks:** legal sign-off, link/metadata checks.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
@@ -1524,7 +1529,7 @@ Gate проверяет только выполненную часть и её �
 - **Title:** Supabase production environment
 - **Goal:** Подготовить отдельные production БД/Auth/Storage и защищённые env.
 - **Why:** Релиз не должен использовать Preview данные или учётные записи.
-- **Dependencies:** T071.
+- **Dependencies:** T071; Production Content Gate PASS и отдельное разрешение на production readiness.
 - **Allowed scope:** Production Supabase project, проверенные migrations/RLS/Storage/Auth config, Vercel Production env.
 - **Forbidden scope:** Production web deploy, реальные PII/секреты в Git. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008–T010); результаты M1–M7.
@@ -1549,7 +1554,7 @@ Gate проверяет только выполненную часть и её �
 - **Forbidden scope:** Запуск production, новые features, редизайн. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008–T010); результаты M1–M7.
 - **Implementation notes:** Владелец заполнил launch каталог через Admin; перечислить блокеры.
-- **Acceptance criteria:** Все M1–M7 и обязательный контент подтверждены либо указан blocker.
+- **Acceptance criteria:** Все M1–M7, Production Content Gate PASS, legal sign-off и полный owner-confirmed launch content подтверждены; при BLOCKED не объявлять production candidate.
 - **Required checks:** readiness matrix, Preview smoke, content/security review.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
@@ -1569,7 +1574,7 @@ Gate проверяет только выполненную часть и её �
 - **Forbidden scope:** Deploy, merge main, новое приложение. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008–T010); результаты M1–M7.
 - **Implementation notes:** Astra только здесь; зафиксировать go/no-go и остаточные риски.
-- **Acceptance criteria:** M8: подтверждён production candidate либо точный блокер; production не запущен.
+- **Acceptance criteria:** M8: production candidate только при PASS Production Content Gate и остальных readiness checks; иначе точный blocker и NO-GO. Production не запущен.
 - **Required checks:** final security/performance/functional review.
 - **Recommended model:** GPT-6 Astra
 - **Reasoning level:** High
