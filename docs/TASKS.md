@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T010 — DONE, T011–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T011 — DONE, T012–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T011 является следующей отдельной задачей и не начинается в этом обновлении документации.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T011 завершена; следующая отдельная задача — T012.
 
 ## PHASE 0 — Project Foundation
 
@@ -263,7 +263,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T011
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Supabase Preview environment
 - **Goal:** Подготовить изолированный тестовый проект и безопасные env.
 - **Why:** Schema и Auth требуют защищённого окружения.
@@ -274,6 +274,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** Изолировать Preview от production; публичный URL и publishable key не secret. Ни seed, ни synthetic fixtures в T011 не создаются.
 - **Acceptance criteria:** Preview env доступен серверу, production изолирован.
 - **Required checks:** env exposure check, connection smoke без PII.
+- **Resolution (2026-09-27):** отдельный проект `marmix-flex-redesign-v2-preview` (`twuevnwxwqdjbjzwuglm`, `eu-central-1`) в состоянии ACTIVE_HEALTHY. Owner настроил в существующем Vercel Preview project только `NEXT_PUBLIC_SUPABASE_URL` и `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` и выполнил Preview redeploy. На временном server-only route в READY deployment `dpl_GRk4xVfVEATNu7Lm4En1W12bVvuP` (ветка `redesign-v2`, commit `d8e8e76d054cd0b59181792f56422a6490b6eb41`) наблюдались `previewEnvironment=true`, `envPresent=true`, `supabaseReachable=true`: проверка HTTPS `/auth/v1/health` с publishable key и строгим соответствием URL отдельному Preview project. Ответ содержал только три boolean; в проверенных runtime logs нет значений env/ключей. Public tables/migrations: 0; seed/fixtures не создавались; legacy Supabase не изменён, Vercel Production не менялся по подтверждению owner. Временный route удалён из финального checkout отдельным cleanup commit; никаких секретов в Git. Development Gate PASS, Production Content Gate BLOCKED.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
