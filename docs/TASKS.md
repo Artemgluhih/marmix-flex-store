@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T011 — DONE, T012–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T012 — DONE, T013–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T011 завершена; следующая отдельная задача — T012.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T012 завершена; следующая отдельная задача — T013.
 
 ## PHASE 0 — Project Foundation
 
@@ -284,7 +284,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T012
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Schema каталога и индексы
 - **Goal:** Создать categories/products/product_images под утверждённую модель SKU.
 - **Why:** Admin и витрина должны разделять одну модель.
@@ -295,6 +295,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** Реальные неполные commercial fields должны допускать null/unresolved и visible non-orderable SKU; уникальные slug/SKU и primary. Способ TEST_ONLY изоляции и constraints определить здесь, без присвоения synthetic значений реальным SKU.
 - **Acceptance criteria:** Миграция воспроизводима; ограничения отклоняют некорректные известные значения и допускают подтверждённые реальные SKU с пустыми обязательными для commerce полями.
 - **Required checks:** migration check, targeted DB constraints.
+- **Resolution (2026-09-27):** миграция `supabase/migrations/20260927104945_catalog_foundation.sql` применена только к Supabase Preview `twuevnwxwqdjbjzwuglm`, её filename version совпадает с записью migration history. Созданы пустые `categories`, `products`, `product_images`: UUID PK, уникальные category/product slug и SKU, FK с RESTRICT, допустимые роли изображений через CHECK и partial unique index на primary. `price_minor` хранит только точную цену в копейках RUB; диапазон отдельно в `source_price_range`; `price_unit` и `sale_unit` разделены; площадь листа `numeric(14,4)` и неизвестные коммерческие/размерные поля nullable; availability nullable только `in_stock`/`on_order`. Один product = один immutable SKU. `catalog_kind` REAL/TEST_ONLY, префикс TEST_ONLY SKU и immutable trigger отделяют будущие fixtures; изображения наследуют тип через product FK. Public policies T014 обязаны допускать только REAL и опубликованные product/category; пока все три таблицы имеют RLS enabled без policies, API grants отозваны. Targeted DB checks (включая duplicate SKU/slug, неверные price/quantity/availability/dimensions, второе primary, TEST_ONLY marker) PASS в транзакции с rollback; по завершении все три таблицы пусты. Seed, Auth, Storage, order schema, production изменения отсутствуют. Development Gate PASS; Production Content Gate BLOCKED.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
@@ -332,7 +333,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Allowed scope:** RLS/grants для каталога и заказов.
 - **Forbidden scope:** Admin policies до membership, seed, frontend. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008–T010); Development Gate policy above.
-- **Implementation notes:** Проверить связи продукт↔категория↔изображение.
+- **Implementation notes:** Проверить связи продукт↔категория↔изображение; публичные policies/grants исключают `products.catalog_kind = 'TEST_ONLY'` через явное `catalog_kind = 'REAL'` и проверяют опубликованную категорию. T012 оставила API доступ закрытым до этой задачи.
 - **Acceptance criteria:** anon видит только опубликованное и не читает/меняет orders.
 - **Required checks:** targeted anon/authenticated denial tests.
 - **Recommended model:** GPT-6 Sol High
