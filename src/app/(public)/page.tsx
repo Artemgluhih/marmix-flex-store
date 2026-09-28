@@ -10,7 +10,7 @@ export default function HomePage() {
     <>
       <MotionReveal />
       <section className={styles.hero} aria-labelledby="hero-title">
-        <Image className={styles.heroImage} src="/images/showroom/hero-room.webp" alt="" fill preload sizes="(max-width: 1800px) 100vw, 1800px" />
+        <Image className={styles.heroImage} src="/images/showroom/hero-room.webp" alt="" fill preload sizes="100vw" />
         <div className={styles.heroContent}>
           <p className={styles.heroEyebrow}><span className={styles.eyebrowLine} />Гибкий мрамор · Сургут</p>
           <h1 id="hero-title">Природа.<br />В масштабе<br /><em>пространства.</em></h1>

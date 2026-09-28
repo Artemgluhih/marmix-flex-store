@@ -1,7 +1,7 @@
 .catalog,
 .interiors,
 .closing {
-  padding-inline: var(--outer-desktop);
+  padding-inline: var(--wide-gutter);
 }
 
 .catalog {

@@ -6,7 +6,7 @@
   justify-content: space-between;
   gap: 32px;
   height: 86px;
-  padding-inline: var(--outer-desktop);
+  padding-inline: var(--wide-gutter);
   border-bottom: 1px solid var(--color-border-warm);
   background: var(--color-header);
 }

@@ -1,7 +1,8 @@
 .shell {
-  max-width: var(--content-max);
+  --wide-offset: max(0px, calc((100vw - var(--content-max)) / 2));
+  --wide-gutter: calc(var(--wide-offset) + var(--outer-desktop));
+  width: 100%;
   min-height: 100svh;
-  margin-inline: auto;
   background: var(--color-page);
 }
 
