@@ -5,7 +5,7 @@ function requireEnv(name: string, value: string | undefined): string {
     throw new Error(`Missing required Supabase configuration: ${name}`);
   }
 
-  return value;
+  return value.trim();
 }
 
 export function getPublicSupabaseConfig() {
