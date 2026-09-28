@@ -16,7 +16,10 @@ export async function GET() {
     previewProject: false,
     publicCatalog: false,
     publicOrdersDenied: false,
+    secretEnvPresent: Boolean(process.env.SUPABASE_SECRET_KEY),
+    secretKeyFormat: process.env.SUPABASE_SECRET_KEY?.startsWith("sb_secret_") ?? false,
     secretServer: false,
+    secretHttpStatus: 0,
   };
 
   try {
@@ -39,11 +42,12 @@ export async function GET() {
       result.publicOrdersDenied = orderError !== null;
 
       const secretClient = createOrderSecretSupabaseClient();
-      const { error: secretError } = await secretClient
+      const { error: secretError, status: secretStatus } = await secretClient
         .from("order_requests")
         .select("id")
         .limit(1);
       result.secretServer = secretError === null;
+      result.secretHttpStatus = secretStatus;
     }
   } catch {
     // Configuration and network errors remain private; only booleans leave the server.
