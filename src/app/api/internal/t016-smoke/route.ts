@@ -20,6 +20,7 @@ export async function GET() {
     secretKeyFormat: process.env.SUPABASE_SECRET_KEY?.startsWith("sb_secret_") ?? false,
     secretServer: false,
     secretHttpStatus: 0,
+    secretErrorCode: "",
   };
 
   try {
@@ -48,6 +49,9 @@ export async function GET() {
         .limit(1);
       result.secretServer = secretError === null;
       result.secretHttpStatus = secretStatus;
+      result.secretErrorCode = /^[A-Z0-9_]{1,24}$/.test(secretError?.code ?? "")
+        ? (secretError?.code ?? "")
+        : "";
     }
   } catch {
     // Configuration and network errors remain private; only booleans leave the server.
