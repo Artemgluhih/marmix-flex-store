@@ -19,6 +19,8 @@ export async function GET() {
     secretServer: false,
     secretStatus: 0,
     directSecretStatus: 0,
+    secretWhitespace: false,
+    directFailureKind: "none",
   };
 
   try {
@@ -50,6 +52,7 @@ export async function GET() {
 
       // Diagnostic only: opaque secret keys belong in apikey, never Bearer JWT.
       const { url, secretKey } = getSecretSupabaseConfig();
+      result.secretWhitespace = secretKey !== secretKey.trim();
       const direct = await fetch(`${url}/rest/v1/order_requests?select=id&limit=1`, {
         method: "GET",
         headers: {
@@ -59,6 +62,16 @@ export async function GET() {
         cache: "no-store",
       });
       result.directSecretStatus = direct.status;
+      if (!direct.ok) {
+        const diagnostic = (await direct.text()).slice(0, 512).toLowerCase();
+        result.directFailureKind = diagnostic.includes("browser")
+          ? "browser-policy"
+          : diagnostic.includes("invalid api key")
+            ? "invalid-api-key"
+            : diagnostic.includes("jwt")
+              ? "jwt-rejection"
+              : "other";
+      }
     }
   } catch {
     // Do not return or log configuration values or provider error messages.
