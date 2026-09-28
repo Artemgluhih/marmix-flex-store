@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T014 — DONE, T015–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T015 — DONE, T016–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T014 завершена; следующая отдельная задача — T015.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T015 завершена; следующая отдельная задача — T016.
 
 ## PHASE 0 — Project Foundation
 
@@ -347,7 +347,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T015
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Storage bucket baseline
 - **Goal:** Создать product media bucket и начальные ограничения.
 - **Why:** Image delivery зависит от безопасного хранения.
@@ -358,6 +358,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** Не загружать неподтверждённые кадры; ключи и префиксы фиксированы.
 - **Acceptance criteria:** anon может читать разрешённый asset, не может upload/delete.
 - **Required checks:** Storage policy negative tests.
+- **Resolution (2026-09-28):** В отдельном Supabase Preview применена migration `supabase/migrations/20260928044406_product_media_bucket_baseline.sql` с совпадающей migration history: один `product-media` bucket, public object URL, MIME только `image/jpeg`, `image/png`, `image/webp`, `image/avif`, максимальный размер 12 MiB (12 582 912 байт). Это технический лимит bucket, не коммерческий факт. Будущие Admin пути генерируются под `products/<product-id>/<generated-file-key>.<ext>`; raw user path не допускается. Известный URL публичного bucket доступен всем: в него можно загружать только owner-approved media с правами на публичный показ, не confidential drafts. Storage `objects` RLS включена и policies отсутствуют: anon/authenticated upload, overwrite и delete не получают доступа до admin membership/policies будущих TASK. Технический TEST_ONLY PNG через доверенную Preview панель дал HTTP 200 public URL и совпадение байтов; SVG отклонён MIME restriction; лимит файла подтверждён конфигурацией bucket. SQL role smoke подтвердил denied mutations для anon и ordinary authenticated; PNG удалён, объектов 0, реальные изображения и product_images rows не добавлялись. Legacy/production Storage не менялся; Development Gate PASS, Production Content Gate BLOCKED.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
