@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { createOrderSecretSupabaseClient } from "@/lib/supabase/secret";
+import { getSecretSupabaseConfig } from "@/lib/supabase/env";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,7 @@ export async function GET() {
     publicOrdersDenied: false,
     secretServer: false,
     secretStatus: 0,
+    directSecretStatus: 0,
   };
 
   try {
@@ -45,6 +47,18 @@ export async function GET() {
         .limit(1);
       result.secretServer = secretError === null;
       result.secretStatus = status;
+
+      // Diagnostic only: opaque secret keys belong in apikey, never Bearer JWT.
+      const { url, secretKey } = getSecretSupabaseConfig();
+      const direct = await fetch(`${url}/rest/v1/order_requests?select=id&limit=1`, {
+        method: "GET",
+        headers: {
+          apikey: secretKey,
+          "User-Agent": "marmix-flex-preview-server-smoke",
+        },
+        cache: "no-store",
+      });
+      result.directSecretStatus = direct.status;
     }
   } catch {
     // Do not return or log configuration values or provider error messages.
