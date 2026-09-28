@@ -18,6 +18,11 @@ export function getPublicSupabaseConfig() {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY,
   );
 
+  // A mistaken secret in NEXT_PUBLIC_* would otherwise enter the browser bundle.
+  if (!publishableKey.startsWith("sb_publishable_")) {
+    throw new Error("Invalid Supabase publishable key configuration");
+  }
+
   try {
     if (new URL(url).protocol !== "https:") {
       throw new Error("Invalid Supabase URL");
