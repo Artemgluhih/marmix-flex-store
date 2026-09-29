@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T015 — DONE, T016–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T016 — DONE, T017–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -368,7 +368,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T016
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Server clients и env boundary
 - **Goal:** Реализовать отдельные public и secret Supabase clients.
 - **Why:** Secret нужен только публичному endpoint заявки.
@@ -379,6 +379,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** Public read всегда без admin cookies; secret client не экспортировать в client.
 - **Acceptance criteria:** Build не включает secret; anon/secret boundaries проверены.
 - **Required checks:** typecheck, bundle boundary, targeted DB smoke.
+- **Resolution (2026-09-29):** Public client использует только Preview URL и publishable key, без cookies и user session; catalog SELECT PASS, доступ к `order_requests` DENIED. Отдельный `server-only` Secret client создан только для будущего server-side Order API, без browser import; env проверяются при использовании и нормализуются через `trim()`. Secret server smoke на `order_requests SELECT id LIMIT 1` — PASS (HTTP 200, owner/authorized Vercel verification на deployed Preview); пустой результат допустим, записи не создавались. Secret catalog SELECT закрыт grants по проекту и не является тестом Secret client. Временный Preview diagnostic route удалён; lint, typecheck, build, bundle/Git secret scans PASS. Production без изменений. Development Gate PASS, Production Content Gate BLOCKED; следующая TASK T017.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
