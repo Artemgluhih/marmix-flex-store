@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { createAuthSupabaseClient } from "@/lib/supabase/auth";
+import { hasActiveAdminMembership } from "@/lib/admin/membership";
 import { LoginForm } from "./LoginForm";
-import { hasActiveLoginMembership } from "./membership";
 import { adminReturnPath } from "./return-path";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,7 @@ export default async function AdminLoginPage({
   try {
     const { data } = await client.auth.getUser();
     if (data.user) {
-      activeAdmin = await hasActiveLoginMembership(client, data.user.id);
+      activeAdmin = await hasActiveAdminMembership(client, data.user.id);
       clearNonAdminSession = !activeAdmin;
     }
   } catch {

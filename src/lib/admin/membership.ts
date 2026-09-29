@@ -4,8 +4,8 @@ import type { createAuthSupabaseClient } from "@/lib/supabase/auth";
 
 type AuthClient = Awaited<ReturnType<typeof createAuthSupabaseClient>>;
 
-/** Login-specific own-row check under the authenticated user's JWT and T017 RLS. */
-export async function hasActiveLoginMembership(client: AuthClient, userId: string) {
+/** Own-row read through the user's JWT and T017 RLS; never use a privileged client. */
+export async function hasActiveAdminMembership(client: AuthClient, userId: string) {
   const { data, error } = await client
     .from("admin_users")
     .select("user_id")

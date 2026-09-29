@@ -36,7 +36,7 @@ export async function proxy(request: NextRequest) {
   });
 
   // getUser() validates with Auth and refreshes when needed; cookie presence is not identity.
-  // A failed session does not grant access or cause a redirect before T020/T021 exist.
+  // A failed session never grants access; the workspace/action guards handle denial.
   try {
     await supabase.auth.getUser();
   } catch {

@@ -3,7 +3,7 @@
 import { redirect, RedirectType } from "next/navigation";
 
 import { createAuthSupabaseClient } from "@/lib/supabase/auth";
-import { hasActiveLoginMembership } from "./membership";
+import { hasActiveAdminMembership } from "@/lib/admin/membership";
 import { adminReturnPath } from "./return-path";
 
 const LOGIN_ERROR = "Не удалось выполнить вход. Проверьте данные и попробуйте снова.";
@@ -34,7 +34,7 @@ export async function loginAction(_previous: LoginState, formData: FormData): Pr
     if (!error && data.user) {
       const verified = await client.auth.getUser();
       if (!verified.error && verified.data.user?.id === data.user.id) {
-        allowed = await hasActiveLoginMembership(client, data.user.id);
+        allowed = await hasActiveAdminMembership(client, data.user.id);
       }
     }
   } catch {

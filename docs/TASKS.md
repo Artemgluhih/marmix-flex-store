@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T020 — DONE, T021–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T021 — DONE, T022–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -476,7 +476,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T021
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** requireAdmin и guard mutations
 - **Goal:** Защитить /admin/* и шаблон всех будущих Server Actions.
 - **Why:** Guard в layout не защищает прямой вызов mutation.
@@ -487,6 +487,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** getUser + membership при каждом действии; redirect только локальный.
 - **Acceptance criteria:** Без активной session любой admin route/action отказан.
 - **Required checks:** direct action denial, expired/revoked tests.
+- **Resolution (2026-09-29):** Added server-only `requireAdmin()` and independent `requireAdminMutation()` for future Admin actions/handlers. Every invocation uses the request-scoped cookie Auth client, `getUser()` and an uncached own-row `admin_users` read under the user JWT/T017 RLS; only active membership returns a minimal user ID and authenticated client. The `(workspace)` layout invokes the page guard before children, is dynamic/no-store/noindex, and leaves `/admin/login` outside the group. No session or inactive/non-admin membership redirects to the login route; the existing login flow clears a valid non-admin session. Mutation guard checks strict request Origin against host/forwarded protocol before checking Auth and denies by safe redirect; non-admin mutation denial attempts local signOut. Direct-invocation harness covered active, no-session, invalid/expired, non-admin and revoked membership, same/cross-origin, safe return path and T020 login/logout. No Auth fixture or DB row was created. Preview anon catalog SELECT PASS, anon orders denied; Storage has zero write policies/objects; one real Auth user and matching membership remain, synthetic accounts 0. Lint/typecheck/build and bundle/Git secret scans PASS. T019 proxy and T020 behavior retained; no Admin shell, Storage policy or Production change. Development Gate PASS; Production Content Gate BLOCKED. Next T022.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
