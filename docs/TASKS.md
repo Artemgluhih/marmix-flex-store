@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T017 — DONE, T018–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T018 — DONE, T019–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -413,7 +413,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T018
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Auth config и первый admin
 - **Goal:** Отключить регистрацию и безопасно завести первого владельца.
 - **Why:** Любой посетитель не должен создавать admin account.
@@ -424,6 +424,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** Account создаёт владелец техническим каналом, без секрета в commit.
 - **Acceptance criteria:** Sign-up отклоняется; только внесённый UUID имеет membership.
 - **Required checks:** signup denial, login/admin membership smoke.
+- **Resolution (2026-09-29):** Supabase Preview public settings подтверждают `disable_signup=true`, email/password provider включён, phone/external providers выключены. Публичный `signUp` с уникальным синтетическим адресом отклонён `signup_disabled`; anonymous sign-in отклонён `anonymous_provider_disabled`, тестовые аккаунты не созданы. Владелец вручную provisioned единственный подтверждённый Preview email/password Auth user через Dashboard; trusted management SQL добавил ровно одну active membership с тем же UUID. Отдельные Auth account и membership проверены без вывода email, password, hash или token; полноценный password login/session — T020. T017 own-row SELECT и active-membership policies сохранены, self-write grants отсутствуют; non-admin не получает admin rights. Production Auth не менялся, Development Gate PASS, Production Content Gate BLOCKED. Supabase security advisor показывает WARN о выключенной leaked-password protection; настройка не менялась в T018 и требует отдельного Auth security review перед production. Следующая TASK T019.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
