@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T016 — DONE, T017–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T017 — DONE, T018–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -392,7 +392,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T017
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** admin_users и admin RLS
 - **Goal:** Создать единую таблицу допуска админов и политики membership.
 - **Why:** Auth account сам по себе не даёт прав.
@@ -403,6 +403,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** Order UPDATE только status/internal_note; catalogue CRUD только active admin.
 - **Acceptance criteria:** Не-admin authenticated не видит заявки/черновики и не меняет каталог.
 - **Required checks:** RLS negative/positive tests.
+- **Resolution (2026-09-29):** Preview migration `supabase/migrations/20260929052535_admin_users_and_admin_rls.sql` applied with matching history. `admin_users` uses Auth UUID PK/FK (`ON DELETE CASCADE`), active flag and own-row SELECT under RLS; anon has no access, authenticated has no membership writes. Existing public T014 SELECT remains intact. Only active membership grants private catalog SELECT and scoped category/product INSERT/UPDATE, image-row INSERT/UPDATE/DELETE, order SELECT and T013 column-only status/internal_note UPDATE. Catalog/category physical DELETE, order INSERT/DELETE and immutable snapshot UPDATE remain denied; Storage policies unchanged. Targeted active/non-admin/inactive and anon RLS tests passed with synthetic Auth/catalog/order rows rolled back; permanent test accounts/rows 0. Public Data API catalog SELECT PASS, order and membership access denied; security advisor had no findings. Development Gate PASS, Production Content Gate BLOCKED; next T018.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
