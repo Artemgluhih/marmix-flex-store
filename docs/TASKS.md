@@ -434,7 +434,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T019
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** SSR session refresh
 - **Goal:** Настроить cookie-based Auth и обновление session на /admin.
 - **Why:** Admin должен сохранять session без доверия к client state.
@@ -445,6 +445,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** No-store на admin HTML/Set-Cookie, корректный refresh.
 - **Acceptance criteria:** Valid session обновляется; истёкшая не раскрывает данные.
 - **Required checks:** auth session integration, cache header check.
+- **Resolution (2026-09-29):** Installed pinned `@supabase/ssr` and added a request-scoped, server-only cookie Auth client using only the Preview URL and publishable key. Next 16 `src/proxy.ts` runs only on `/admin` and descendants, calls `getUser()` for session verification/refresh, forwards updated request cookies and returns all response Set-Cookie values with cookie attributes and private/no-store cache headers. It is session maintenance, not an admin authorization guard; membership checks remain T021. Targeted matcher, cookie propagation (including consecutive writes), server Auth adapter, no-session and malformed-cookie tests passed without real credentials or token output. Local HTTP requests without a session and with synthetic malformed cookie returned safely with no Set-Cookie and no private data. Public catalog and Order-only Secret clients remain separate and unchanged; no login UI or admin data access was added. Real password-login/browser session integration is required in T020 when its flow exists. Development Gate PASS; Production Content Gate BLOCKED; Production unchanged. The existing Preview leaked-password protection warning remains for pre-production security review. Next T020.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
