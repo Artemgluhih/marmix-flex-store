@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T021 — DONE, T022–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T022 — DONE, T023–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -26,7 +26,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 | M2 — Public visual foundation approved | T007 | Header/Hero/Showcase/Card/CTA в Next визуально совпадают с утверждённым prototype на 1440/390, mobile menu и reduced-motion проходят; принимать перенос, не новое направление; проверить T004–T007. |
 | Development Gate — **PASS** | T010 | T008–T010 DONE. T011 and subsequent technical tasks may proceed in isolated Preview under the TEST_ONLY/nullable commercial rules below. |
 | Production Content Gate — **BLOCKED** | T010; required before Phase 17 readiness | Two real commercial groups and three real legal groups remain unresolved. Production commerce, readiness and deployment are forbidden until this gate passes; selected-media quality review remains a separate pre-production check. |
-| M3 — Supabase & Admin Auth secured | T022 | T011–T022: схемы, anon/RLS/Storage, закрытый signup, active membership, session/guard, негативные security проверки. |
+| M3 — Supabase & Admin Auth secured — **PASS** | T022 | T011–T022: схемы, anon/RLS/Storage, закрытый signup, active membership, session/guard, негативные security проверки. |
 | M4 — Admin catalog management operational | T038 | T023–T038: dashboard, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
 | M5 — Public catalog operational | T046 | T039–T046: списки/поиск/категории/Product Detail на общих данных, только published, реальные цена/медиа. Подключение add-to-cart является T049 и входит в M6. |
 | M6 — Cart & Order flow operational | T055 | T047–T055: persistence, refresh цен, server validation, idempotency, одна приватная заявка и подтверждение; проверить вместе с M5. |
@@ -497,7 +497,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T022
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Admin Auth security gate
 - **Goal:** Проверить регистрацию, отзыв роли, сессию и все права.
 - **Why:** Перед CRUD нужен доказанный security baseline.
@@ -512,6 +512,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T022): Admin Auth security gate
+- **Resolution (2026-09-29):** Preview security integration and remote smoke PASS: public signup and anonymous sign-in denied; session/login/logout and server mutation guard regressions PASS; cross-origin mutation denied; private catalog and order access require active membership; immutable order snapshot and Storage mutation baseline preserved. Owner-authorized direct PostgREST JWT verification: active admin sees own active membership and can SELECT orders; separate authenticated non-admin sees empty membership and order results, and self-escalation INSERT is denied (HTTP 403). Anon order access and catalog mutation denied. Temporary non-admin Auth user removed; final Preview counts: one real Auth user with one matching active membership, zero unlinked/synthetic accounts, zero catalog/order test rows and zero Storage objects. Security Advisor has zero blocking findings. Its leaked-password protection WARN remains a separate pre-production Auth item; M3 PASS does not change Production Content Gate BLOCKED. Production unchanged. Next T023.
 
 
 ## PHASE 5 — Admin Shell
