@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T018 — DONE, T019–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T020 — DONE, T021–T074 — TODO; M1 — PASS; M2 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -455,7 +455,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T020
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Admin login и logout
 - **Goal:** Реализовать вход/выход и сообщения об ошибке без enumeration.
 - **Why:** Владелец должен управлять доступом с рабочих устройств.
@@ -466,6 +466,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Implementation notes:** После входа проверять active membership; non-admin signOut.
 - **Acceptance criteria:** Admin входит/выходит; non-admin не проходит, ошибке нет PII.
 - **Required checks:** login/logout browser smoke и негативный auth тест.
+- **Resolution (2026-09-29):** Preview `/admin/login` uses server-side Supabase password Auth, verifies the user with `getUser()` and checks active `admin_users` membership through the authenticated JWT/RLS before redirecting to a safe local path. Invalid credentials and non-admin membership yield the same generic error; non-admin sessions are cleared. Owner confirmed real admin login and a browser Auth session. Owner then confirmed real Preview logout through the existing POST `logoutAction`: the browser returned to `/admin/login`, and a subsequent visit remained on the login form instead of accepting the signed-out session. The temporary Preview-only `TEST_ONLY` logout route used for this smoke was removed. Targeted negative auth, redirect, cookie-propagation, no-session and cross-origin checks passed; lint, typecheck, build and secret-path review passed. No credentials, cookies, tokens or session values were recorded. This login/logout flow does not add the T021 admin guard or Admin shell. Development Gate PASS; Production Content Gate BLOCKED; Production unchanged. Next T021.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
