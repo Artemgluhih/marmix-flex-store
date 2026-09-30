@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T028 — DONE, T029–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T029 — DONE, T030–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T028 завершена; следующая отдельная задача — T029.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T029 завершена; следующая отдельная задача — T030.
 
 ## PHASE 0 — Project Foundation
 
@@ -650,7 +650,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T029
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Edit product properties
 - **Goal:** Редактировать описание, размеры, specs, attributes и SEO.
 - **Why:** Товар должен обслуживаться без Studio.
@@ -665,6 +665,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T029): Edit product properties
+- **Resolution (2026-09-30):** защищённый `/admin/products/[id]` редактирует только описание, nullable размеры/площадь, контролируемые характеристики/атрибуты и SEO одной строки через authenticated admin JWT и T017 RLS. Независимый same-origin mutation guard, строгая проверка полей и явный allowlist исключают mass assignment: SKU/slug, цена, публикация и архив не меняются. Транзакционные Preview TEST_ONLY тесты с ROLLBACK подтвердили сохранение/повторное чтение свойств, валидацию, отказ anon/non-admin и неизменность публикации/архива; постоянных synthetic products/categories/rows — 0. Lint/typecheck/build и guarded Preview/public smoke PASS. Owner после реального admin login подтвердил layout, группировку, размеры, характеристики/атрибуты, SEO, ошибки, 390/768/1024/1440, отсутствие overflow и согласованность с Admin shell. Временный Preview-only visual-check route удалён после проверки; реальный editor сохранён. Production unchanged; Development Gate PASS; Production Content Gate BLOCKED. Next T030, not started.
 
 ### T030 — Publication и assortment states
 

@@ -9,19 +9,15 @@ import { MAX_SPECS, type EditField, type EditValues } from "./edit-validation";
 import base from "../new/new-product.module.css";
 import styles from "./edit-product.module.css";
 
-function SaveButton({ previewOnly }: { previewOnly: boolean }) {
+function SaveButton() {
   const { pending } = useFormStatus();
-  return <button type="submit" disabled={pending || previewOnly}>{pending ? "Сохраняем…" : "Сохранить изменения"}</button>;
+  return <button type="submit" disabled={pending}>{pending ? "Сохраняем…" : "Сохранить изменения"}</button>;
 }
 
-export function EditProductForm({ productId, values, areaAllowed = false, previewOnly = false, previewErrors = false }: {
-  productId: string; values: EditValues; areaAllowed?: boolean; previewOnly?: boolean; previewErrors?: boolean;
+export function EditProductForm({ productId, values, areaAllowed = false }: {
+  productId: string; values: EditValues; areaAllowed?: boolean;
 }) {
-  const [state, action] = useActionState(saveProductProperties.bind(null, productId), { values, errors: previewErrors ? {
-    width_mm: "Укажите положительное целое число миллиметров.",
-    specs: "Заполните пары «Название — Значение» без HTML и повторов.",
-    seo_title: "SEO-заголовок: до 180 символов, без HTML.",
-  } : {} } as EditState);
+  const [state, action] = useActionState(saveProductProperties.bind(null, productId), { values, errors: {} } as EditState);
   const [specRows, setSpecRows] = useState(Math.max(1, state.values.specs.findLastIndex(({ key, value }) => key || value) + 1));
   const field = (name: EditField, label: string, options: { multiline?: boolean; inputMode?: "numeric" | "decimal"; maxLength?: number; disabled?: boolean } = {}) => (
     <div className={base.field}>
@@ -95,7 +91,7 @@ export function EditProductForm({ productId, values, areaAllowed = false, previe
       </section>
       {state.errors.form && <p className={base.formError} role="alert">{state.errors.form}</p>}
       <div className={base.actions}>
-        <SaveButton previewOnly={previewOnly} />
+        <SaveButton />
         <Link href="/admin/products">Вернуться к товарам</Link>
       </div>
     </form>
