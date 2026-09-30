@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T023 — DONE, T024–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T024 — DONE, T025–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -542,7 +542,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T024
 - **Priority:** P0
-- **Status:** BLOCKED — OWNER VISUAL VERIFICATION
+- **Status:** DONE
 - **Title:** Operational dashboard
 - **Goal:** Вывести новые/в работе заявки и опубликованные/скрытые товары.
 - **Why:** Владелец должен видеть очередь и состояние каталога.
@@ -557,7 +557,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T024): Operational dashboard
-- **Progress (2026-09-30):** READY HTTPS Preview dashboard reads five exact `head` counts after a fresh `requireAdmin()` under authenticated user JWT/T017 RLS: new and in-progress orders, published and hidden unarchived REAL products, and archived REAL products. No PII, Secret client, hardcoded metrics or production data. Empty Preview returns honest zero; query errors throw a generic server error. Transactional authenticated role smoke with a visible TEST_ONLY product confirmed it is excluded; rollback left zero catalog/order rows. Direct Preview counts are all zero. Missing `/admin/orders` and `/admin/products` routes remain non-clickable future destinations according to T023 navigation, without 404 links or list implementation. Lint/typecheck/build and secret scan PASS; unauthenticated `/admin` redirects to login, login/public home smoke PASS, private/no-store/noindex retained. Authenticated dashboard viewport, keyboard/console and owner visual check remain pending without requesting credentials. T025 remains TODO; gates and M3 unchanged.
+- **Resolution (2026-09-30):** READY HTTPS Preview dashboard reads five exact `head` counts after a fresh `requireAdmin()` under authenticated user JWT/T017 RLS: new and in-progress orders, published and hidden unarchived REAL products, and archived REAL products. No PII, Secret client, hardcoded metrics or production data. Empty Preview returns honest zero; query errors throw a generic server error. Transactional authenticated role smoke with a visible TEST_ONLY product confirmed it is excluded; rollback left zero catalog/order rows. Direct Preview counts are all zero. Missing `/admin/orders` and `/admin/products` routes remain non-clickable future destinations according to T023 navigation, without 404 links or list implementation. Lint/typecheck/build and secret scan PASS; unauthenticated `/admin` redirects to login, login/public home smoke PASS, private/no-store/noindex retained. Owner verified after real admin login: counters readable, orders/catalog separation understandable, zero state and no PII PASS; desktop and mobile 390 PASS, no horizontal overflow, visual consistency with T023 PASS. Credentials were not shared. T024 DONE. T025 remains TODO; gates and M3 unchanged.
 
 ### T025 — Admin states и responsive
 
