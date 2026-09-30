@@ -9,34 +9,34 @@ import styles from "./assortment.module.css";
 
 type ProductState = { id: string; is_published: boolean; archived_at: string | null; availability_status: string | null; is_featured: boolean; sort_order: number };
 
-function Submit({ children, critical = false, previewOnly = false }: { children: React.ReactNode; critical?: boolean; previewOnly?: boolean }) {
+function Submit({ children, critical = false }: { children: React.ReactNode; critical?: boolean }) {
   const { pending } = useFormStatus();
-  return <button type="submit" disabled={pending || previewOnly} className={critical ? styles.critical : undefined}>{pending ? "Сохраняем…" : children}</button>;
+  return <button type="submit" disabled={pending} className={critical ? styles.critical : undefined}>{pending ? "Сохраняем…" : children}</button>;
 }
 
-function TransitionForm({ productId, command, label, previewOnly }: { productId: string; command: Transition; label: string; previewOnly: boolean }) {
+function TransitionForm({ productId, command, label }: { productId: string; command: Transition; label: string }) {
   const [state, action] = useActionState(changePublication.bind(null, productId, command), {} as TransitionState);
   return <form action={action} className={styles.transition}>
-    <Submit previewOnly={previewOnly}>{label}</Submit>
+    <Submit>{label}</Submit>
     {state.error && <p role="alert" className={styles.error}>{state.error}</p>}
   </form>;
 }
 
-function ArchiveForm({ productId, previewOnly }: { productId: string; previewOnly: boolean }) {
+function ArchiveForm({ productId }: { productId: string }) {
   const [state, action] = useActionState(changePublication.bind(null, productId, "archive"), {} as TransitionState);
   return <div className={styles.archive}>
     <details>
       <summary>Архивировать…</summary>
       <div className={styles.confirm}>
         <p>Товар будет скрыт с публичного сайта. SKU и данные сохранятся; товар можно восстановить.</p>
-        <form action={action}><Submit critical previewOnly={previewOnly}>Да, архивировать и скрыть</Submit></form>
+        <form action={action}><Submit critical>Да, архивировать и скрыть</Submit></form>
       </div>
     </details>
     {state.error && <p role="alert" className={styles.error}>{state.error}</p>}
   </div>;
 }
 
-export function AssortmentControls({ product, previewOnly = false }: { product: ProductState; previewOnly?: boolean }) {
+export function AssortmentControls({ product }: { product: ProductState }) {
   const [state, action] = useActionState(saveAssortment.bind(null, product.id), {
     values: { availability: product.availability_status ?? "", featured: product.is_featured, sortOrder: String(product.sort_order) }, errors: {},
   } as AssortmentState);
@@ -48,9 +48,9 @@ export function AssortmentControls({ product, previewOnly = false }: { product: 
       <p>Публикация делает товар видимым при открытой категории. Неполные коммерческие данные не позволяют оформить заказ.</p>
     </header>
     <div className={styles.transitions}>
-      {archived ? <><p>Сначала восстановите товар из архива, чтобы опубликовать его.</p><TransitionForm productId={product.id} command="restore" label="Восстановить" previewOnly={previewOnly} /></>
-        : product.is_published ? <TransitionForm productId={product.id} command="unpublish" label="Снять с публикации" previewOnly={previewOnly} />
-          : <TransitionForm productId={product.id} command="publish" label="Опубликовать" previewOnly={previewOnly} />}
+      {archived ? <><p>Сначала восстановите товар из архива, чтобы опубликовать его.</p><TransitionForm productId={product.id} command="restore" label="Восстановить" /></>
+        : product.is_published ? <TransitionForm productId={product.id} command="unpublish" label="Снять с публикации" />
+          : <TransitionForm productId={product.id} command="publish" label="Опубликовать" />}
     </div>
     <form action={action} className={styles.properties} noValidate>
       <div className={styles.fields}>
@@ -69,8 +69,8 @@ export function AssortmentControls({ product, previewOnly = false }: { product: 
       </div>
       <label className={styles.checkbox}><input type="checkbox" name="featured" defaultChecked={state.values.featured} key={String(state.values.featured)} /> Выделить товар</label>
       {state.errors.form && <p role="alert" className={styles.error}>{state.errors.form}</p>}
-      <div className={styles.save}><Submit previewOnly={previewOnly}>Сохранить параметры ассортимента</Submit></div>
+      <div className={styles.save}><Submit>Сохранить параметры ассортимента</Submit></div>
     </form>
-    {!archived && <ArchiveForm productId={product.id} previewOnly={previewOnly} />}
+    {!archived && <ArchiveForm productId={product.id} />}
   </section>;
 }
