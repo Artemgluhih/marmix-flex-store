@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T024 — DONE, T025–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T025 — DONE, T026–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -563,7 +563,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T025
 - **Priority:** P1
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Admin states и responsive
 - **Goal:** Добавить loading/error/empty и проверить рабочие ширины.
 - **Why:** Операционный интерфейс должен быть понятен при сбое.
@@ -578,6 +578,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T025): Admin states и responsive
+- **Resolution (2026-09-30):** READY Preview adds restrained route loading, safe error/retry and honest fully empty group notes. T024 exact count queries, REAL/TEST_ONLY semantics and Admin RLS remain unchanged. Controlled local harness verified loading, retry, zeros and generic failure instead of a false zero; lint/typecheck/build PASS. Guest `/admin` redirects to login, public homepage smoke PASS. Owner verified after real admin login: 390/768/1024/1440 and 1920/2560 sanity, keyboard/focus, mobile drawer, zero state and T023/T024 visual consistency PASS; horizontal overflow NO. Production unchanged. T025 DONE; M3 and Development Gate PASS; Production Content Gate BLOCKED. Next T026, not started.
 
 
 ## PHASE 6 — Admin Catalog Management
