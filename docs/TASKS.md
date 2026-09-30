@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T027 — DONE, T028–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T028 — DONE, T029–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T015 завершена; следующая отдельная задача — T016.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T028 завершена; следующая отдельная задача — T029.
 
 ## PHASE 0 — Project Foundation
 
@@ -629,7 +629,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T028
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Create product
 - **Goal:** Создать SKU через защищённую форму.
 - **Why:** Admin Panel — основной способ наполнения каталога.
@@ -644,6 +644,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T028): Create product
+- **Resolution (2026-09-30):** READY Preview `/admin/products/new` is guarded by `requireAdmin()` and an independent same-origin `requireAdminMutation()` action using the authenticated JWT under T017 RLS. It validates name, stable SKU, slug, existing category, optional series, exact RUB-to-kopeck price, constrained price/sale units and positive integer minimum/step. The action inserts only REAL, unpublished, unarchived drafts; unknown commerce stays NULL. Unique SKU/slug conflicts return safe field errors, and the list is revalidated after save. Targeted validation and transactional TEST_ONLY active-admin insert/read, anon invisibility and non-admin/anon denial checks PASS with rollback; permanent synthetic rows 0. Lint/typecheck/build and guarded Preview route/public smoke PASS. Owner after real login verified form, empty-category state, labels/validation, 390/768/1024/1440, no overflow and Admin visual consistency. Preview has no categories yet; the form disables save until one exists, without blocking T028. Production unchanged; M3 and Development Gate PASS, Production Content Gate BLOCKED. Next T029, not started.
 
 ### T029 — Edit product properties
 
