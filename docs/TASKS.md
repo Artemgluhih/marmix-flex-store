@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T022 — DONE, T023–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T023 — DONE, T024–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -521,7 +521,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T023
 - **Priority:** P0
-- **Status:** BLOCKED — OWNER VISUAL VERIFICATION
+- **Status:** DONE
 - **Title:** Admin shell и навигация
 - **Goal:** Сделать рабочий layout Marmix Flex для /admin.
 - **Why:** Операции требуют понятной навигации без showroom декора.
@@ -536,7 +536,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T023): Admin shell и навигация
-- **Progress (2026-09-30):** Protected `/admin` shell, desktop sidebar, tablet/mobile drawer, route state, existing server logout action, local public-site link and neutral landing page implemented in Preview. T021 server guard, dynamic/no-store/noindex and separate login retained. Lint, typecheck, build and Git secret-path checks PASS. READY HTTPS Preview for the `redesign-v2` implementation commit; unauthenticated `/admin` redirects to login, login and public home return successfully, admin response is private/no-store and noindex. Authenticated visual/keyboard/viewport verification cannot be performed without owner credentials, which are not requested or stored. Owner must sign in and inspect desktop/mobile navigation, menu, logout visibility and visual integrity before DONE. T024 remains TODO; gates and M3 unchanged.
+- **Resolution (2026-09-30):** Protected `/admin` shell, desktop sidebar, tablet/mobile drawer, route state, existing server logout action, local public-site link and neutral landing page implemented in Preview. T021 server guard, dynamic/no-store/noindex and separate login retained. Lint, typecheck, build and Git secret-path checks PASS. READY HTTPS Preview for the `redesign-v2` implementation commit; unauthenticated `/admin` redirects to login, login and public home return successfully, admin response is private/no-store and noindex. Owner completed authenticated visual verification after real login: desktop/mobile navigation, keyboard/focus, visible logout and public-site link PASS; 390/768/1024/1440/1920/2560 PASS; horizontal overflow and visual breakage absent. Credentials were not shared. T023 DONE. T024 remains TODO; gates and M3 unchanged.
 
 ### T024 — Operational dashboard
 
