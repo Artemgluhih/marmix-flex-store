@@ -93,6 +93,14 @@
   border-left: 0;
 }
 .archived dd { font-size: 36px; }
+.emptyNote {
+  margin: 0;
+  padding: 16px 27px;
+  border-top: 1px solid var(--color-border-quiet);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
 @media (max-width: 1250px) {
   .groups { grid-template-columns: minmax(0, 1fr); }
   .groupHeading { min-height: 112px; }
@@ -107,4 +115,5 @@
   .metric dd { font-size: 40px; }
   .archived { min-height: 100px; }
   .archived dd { font-size: 32px; }
+  .emptyNote { padding-inline: 20px; }
 }

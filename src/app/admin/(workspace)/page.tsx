@@ -40,6 +40,9 @@ export default async function AdminHomePage() {
               <dd>{counts.inProgressOrders}</dd>
             </div>
           </dl>
+          {counts.newOrders === 0 && counts.inProgressOrders === 0 && (
+            <p className={styles.emptyNote}>Пока нет новых заявок и заявок в работе.</p>
+          )}
         </section>
         <section className={styles.group} aria-labelledby="products-title">
           <div className={styles.groupHeading}>
@@ -63,6 +66,9 @@ export default async function AdminHomePage() {
               <dd>{counts.archivedProducts}</dd>
             </div>
           </dl>
+          {counts.publishedProducts === 0 && counts.hiddenProducts === 0 && counts.archivedProducts === 0 && (
+            <p className={styles.emptyNote}>В каталоге пока нет товаров.</p>
+          )}
         </section>
       </div>
     </div>
