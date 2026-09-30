@@ -521,7 +521,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T023
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** BLOCKED — OWNER VISUAL VERIFICATION
 - **Title:** Admin shell и навигация
 - **Goal:** Сделать рабочий layout Marmix Flex для /admin.
 - **Why:** Операции требуют понятной навигации без showroom декора.
@@ -536,6 +536,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T023): Admin shell и навигация
+- **Progress (2026-09-30):** Protected `/admin` shell, desktop sidebar, tablet/mobile drawer, route state, existing server logout action, local public-site link and neutral landing page implemented in Preview. T021 server guard, dynamic/no-store/noindex and separate login retained. Lint, typecheck, build and Git secret-path checks PASS. READY HTTPS Preview for the `redesign-v2` implementation commit; unauthenticated `/admin` redirects to login, login and public home return successfully, admin response is private/no-store and noindex. Authenticated visual/keyboard/viewport verification cannot be performed without owner credentials, which are not requested or stored. Owner must sign in and inspect desktop/mobile navigation, menu, logout visibility and visual integrity before DONE. T024 remains TODO; gates and M3 unchanged.
 
 ### T024 — Operational dashboard
 
