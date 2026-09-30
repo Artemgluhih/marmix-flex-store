@@ -542,7 +542,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T024
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** BLOCKED — OWNER VISUAL VERIFICATION
 - **Title:** Operational dashboard
 - **Goal:** Вывести новые/в работе заявки и опубликованные/скрытые товары.
 - **Why:** Владелец должен видеть очередь и состояние каталога.
@@ -557,6 +557,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T024): Operational dashboard
+- **Progress (2026-09-30):** READY HTTPS Preview dashboard reads five exact `head` counts after a fresh `requireAdmin()` under authenticated user JWT/T017 RLS: new and in-progress orders, published and hidden unarchived REAL products, and archived REAL products. No PII, Secret client, hardcoded metrics or production data. Empty Preview returns honest zero; query errors throw a generic server error. Transactional authenticated role smoke with a visible TEST_ONLY product confirmed it is excluded; rollback left zero catalog/order rows. Direct Preview counts are all zero. Missing `/admin/orders` and `/admin/products` routes remain non-clickable future destinations according to T023 navigation, without 404 links or list implementation. Lint/typecheck/build and secret scan PASS; unauthenticated `/admin` redirects to login, login/public home smoke PASS, private/no-store/noindex retained. Authenticated dashboard viewport, keyboard/console and owner visual check remain pending without requesting credentials. T025 remains TODO; gates and M3 unchanged.
 
 ### T025 — Admin states и responsive
 
