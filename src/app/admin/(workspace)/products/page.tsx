@@ -33,6 +33,7 @@ export default async function AdminProductsPage({
         <p className={styles.eyebrow}>Рабочее пространство / Каталог</p>
         <h1>Товары</h1>
         <p>Список товаров основного каталога и их текущий статус.</p>
+        <Link className={styles.createLink} href="/admin/products/new">Добавить товар</Link>
       </div>
       <form className={styles.filters} action="/admin/products" method="get" role="search">
         <div className={styles.searchControl}>

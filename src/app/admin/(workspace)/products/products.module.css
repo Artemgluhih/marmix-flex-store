@@ -16,12 +16,26 @@
   letter-spacing: -0.035em;
   line-height: 1.2;
 }
-.heading > p:last-child {
+.heading > p:not(.eyebrow) {
   margin: 14px 0 0;
   color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 1.65;
 }
+.createLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 20px;
+  padding: 10px 17px;
+  background: var(--color-gold);
+  color: #181510;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.createLink:hover { background: var(--color-gold-hover); }
+.createLink:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
 .filters {
   display: grid;
   grid-template-columns: minmax(180px, 1.55fr) repeat(3, minmax(125px, 1fr)) auto;
