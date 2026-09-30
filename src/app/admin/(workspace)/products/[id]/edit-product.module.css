@@ -1,0 +1,28 @@
+.identity {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 28px;
+  min-width: 0; margin-bottom: 22px; padding: 24px 28px;
+  border: 1px solid var(--color-border-quiet); background: var(--color-graphite);
+}
+.identity div { min-width: 0; display: grid; gap: 5px; }
+.identity span { color: var(--color-text-quiet); font-size: 11px; }
+.identity strong { color: var(--color-text-primary); font-size: 13px; overflow-wrap: anywhere; }
+.fixture, .success { margin: 0 0 20px; padding: 12px 16px; border: 1px solid var(--color-border-warm); color: var(--color-text-primary); font-size: 13px; line-height: 1.6; }
+.success { color: var(--color-success); border-color: var(--color-success); }
+.textarea {
+  width: 100%; min-width: 0; min-height: 116px; padding: 12px;
+  border: 1px solid var(--color-border); border-radius: 0;
+  background: var(--color-elevated); color: var(--color-text-primary);
+  font: inherit; font-size: 14px; line-height: 1.6; resize: vertical;
+}
+.textarea[aria-invalid="true"] { border-color: var(--color-error); }
+.textarea:focus-visible, .addSpec:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
+.specs { display: grid; gap: 14px; margin-top: 27px; }
+.specs h3 { margin: 0; font-size: 14px; font-weight: 600; }
+.specRow { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; }
+.addSpec { justify-self: start; min-height: 44px; padding: 8px 12px; border: 1px solid var(--color-border-warm); border-radius: 0; background: transparent; color: var(--color-text-primary); font: inherit; font-size: 12px; cursor: pointer; }
+.addSpec:hover { color: var(--color-gold-hover); }
+.seoGrid { display: grid; gap: 20px; }
+@media (max-width: 700px) {
+  .identity, .specRow { grid-template-columns: minmax(0, 1fr); }
+  .identity { padding: 22px 20px; }
+}

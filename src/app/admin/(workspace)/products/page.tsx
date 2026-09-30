@@ -89,6 +89,7 @@ export default async function AdminProductsPage({
                 <th scope="col">Категория</th>
                 <th scope="col">Цена</th>
                 <th scope="col">Статус</th>
+                <th scope="col">Действие</th>
               </tr>
             </thead>
             <tbody>
@@ -101,6 +102,7 @@ export default async function AdminProductsPage({
                     <td><span className={styles.mobileLabel} aria-hidden="true">Категория</span>{product.categories?.name ?? "Без категории"}</td>
                     <td className={styles.price}><span className={styles.mobileLabel} aria-hidden="true">Цена</span>{productPrice(product)}</td>
                     <td><span className={styles.mobileLabel} aria-hidden="true">Статус</span><span className={`${styles.badge} ${status === "Опубликован" ? styles.published : status === "В архиве" ? styles.archived : styles.hidden}`}>{status}</span></td>
+                    <td><span className={styles.mobileLabel} aria-hidden="true">Действие</span><Link className={styles.editLink} href={`/admin/products/${product.id}`}>Редактировать</Link></td>
                   </tr>
                 );
               })}

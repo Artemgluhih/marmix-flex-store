@@ -1,0 +1,43 @@
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+
+import { requireAdmin } from "@/lib/admin/require-admin";
+import { EditProductForm } from "./EditProductForm";
+import { editValuesFromProduct, validProductId } from "./edit-validation";
+import base from "../new/new-product.module.css";
+import styles from "./edit-product.module.css";
+
+export const metadata: Metadata = { title: "Редактирование товара — Marmix Flex", robots: { index: false, follow: false } };
+
+export default async function EditProductPage({ params, searchParams }: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const { id } = await params;
+  const { supabase } = await requireAdmin(`/admin/products/${id}`);
+  if (!validProductId(id)) notFound();
+  const { data: product, error } = await supabase.from("products")
+    .select("id,sku,slug,name,series,category_id,catalog_kind,is_published,archived_at,description,width_mm,height_mm,thickness_mm,area_per_sale_unit_m2,price_unit,sale_unit,specifications,seo_title,seo_description")
+    .eq("id", id).maybeSingle();
+  if (error) throw new Error("Не удалось загрузить товар для редактирования.");
+  if (!product || (product.catalog_kind !== "REAL" && !(process.env.VERCEL_ENV === "preview" && product.catalog_kind === "TEST_ONLY"))) notFound();
+  const values = editValuesFromProduct(product);
+  if (!values) throw new Error("Характеристики товара требуют проверки перед редактированием.");
+
+  return (
+    <div className={base.page}>
+      <p className={base.eyebrow}>Рабочее пространство / Каталог</p>
+      <h1>Редактирование товара</h1>
+      <p className={base.intro}>Свойства одного SKU. Публикация, наличие и изображения управляются отдельно.</p>
+      {product.catalog_kind === "TEST_ONLY" && <p className={styles.fixture}>TEST_ONLY — временный Preview товар. Не относится к реальному каталогу.</p>}
+      {(await searchParams).saved === "1" && <p className={styles.success} role="status">Изменения сохранены.</p>}
+      <section className={styles.identity} aria-label="Идентичность товара">
+        <div><span>Название</span><strong>{product.name}</strong></div>
+        <div><span>SKU</span><strong>{product.sku}</strong></div>
+        <div><span>Адрес</span><strong>{product.slug}</strong></div>
+        {product.series && <div><span>Серия</span><strong>{product.series}</strong></div>}
+      </section>
+      <EditProductForm productId={product.id} values={values} areaAllowed={product.price_unit === "м²" && product.sale_unit === "sheet"} />
+    </div>
+  );
+}
