@@ -1,0 +1,128 @@
+.page { width: 100%; max-width: 1480px; min-width: 0; }
+.heading { margin-bottom: 38px; }
+.eyebrow {
+  margin: 0 0 19px;
+  color: var(--color-gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  line-height: 1.5;
+  text-transform: uppercase;
+}
+.heading h1 {
+  margin: 0;
+  font-size: clamp(31px, 3vw, 44px);
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+.heading > p:last-child {
+  margin: 14px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.65;
+}
+.empty {
+  padding: 30px 32px;
+  border: 1px solid var(--color-border-quiet);
+  background: var(--color-graphite);
+}
+.empty h2 { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.35; }
+.empty p { margin: 10px 0 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.6; }
+.tableFrame { min-width: 0; border: 1px solid var(--color-border-quiet); background: var(--color-graphite); }
+.table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
+.table th:nth-child(1) { width: 18%; }
+.table th:nth-child(2) { width: 28%; }
+.table th:nth-child(3) { width: 20%; }
+.table th:nth-child(4) { width: 19%; }
+.table th:nth-child(5) { width: 15%; }
+.table th {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--color-border-warm);
+  color: var(--color-text-quiet);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+  line-height: 1.45;
+  text-transform: uppercase;
+}
+.table td {
+  min-width: 0;
+  padding: 20px;
+  border-bottom: 1px solid var(--color-border-quiet);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  vertical-align: middle;
+}
+.table tbody tr:last-child td { border-bottom: 0; }
+.table .sku { color: var(--color-gold-hover); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 11px; }
+.table .name { color: var(--color-text-primary); font-size: 13px; font-weight: 600; }
+.table .price { color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.badge {
+  display: inline-block;
+  max-width: 100%;
+  padding: 5px 8px;
+  border: 1px solid var(--color-border-warm);
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.published { border-color: var(--color-success); color: var(--color-success); }
+.hidden { color: var(--color-text-secondary); }
+.archived { color: var(--color-text-quiet); border-color: var(--color-border-quiet); }
+.mobileLabel { display: none; }
+@media (max-width: 850px) {
+  .heading { margin-bottom: 30px; }
+  .tableFrame { border: 0; background: transparent; }
+  .table, .table tbody { display: block; width: 100%; }
+  .table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .table tbody { display: grid; gap: 12px; }
+  .table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, auto);
+    gap: 12px 22px;
+    padding: 19px 20px;
+    border: 1px solid var(--color-border-quiet);
+    background: var(--color-graphite);
+  }
+  .table td {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    padding: 0;
+    border: 0;
+  }
+  .table .name { grid-column: 1 / -1; grid-row: 1; font-size: 16px; }
+  .table .sku { grid-column: 1; grid-row: 2; }
+  .table td:nth-child(3) { grid-column: 1; grid-row: 3; }
+  .table .price { grid-column: 1; grid-row: 4; }
+  .table td:nth-child(5) { grid-column: 2; grid-row: 2 / 5; align-self: start; }
+  .mobileLabel {
+    display: block;
+    color: var(--color-text-quiet);
+    font-family: var(--font-ui);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+}
+@media (max-width: 620px) {
+  .empty { padding: 24px 20px; }
+  .table tr { gap: 12px 10px; padding: 18px 16px; }
+  .table td:nth-child(5) { grid-column: 1 / -1; grid-row: 5; }
+}

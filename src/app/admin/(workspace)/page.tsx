@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { getDashboardCounts } from "./dashboard-counts";
@@ -50,7 +51,7 @@ export default async function AdminHomePage() {
               <span className={styles.groupIndex}>02 / Каталог</span>
               <h2 id="products-title">Каталог</h2>
             </div>
-            <span className={styles.destination}>Раздел товаров — скоро</span>
+            <Link className={styles.destinationLink} href="/admin/products">Перейти к товарам <span aria-hidden="true">↗</span></Link>
           </div>
           <dl className={styles.metrics}>
             <div className={styles.metric}>
