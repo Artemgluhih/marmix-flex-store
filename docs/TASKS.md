@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T025 — DONE, T026–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T026 — DONE, T027–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -587,7 +587,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T026
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Products list
 - **Goal:** Создать /admin/products с видимым статусом и ключевыми полями.
 - **Why:** Операции начинаются с обзора SKU.
@@ -602,6 +602,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T026): Products list
+- **Resolution (2026-09-30):** READY Preview `/admin/products` reads only REAL rows after `requireAdmin()` through the authenticated JWT/T017 RLS client, with one category relation select, stable order and no Secret client. The list presents SKU, name, category, exact RUB price or neutral null state, and published/hidden/archived status; desktop table and compact mobile presentation share T023–T025 shell and states. Empty Preview products/categories remain 0. Targeted TEST_ONLY published/hidden/archived, null-price and category checks ran in a rollback transaction; permanent synthetic rows 0. Local rendering/query/error harness, lint/typecheck/build, guest redirect and public smoke PASS. Owner after real login verified desktop/mobile list, all field/status labels, null and empty states, active navigation, 390/768/1024/1440, no horizontal overflow and T023–T025 visual consistency. T026 DONE; M3 and Development Gate PASS; Production Content Gate BLOCKED. Next T027, not started.
 
 ### T027 — Products search и filters
 
