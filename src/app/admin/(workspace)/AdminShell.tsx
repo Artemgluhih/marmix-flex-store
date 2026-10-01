@@ -10,7 +10,7 @@ import styles from "./admin-shell.module.css";
 const sections = [
   { label: "Обзор", href: "/admin" },
   { label: "Товары", href: "/admin/products" },
-  { label: "Категории" },
+  { label: "Категории", href: "/admin/categories" },
   { label: "Заявки" },
 ] as const;
 
