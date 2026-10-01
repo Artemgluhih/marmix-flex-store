@@ -5,7 +5,7 @@ import { requireAdminMutation } from "@/lib/admin/require-admin";
 import { MEDIA_BUCKET, MAX_IMAGE_BYTES, validImageDimensions, validMediaPath } from "./media-validation";
 import { validProductId } from "./edit-validation";
 
-export type LinkMediaResult = { ok: true } | { ok: false; error: string };
+export type LinkMediaResult = { ok: true; id: string } | { ok: false; error: string };
 
 export async function linkUploadedImage(productId: string, path: string, width: number, height: number): Promise<LinkMediaResult> {
   const { supabase } = await requireAdminMutation();
@@ -40,5 +40,5 @@ export async function linkUploadedImage(productId: string, path: string, width: 
   if (insert.error || !insert.data) return failure("Не удалось привязать изображение к товару.");
 
   revalidatePath(`/admin/products/${productId}`);
-  return { ok: true };
+  return { ok: true, id: insert.data.id };
 }

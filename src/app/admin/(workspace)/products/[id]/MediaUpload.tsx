@@ -8,116 +8,147 @@ import { MEDIA_BUCKET, mediaPathFor, validateImageFile, validImageDimensions } f
 import styles from "./media-upload.module.css";
 
 export type ImagePreview = { id: string; url: string; width: number; height: number };
+type UploadStatus = "ready" | "invalid" | "uploading" | "uploaded" | "error";
+type Selection = { id: string; file: File; preview: string | null; extension: string | null; status: UploadStatus; error?: string };
 
 export function MediaUpload({ productId, images, previewOnly = false }: { productId: string; images: ImagePreview[]; previewOnly?: boolean }) {
-  const [file, setFile] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Selection[]>([]);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
   const [saved, setSaved] = useState<ImagePreview[]>(images);
+  const urls = useRef<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => () => { urls.current.forEach(URL.revokeObjectURL); }, []);
 
-  useEffect(() => {
-    return () => { if (preview) URL.revokeObjectURL(preview); };
-  }, [preview]);
+  function chooseFiles(files: FileList | null) {
+    urls.current.forEach(URL.revokeObjectURL);
+    urls.current = [];
+    setMessage("");
+    setSelected(Array.from(files ?? []).map((file): Selection => {
+      const validation = validateImageFile(file);
+      if ("error" in validation) return { id: crypto.randomUUID(), file, preview: null, extension: null, status: "invalid", error: validation.error };
+      const preview = URL.createObjectURL(file);
+      urls.current.push(preview);
+      return { id: crypto.randomUUID(), file, preview, extension: validation.extension, status: "ready" };
+    }));
+  }
+
+  function mark(id: string, status: UploadStatus, error?: string) {
+    setSelected((current) => current.map((item) => item.id === id ? { ...item, status, error } : item));
+  }
+
+  async function uploadOne(item: Selection, client: ReturnType<typeof createAdminBrowserSupabaseClient>) {
+    if (!item.extension) return;
+    mark(item.id, "uploading");
+    let path: string | null = null;
+    let dimensions: { width: number; height: number } | null = null;
+    const bucket = client.storage.from(MEDIA_BUCKET);
+    try {
+      const bitmap = await createImageBitmap(item.file);
+      dimensions = { width: bitmap.width, height: bitmap.height };
+      bitmap.close();
+      if (!validImageDimensions(dimensions.width, dimensions.height)) {
+        mark(item.id, "error", "Не удалось определить размеры изображения."); return;
+      }
+      path = mediaPathFor(productId, crypto.randomUUID(), item.extension);
+      const uploaded = await bucket.upload(path, item.file, { contentType: item.file.type, upsert: false });
+      if (uploaded.error) {
+        // A collision must never remove the pre-existing object.
+        path = null; mark(item.id, "error", "Не удалось загрузить файл. Проверьте доступ и повторите попытку."); return;
+      }
+      const linked = await linkUploadedImage(productId, path, dimensions.width, dimensions.height);
+      if (!linked.ok) {
+        const cleanup = await bucket.remove([path]);
+        mark(item.id, "error", cleanup.error
+          ? linked.error + " Загруженный файл не удалось очистить; сообщите администратору."
+          : linked.error);
+        return;
+      }
+      const url = bucket.getPublicUrl(path).data.publicUrl;
+      setSaved((current) => [...current, { id: linked.id, url, width: dimensions!.width, height: dimensions!.height }]);
+      mark(item.id, "uploaded");
+    } catch {
+      if (!path) { mark(item.id, "error", "Файл не удалось прочитать. Выберите исправное изображение."); return; }
+      // Lost response after a committed insert: preserve the object if its relation exists.
+      try {
+        const relation = await client.from("product_images").select("id")
+          .eq("product_id", productId).eq("storage_path", path).maybeSingle();
+        if (relation.error) throw relation.error;
+        if (relation.data && dimensions) {
+          const url = bucket.getPublicUrl(path).data.publicUrl;
+          setSaved((current) => [...current, { id: relation.data!.id, url, width: dimensions!.width, height: dimensions!.height }]);
+          mark(item.id, "uploaded"); return;
+        }
+        const cleanup = await bucket.remove([path]);
+        mark(item.id, "error", cleanup.error
+          ? "Загрузка прервалась; файл не удалось очистить. Сообщите администратору."
+          : "Загрузка не завершилась. Повторите попытку.");
+      } catch {
+        mark(item.id, "error", "Не удалось проверить результат загрузки. Обновите страницу и сообщите администратору, если файл отсутствует.");
+      }
+    }
+  }
 
   async function upload() {
     if (pending) return;
-    setError(""); setMessage("");
-    if (!file) { setError("Сначала выберите изображение."); return; }
-    const validation = validateImageFile(file);
-    if ("error" in validation) { setError(validation.error); return; }
-    if (previewOnly) {
-      setPending(true);
-      window.setTimeout(() => { setPending(false); setMessage("Образец завершённой загрузки — файл не записан."); }, 700);
-      return;
-    }
-    setPending(true);
-    let path: string | null = null;
-    let client: ReturnType<typeof createAdminBrowserSupabaseClient> | null = null;
-    let dimensions: { width: number; height: number } | null = null;
+    const candidates = selected.filter((item) => item.status === "ready" || item.status === "error");
+    if (!candidates.length) return;
+    setPending(true); setMessage("");
     try {
-      const bitmap = await createImageBitmap(file);
-      const { width, height } = bitmap;
-      bitmap.close();
-      if (!validImageDimensions(width, height)) { setError("Не удалось определить размеры изображения."); return; }
-      dimensions = { width, height };
-      client = createAdminBrowserSupabaseClient();
-      const user = await client.auth.getUser();
-      if (user.error || !user.data.user) { setError("Сессия истекла. Войдите в Admin повторно."); return; }
-      path = mediaPathFor(productId, crypto.randomUUID(), validation.extension);
-      const bucket = client.storage.from(MEDIA_BUCKET);
-      const uploaded = await bucket.upload(path, file, { contentType: file.type, upsert: false });
-      if (uploaded.error) { path = null; setError("Не удалось загрузить изображение. Проверьте доступ и попробуйте ещё раз."); return; }
-
-      const linked = await linkUploadedImage(productId, path, width, height);
-      if (!linked.ok) {
-        const cleanup = await bucket.remove([path]);
-        setError(cleanup.error ? `${linked.error} Загруженный файл не удалось очистить; сообщите администратору.` : linked.error);
+      if (previewOnly) {
+        for (const item of candidates) {
+          mark(item.id, "uploading");
+          await new Promise((resolve) => window.setTimeout(resolve, 350));
+          mark(item.id, "uploaded");
+        }
+        setMessage("Демонстрация завершена — файлы не записаны.");
         return;
       }
-
-      const { data } = bucket.getPublicUrl(path);
-      setSaved((current) => [...current, { id: path!, url: data.publicUrl, width, height }]);
-      setFile(null); setPreview(null); if (inputRef.current) inputRef.current.value = "";
-      setMessage("Изображение загружено и привязано к товару.");
+      const client = createAdminBrowserSupabaseClient();
+      const user = await client.auth.getUser();
+      if (user.error || !user.data.user) {
+        candidates.forEach((item) => mark(item.id, "error", "Сессия истекла. Войдите в Admin повторно."));
+        return;
+      }
+      // Sequential, isolated object and relation per file. One failure does not undo successes.
+      for (const item of candidates) await uploadOne(item, client);
+      if (inputRef.current) inputRef.current.value = "";
     } catch {
-      if (path && client) {
-        // A lost Server Action response may follow a committed metadata insert.
-        // Keep the object when its relation exists instead of creating a broken row.
-        try {
-          const relation = await client.from("product_images").select("id")
-            .eq("product_id", productId).eq("storage_path", path).maybeSingle();
-          if (relation.error) throw relation.error;
-          if (relation.data) {
-            const publicUrl = client.storage.from(MEDIA_BUCKET).getPublicUrl(path).data.publicUrl;
-            const linkedId = relation.data.id;
-            const measured = dimensions;
-            if (measured) setSaved((current) => [...current, { id: linkedId, url: publicUrl, width: measured.width, height: measured.height }]);
-            setMessage("Изображение привязано. Обновите страницу для проверки.");
-            return;
-          }
-          const cleanup = await client.storage.from(MEDIA_BUCKET).remove([path]);
-          setError(cleanup.error ? "Загрузка прервалась; файл не удалось очистить. Сообщите администратору." : "Загрузка не завершилась. Повторите попытку.");
-        } catch {
-          setError("Не удалось проверить результат загрузки. Обновите страницу и сообщите администратору, если изображение отсутствует.");
-        }
-      } else setError("Файл не удалось прочитать. Выберите исправное изображение.");
+      candidates.forEach((item) => mark(item.id, "error", "Загрузка недоступна. Повторите попытку."));
     } finally { setPending(false); }
   }
 
+  const hasUploadable = selected.some((item) => item.status === "ready" || item.status === "error");
   return <section className={styles.section} aria-labelledby="media-heading">
     <div className={styles.heading}>
       <h2 id="media-heading">Изображения</h2>
-      <p>JPEG, PNG, WebP или AVIF, до 12 МБ. Загружайте только материалы, разрешённые к публичному показу.</p>
+      <p>JPEG, PNG, WebP или AVIF, до 12 МБ на файл. Загружайте только материалы, разрешённые к публичному показу.</p>
       {previewOnly && <p>Демонстрация интерфейса без записи в Storage и базу данных.</p>}
     </div>
     <div className={styles.field}>
-      <label htmlFor="media-file">Выбрать изображение</label>
-      <input id="media-file" ref={inputRef} type="file" accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
-        disabled={pending} aria-describedby={error ? "media-error" : "media-hint"}
-        onChange={(event) => {
-          const selected = event.target.files?.[0] ?? null;
-          const validation = selected ? validateImageFile(selected) : null;
-          if (validation && "error" in validation) {
-            setFile(null); setPreview(null); setError(validation.error);
-            event.target.value = "";
-          } else {
-            setFile(selected); setPreview(selected ? URL.createObjectURL(selected) : null); setError("");
-          }
-          setMessage("");
-        }} />
-      <p id="media-hint">Alt и роль будут настроены на следующем этапе.</p>
+      <label htmlFor="media-file">Выбрать изображения</label>
+      <input id="media-file" ref={inputRef} type="file" multiple accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
+        disabled={pending} aria-describedby="media-hint" onChange={(event) => chooseFiles(event.target.files)} />
+      <p id="media-hint">Можно выбрать несколько файлов. Alt и роль будут настроены на следующем этапе.</p>
     </div>
-    {file && <div className={styles.selected}>
-      {preview && <Image src={preview} alt="Предпросмотр выбранного изображения" width={136} height={112} unoptimized />}
-      <div><strong title={file.name}>{file.name}</strong><span>{(file.size / 1024 / 1024).toFixed(2)} МБ</span></div>
-    </div>}
-    <button type="button" onClick={upload} disabled={pending || !file} className={styles.upload}>
-      {pending ? "Загрузка…" : "Добавить изображение"}
+    {selected.length > 0 && <ul className={styles.selection} aria-label="Выбранные изображения" aria-live="polite">
+      {selected.map((item) => <li key={item.id} className={styles.selected}>
+        {item.preview ? <Image src={item.preview} alt="Предпросмотр выбранного изображения" width={136} height={112} unoptimized />
+          : <span className={styles.noPreview}>Без предпросмотра</span>}
+        <div>
+          <strong title={item.file.name}>{item.file.name}</strong>
+          <span>{(item.file.size / 1024 / 1024).toFixed(2)} МБ</span>
+          <span>{item.status === "ready" ? "Готово к загрузке" :
+            item.status === "invalid" ? "Недопустимый файл" :
+            item.status === "uploading" ? "Загрузка…" :
+            item.status === "uploaded" ? "Загружено" : "Ошибка загрузки"}</span>
+          {item.error && <span className={styles.error}>{item.error}</span>}
+        </div>
+      </li>)}
+    </ul>}
+    <button type="button" onClick={upload} disabled={pending || !hasUploadable} className={styles.upload}>
+      {pending ? "Загрузка…" : "Загрузить изображения"}
     </button>
-    {error && <p className={styles.error} id="media-error" role="alert">{error}</p>}
     {message && <p className={styles.success} role="status">{message}</p>}
     <div className={styles.existing}>
       <h3>Связанные изображения</h3>
