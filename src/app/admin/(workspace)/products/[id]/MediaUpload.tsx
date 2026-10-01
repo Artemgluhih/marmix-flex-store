@@ -17,8 +17,9 @@ export type ImagePreview = {
 type UploadStatus = "ready" | "invalid" | "uploading" | "uploaded" | "error";
 type Selection = { id: string; file: File; preview: string | null; extension: string | null; status: UploadStatus; error?: string };
 
-export function MediaUpload({ productId, images, productPublished, previewOnly = false, previewFailure = false }: {
+export function MediaUpload({ productId, images, productPublished, previewOnly = false, previewFailure = false, smokeFaultImageId }: {
   productId: string; images: ImagePreview[]; productPublished: boolean; previewOnly?: boolean; previewFailure?: boolean;
+  smokeFaultImageId?: string;
 }) {
   const [selected, setSelected] = useState<Selection[]>([]);
   const [pending, setPending] = useState(false);
@@ -29,6 +30,7 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
   const [saveError, setSaveError] = useState("");
   const [removing, setRemoving] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<ImagePreview | null>(null);
+  const [failureTarget, setFailureTarget] = useState(false);
   const [removeMessage, setRemoveMessage] = useState("");
   const [removeError, setRemoveError] = useState("");
   const [orphans, setOrphans] = useState<string[]>([]);
@@ -191,10 +193,11 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     } finally { setSaving(false); }
   }
 
-  function askToRemove(image: ImagePreview, trigger: HTMLButtonElement) {
+  function askToRemove(image: ImagePreview, trigger: HTMLButtonElement, simulateFailure = false) {
     if (pending || saving || removing || dirty) return;
     deleteTrigger.current = trigger;
     setRemoveTarget(image);
+    setFailureTarget(simulateFailure);
     setRemoveMessage("");
     setRemoveError("");
     dialog.current?.showModal();
@@ -217,7 +220,7 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
         dialog.current?.close();
         return;
       }
-      const result = await removeProductImage(productId, removeTarget.id);
+      const result = await removeProductImage(productId, removeTarget.id, failureTarget);
       if (result.kind === "denied") {
         setRemoveError(result.error);
         return;
@@ -366,10 +369,12 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
               }}>{image.is_primary ? "Главное изображение" : "Сделать главным"}</button>
             {productPublished && image.is_primary
               ? <p className={styles.blockedDelete}>Нельзя удалить главное изображение опубликованного товара. Сначала назначьте другое изображение главным или снимите товар с публикации.</p>
-              : <button type="button" className={styles.delete} title="Удалить изображение"
+              : <button type="button" className={styles.delete} title={image.id === smokeFaultImageId ? "Тест отказа Storage на TEST_ONLY изображении" : "Удалить изображение"}
                   aria-label={`Удалить изображение с позиции ${index + 1}`}
                   disabled={pending || saving || removing || dirty}
-                  onClick={(event) => askToRemove(image, event.currentTarget)}>Удалить изображение</button>}
+                  onClick={(event) => askToRemove(image, event.currentTarget, image.id === smokeFaultImageId)}>
+                  {image.id === smokeFaultImageId ? "Тест: отказ удаления файла" : "Удалить изображение"}
+                </button>}
           </li>)}
         </ul>
         {dirty && <p className={styles.unsaved}>Есть несохранённые изменения изображений.</p>}
@@ -403,7 +408,9 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
           else scanTrigger.current?.focus();
         }}>
         <h3>Удалить изображение?</h3>
-        <p>Изображение будет удалено из товара и хранилища. Отменить это действие после завершения нельзя.</p>
+        <p>{failureTarget
+          ? "Тест TEST_ONLY: связь с товаром будет удалена, файл останется для проверки предупреждения и повторной очистки."
+          : "Изображение будет удалено из товара и хранилища. Отменить это действие после завершения нельзя."}</p>
         {removeTarget?.is_primary && <p>Это главное изображение товара.</p>}
         {removeError && <p role="alert" className={styles.error}>{removeError}</p>}
         <div className={styles.dialogActions}>

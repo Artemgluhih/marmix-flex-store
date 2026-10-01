@@ -53,7 +53,11 @@ export default async function EditProductPage({ params, searchParams }: {
       <ProductCategoriesForm productId={product.id} categories={categoryOptions.data}
         selectedIds={memberships.data.map(({ category_id }) => category_id)} />
       <EditProductForm productId={product.id} values={values} areaAllowed={product.price_unit === "м²" && product.sale_unit === "sheet"} />
-      <MediaUpload productId={product.id} productPublished={product.is_published} images={imageRows.data.map((image) => ({
+      <MediaUpload productId={product.id} productPublished={product.is_published}
+        smokeFaultImageId={process.env.VERCEL_ENV === "preview" && product.catalog_kind === "TEST_ONLY"
+          ? imageRows.data.find((image) => image.storage_path.startsWith(`products/${product.id}/t036-failure-`))?.id
+          : undefined}
+        images={imageRows.data.map((image) => ({
         id: image.id,
         url: supabase.storage.from("product-media").getPublicUrl(image.storage_path).data.publicUrl,
         width: image.width, height: image.height,

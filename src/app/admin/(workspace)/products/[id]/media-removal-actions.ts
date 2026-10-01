@@ -21,11 +21,11 @@ async function missingAfterRemove(
 }
 
 async function productExists(supabase: Awaited<ReturnType<typeof requireAdminMutation>>["supabase"], productId: string) {
-  const result = await supabase.from("products").select("id,is_published").eq("id", productId).maybeSingle();
+  const result = await supabase.from("products").select("id,sku,is_published,catalog_kind").eq("id", productId).maybeSingle();
   return !result.error ? result.data : null;
 }
 
-export async function removeProductImage(productId: string, imageId: string): Promise<Removal> {
+export async function removeProductImage(productId: string, imageId: string, simulateStorageFailure = false): Promise<Removal> {
   const { supabase } = await requireAdminMutation();
   if (!validProductId(productId) || !ID.test(imageId)) return { kind: "denied", error: FAILURE };
   const product = await productExists(supabase, productId);
@@ -33,6 +33,14 @@ export async function removeProductImage(productId: string, imageId: string): Pr
     .select("id,product_id,storage_path,is_primary").eq("id", imageId).maybeSingle();
   if (!product || image.error || !image.data || image.data.product_id !== productId ||
       !validMediaPath(productId, image.data.storage_path)) {
+    return { kind: "denied", error: FAILURE };
+  }
+  // Temporary owner smoke: one explicitly named TEST_ONLY object in Preview.
+  // The normal Storage policy is never changed; the object remains for the real retry action.
+  if (simulateStorageFailure && !(process.env.VERCEL_ENV === "preview" &&
+      productId === "d8d2f0b5-4453-4862-8c59-0f9471c337ae" &&
+      product.catalog_kind === "TEST_ONLY" && product.sku.startsWith("TEST_ONLY-T036-BROWSER-") &&
+      image.data.storage_path.startsWith(`products/${productId}/t036-failure-`))) {
     return { kind: "denied", error: FAILURE };
   }
   if (product.is_published && image.data.is_primary) {
@@ -45,6 +53,10 @@ export async function removeProductImage(productId: string, imageId: string): Pr
     .eq("id", imageId).eq("product_id", productId).select("id");
   if (detached.error || detached.data?.length !== 1) return { kind: "denied", error: FAILURE };
   revalidatePath(`/admin/products/${productId}`);
+
+  if (simulateStorageFailure) {
+    return { kind: "orphan", path: image.data.storage_path, error: PARTIAL };
+  }
 
   try {
     const removed = await supabase.storage.from(MEDIA_BUCKET).remove([image.data.storage_path]);
