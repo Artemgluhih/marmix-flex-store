@@ -14,7 +14,11 @@ export async function saveCategory(categoryId: string | null, _previous: Categor
   const fail = (errors: CategoryErrors): CategoryState => ({ values, errors });
   const mode = categoryId === null ? "create" : "edit";
   if (categoryId !== null && !validCategoryId(categoryId)) return fail({ form: "Категория не найдена." });
-  const checked = validateCategory(values, mode);
+  // Publication is controlled only by the separate, confirmed T032 actions.
+  const current = categoryId === null ? null : await supabase.from("categories")
+    .select("id,slug,is_published").eq("id", categoryId).maybeSingle();
+  if (current && (current.error || !current.data)) return fail({ form: "Категория не найдена. Обновите страницу." });
+  const checked = validateCategory({ ...values, status: current?.data?.is_published ? "published" : "draft" }, mode);
   if (!checked.input) return fail(checked.errors);
   const input = checked.input;
 
@@ -31,13 +35,12 @@ export async function saveCategory(categoryId: string | null, _previous: Categor
     redirect(`/admin/categories?edit=${created.data.id}&saved=1`);
   }
 
-  const current = await supabase.from("categories").select("id,slug,is_published").eq("id", categoryId).maybeSingle();
-  if (current.error || !current.data) return fail({ form: "Категория не найдена. Обновите страницу." });
+  if (!current?.data) return fail({ form: "Категория не найдена. Обновите страницу." });
   if (current.data.is_published && input.slug !== current.data.slug) return fail({ slug: "Адрес опубликованной категории нельзя изменить без перенаправления." });
 
   const updated = await supabase.from("categories").update({
     name: input.name, slug: input.slug, description: input.description, sort_order: input.sort_order,
-    seo_title: input.seo_title, seo_description: input.seo_description, is_published: input.is_published,
+    seo_title: input.seo_title, seo_description: input.seo_description,
   }).eq("id", categoryId).eq("is_published", current.data.is_published).eq("slug", current.data.slug)
     .select("id").maybeSingle();
   if (updated.error) return fail(updated.error.code === "23505" ? { slug: "Такой slug уже используется." } : { form: "Не удалось сохранить категорию. Повторите попытку." });

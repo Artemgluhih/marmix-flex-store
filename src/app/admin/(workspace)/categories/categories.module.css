@@ -32,7 +32,7 @@
 .formNote { margin-top: -12px; }
 .formGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .field { display: grid; align-content: start; min-width: 0; gap: 8px; }
-.field label { color: var(--color-text-secondary); font-size: 12px; font-weight: 600; }
+.field label, .fieldLabel { color: var(--color-text-secondary); font-size: 12px; font-weight: 600; }
 .field input, .field select, .field textarea { width: 100%; min-width: 0; min-height: 46px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 0; background: var(--color-elevated); color: var(--color-text-primary); font: inherit; font-size: 13px; }
 .field textarea { min-height: 88px; resize: vertical; }
 .field input[readonly] { color: var(--color-text-secondary); cursor: not-allowed; }
@@ -46,7 +46,22 @@
 .actions button:disabled { background: var(--color-disabled-surface); color: var(--color-disabled-text); cursor: not-allowed; }
 .actions button:hover:not(:disabled) { background: var(--color-gold-hover); }
 .success { margin: 0 0 20px; padding: 12px 16px; border: 1px solid var(--color-border-warm); color: var(--color-text-primary); background: var(--color-graphite); font-size: 12px; line-height: 1.6; }
+.visual { margin: 0 0 20px; padding: 12px 16px; border: 1px solid var(--color-border-warm); color: var(--color-gold-hover); background: var(--color-graphite); font-size: 12px; line-height: 1.6; }
+.publication { min-width: 0; margin-top: 20px; padding: 26px; border: 1px solid var(--color-border-quiet); background: var(--color-graphite); }
+.publication h2 { margin: 0 0 15px; font-size: 19px; font-weight: 600; }
+.publication > p { margin: 8px 0; color: var(--color-text-secondary); font-size: 12px; line-height: 1.6; }
+.publication strong { color: var(--color-text-primary); overflow-wrap: anywhere; }
+.confirmation { margin-top: 20px; border-top: 1px solid var(--color-border-warm); padding-top: 18px; }
+.confirmation summary { display: inline-flex; align-items: center; min-height: 46px; padding: 10px 16px; border: 1px solid var(--color-border-warm); color: var(--color-text-primary); font-size: 12px; font-weight: 700; cursor: pointer; }
+.confirmation summary:hover { color: var(--color-gold-hover); }
+.confirmationBody { margin-top: 16px; padding: 18px; border: 1px solid var(--color-border-quiet); color: var(--color-text-secondary); font-size: 12px; line-height: 1.65; overflow-wrap: anywhere; }
+.confirmationBody p { margin: 0 0 10px; }
+.confirmationBody form { margin-top: 16px; }
+.confirmationBody button { min-height: 48px; padding: 10px 18px; border: 0; border-radius: 0; background: var(--color-gold); color: #181510; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.confirmationBody button:hover:not(:disabled) { background: var(--color-gold-hover); }
+.confirmationBody button:disabled { background: var(--color-disabled-surface); color: var(--color-disabled-text); cursor: not-allowed; }
 .page a:focus-visible, .page button:focus-visible, .page input:focus-visible, .page select:focus-visible, .page textarea:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.page summary:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
 @media (max-width: 1320px) { .layout { grid-template-columns: minmax(0, 1fr); } .editorSection { max-width: 760px; } }
 @media (max-width: 700px) {
   .tableFrame { border: 0; background: transparent; }
@@ -62,4 +77,4 @@
   .table td:nth-child(4) { grid-column: 1; }
   .table td:nth-child(5) { grid-column: 2; align-self: end; }
 }
-@media (max-width: 520px) { .form { padding: 20px 16px; } .formGrid { grid-template-columns: minmax(0, 1fr); } .actions button { width: 100%; } .table tr { padding: 16px; } }
+@media (max-width: 520px) { .form, .publication { padding: 20px 16px; } .formGrid { grid-template-columns: minmax(0, 1fr); } .actions button, .confirmationBody button { width: 100%; } .table tr { padding: 16px; } }

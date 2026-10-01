@@ -8,13 +8,13 @@ import { saveCategory, type CategoryState } from "./actions";
 import { emptyCategoryValues, type CategoryField, type CategoryValues } from "./category-validation";
 import styles from "./categories.module.css";
 
-function SaveButton() {
+function SaveButton({ previewOnly }: { previewOnly: boolean }) {
   const { pending } = useFormStatus();
-  return <button type="submit" disabled={pending}>{pending ? "Сохраняем…" : "Сохранить категорию"}</button>;
+  return <button type="submit" disabled={pending || previewOnly}>{pending ? "Сохраняем…" : "Сохранить категорию"}</button>;
 }
 
-export function CategoryForm({ categoryId, values = emptyCategoryValues, published = false }: {
-  categoryId: string | null; values?: CategoryValues; published?: boolean;
+export function CategoryForm({ categoryId, values = emptyCategoryValues, published = false, previewOnly = false }: {
+  categoryId: string | null; values?: CategoryValues; published?: boolean; previewOnly?: boolean;
 }) {
   const [state, action] = useActionState(saveCategory.bind(null, categoryId), { values, errors: {} } as CategoryState);
   const field = (name: CategoryField, label: string, options: { multiline?: boolean; maxLength?: number; required?: boolean; readOnly?: boolean; inputMode?: "numeric" } = {}) => (
@@ -40,17 +40,13 @@ export function CategoryForm({ categoryId, values = emptyCategoryValues, publish
     <div className={styles.formGrid}>
       {field("sort_order", "Порядок показа", { required: true, inputMode: "numeric" })}
       <div className={styles.field}>
-        <label htmlFor="category-status">Статус</label>
-        {categoryId ? <select id="category-status" name="status" defaultValue={state.values.status} key={state.values.status}
-          aria-invalid={Boolean(state.errors.status)} aria-describedby={state.errors.status ? "category-status-error" : undefined}>
-          <option value="draft">Скрыта</option><option value="published">Опубликована</option>
-        </select> : <><input type="hidden" name="status" value="draft" /><p className={styles.draft}>Скрыта — публикация доступна после создания</p></>}
-        {state.errors.status && <p className={styles.error} id="category-status-error">{state.errors.status}</p>}
+        <span className={styles.fieldLabel}>Статус</span>
+        <p className={styles.draft}>{categoryId ? published ? "Опубликована — состояние меняется отдельным действием ниже" : "Скрыта — состояние меняется отдельным действием ниже" : "Скрыта — публикация доступна после создания"}</p>
       </div>
     </div>
     {field("seo_title", "SEO-заголовок", { maxLength: 180 })}
     {field("seo_description", "SEO-описание", { multiline: true, maxLength: 320 })}
     {state.errors.form && <p className={styles.formError} role="alert">{state.errors.form}</p>}
-    <div className={styles.actions}><SaveButton />{categoryId && <Link href="/admin/categories">Добавить новую</Link>}</div>
+    <div className={styles.actions}><SaveButton previewOnly={previewOnly} />{categoryId && !previewOnly && <Link href="/admin/categories">Добавить новую</Link>}</div>
   </form>;
 }
