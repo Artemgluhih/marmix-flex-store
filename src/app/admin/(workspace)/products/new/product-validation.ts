@@ -1,14 +1,14 @@
 export const productFields = [
-  "name", "sku", "slug", "category_id", "series", "price", "price_unit", "sale_unit", "min_quantity", "quantity_step",
+  "name", "sku", "slug", "series", "price", "price_unit", "sale_unit", "min_quantity", "quantity_step",
 ] as const;
 export type ProductField = (typeof productFields)[number];
 export type ProductValues = Record<ProductField, string>;
-export type ProductErrors = Partial<Record<ProductField | "form", string>>;
+export type ProductErrors = Partial<Record<ProductField | "category_ids" | "form", string>>;
 export type ProductInput = {
   name: string;
   sku: string;
   slug: string;
-  category_id: string;
+  category_ids: string[];
   series: string | null;
   price_minor: number | null;
   price_unit: "м²" | "шт./упаковка" | null;
@@ -33,13 +33,12 @@ function rublesToMinor(value: string): number | null {
   return minor > BigInt(0) && minor <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(minor) : null;
 }
 
-export function validateProductValues(values: ProductValues, categoryIds: readonly string[]):
+export function validateProductValues(values: ProductValues, categoryIds: readonly string[], selectedIds: readonly string[]):
   { input: ProductInput; errors: ProductErrors } | { input: null; errors: ProductErrors } {
   const errors: ProductErrors = {};
   const name = values.name.trim();
   const sku = values.sku.trim();
   const slug = values.slug.trim();
-  const category_id = values.category_id.trim();
   const series = values.series.trim();
   const price = values.price.trim();
   const price_unit = values.price_unit.trim();
@@ -50,9 +49,10 @@ export function validateProductValues(values: ProductValues, categoryIds: readon
   if (!name || name.length > 160) errors.name = "Укажите название до 160 символов.";
   if (sku.length > 80 || !/^MF-[A-Z0-9]+-[0-9]{4,}$/.test(sku)) errors.sku = "Укажите SKU формата MF-ABC-0000.";
   if (slug.length > 160 || !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) errors.slug = "Используйте строчные латинские буквы, цифры и дефис между словами.";
-  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(category_id) || !categoryIds.includes(category_id)) {
-    errors.category_id = "Выберите существующую категорию.";
-  }
+  const category_ids = [...new Set(selectedIds)];
+  if (category_ids.length > 100 || category_ids.some((id) =>
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id) || !categoryIds.includes(id)
+  )) errors.category_ids = "Выберите существующие категории.";
   if (series.length > 120) errors.series = "Серия не должна быть длиннее 120 символов.";
 
   const price_minor = price ? rublesToMinor(price) : null;
@@ -72,7 +72,7 @@ export function validateProductValues(values: ProductValues, categoryIds: readon
   if (Object.keys(errors).length) return { input: null, errors };
 
   return { input: {
-    name, sku, slug, category_id, series: series || null, price_minor,
+    name, sku, slug, category_ids, series: series || null, price_minor,
     price_unit: (price_unit || null) as ProductInput["price_unit"],
     sale_unit: (sale_unit || null) as ProductInput["sale_unit"],
     min_quantity, quantity_step,

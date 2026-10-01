@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { EditProductForm } from "./EditProductForm";
 import { AssortmentControls } from "./AssortmentControls";
+import { ProductCategoriesForm } from "./ProductCategoriesForm";
 import { editValuesFromProduct, validProductId } from "./edit-validation";
 import base from "../new/new-product.module.css";
 import styles from "./edit-product.module.css";
@@ -18,10 +19,17 @@ export default async function EditProductPage({ params, searchParams }: {
   const { supabase } = await requireAdmin(`/admin/products/${id}`);
   if (!validProductId(id)) notFound();
   const { data: product, error } = await supabase.from("products")
-    .select("id,sku,slug,name,series,category_id,catalog_kind,is_published,archived_at,availability_status,is_featured,sort_order,description,width_mm,height_mm,thickness_mm,area_per_sale_unit_m2,price_unit,sale_unit,specifications,seo_title,seo_description")
+    .select("id,sku,slug,name,series,catalog_kind,is_published,archived_at,availability_status,is_featured,sort_order,description,width_mm,height_mm,thickness_mm,area_per_sale_unit_m2,price_unit,sale_unit,specifications,seo_title,seo_description")
     .eq("id", id).maybeSingle();
   if (error) throw new Error("Не удалось загрузить товар для редактирования.");
   if (!product || (product.catalog_kind !== "REAL" && !(process.env.VERCEL_ENV === "preview" && product.catalog_kind === "TEST_ONLY"))) notFound();
+  const [categoryOptions, memberships] = await Promise.all([
+    supabase.from("categories").select("id,name").order("sort_order").order("name"),
+    supabase.from("product_categories").select("category_id").eq("product_id", id),
+  ]);
+  if (categoryOptions.error || memberships.error || !categoryOptions.data || !memberships.data) {
+    throw new Error("Не удалось загрузить категории товара.");
+  }
   const values = editValuesFromProduct(product);
   if (!values) throw new Error("Характеристики товара требуют проверки перед редактированием.");
   const notice = await searchParams;
@@ -40,6 +48,8 @@ export default async function EditProductPage({ params, searchParams }: {
         {product.series && <div><span>Серия</span><strong>{product.series}</strong></div>}
       </section>
       <AssortmentControls product={product} />
+      <ProductCategoriesForm productId={product.id} categories={categoryOptions.data}
+        selectedIds={memberships.data.map(({ category_id }) => category_id)} />
       <EditProductForm productId={product.id} values={values} areaAllowed={product.price_unit === "м²" && product.sale_unit === "sheet"} />
     </div>
   );

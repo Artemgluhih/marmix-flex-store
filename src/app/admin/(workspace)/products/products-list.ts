@@ -10,7 +10,7 @@ export type ProductListRow = {
   price_unit: string | null;
   is_published: boolean;
   archived_at: string | null;
-  categories: { name: string } | null;
+  categories: { name: string }[];
 };
 
 export type CategoryOption = { id: string; name: string };
@@ -57,8 +57,8 @@ export function productsHref(params: ProductListParams, page: number): string {
 /** No category can appear here solely because of a TEST_ONLY fixture. */
 export async function getRealCategoryOptions(supabase: AdminContext["supabase"]): Promise<CategoryOption[]> {
   const { data, error } = await supabase.from("categories")
-    .select("id,name,products!inner()")
-    .eq("products.catalog_kind", "REAL")
+    .select("id,name,product_categories!inner(products!inner(id))")
+    .eq("product_categories.products.catalog_kind", "REAL")
     .order("sort_order", { ascending: true })
     .order("name", { ascending: true });
   if (error || !data) throw new Error("Не удалось загрузить категории товаров.");
@@ -67,13 +67,13 @@ export async function getRealCategoryOptions(supabase: AdminContext["supabase"])
 
 function filteredQuery(supabase: AdminContext["supabase"], params: ProductListParams) {
   let query = supabase.from("products")
-    .select("id,sku,name,price_minor,price_unit,is_published,archived_at,categories!inner(name)", { count: "exact" })
+    .select("id,sku,name,price_minor,price_unit,is_published,archived_at,product_categories(category_id)", { count: "exact" })
     .eq("catalog_kind", "REAL");
   if (params.q) {
     // q has only letters/digits/spaces/dot/hyphen; no PostgREST delimiters or LIKE wildcards.
     query = query.or(`sku.ilike.%${params.q}%,name.ilike.%${params.q}%`);
   }
-  if (params.category) query = query.eq("category_id", params.category);
+  if (params.category) query = query.eq("product_categories.category_id", params.category).not("product_categories", "is", null);
   if (params.status === "published") query = query.eq("is_published", true).is("archived_at", null);
   if (params.status === "unpublished") query = query.eq("is_published", false).is("archived_at", null);
   if (params.status === "archived") query = query.not("archived_at", "is", null);
@@ -120,10 +120,21 @@ export async function getRealProductsPage(
     }
   }
 
+  const links = data.length ? await supabase.from("product_categories")
+    .select("product_id,categories(name)").in("product_id", data.map(({ id }) => id)) : null;
+  if (links?.error) throw new Error("Не удалось загрузить категории товаров.");
+  const names = new Map<string, { name: string }[]>();
+  for (const link of links?.data ?? []) {
+    const category = Array.isArray(link.categories) ? link.categories[0] : link.categories;
+    if (category) names.set(link.product_id, [...(names.get(link.product_id) ?? []), category]);
+  }
+  for (const categories of names.values()) categories.sort((a, b) => a.name.localeCompare(b.name, "ru"));
+
   return {
     products: data.map((product) => ({
-      ...product,
-      categories: Array.isArray(product.categories) ? product.categories[0] ?? null : product.categories,
+      id: product.id, sku: product.sku, name: product.name, price_minor: product.price_minor,
+      price_unit: product.price_unit, is_published: product.is_published, archived_at: product.archived_at,
+      categories: names.get(product.id) ?? [],
     })),
     total,
     page,

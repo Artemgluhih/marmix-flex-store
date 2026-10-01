@@ -28,6 +28,12 @@
 .error, .formError { margin: 0; color: var(--color-error); font-size: 12px; line-height: 1.55; overflow-wrap: anywhere; }
 .formError { padding: 13px 16px; border: 1px solid var(--color-error); }
 .notice { margin: 20px 0 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.6; }
+.categories { display: grid; gap: 10px; min-width: 0; margin: 0; padding: 18px; border: 1px solid var(--color-border-quiet); }
+.categories legend { padding: 0 7px; color: var(--color-text-primary); font-size: 13px; font-weight: 700; }
+.categories p { margin: 0 0 4px; color: var(--color-text-secondary); font-size: 12px; line-height: 1.6; }
+.categories label { display: flex; align-items: center; gap: 12px; min-height: 44px; min-width: 0; overflow-wrap: anywhere; color: var(--color-text-primary); font-size: 13px; }
+.categories input { width: 18px; height: 18px; flex: none; accent-color: var(--color-gold); }
+.categories input:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
 .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; }
 .actions button {
   min-height: 52px; padding: 12px 20px; border: 0; border-radius: 0;
@@ -47,5 +53,6 @@
 }
 @media (max-width: 390px) {
   .section { padding: 20px 16px; }
+  .categories { padding: 14px; }
   .actions button { width: 100%; }
 }
