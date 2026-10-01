@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T035 — DONE, T036–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T035 — DONE, T036 — BLOCKED (OWNER VERIFICATION), T037–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -827,7 +827,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T036
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** BLOCKED — OWNER VERIFICATION
 - **Title:** Safe image removal
 - **Goal:** Удалять медиа без битых публичных ссылок.
 - **Why:** Storage и таблица изменяются раздельно.
@@ -842,6 +842,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T036): Safe image removal
+
+- **Progress (2026-10-01):** Preview migration `20261001140002_protect_published_primary_delete.sql` applied with matching history; a direct authenticated DB DELETE of a published primary is denied without changing RLS/Storage policies. Product Editor has per-image confirmation, guarded exact-row detach before single-object Storage removal, explicit partial-failure warning, scoped orphan scan/retry, and a guarded no-write Preview review screen. Transactional TEST_ONLY direct DB matrix for non-primary, published primary denial, draft primary and last draft image PASS with rollback; permanent synthetic product/image/Storage counts 0. Lint/typecheck/build PASS. Real-admin browser Storage delete, public URL, failure/retry and owner visual/responsive verification remain required before DONE. Production unchanged; T037 not started.
 
 ### T037 — Media presentation verification
 

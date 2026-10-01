@@ -53,7 +53,7 @@ export default async function EditProductPage({ params, searchParams }: {
       <ProductCategoriesForm productId={product.id} categories={categoryOptions.data}
         selectedIds={memberships.data.map(({ category_id }) => category_id)} />
       <EditProductForm productId={product.id} values={values} areaAllowed={product.price_unit === "м²" && product.sale_unit === "sheet"} />
-      <MediaUpload productId={product.id} images={imageRows.data.map((image) => ({
+      <MediaUpload productId={product.id} productPublished={product.is_published} images={imageRows.data.map((image) => ({
         id: image.id,
         url: supabase.storage.from("product-media").getPublicUrl(image.storage_path).data.publicUrl,
         width: image.width, height: image.height,
