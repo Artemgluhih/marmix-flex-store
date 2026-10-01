@@ -101,7 +101,9 @@ export function CatalogFragment() {
               <span className={base.eyebrow}>Рассмотреть фактуру</span>
               <button type="button" className={styles.dialogClose} onClick={closeTexture} aria-label="Закрыть просмотр">Закрыть ×</button>
             </div>
-            <Image className={styles.dialogImage} src={selected.image} width={1000} height={650} alt={`Демонстрационная фактура ${selected.name} крупно`} />
+            <Image className={styles.dialogImage} src={selected.image} width={1000} height={650}
+              sizes="(max-width: 620px) calc(100vw - 32px), min(90vw, 1000px)"
+              alt={`Демонстрационная фактура ${selected.name} крупно`} />
             <div className={styles.dialogBottom}>
               <h2 id="dialog-title">{selected.name}</h2>
               <p>Демонстрационная визуализация. Цвет и рисунок конкретного товара необходимо проверить по образцу.</p>

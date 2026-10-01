@@ -1,0 +1,19 @@
+.page { width: 100%; padding: 64px clamp(20px, 5vw, 88px) 100px; color: var(--color-text-primary); background: var(--color-page); }
+.intro { max-width: 780px; margin-bottom: 72px; }
+.intro > p:first-child { color: var(--color-gold); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; }
+.intro h1 { margin: 18px 0; font: 400 clamp(36px, 4vw, 58px)/1.2 var(--font-display); }
+.intro p, .section figcaption, .note { color: var(--color-text-secondary); line-height: 1.6; }
+.section { margin: 0 0 80px; }
+.section h2 { margin: 0 0 24px; font: 400 clamp(25px, 3vw, 36px)/1.2 var(--font-display); }
+.section figure { min-width: 0; margin: 0; }
+.pair { display: grid; grid-template-columns: minmax(0, 600px) minmax(0, 360px); gap: clamp(24px, 4vw, 72px); align-items: end; }
+.materialFrame, .cardFrame { display: grid; place-items: center; aspect-ratio: 1; background: #222; }
+.materialFrame img, .cardFrame img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.cardFrame { background: var(--color-disabled-surface); }
+.section figcaption { margin-top: 14px; max-width: 600px; font-size: 12px; }
+.detail, .interior { max-width: 1100px; }
+.detail img { display: block; width: 100%; height: auto; }
+.interior { max-width: 600px; }
+.interior img { display: block; width: 100%; height: auto; }
+.note { max-width: 740px; font-size: 13px; }
+@media (max-width: 700px) { .page { padding-top: 42px; } .intro { margin-bottom: 54px; } .pair { grid-template-columns: 1fr; max-width: 600px; } .card { max-width: 360px; } .section { margin-bottom: 58px; } }

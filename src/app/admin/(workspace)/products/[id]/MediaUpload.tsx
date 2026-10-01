@@ -290,8 +290,8 @@ export function MediaUpload({ productId, images, productPublished }: {
         <p>Главное изображение используется как основное превью товара.</p>
         <div className={styles.mainPreview}>
           {primary ? <>
-            <Image src={primary.url} width={160} height={116}
-              alt={primary.alt || "Главное изображение без alt-текста"} unoptimized />
+            <Image src={primary.url} width={primary.width} height={primary.height} sizes="92px"
+              alt={primary.alt || "Главное изображение: alt-текст не задан"} />
             <span>Основное превью товара</span>
           </> : <span>Главное изображение не выбрано.</span>}
         </div>
@@ -302,7 +302,8 @@ export function MediaUpload({ productId, images, productPublished }: {
             onDrop={(event) => { event.preventDefault(); const source = dragging.current; dragging.current = null; if (source) move(source, image.id); }}>
             <div className={styles.mediaTop}><span>Позиция {index + 1}</span>{image.is_primary && <strong>Главное</strong>}</div>
             <Image src={image.url} width={image.width} height={image.height}
-              alt={image.alt || "Изображение товара без alt-текста"} loading="lazy" unoptimized draggable={false} />
+              sizes="(max-width: 700px) calc(100vw - 96px), (max-width: 1200px) 35vw, 300px"
+              alt={image.alt || "Изображение товара: alt-текст не задан"} loading="lazy" draggable={false} />
             <div className={styles.reorder}>
               <button type="button" draggable={!pending && !saving} className={styles.drag}
                 aria-label={`Перетащить изображение с позиции ${index + 1}`}
