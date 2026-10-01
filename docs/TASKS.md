@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T033 — DONE, T034–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T033 — DONE, T034 — BLOCKED (OWNER VISUAL VERIFICATION), T035–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 ожидает завершения T034–T038. T033 DONE; следующая задача — T034.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 ожидает завершения T034–T038. T034 implementation опубликована для owner verification; T035 не начинать.
 
 ## PHASE 0 — Project Foundation
 
@@ -783,7 +783,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T034
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** BLOCKED — OWNER VISUAL VERIFICATION
 - **Title:** Media upload и preview
 - **Goal:** Добавить загрузку и предпросмотр в Product Editor.
 - **Why:** Редактор не должен вводить Storage paths.
@@ -798,6 +798,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T034): Media upload и preview
+
+- **Progress (2026-10-01):** Preview-only migration `20261001073651_media_draft_nullable.sql` applied with matching history after confirming zero existing image rows; only `product_images.role` and `alt` became nullable for draft media. No semantic defaults or T035 controls. Product Editor now uses browser publishable key with authenticated cookie session for Storage upload, generated per-product UUID path and no upsert; a same-origin guarded Server Action verifies existing product, exact path, object metadata and dimensions before inserting a draft relation with NULL role/alt. Partial metadata failure attempts object cleanup; ambiguous response is checked before deletion. Existing images and preview, local format/size validation and safe errors implemented. Validation/path cases and transactional authenticated admin DB insert with rollback PASS; objects, image rows, TEST_ONLY products and temporary Auth accounts 0. Prior T033 real-admin Storage API smoke proves its RLS boundary; combined browser upload/link through the new UI and owner visual verification remain pending. Lint/typecheck/build PASS, Security Advisor has no new blocking findings. Temporary Preview-only no-write media-review screen must be removed after owner verification. Production untouched; T035 not started.
 
 ### T035 — Image metadata и primary
 
