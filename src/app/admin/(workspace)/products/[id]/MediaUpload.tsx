@@ -37,6 +37,18 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     setSelected((current) => current.map((item) => item.id === id ? { ...item, status, error } : item));
   }
 
+  function removeQueued(id: string) {
+    if (pending) return;
+    const item = selected.find((entry) => entry.id === id);
+    if (!item || (item.status !== "ready" && item.status !== "invalid")) return;
+    if (item.preview) {
+      URL.revokeObjectURL(item.preview);
+      urls.current = urls.current.filter((url) => url !== item.preview);
+    }
+    setSelected((current) => current.filter((entry) => entry.id !== id));
+    setMessage("");
+  }
+
   async function uploadOne(item: Selection, client: ReturnType<typeof createAdminBrowserSupabaseClient>) {
     if (!item.extension) return;
     mark(item.id, "uploading");
@@ -128,7 +140,10 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     <div className={styles.field}>
       <label htmlFor="media-file">Выбрать изображения</label>
       <input id="media-file" ref={inputRef} type="file" multiple accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
-        disabled={pending} aria-describedby="media-hint" onChange={(event) => chooseFiles(event.target.files)} />
+        disabled={pending} aria-describedby="media-hint" onChange={(event) => {
+          chooseFiles(event.target.files);
+          event.target.value = "";
+        }} />
       <p id="media-hint">Можно выбрать несколько файлов. Alt и роль будут настроены на следующем этапе.</p>
     </div>
     {selected.length > 0 && <ul className={styles.selection} aria-label="Выбранные изображения" aria-live="polite">
@@ -144,6 +159,10 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
             item.status === "uploaded" ? "Загружено" : "Ошибка загрузки"}</span>
           {item.error && <span className={styles.error}>{item.error}</span>}
         </div>
+        {(item.status === "ready" || item.status === "invalid") &&
+          <button type="button" className={styles.remove} disabled={pending}
+            aria-label={`Убрать ${item.file.name} из очереди загрузки`}
+            onClick={() => removeQueued(item.id)}>Убрать</button>}
       </li>)}
     </ul>}
     <button type="button" onClick={upload} disabled={pending || !hasUploadable} className={styles.upload}>

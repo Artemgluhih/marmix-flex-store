@@ -9,12 +9,15 @@
 .selected { display: flex; gap: 16px; align-items: center; min-width: 0; padding: 10px; border: 1px solid var(--color-border-quiet); }
 .selected img, .noPreview { display: block; width: 136px; height: 112px; flex: none; object-fit: contain; background: var(--color-elevated); }
 .noPreview { display: grid; place-items: center; padding: 8px; color: var(--color-text-secondary); font-size: 12px; text-align: center; }
-.selected div { display: grid; gap: 7px; min-width: 0; }
+.selected div { display: grid; gap: 7px; min-width: 0; flex: 1; }
 .selected strong { font-size: 13px; overflow-wrap: anywhere; }
 .selected span { color: var(--color-text-secondary); font-size: 12px; }
+.remove { flex: none; align-self: center; min-height: 44px; margin-left: auto; padding: 8px 10px; border: 1px solid var(--color-border-warm); background: transparent; color: var(--color-text-primary); font: inherit; font-size: 12px; cursor: pointer; }
+.remove:hover:not(:disabled) { border-color: var(--color-gold); color: var(--color-gold-hover); }
+.remove:disabled { opacity: .65; cursor: not-allowed; }
 .upload { justify-self: start; min-height: 46px; padding: 10px 16px; border: 1px solid var(--color-gold); background: var(--color-gold); color: #181510; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .upload:disabled { opacity: .65; cursor: not-allowed; }
-.field input:focus-visible, .upload:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
+.field input:focus-visible, .upload:focus-visible, .remove:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
 .error, .success { margin: 0; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
 .error { color: var(--color-error); }
 .success { color: var(--color-success); }
