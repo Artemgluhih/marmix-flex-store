@@ -45,7 +45,7 @@ export function AssortmentControls({ product }: { product: ProductState }) {
     <header className={styles.header}>
       <h2 id="assortment-title">Публикация и ассортимент</h2>
       <p>Текущий статус: <strong>{archived ? "В архиве" : product.is_published ? "Опубликован" : "Скрыт"}</strong></p>
-      <p>Публикация делает товар видимым при открытой категории. Неполные коммерческие данные не позволяют оформить заказ.</p>
+      <p>Для публикации выберите главное изображение и заполните alt и роль кадров. Неполные коммерческие данные не позволяют оформить заказ.</p>
     </header>
     <div className={styles.transitions}>
       {archived ? <><p>Сначала восстановите товар из архива, чтобы опубликовать его.</p><TransitionForm productId={product.id} command="restore" label="Восстановить" /></>

@@ -42,6 +42,17 @@ export async function changePublication(productId: string, command: Transition, 
   if (found.error || !found.data || !editable(found.data.catalog_kind)) return { error: "Товар не найден." };
   const next = transitionPatch(command, found.data);
   if ("error" in next) return { error: next.error };
+  if (command === "publish") {
+    const [primary, incomplete] = await Promise.all([
+      supabase.from("product_images").select("id", { count: "exact", head: true })
+        .eq("product_id", productId).eq("is_primary", true),
+      supabase.from("product_images").select("id", { count: "exact", head: true })
+        .eq("product_id", productId).or("role.is.null,alt.is.null"),
+    ]);
+    if (primary.error || incomplete.error) return { error: "Не удалось проверить изображения товара. Повторите попытку." };
+    if (primary.count !== 1) return { error: "Перед публикацией выберите главное изображение." };
+    if (incomplete.count !== 0) return { error: "Перед публикацией заполните alt и роль для всех изображений." };
+  }
   // Optimistic precondition makes a concurrent archive/restore fail closed.
   let query = supabase.from("products").update(next.patch)
     .eq("id", productId).eq("catalog_kind", found.data.catalog_kind)

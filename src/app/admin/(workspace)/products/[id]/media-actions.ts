@@ -33,9 +33,14 @@ export async function linkUploadedImage(productId: string, path: string, width: 
     return failure("Загруженное изображение не найдено или его формат недопустим.");
   }
 
+  const latest = await supabase.from("product_images").select("sort_order")
+    .eq("product_id", productId).order("sort_order", { ascending: false }).limit(1).maybeSingle();
+  if (latest.error || (latest.data && latest.data.sort_order >= 2147483647)) {
+    return failure("Не удалось определить порядок изображения.");
+  }
   const insert = await supabase.from("product_images").insert({
     product_id: productId, storage_path: path, width, height,
-    role: null, alt: null,
+    role: null, alt: null, sort_order: (latest.data?.sort_order ?? -1) + 1,
   }).select("id").single();
   if (insert.error || !insert.data) return failure("Не удалось привязать изображение к товару.");
 

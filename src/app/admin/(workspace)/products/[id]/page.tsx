@@ -27,7 +27,7 @@ export default async function EditProductPage({ params, searchParams }: {
   const [categoryOptions, memberships, imageRows] = await Promise.all([
     supabase.from("categories").select("id,name").order("sort_order").order("name"),
     supabase.from("product_categories").select("category_id").eq("product_id", id),
-    supabase.from("product_images").select("id,storage_path,width,height").eq("product_id", id).order("sort_order").order("created_at"),
+    supabase.from("product_images").select("id,storage_path,width,height,alt,role,sort_order,is_primary").eq("product_id", id).order("sort_order").order("created_at").order("id"),
   ]);
   if (categoryOptions.error || memberships.error || imageRows.error || !categoryOptions.data || !memberships.data || !imageRows.data) {
     throw new Error("Не удалось загрузить данные товара.");
@@ -57,6 +57,7 @@ export default async function EditProductPage({ params, searchParams }: {
         id: image.id,
         url: supabase.storage.from("product-media").getPublicUrl(image.storage_path).data.publicUrl,
         width: image.width, height: image.height,
+        role: image.role, alt: image.alt, sort_order: image.sort_order, is_primary: image.is_primary,
       }))} />
     </div>
   );

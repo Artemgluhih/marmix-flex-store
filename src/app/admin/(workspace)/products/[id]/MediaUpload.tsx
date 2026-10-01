@@ -4,17 +4,27 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { createAdminBrowserSupabaseClient } from "@/lib/supabase/browser-auth";
 import { linkUploadedImage } from "./media-actions";
+import { saveMediaMetadata } from "./media-metadata-actions";
+import { IMAGE_ROLES, type ImageRole } from "./media-metadata-validation";
 import { MEDIA_BUCKET, mediaPathFor, validateImageFile, validImageDimensions } from "./media-validation";
 import styles from "./media-upload.module.css";
 
-export type ImagePreview = { id: string; url: string; width: number; height: number };
+export type ImagePreview = {
+  id: string; url: string; width: number; height: number;
+  role: ImageRole | null; alt: string | null; sort_order: number; is_primary: boolean;
+};
 type UploadStatus = "ready" | "invalid" | "uploading" | "uploaded" | "error";
 type Selection = { id: string; file: File; preview: string | null; extension: string | null; status: UploadStatus; error?: string };
 
-export function MediaUpload({ productId, images }: { productId: string; images: ImagePreview[] }) {
+export function MediaUpload({ productId, images, previewOnly = false }: { productId: string; images: ImagePreview[]; previewOnly?: boolean }) {
   const [selected, setSelected] = useState<Selection[]>([]);
   const [pending, setPending] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState<ImagePreview[]>(images);
+  const [baseline, setBaseline] = useState<ImagePreview[]>(images);
+  const [saveMessage, setSaveMessage] = useState("");
+  const [saveError, setSaveError] = useState("");
+  const dragging = useRef<string | null>(null);
   const urls = useRef<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => () => { urls.current.forEach(URL.revokeObjectURL); }, []);
@@ -74,7 +84,10 @@ export function MediaUpload({ productId, images }: { productId: string; images: 
         return;
       }
       const url = bucket.getPublicUrl(path).data.publicUrl;
-      setSaved((current) => [...current, { id: linked.id, url, width: dimensions!.width, height: dimensions!.height }]);
+      const image: ImagePreview = { id: linked.id, url, width: dimensions!.width, height: dimensions!.height,
+        role: null, alt: null, sort_order: 0, is_primary: false };
+      setSaved((current) => [...current, { ...image, sort_order: Math.max(-1, ...current.map(({ sort_order }) => sort_order)) + 1 }]);
+      setBaseline((current) => [...current, { ...image, sort_order: Math.max(-1, ...current.map(({ sort_order }) => sort_order)) + 1 }]);
       mark(item.id, "uploaded");
     } catch {
       if (!path) { mark(item.id, "error", "Файл не удалось прочитать. Выберите исправное изображение."); return; }
@@ -85,7 +98,10 @@ export function MediaUpload({ productId, images }: { productId: string; images: 
         if (relation.error) throw relation.error;
         if (relation.data && dimensions) {
           const url = bucket.getPublicUrl(path).data.publicUrl;
-          setSaved((current) => [...current, { id: relation.data!.id, url, width: dimensions!.width, height: dimensions!.height }]);
+          const image: ImagePreview = { id: relation.data!.id, url, width: dimensions!.width, height: dimensions!.height,
+            role: null, alt: null, sort_order: 0, is_primary: false };
+          setSaved((current) => [...current, { ...image, sort_order: Math.max(-1, ...current.map(({ sort_order }) => sort_order)) + 1 }]);
+          setBaseline((current) => [...current, { ...image, sort_order: Math.max(-1, ...current.map(({ sort_order }) => sort_order)) + 1 }]);
           mark(item.id, "uploaded"); return;
         }
         const cleanup = await bucket.remove([path]);
@@ -99,7 +115,7 @@ export function MediaUpload({ productId, images }: { productId: string; images: 
   }
 
   async function upload() {
-    if (pending) return;
+    if (pending || saving) return;
     const candidates = selected.filter((item) => item.status === "ready" || item.status === "error");
     if (!candidates.length) return;
     setPending(true);
@@ -118,20 +134,65 @@ export function MediaUpload({ productId, images }: { productId: string; images: 
     } finally { setPending(false); }
   }
 
+  function editImage(id: string, patch: Partial<Pick<ImagePreview, "alt" | "role">>) {
+    setSaved((current) => current.map((image) => image.id === id ? { ...image, ...patch } : image));
+    setSaveMessage("");
+    setSaveError("");
+  }
+
+  function move(sourceId: string, targetId: string) {
+    if (sourceId === targetId || pending || saving) return;
+    setSaved((current) => {
+      const source = current.findIndex(({ id }) => id === sourceId);
+      const target = current.findIndex(({ id }) => id === targetId);
+      if (source < 0 || target < 0) return current;
+      const next = [...current];
+      next.splice(target, 0, next.splice(source, 1)[0]);
+      return next;
+    });
+    setSaveMessage("");
+    setSaveError("");
+  }
+
+  async function save() {
+    if (saving || pending || !saved.length) return;
+    setSaving(true);
+    setSaveMessage("");
+    setSaveError("");
+    try {
+      if (!previewOnly) {
+        const result = await saveMediaMetadata(productId,
+          saved.map(({ id, alt, role }) => ({ id, alt, role })),
+          saved.find(({ is_primary }) => is_primary)?.id ?? null);
+        if (!result.ok) { setSaveError(result.error); return; }
+      }
+      setBaseline(saved.map((image, sort_order) => ({ ...image, sort_order })));
+      setSaved((current) => current.map((image, sort_order) => ({ ...image, sort_order })));
+      setSaveMessage(previewOnly ? "Демонстрация сохранения завершена — данные не записаны." : "Изменения изображений сохранены.");
+    } catch {
+      setSaveError("Не удалось сохранить изображения. Обновите страницу и повторите попытку.");
+    } finally { setSaving(false); }
+  }
+
+  const edited = (items: ImagePreview[]) => items.map(({ id, alt, role, is_primary }) => ({ id, alt, role, is_primary }));
+  const dirty = JSON.stringify(edited(saved)) !== JSON.stringify(edited(baseline));
   const hasUploadable = selected.some((item) => item.status === "ready" || item.status === "error");
+  const primary = saved.find(({ is_primary }) => is_primary);
   return <section className={styles.section} aria-labelledby="media-heading">
     <div className={styles.heading}>
       <h2 id="media-heading">Изображения</h2>
       <p>JPEG, PNG, WebP или AVIF, до 12 МБ на файл. Загружайте только материалы, разрешённые к публичному показу.</p>
+      {previewOnly && <p>Временный Preview образец интерфейса без записи в базу и Storage.</p>}
     </div>
+    {!previewOnly && <>
     <div className={styles.field}>
       <label htmlFor="media-file">Выбрать изображения</label>
       <input id="media-file" ref={inputRef} type="file" multiple accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
-        disabled={pending} aria-describedby="media-hint" onChange={(event) => {
+        disabled={pending || saving} aria-describedby="media-hint" onChange={(event) => {
           chooseFiles(event.target.files);
           event.target.value = "";
         }} />
-      <p id="media-hint">Можно выбрать несколько файлов. Alt и роль будут настроены на следующем этапе.</p>
+      <p id="media-hint">Можно выбрать несколько файлов. После загрузки настройте alt, роль, порядок и главное изображение.</p>
     </div>
     {selected.length > 0 && <ul className={styles.selection} aria-label="Выбранные изображения" aria-live="polite">
       {selected.map((item) => <li key={item.id} className={styles.selected}>
@@ -152,17 +213,67 @@ export function MediaUpload({ productId, images }: { productId: string; images: 
             onClick={() => removeQueued(item.id)}>Убрать</button>}
       </li>)}
     </ul>}
-    <button type="button" onClick={upload} disabled={pending || !hasUploadable} className={styles.upload}>
+    <button type="button" onClick={upload} disabled={pending || saving || !hasUploadable} className={styles.upload}>
       {pending ? "Загрузка…" : "Загрузить изображения"}
     </button>
+    </>}
     <div className={styles.existing}>
       <h3>Связанные изображения</h3>
-      {saved.length === 0 ? <p>Изображений пока нет.</p> : <ul>
-        {saved.map((image) => <li key={image.id}>
-          <Image src={image.url} width={image.width} height={image.height} alt="Изображение товара без заполненного alt" loading="lazy" unoptimized />
-          <span>Метаданные изображения ещё не заполнены</span>
-        </li>)}
-      </ul>}
+      {saved.length === 0 ? <p>Изображений пока нет.</p> : <>
+        <p>Главное изображение используется как основное превью товара.</p>
+        <div className={styles.mainPreview}>
+          {primary ? <>
+            <Image src={primary.url} width={160} height={116}
+              alt={primary.alt || "Главное изображение без alt-текста"} unoptimized />
+            <span>Основное превью товара</span>
+          </> : <span>Главное изображение не выбрано.</span>}
+        </div>
+        <p id="media-reorder-hint">Перетаскивайте за «Переместить» или используйте кнопки «Назад» и «Вперёд». Затем сохраните изменения.</p>
+        <ul className={styles.mediaGrid}>
+          {saved.map((image, index) => <li key={image.id} className={styles.mediaCard}
+            onDragOver={(event) => { if (dragging.current) event.preventDefault(); }}
+            onDrop={(event) => { event.preventDefault(); const source = dragging.current; dragging.current = null; if (source) move(source, image.id); }}>
+            <div className={styles.mediaTop}><span>Позиция {index + 1}</span>{image.is_primary && <strong>Главное</strong>}</div>
+            <Image src={image.url} width={image.width} height={image.height}
+              alt={image.alt || "Изображение товара без alt-текста"} loading="lazy" unoptimized draggable={false} />
+            <div className={styles.reorder}>
+              <button type="button" draggable={!pending && !saving} className={styles.drag}
+                aria-label={`Перетащить изображение с позиции ${index + 1}`}
+                aria-describedby="media-reorder-hint"
+                onDragStart={(event) => { dragging.current = image.id; event.dataTransfer.effectAllowed = "move"; event.dataTransfer.setData("text/plain", image.id); }}
+                onDragEnd={() => { dragging.current = null; }}>⋮⋮ Переместить</button>
+              <button type="button" disabled={index === 0 || pending || saving}
+                aria-label={`Переместить изображение ${index + 1} назад`}
+                onClick={() => move(image.id, saved[index - 1].id)}>Назад</button>
+              <button type="button" disabled={index === saved.length - 1 || pending || saving}
+                aria-label={`Переместить изображение ${index + 1} вперёд`}
+                onClick={() => move(image.id, saved[index + 1].id)}>Вперёд</button>
+            </div>
+            <label htmlFor={`media-role-${image.id}`}>Роль</label>
+            <select id={`media-role-${image.id}`} value={image.role ?? ""}
+              disabled={pending || saving}
+              onChange={(event) => editImage(image.id, { role: (event.target.value || null) as ImageRole | null })}>
+              <option value="">Роль не задана</option>
+              {IMAGE_ROLES.map(({ value, label }) => <option key={value} value={value}>{label}</option>)}
+            </select>
+            <label htmlFor={`media-alt-${image.id}`}>Alt-текст</label>
+            <input id={`media-alt-${image.id}`} value={image.alt ?? ""} maxLength={250}
+              disabled={pending || saving} placeholder="Опишите изображение"
+              onChange={(event) => editImage(image.id, { alt: event.target.value })} />
+            <button type="button" className={styles.primary} disabled={image.is_primary || pending || saving}
+              onClick={() => {
+                setSaved((current) => current.map((entry) => ({ ...entry, is_primary: entry.id === image.id })));
+                setSaveMessage(""); setSaveError("");
+              }}>{image.is_primary ? "Главное изображение" : "Сделать главным"}</button>
+          </li>)}
+        </ul>
+        {dirty && <p className={styles.unsaved}>Есть несохранённые изменения изображений.</p>}
+        <button type="button" className={styles.upload} disabled={!dirty || pending || saving} onClick={save}>
+          {saving ? "Сохраняем…" : "Сохранить изображения"}
+        </button>
+        {saveMessage && <p className={styles.success} role="status">{saveMessage}</p>}
+        {saveError && <p className={styles.error} role="alert">{saveError}</p>}
+      </>}
     </div>
   </section>;
 }
