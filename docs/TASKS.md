@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T034 — DONE, T035 — BLOCKED (OWNER VISUAL VERIFICATION), T036–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T035 — DONE, T036–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 ожидает завершения T035–T038. T034 owner visual и browser batch upload PASS, synthetic cleanup подтверждён нулевыми Preview counts. T035 implementation в Preview ожидает owner visual verification; T036 не начинать.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 ожидает завершения T036–T038. T034 owner visual и browser batch upload PASS, synthetic cleanup подтверждён нулевыми Preview counts. T035 owner visual verification PASS, временный no-write harness удалён; следующая задача T036, не начата.
 
 ## PHASE 0 — Project Foundation
 
@@ -805,7 +805,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T035
 - **Priority:** P0
-- **Status:** BLOCKED — OWNER VISUAL VERIFICATION
+- **Status:** DONE
 - **Title:** Image metadata и primary
 - **Goal:** Редактировать alt/role/order/primary для изображений товара.
 - **Why:** Фактуры и интерьер имеют разную семантику.
@@ -821,7 +821,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T035): Image metadata и primary
 
-- **Progress (2026-10-01):** Preview migrations `20261001124018_media_metadata_primary.sql` и `20261001124304_product_media_publication_guard.sql` применены с matching history: SECURITY INVOKER + RLS, explicit admin membership, exact image set/ownership validation, atomic order/alt/role/primary save under product row lock and existing unique-primary index; publish transition requires primary and complete alt/role, без backfill REAL. Product Editor uses compact media cards, drag handle, keyboard/mobile reorder, main preview, explicit primary, controlled four roles and alt; T034 multiple upload/queue/append unchanged except a new image receives next technical order. No Delete. Transactional TEST_ONLY 3-image/foreign-image/non-admin/validation/publication checks PASS with rollback; 1/3/8 validation cases PASS. Products/images/Storage after tests 0; lint/typecheck/build PASS. Temporary guarded no-write Preview harness for 1/3/8 visual states awaits owner verification and must be removed afterward. Production unchanged; T036 not started.
+- **Resolution (2026-10-01):** Preview migrations `20261001124018_media_metadata_primary.sql` и `20261001124304_product_media_publication_guard.sql` применены с matching history: SECURITY INVOKER + RLS, active membership, exact image set/ownership validation, atomic order/alt/role/primary save under product row lock and existing unique-primary index; publish transition requires primary and complete alt/role, без backfill REAL. Product Editor uses compact media cards, drag handle, keyboard/mobile reorder, main preview, explicit primary, controlled roles and alt; T034 multiple upload/queue/append preserved. No uploaded-image Delete. Transactional TEST_ONLY reorder/persistence, primary transition/uniqueness, alt/role, foreign-image/non-admin/validation/publication checks PASS with rollback; products/images/Storage after tests 0. Owner real-admin visual verification PASS for 1/3/8 image cards, drag and keyboard/mobile reorder, primary/metadata/save states, T034 queue, 390/768/1024/1440, no overflow and clean console. Temporary no-write review screen and preview-only branch removed. Lint/typecheck/build PASS; Production unchanged. T035 DONE; next T036, not started.
 
 ### T036 — Safe image removal
 

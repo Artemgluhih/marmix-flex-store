@@ -16,7 +16,7 @@ export type ImagePreview = {
 type UploadStatus = "ready" | "invalid" | "uploading" | "uploaded" | "error";
 type Selection = { id: string; file: File; preview: string | null; extension: string | null; status: UploadStatus; error?: string };
 
-export function MediaUpload({ productId, images, previewOnly = false }: { productId: string; images: ImagePreview[]; previewOnly?: boolean }) {
+export function MediaUpload({ productId, images }: { productId: string; images: ImagePreview[] }) {
   const [selected, setSelected] = useState<Selection[]>([]);
   const [pending, setPending] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -160,15 +160,13 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     setSaveMessage("");
     setSaveError("");
     try {
-      if (!previewOnly) {
-        const result = await saveMediaMetadata(productId,
-          saved.map(({ id, alt, role }) => ({ id, alt, role })),
-          saved.find(({ is_primary }) => is_primary)?.id ?? null);
-        if (!result.ok) { setSaveError(result.error); return; }
-      }
+      const result = await saveMediaMetadata(productId,
+        saved.map(({ id, alt, role }) => ({ id, alt, role })),
+        saved.find(({ is_primary }) => is_primary)?.id ?? null);
+      if (!result.ok) { setSaveError(result.error); return; }
       setBaseline(saved.map((image, sort_order) => ({ ...image, sort_order })));
       setSaved((current) => current.map((image, sort_order) => ({ ...image, sort_order })));
-      setSaveMessage(previewOnly ? "Демонстрация сохранения завершена — данные не записаны." : "Изменения изображений сохранены.");
+      setSaveMessage("Изменения изображений сохранены.");
     } catch {
       setSaveError("Не удалось сохранить изображения. Обновите страницу и повторите попытку.");
     } finally { setSaving(false); }
@@ -182,9 +180,7 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     <div className={styles.heading}>
       <h2 id="media-heading">Изображения</h2>
       <p>JPEG, PNG, WebP или AVIF, до 12 МБ на файл. Загружайте только материалы, разрешённые к публичному показу.</p>
-      {previewOnly && <p>Временный Preview образец интерфейса без записи в базу и Storage.</p>}
     </div>
-    {!previewOnly && <>
     <div className={styles.field}>
       <label htmlFor="media-file">Выбрать изображения</label>
       <input id="media-file" ref={inputRef} type="file" multiple accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
@@ -216,7 +212,6 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     <button type="button" onClick={upload} disabled={pending || saving || !hasUploadable} className={styles.upload}>
       {pending ? "Загрузка…" : "Загрузить изображения"}
     </button>
-    </>}
     <div className={styles.existing}>
       <h3>Связанные изображения</h3>
       {saved.length === 0 ? <p>Изображений пока нет.</p> : <>
