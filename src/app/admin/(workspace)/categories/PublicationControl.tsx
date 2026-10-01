@@ -5,15 +5,15 @@ import { useFormStatus } from "react-dom";
 import { publishCategory, unpublishCategory } from "./publication-actions";
 import styles from "./categories.module.css";
 
-function ConfirmButton({ published, previewOnly }: { published: boolean; previewOnly: boolean }) {
+function ConfirmButton({ published }: { published: boolean }) {
   const { pending } = useFormStatus();
-  return <button type="submit" disabled={pending || previewOnly}>
+  return <button type="submit" disabled={pending}>
     {pending ? "Сохраняем…" : published ? "Подтвердить скрытие" : "Подтвердить публикацию"}
   </button>;
 }
 
-export function PublicationControl({ id, name, published, affectedCount, previewOnly = false }: {
-  id: string; name: string; published: boolean; affectedCount: number; previewOnly?: boolean;
+export function PublicationControl({ id, name, published, affectedCount }: {
+  id: string; name: string; published: boolean; affectedCount: number;
 }) {
   const action = published ? unpublishCategory.bind(null, id) : publishCategory.bind(null, id);
   return <section className={styles.publication} aria-labelledby="category-publication-title">
@@ -26,9 +26,8 @@ export function PublicationControl({ id, name, published, affectedCount, preview
         <p><strong>{name}</strong></p>
         {published ? <p>Скрыть категорию? Она исчезнет из публичного каталога, а {affectedCount} опубликованных неархивных товаров перестанут быть публично видимыми. Товары не архивируются и не удаляются; их собственный статус публикации и данные сохраняются.</p>
           : <p>Опубликовать категорию? До {affectedCount} ранее опубликованных неархивных товаров могут снова стать публично видимыми. Скрытые и архивные товары останутся скрытыми. Данные товаров не меняются.</p>}
-        <form action={action}><ConfirmButton published={published} previewOnly={previewOnly} /></form>
+        <form action={action}><ConfirmButton published={published} /></form>
       </div>
     </details>
-    {previewOnly && <p className={styles.hint}>Визуальный образец: сохранение отключено.</p>}
   </section>;
 }
