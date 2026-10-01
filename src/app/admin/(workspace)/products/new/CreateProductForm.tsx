@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { CategoryMultiselect } from "@/components/admin/CategoryMultiselect";
 
 import { createProductAction, type CreateProductState } from "./actions";
 import { emptyProductValues, type ProductField } from "./product-validation";
@@ -64,13 +65,8 @@ export function CreateProductForm({ categories }: { categories: Category[] }) {
           {field("slug", "Публичный адрес (slug)", { required: true, maxLength: 160, placeholder: "nazvanie-tovara" })}
           {field("series", "Серия", { maxLength: 120 })}
         </div>
-        <fieldset className={styles.categories} aria-describedby={state.errors.category_ids ? "new-categories-error" : undefined}>
-          <legend>Категории</legend>
-          <p>Можно выбрать несколько или оставить пустым. Товар всегда будет в «Все товары».</p>
-          {categories.length === 0 ? <p>Пользовательские категории пока не добавлены.</p> : categories.map(({ id, name }) =>
-            <label key={id}><input type="checkbox" name="category_ids" value={id} defaultChecked={state.selectedIds.includes(id)} />{name}</label>)}
-          {state.errors.category_ids && <p className={styles.error} id="new-categories-error">{state.errors.category_ids}</p>}
-        </fieldset>
+        <CategoryMultiselect key={state.selectedIds.join(",")} categories={categories}
+          selectedIds={state.selectedIds} error={state.errors.category_ids} errorId="new-categories-error" />
       </section>
 
       <section className={styles.section} aria-labelledby="new-product-commerce">

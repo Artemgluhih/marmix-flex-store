@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/admin/require-admin";
+import { CategoryMultiselect } from "@/components/admin/CategoryMultiselect";
 import categories from "../../categories/categories.module.css";
 import product from "../../products/new/new-product.module.css";
 
@@ -8,6 +9,7 @@ export default async function T032AVisual() {
   if (process.env.VERCEL_ENV !== "preview") notFound();
   await requireAdmin("/admin/internal/t032a-visual");
   const names = ["TEST_ONLY Категория A", "TEST_ONLY Категория B", "TEST_ONLY Категория C"];
+  const options = names.map((name, index) => ({ id: `visual-${index}`, name }));
   return <div className={categories.page}>
     <header className={categories.heading}><p className={categories.eyebrow}>TEST_ONLY / без записи в базу</p>
       <h1>Multi-category visual check</h1><p>Образец состояний интерфейса. Кнопки сохранения не выполняют действий.</p></header>
@@ -25,10 +27,10 @@ export default async function T032AVisual() {
           <p>Без связей: Без пользовательских категорий.</p></section>
       </section>
       <section className={categories.editorSection} aria-label="Визуальные состояния действий">
-        <section className={product.section}><div className={product.sectionHeading}><h2>Категории товара</h2><p>Создание и редактор: 0, 1 или несколько пользовательских категорий.</p></div>
-          <fieldset className={product.categories}><legend>Категории</legend><p>Товар всегда доступен в «Все товары».</p>
-            {names.map((name, index) => <label key={name}><input type="checkbox" defaultChecked={index !== 1} />{name}</label>)}
-          </fieldset></section>
+        <section className={product.section}><div className={product.sectionHeading}><h2>Категории товара</h2><p>Создание: без выбранных категорий. Редактор: сохранены две категории. Образцы не отправляют данные.</p></div>
+          <CategoryMultiselect categories={options} selectedIds={[]} />
+          <CategoryMultiselect categories={options} selectedIds={[options[0].id, options[2].id]} />
+        </section>
         <section className={categories.publication}><h2>Публикация категории</h2>
           <p>Опубликованных неархивных товаров в категории: <strong>0</strong>.</p>
           <details className={categories.confirmation}><summary>Снять с публикации</summary><div className={categories.confirmationBody}>

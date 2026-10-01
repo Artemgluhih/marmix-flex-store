@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
+import { CategoryMultiselect } from "@/components/admin/CategoryMultiselect";
 import { saveProductCategories, type MembershipState } from "./category-actions";
 import styles from "../new/new-product.module.css";
 
@@ -21,12 +22,8 @@ export function ProductCategoriesForm({ productId, categories, selectedIds }: {
         <h2 id="edit-categories">Категории</h2>
         <p>Один товар может находиться в нескольких категориях. Без выбора он остаётся в «Все товары».</p>
       </div>
-      <fieldset className={styles.categories} aria-describedby={state.error ? "edit-categories-error" : undefined}>
-        <legend>Пользовательские категории</legend>
-        {categories.length === 0 ? <p>Пользовательские категории пока не добавлены.</p> : categories.map(({ id, name }) =>
-          <label key={id}><input name="category_ids" type="checkbox" value={id} defaultChecked={state.selectedIds.includes(id)} />{name}</label>)}
-      </fieldset>
-      {state.error && <p className={styles.formError} id="edit-categories-error" role="alert">{state.error}</p>}
+      <CategoryMultiselect key={state.selectedIds.join(",")} categories={categories}
+        selectedIds={state.selectedIds} error={state.error} errorId="edit-categories-error" />
       {state.saved && <p role="status">Категории сохранены.</p>}
       <div className={styles.actions}><SaveButton /></div>
     </section>
