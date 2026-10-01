@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T030 — DONE, T031–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T031 — DONE, T032–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T030 завершена; следующая отдельная задача — T031.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T031 завершена; следующая отдельная задача — T032.
 
 ## PHASE 0 — Project Foundation
 
@@ -692,7 +692,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T031
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Category management
 - **Goal:** Создать список и create/edit категорий.
 - **Why:** Admin должен управлять навигацией каталога.
@@ -707,6 +707,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T031): Category management
+- **Resolution (2026-10-01):** `/admin/categories` предоставляет список, честное пустое состояние и общую create/edit форму с проверкой title/slug/sort/SEO, безопасной обработкой дублированного slug, draft при создании и запретом смены slug опубликованной категории. Чтение и изменения используют `requireAdmin()` / same-origin `requireAdminMutation()`, authenticated JWT и T017 RLS; поля записи ограничены явным allowlist. Транзакционные Preview TEST_ONLY проверки create/edit/duplicate, anon visibility, admin/non-admin доступа и запрета DELETE прошли с ROLLBACK; постоянных synthetic categories/products/rows — 0. Lint/typecheck/build и guest/public smoke PASS; T028–T030 не изменены. Владелец после реального login подтвердил список, empty/create/edit, поля и статус, отсутствие Delete и вложенности, 390/768/1024/1440, отсутствие overflow, чистую console и согласованность с Admin shell. Временный no-write visual harness удалён. Production/main unchanged; M3 и Development Gate PASS; Production Content Gate BLOCKED. Next T032, not started.
 
 ### T032 — Category publication behavior
 

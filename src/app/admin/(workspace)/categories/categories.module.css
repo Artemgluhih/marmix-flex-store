@@ -45,8 +45,7 @@
 .actions button { min-height: 48px; padding: 10px 18px; border: 0; border-radius: 0; background: var(--color-gold); color: #181510; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
 .actions button:disabled { background: var(--color-disabled-surface); color: var(--color-disabled-text); cursor: not-allowed; }
 .actions button:hover:not(:disabled) { background: var(--color-gold-hover); }
-.success, .visual { margin: 0 0 20px; padding: 12px 16px; border: 1px solid var(--color-border-warm); color: var(--color-text-primary); background: var(--color-graphite); font-size: 12px; line-height: 1.6; }
-.visual { color: var(--color-gold-hover); }
+.success { margin: 0 0 20px; padding: 12px 16px; border: 1px solid var(--color-border-warm); color: var(--color-text-primary); background: var(--color-graphite); font-size: 12px; line-height: 1.6; }
 .page a:focus-visible, .page button:focus-visible, .page input:focus-visible, .page select:focus-visible, .page textarea:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
 @media (max-width: 1320px) { .layout { grid-template-columns: minmax(0, 1fr); } .editorSection { max-width: 760px; } }
 @media (max-width: 700px) {

@@ -8,13 +8,13 @@ import { saveCategory, type CategoryState } from "./actions";
 import { emptyCategoryValues, type CategoryField, type CategoryValues } from "./category-validation";
 import styles from "./categories.module.css";
 
-function SaveButton({ previewOnly }: { previewOnly: boolean }) {
+function SaveButton() {
   const { pending } = useFormStatus();
-  return <button type="submit" disabled={pending || previewOnly}>{pending ? "Сохраняем…" : "Сохранить категорию"}</button>;
+  return <button type="submit" disabled={pending}>{pending ? "Сохраняем…" : "Сохранить категорию"}</button>;
 }
 
-export function CategoryForm({ categoryId, values = emptyCategoryValues, published = false, previewOnly = false }: {
-  categoryId: string | null; values?: CategoryValues; published?: boolean; previewOnly?: boolean;
+export function CategoryForm({ categoryId, values = emptyCategoryValues, published = false }: {
+  categoryId: string | null; values?: CategoryValues; published?: boolean;
 }) {
   const [state, action] = useActionState(saveCategory.bind(null, categoryId), { values, errors: {} } as CategoryState);
   const field = (name: CategoryField, label: string, options: { multiline?: boolean; maxLength?: number; required?: boolean; readOnly?: boolean; inputMode?: "numeric" } = {}) => (
@@ -51,6 +51,6 @@ export function CategoryForm({ categoryId, values = emptyCategoryValues, publish
     {field("seo_title", "SEO-заголовок", { maxLength: 180 })}
     {field("seo_description", "SEO-описание", { multiline: true, maxLength: 320 })}
     {state.errors.form && <p className={styles.formError} role="alert">{state.errors.form}</p>}
-    <div className={styles.actions}><SaveButton previewOnly={previewOnly} />{categoryId && <Link href="/admin/categories">Добавить новую</Link>}</div>
+    <div className={styles.actions}><SaveButton />{categoryId && <Link href="/admin/categories">Добавить новую</Link>}</div>
   </form>;
 }
