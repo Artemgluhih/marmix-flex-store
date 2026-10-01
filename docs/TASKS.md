@@ -827,7 +827,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T036
 - **Priority:** P0
-- **Status:** BLOCKED — OWNER VERIFICATION
+- **Status:** BLOCKED — ORPHAN CLEANUP VERIFICATION
 - **Title:** Safe image removal
 - **Goal:** Удалять медиа без битых публичных ссылок.
 - **Why:** Storage и таблица изменяются раздельно.
@@ -843,7 +843,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T036): Safe image removal
 
-- **Progress (2026-10-01):** Preview migration `20261001140002_protect_published_primary_delete.sql` applied with matching history; a direct authenticated DB DELETE of a published primary is denied without changing RLS/Storage policies. Product Editor has per-image confirmation, guarded exact-row detach before single-object Storage removal, explicit partial-failure warning, scoped orphan scan/retry, and a guarded no-write Preview review screen. Transactional TEST_ONLY direct DB matrix for non-primary, published primary denial, draft primary and last draft image PASS with rollback. Owner visual/responsive verification PASS for confirmation, published-primary block, draft deletion states, failure warning and retry at 390/768/1024/1440, no overflow/console error. A temporary guarded Preview-only browser smoke prepares three technical images on one TEST_ONLY product through the owner's normal admin session: normal deletion B, primary preservation A, controlled Storage failure after C detach and real orphan retry. The simulation is restricted to that fixture and never changes schema/RLS/Storage policies. Lint/typecheck/build PASS. Real-admin browser deletion, public URL and failure/retry verification plus full synthetic cleanup remain required before DONE. Production unchanged; T037 not started.
+- **Progress (2026-10-01):** Preview migration `20261001140002_protect_published_primary_delete.sql` applied with matching history; a direct authenticated DB DELETE of a published primary is denied without changing RLS/Storage policies. Product Editor has per-image confirmation, guarded exact-row detach before single-object Storage removal, explicit partial-failure warning, scoped orphan scan/retry, and a guarded no-write Preview review screen. Transactional TEST_ONLY direct DB matrix for non-primary, published primary denial, draft primary and last draft image PASS with rollback. Owner visual/responsive verification PASS for confirmation, published-primary block, draft deletion states, failure warning and retry at 390/768/1024/1440, no overflow/console error. A temporary guarded Preview-only browser smoke prepares three technical images on one TEST_ONLY product through the owner's normal admin session: normal deletion B, primary preservation A, controlled Storage failure after C detach and real orphan retry. The simulation is restricted to that fixture and never changes schema/RLS/Storage policies. Lint/typecheck/build PASS. Owner real-admin browser B deletion and C failure/retry UI reported PASS. Direct Preview verification confirms B/C image rows absent, B Storage absent, A primary row/object intact, but C orphan object persists and its public URL returns HTTP 200. The retry action now checks actual Storage absence before reporting success. C cleanup, complete TEST_ONLY cleanup and temporary-route removal remain required before DONE. Production unchanged; T037 not started.
 
 ### T037 — Media presentation verification
 

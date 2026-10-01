@@ -59,8 +59,8 @@ export async function removeProductImage(productId: string, imageId: string, sim
   }
 
   try {
-    const removed = await supabase.storage.from(MEDIA_BUCKET).remove([image.data.storage_path]);
-    if (removed.error && !(await missingAfterRemove(supabase, image.data.storage_path))) {
+    await supabase.storage.from(MEDIA_BUCKET).remove([image.data.storage_path]);
+    if (!(await missingAfterRemove(supabase, image.data.storage_path))) {
       return { kind: "orphan", path: image.data.storage_path, error: PARTIAL };
     }
   } catch {
@@ -109,8 +109,8 @@ export async function retryOrphanCleanup(productId: string, path: string): Promi
   const object = await supabase.storage.from(MEDIA_BUCKET).info(path);
   if (object.error?.statusCode === "404") return { ok: true };
   if (object.error || !object.data) return { ok: false, error: "Состояние файла не удалось проверить." };
-  const removed = await supabase.storage.from(MEDIA_BUCKET).remove([path]);
-  if (removed.error && !(await missingAfterRemove(supabase, path))) {
+  await supabase.storage.from(MEDIA_BUCKET).remove([path]);
+  if (!(await missingAfterRemove(supabase, path))) {
     return { ok: false, error: "Файл не удалось удалить из хранилища. Повторите попытку." };
   }
   return { ok: true };
