@@ -11,10 +11,9 @@ export type ImagePreview = { id: string; url: string; width: number; height: num
 type UploadStatus = "ready" | "invalid" | "uploading" | "uploaded" | "error";
 type Selection = { id: string; file: File; preview: string | null; extension: string | null; status: UploadStatus; error?: string };
 
-export function MediaUpload({ productId, images, previewOnly = false }: { productId: string; images: ImagePreview[]; previewOnly?: boolean }) {
+export function MediaUpload({ productId, images }: { productId: string; images: ImagePreview[] }) {
   const [selected, setSelected] = useState<Selection[]>([]);
   const [pending, setPending] = useState(false);
-  const [message, setMessage] = useState("");
   const [saved, setSaved] = useState<ImagePreview[]>(images);
   const urls = useRef<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +22,6 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
   function chooseFiles(files: FileList | null) {
     urls.current.forEach(URL.revokeObjectURL);
     urls.current = [];
-    setMessage("");
     setSelected(Array.from(files ?? []).map((file): Selection => {
       const validation = validateImageFile(file);
       if ("error" in validation) return { id: crypto.randomUUID(), file, preview: null, extension: null, status: "invalid", error: validation.error };
@@ -46,7 +44,6 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
       urls.current = urls.current.filter((url) => url !== item.preview);
     }
     setSelected((current) => current.filter((entry) => entry.id !== id));
-    setMessage("");
   }
 
   async function uploadOne(item: Selection, client: ReturnType<typeof createAdminBrowserSupabaseClient>) {
@@ -105,17 +102,8 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     if (pending) return;
     const candidates = selected.filter((item) => item.status === "ready" || item.status === "error");
     if (!candidates.length) return;
-    setPending(true); setMessage("");
+    setPending(true);
     try {
-      if (previewOnly) {
-        for (const item of candidates) {
-          mark(item.id, "uploading");
-          await new Promise((resolve) => window.setTimeout(resolve, 350));
-          mark(item.id, "uploaded");
-        }
-        setMessage("Демонстрация завершена — файлы не записаны.");
-        return;
-      }
       const client = createAdminBrowserSupabaseClient();
       const user = await client.auth.getUser();
       if (user.error || !user.data.user) {
@@ -135,7 +123,6 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     <div className={styles.heading}>
       <h2 id="media-heading">Изображения</h2>
       <p>JPEG, PNG, WebP или AVIF, до 12 МБ на файл. Загружайте только материалы, разрешённые к публичному показу.</p>
-      {previewOnly && <p>Демонстрация интерфейса без записи в Storage и базу данных.</p>}
     </div>
     <div className={styles.field}>
       <label htmlFor="media-file">Выбрать изображения</label>
@@ -168,7 +155,6 @@ export function MediaUpload({ productId, images, previewOnly = false }: { produc
     <button type="button" onClick={upload} disabled={pending || !hasUploadable} className={styles.upload}>
       {pending ? "Загрузка…" : "Загрузить изображения"}
     </button>
-    {message && <p className={styles.success} role="status">{message}</p>}
     <div className={styles.existing}>
       <h3>Связанные изображения</h3>
       {saved.length === 0 ? <p>Изображений пока нет.</p> : <ul>
