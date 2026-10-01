@@ -1,4 +1,0 @@
-.variants { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 20px; }
-.variants a { color: var(--color-text-secondary); padding: 8px 0; border-bottom: 1px solid transparent; font-size: 13px; text-decoration: none; }
-.variants a[aria-current="page"] { color: var(--color-gold); border-color: var(--color-gold); }
-.variants a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }

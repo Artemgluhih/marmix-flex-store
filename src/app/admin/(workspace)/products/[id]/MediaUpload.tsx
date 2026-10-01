@@ -17,9 +17,8 @@ export type ImagePreview = {
 type UploadStatus = "ready" | "invalid" | "uploading" | "uploaded" | "error";
 type Selection = { id: string; file: File; preview: string | null; extension: string | null; status: UploadStatus; error?: string };
 
-export function MediaUpload({ productId, images, productPublished, previewOnly = false, previewFailure = false, smokeFaultImageId }: {
-  productId: string; images: ImagePreview[]; productPublished: boolean; previewOnly?: boolean; previewFailure?: boolean;
-  smokeFaultImageId?: string;
+export function MediaUpload({ productId, images, productPublished }: {
+  productId: string; images: ImagePreview[]; productPublished: boolean;
 }) {
   const [selected, setSelected] = useState<Selection[]>([]);
   const [pending, setPending] = useState(false);
@@ -30,7 +29,6 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
   const [saveError, setSaveError] = useState("");
   const [removing, setRemoving] = useState(false);
   const [removeTarget, setRemoveTarget] = useState<ImagePreview | null>(null);
-  const [failureTarget, setFailureTarget] = useState(false);
   const [removeMessage, setRemoveMessage] = useState("");
   const [removeError, setRemoveError] = useState("");
   const [orphans, setOrphans] = useState<string[]>([]);
@@ -174,13 +172,6 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     setSaveMessage("");
     setSaveError("");
     try {
-      if (previewOnly) {
-        await new Promise((resolve) => setTimeout(resolve, 350));
-        setBaseline(saved.map((image, sort_order) => ({ ...image, sort_order })));
-        setSaved((current) => current.map((image, sort_order) => ({ ...image, sort_order })));
-        setSaveMessage("Образец сохранён локально без записи данных.");
-        return;
-      }
       const result = await saveMediaMetadata(productId,
         saved.map(({ id, alt, role }) => ({ id, alt, role })),
         saved.find(({ is_primary }) => is_primary)?.id ?? null);
@@ -193,11 +184,10 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     } finally { setSaving(false); }
   }
 
-  function askToRemove(image: ImagePreview, trigger: HTMLButtonElement, simulateFailure = false) {
+  function askToRemove(image: ImagePreview, trigger: HTMLButtonElement) {
     if (pending || saving || removing || dirty) return;
     deleteTrigger.current = trigger;
     setRemoveTarget(image);
-    setFailureTarget(simulateFailure);
     setRemoveMessage("");
     setRemoveError("");
     dialog.current?.showModal();
@@ -208,19 +198,7 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     setRemoving(true);
     setRemoveError("");
     try {
-      if (previewOnly) {
-        await new Promise((resolve) => setTimeout(resolve, 450));
-        setSaved((current) => current.filter(({ id }) => id !== removeTarget.id));
-        setBaseline((current) => current.filter(({ id }) => id !== removeTarget.id));
-        if (previewFailure) {
-          const path = `products/${productId}/sample-${removeTarget.id.slice(-12)}.png`;
-          setOrphans((current) => [...new Set([...current, path])]);
-          setRemoveError("Изображение удалено из товара, но файл не удалось удалить из хранилища. Повторите очистку.");
-        } else setRemoveMessage("Изображение удалено.");
-        dialog.current?.close();
-        return;
-      }
-      const result = await removeProductImage(productId, removeTarget.id, failureTarget);
+      const result = await removeProductImage(productId, removeTarget.id);
       if (result.kind === "denied") {
         setRemoveError(result.error);
         return;
@@ -244,10 +222,6 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     setCheckingOrphans(true);
     setRemoveError("");
     try {
-      if (previewOnly) {
-        setOrphans(previewFailure ? [`products/${productId}/sample-orphan.png`] : []);
-        return;
-      }
       const result = await findOrphanImages(productId);
       if (!result.ok) setRemoveError(result.error);
       else setOrphans(result.paths);
@@ -260,12 +234,6 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     setRemoving(true);
     setRemoveError("");
     try {
-      if (previewOnly) {
-        await new Promise((resolve) => setTimeout(resolve, 350));
-        setOrphans((current) => current.filter((candidate) => candidate !== path));
-        setRemoveMessage("Несвязанный файл удалён (образец без записи).");
-        return;
-      }
       const result = await retryOrphanCleanup(productId, path);
       if (!result.ok) setRemoveError(result.error ?? "Не удалось очистить файл.");
       else {
@@ -284,9 +252,7 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     <div className={styles.heading}>
       <h2 id="media-heading">Изображения</h2>
       <p>JPEG, PNG, WebP или AVIF, до 12 МБ на файл. Загружайте только материалы, разрешённые к публичному показу.</p>
-      {previewOnly && <p>Временный образец без записи в базу и Storage.</p>}
     </div>
-    {!previewOnly && <>
     <div className={styles.field}>
       <label htmlFor="media-file">Выбрать изображения</label>
       <input id="media-file" ref={inputRef} type="file" multiple accept=".jpg,.jpeg,.png,.webp,.avif,image/jpeg,image/png,image/webp,image/avif"
@@ -318,7 +284,6 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
     <button type="button" onClick={upload} disabled={pending || saving || !hasUploadable} className={styles.upload}>
       {pending ? "Загрузка…" : "Загрузить изображения"}
     </button>
-    </>}
     <div className={styles.existing}>
       <h3>Связанные изображения</h3>
       {saved.length === 0 ? <p>Изображений пока нет.</p> : <>
@@ -369,12 +334,10 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
               }}>{image.is_primary ? "Главное изображение" : "Сделать главным"}</button>
             {productPublished && image.is_primary
               ? <p className={styles.blockedDelete}>Нельзя удалить главное изображение опубликованного товара. Сначала назначьте другое изображение главным или снимите товар с публикации.</p>
-              : <button type="button" className={styles.delete} title={image.id === smokeFaultImageId ? "Тест отказа Storage на TEST_ONLY изображении" : "Удалить изображение"}
+              : <button type="button" className={styles.delete} title="Удалить изображение"
                   aria-label={`Удалить изображение с позиции ${index + 1}`}
                   disabled={pending || saving || removing || dirty}
-                  onClick={(event) => askToRemove(image, event.currentTarget, image.id === smokeFaultImageId)}>
-                  {image.id === smokeFaultImageId ? "Тест: отказ удаления файла" : "Удалить изображение"}
-                </button>}
+                  onClick={(event) => askToRemove(image, event.currentTarget)}>Удалить изображение</button>}
           </li>)}
         </ul>
         {dirty && <p className={styles.unsaved}>Есть несохранённые изменения изображений.</p>}
@@ -408,9 +371,7 @@ export function MediaUpload({ productId, images, productPublished, previewOnly =
           else scanTrigger.current?.focus();
         }}>
         <h3>Удалить изображение?</h3>
-        <p>{failureTarget
-          ? "Тест TEST_ONLY: связь с товаром будет удалена, файл останется для проверки предупреждения и повторной очистки."
-          : "Изображение будет удалено из товара и хранилища. Отменить это действие после завершения нельзя."}</p>
+        <p>Изображение будет удалено из товара и хранилища. Отменить это действие после завершения нельзя.</p>
         {removeTarget?.is_primary && <p>Это главное изображение товара.</p>}
         {removeError && <p role="alert" className={styles.error}>{removeError}</p>}
         <div className={styles.dialogActions}>
