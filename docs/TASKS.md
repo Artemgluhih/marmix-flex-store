@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T032 — DONE, T032A — IN_PROGRESS, T033–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T032A — DONE, T033–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 завершена; Phase 6 и M4 ожидают новой T032A. Следующая отдельная задача — T032A; T033 не начинать.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 ожидает T033–T038. Следующая отдельная задача — T033; в ходе T032A она не начиналась.
 
 ## PHASE 0 — Project Foundation
 
@@ -735,7 +735,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T032A
 - **Priority:** P0
-- **Status:** IN_PROGRESS
+- **Status:** DONE
 - **Title:** Multi-category catalog model
 - **Goal:** Перевести Preview на many-to-many категории без копирования товаров; закрепить системное «Все товары», безопасное удаление пользовательских категорий и новую публичную видимость.
 - **Why:** Один SKU остаётся одной строкой продукта при 0, 1 или нескольких пользовательских категориях; глобальный каталог не зависит от состояния одной категории.
@@ -753,7 +753,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T032A): multi-category catalog model
-- **Progress (2026-10-01):** Preview migration applied; backfill integrity guard passed with zero legacy products, relation/FK/RLS/grants and legacy column removal verified. Transactional TEST_ONLY 0/1/3 membership, duplicate, delete/preserve, anon isolation and active/non-admin boundaries PASS with rollback; permanent synthetic rows 0. Admin flows adapted, lint/typecheck/build PASS. READY Preview and owner visual verification pending; do not mark DONE before approval.
+- **Resolution (2026-10-01):** Preview migration applied with legacy backfill integrity guard (zero legacy products), composite membership key/FKs/index/RLS/grants verified and `products.category_id` removed. Transactional TEST_ONLY 0/1/3 membership, duplicate denial, relation removal/category deletion preserving the same product and other links, category hide, anon isolation and active/non-admin boundaries PASS with rollback; permanent synthetic products/categories/relations 0. Admin flows T024/T026–T032 adapted without product duplication; global REAL published non-archived visibility no longer depends on a user category. Product Create/Edit use compact multiselect with existing `category_ids` validation. Lint/typecheck/build PASS. Owner after real admin login confirmed System All, Create/Edit dropdown and 0/multiple/remove states, internal scroll, keyboard/Escape/outside click, delete and publication warnings, 390/768/1024/1440, no overflow, clean console and Admin consistency. Temporary Preview-only no-write visual harness removed. Production/main unchanged; Development Gate PASS, Production Content Gate BLOCKED. Next T033, not started.
 
 
 ## PHASE 7 — Admin Media Management
