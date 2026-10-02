@@ -849,7 +849,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T037
 - **Priority:** P1
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Media presentation verification
 - **Goal:** Проверить фактуру, кадры и производительность медиа.
 - **Why:** Dark Gold Showroom зависит от правдоподобного материала.
@@ -864,6 +864,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T037): Media presentation verification
+
+- **Resolution (2026-10-02):** Next/Image uses a narrow Preview `product-media/products/**` Storage remote pattern; Admin media previews use recorded image dimensions and responsive sizes, while local showroom Hero alone preloads and secondary media stays lazy. A temporary no-write Preview review of T010 manifest product primary/detail and neutral interior/application sources verified rights, role, alt, crop, network and color presentation. Owner visual verification PASS for representative large/card/detail/interior frames, texture/color fidelity, the 656×656 primary presentation, 390/768/1024/1440 and 1920/2560 sanity, no stretch/overflow or application console errors. The temporary route and three exact source patterns were removed after verification. T034–T036 mutation logic, schema and RLS unchanged; Production unchanged. This representative PASS is **not** full Production quality approval of the unique media set; selected assets still require pre-production owner sign-off. T037 DONE; next T038, not started.
 
 ### T038 — Verified catalog population
 
