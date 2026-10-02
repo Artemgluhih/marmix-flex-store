@@ -6,7 +6,7 @@ const rubles = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
 
 function Price({ product }: { product: PublicProduct }) {
   if (product.priceMinor === null) {
-    return <span className={styles.unknownPrice}>Цена уточняется</span>;
+    return <span className={styles.unknownPrice} aria-label="Цена не указана">—</span>;
   }
 
   return (
@@ -17,9 +17,9 @@ function Price({ product }: { product: PublicProduct }) {
   );
 }
 
-export function ProductGrid({ products, emptyMessage = "Пока нет опубликованных материалов." }: { products: PublicProduct[]; emptyMessage?: string }) {
+export function ProductGrid({ products, emptyMessage, emptyKind = "catalog" }: { products: PublicProduct[]; emptyMessage?: string; emptyKind?: "catalog" | "results" }) {
   if (products.length === 0) {
-    return <p className={styles.empty}>{emptyMessage}</p>;
+    return <div className={styles.empty} role="status"><h2>{emptyKind === "catalog" ? "Каталог пуст" : "Материалы не найдены"}</h2><p>{emptyMessage ?? (emptyKind === "catalog" ? "Сейчас нет опубликованных материалов." : "По выбранным параметрам ничего не найдено.")}</p></div>;
   }
 
   return (
@@ -32,6 +32,7 @@ export function ProductGrid({ products, emptyMessage = "Пока нет опуб
                 src={product.primaryImage.url}
                 alt={product.primaryImage.alt ?? ""}
                 fill
+                loading="lazy"
                 sizes="(max-width: 620px) calc(100vw - 40px), (max-width: 1120px) calc((100vw - 64px) / 2), min(30vw, 535px)"
               />
             ) : <span className={styles.noImage}>Изображение не добавлено</span>}

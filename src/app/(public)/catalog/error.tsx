@@ -9,7 +9,7 @@ export default function CatalogError({ reset }: { reset: () => void }) {
         <h1 id="catalog-error-title">Не удалось загрузить каталог</h1>
         <p className={styles.description}>Повторите попытку.</p>
       </header>
-      <button className={styles.retry} type="button" onClick={reset}>Повторить</button>
+      <button className={styles.retry} type="button" onClick={reset}>Повторить загрузку каталога</button>
     </section>
   );
 }
