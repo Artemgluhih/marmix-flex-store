@@ -1,0 +1,8 @@
+.pagination { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 42px; }
+.pagination a {
+  display: grid; place-items: center; min-width: 42px; min-height: 42px; padding: 0 12px;
+  border: 1px solid var(--color-border); color: var(--color-text-secondary);
+  font-size: 12px; text-decoration: none;
+}
+.pagination a:hover, .pagination a[aria-current="page"] { border-color: var(--color-gold); color: var(--color-gold); }
+.pagination a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
