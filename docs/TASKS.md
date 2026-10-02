@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T041 — DONE, T042–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T042 — DONE, T043–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -958,7 +958,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T042
 - **Priority:** P1
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Catalog states и responsive
 - **Goal:** Завершить карточки/empty/loading/error в каталоге.
 - **Why:** Отказ и пустая выдача должны объясняться.
@@ -973,6 +973,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T042): Catalog states и responsive
+- **Resolution (2026-10-02):** T040 Product Card composition retained; long names/price units wrap, NULL price uses a neutral dash with accessible label, NULL media has a neutral empty frame, and missing availability does not become a badge or claim. Existing Next/Image primary mapping and lazy card loading preserved. Catalog-only loading mirrors image/card dimensions without screen-reader noise, true zero published products and filtered no-results use separate messages, and route errors keep a generic retry without backend details. Read-only READY Preview showed the three owner-confirmed REAL SKU with exact prices/units, loaded primary images, hidden-category 404, search/price/sort/reset/URL behavior, and no app console errors. Render-only Preview checked empty/no-results/error/loading/long and NULL states without DB writes; owner visual verification PASS at 360–370/390/768/1024/1440/1920/2560 with no page overflow and Dark Gold Showroom consistency. Temporary review route removed before final commit. Lint/typecheck/build and final catalog route smoke PASS; Supabase data/schema/RLS/Storage and Production unchanged; permanent TEST_ONLY 0. T042 DONE; T043 not started.
 
 ### T043 — Home с проверенными данными
 

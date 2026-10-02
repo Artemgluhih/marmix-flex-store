@@ -54,6 +54,12 @@
 }
 .retry:hover { background: var(--color-gold); color: var(--color-on-gold); }
 .retry:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
+.loadingAnnouncement { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.loadingControls { display: flex; align-items: end; gap: 14px; height: 95px; margin: -14px 0 70px; border-bottom: 1px solid var(--color-border); }
+.loadingControls span { display: block; width: min(25%, 180px); height: 43px; background: var(--color-graphite); border: 1px solid var(--color-border-quiet); }
+.loadingControls span:first-child { width: min(50%, 380px); }
+.loadingName, .loadingPrice { display: block; height: 23px; max-width: 75%; background: var(--color-graphite); }
+.loadingPrice { height: 19px; width: 42%; margin-top: 40px; }
 
 @media (max-width: 800px) {
   .catalog { padding: 30px 24px 87px; }

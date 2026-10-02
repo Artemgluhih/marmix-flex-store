@@ -20,6 +20,8 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
   const params = normalizeCatalogListParams(input);
   const [facets, result] = await Promise.all([getCatalogFacets(), listPublishedProducts(input)]);
   const { products, total, pageSize } = result;
+  const visibleCatalogCount = total === 0 ? (await listPublishedProducts()).total : total;
+  const trulyEmpty = visibleCatalogCount === 0;
   const emptyMessage = total > 0 && (params.page - 1) * pageSize >= total
     ? "На этой странице материалов нет."
     : hasActiveCatalogParams(params) || params.page > 1 ? "По этим параметрам материалы не найдены." : undefined;
@@ -34,7 +36,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         <h1 id="catalog-title">Каталог</h1>
       </header>
       <CatalogControls params={params} facets={facets} total={total} />
-      <ProductGrid products={products} emptyMessage={emptyMessage} />
+      <ProductGrid products={products} emptyMessage={trulyEmpty ? undefined : emptyMessage} emptyKind={trulyEmpty ? "catalog" : "results"} />
       <CatalogPagination params={params} total={total} pageSize={pageSize} />
     </section>
   );
