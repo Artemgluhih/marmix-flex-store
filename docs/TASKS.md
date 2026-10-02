@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T036 — DONE, T037–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T038 — DONE, T039–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -27,7 +27,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 | Development Gate — **PASS** | T010 | T008–T010 DONE. T011 and subsequent technical tasks may proceed in isolated Preview under the TEST_ONLY/nullable commercial rules below. |
 | Production Content Gate — **BLOCKED** | T010; required before Phase 17 readiness | Two real commercial groups and three real legal groups remain unresolved. Production commerce, readiness and deployment are forbidden until this gate passes; selected-media quality review remains a separate pre-production check. |
 | M3 — Supabase & Admin Auth secured — **PASS** | T022 | T011–T022: схемы, anon/RLS/Storage, закрытый signup, active membership, session/guard, негативные security проверки. |
-| M4 — Admin catalog management operational | T038 | T023–T032, T032A, T033–T038: dashboard, multi-category membership/legacy migration, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
+| M4 — Admin catalog management operational — **PASS** | T038 | T023–T032, T032A, T033–T038: dashboard, multi-category membership/legacy migration, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
 | M5 — Public catalog operational | T046 | T039–T046: списки/поиск/категории/Product Detail на общих данных, только published, реальные цена/медиа. Подключение add-to-cart является T049 и входит в M6. |
 | M6 — Cart & Order flow operational | T055 | T047–T055: persistence, refresh цен, server validation, idempotency, одна приватная заявка и подтверждение; проверить вместе с M5. |
 | M7 — Admin order management operational | T059 | T056–T059: статус/заметка в Admin; original snapshot не изменяем через UI и прямой authenticated API; интеграция с M6. |
@@ -41,7 +41,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 ожидает завершения T037–T038. T034 owner visual и browser batch upload PASS, synthetic cleanup подтверждён нулевыми Preview counts. T035 owner visual verification PASS, временный no-write harness удалён; T036 owner browser deletion, orphan retry and cleanup PASS. Следующая задача T037, не начата.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 — PASS после завершения T038: Admin shell/dashboard, Product/Category CRUD, multi-category, media flows и три проверочных REAL SKU интегрированы в Preview. T034 owner browser batch upload PASS и synthetic cleanup = 0; T035 visual PASS; T036 browser delete/orphan retry/cleanup PASS; T037 representative image presentation PASS. T038 сохранённые REAL SKU — только representative subset, не полный launch population. Следующая задача T039, не начата.
 
 ## PHASE 0 — Project Foundation
 
@@ -871,7 +871,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T038
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Verified catalog population
 - **Goal:** Ввести небольшой проверочный набор утверждённых SKU через Admin Panel.
 - **Why:** M4 требует проверить реальные операции на настоящих данных.
@@ -886,6 +886,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T038): Verified catalog population
+- **Resolution (2026-10-02):** Owner correction обновила source of truth: 226 confirmed panel SKU имеют `price_unit = м²`, `sale_unit = sheet`, min/step 1 и площадь листа 4.0328 м²; 14 «Гибкая доска» имеют те же units/min/step, но `area_per_sale_unit_m2 = NULL`; accessories сохраняют обе единицы `шт./упаковка` и min/step 1. Через Custom Admin в isolated Preview внесены и оставлены три REAL SKU: `MF-MAR-0086` (Азур), `MF-TRV-0003` (Травертин 1), `MF-ACC-0005` (Клей для гибкого камня базовый 3 кг). Их Registry→Admin/DB round-trip PASS, точные категории/memberships и manifest media PASS; у каждого одна product row, одна membership и одно primary media с owner-confirmed `neutral_texture`/alt. Все три published и видны anon согласно существующей T014/T032A модели; предыдущий targeted draft/unpublished smoke подтвердил anon denial и запись была возвращена в published. Availability остаётся NULL, featured=false, unresolved values NULL; тестовые TEST_ONLY products/categories/images=0, orphan objects=0. Dashboard показывает 3 published, 0 hidden/archived; Products list содержит ровно три без дублей; Categories содержит только три owner-requested user categories плюс virtual «Все товары», category/product/media/admin integration PASS. Owner data verification PASS. Эти три записи остаются в Preview и не означают полный 251-SKU launch import или Production media approval. Full catalog completeness проверяется перед Production Readiness. M4 PASS; Development Gate PASS; Production Content Gate BLOCKED; T038 DONE; next T039, not started; Production unchanged.
 
 
 ## PHASE 8 — Public Catalog

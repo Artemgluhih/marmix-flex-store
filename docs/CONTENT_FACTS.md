@@ -8,11 +8,21 @@
 
 T008 remains **DONE**. Owner confirmations C1–C4 are applied in [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv) and [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md). T009/T010 remain DONE; T011 is not started.
 
-- **C1 — Flexible Board (14 SKU):** price basis `м²`, minimum `1 sheet`, step `1 sheet`; sale-format size/area remains unresolved. No panel dimensions or area are assigned; `sheets → m² → total` is blocked.
+- **C1 — Flexible Board (14 SKU):** `price_unit = м²`, `sale_unit = sheet`, minimum `1 sheet`, step `1 sheet`; sale-format size/area remains unresolved (`area_per_sale_unit_m2 = NULL`). No panel dimensions or area are assigned; `sheets → m² → total` is blocked.
 - **C2 — Range prices (20 SKU):** 14 Flexible Ceramic source/display ranges `2 100—2 200 ₽/м²`; 6 Travertine `2 200—2 400 ₽/м²`. Variant-specific exact price/rule pending; fixed price remains blank and no fixed-price calculation/order flow is allowed.
 - **C3 — Accessories (11/11):** `price_unit = sale_unit = шт./упаковка`, minimum `1`, step `1`; no area or sheet conversion.
 - **C4 — Public routes:** `MF-MAR-0030 → kalakata-1`; `MF-MAR-0077 → kalakata-2`; acrylic coating slugs are assigned by package weight in the owner decisions table. Legacy shared slugs remain historical evidence. SKU identity is unchanged; all 251 approved public slugs are unique.
 - **Current Content Gate:** **BLOCKED** — 2 commercial T008 groups + 3 current legal T009 groups = 5 consolidated groups; media rights/mapping blockers = 0. Selected-media quality review remains a pre-production requirement.
+
+## Owner correction — sale units (2026-10-02)
+
+This owner-approved correction supersedes the older, erroneous `sale_unit = м²` entries in the registry and earlier decision wording. The corrected row-level source is [CATALOG_OWNER_REVIEW.csv](CATALOG_OWNER_REVIEW.csv), with the rule recorded in [CATALOG_OWNER_DECISIONS.md](CATALOG_OWNER_DECISIONS.md):
+
+- **226 confirmed panel SKU:** `price_unit = м²`; `sale_unit = sheet`; `min_quantity = quantity_step = 1`; `area_per_sale_unit_m2 = 4.0328` (one sheet).
+- **14 Flexible Board SKU:** `price_unit = м²`; `sale_unit = sheet`; `min_quantity = quantity_step = 1`; `area_per_sale_unit_m2 = NULL` until the sold sheet area is confirmed.
+- **11 accessories:** `price_unit = sale_unit = шт./упаковка`; `min_quantity = quantity_step = 1`.
+
+No SKU, price, dimensions, availability, or other business fact is changed by this correction.
 
 ## Current owner-confirmed product facts
 
@@ -22,7 +32,7 @@ T008 remains **DONE**. Owner confirmations C1–C4 are applied in [CATALOG_OWNER
 | Merchant SKU | 251 уникальный стабильный SKU: утверждённый формат `MF-<CATEGORY_CODE>-<NUMBER>`; номера присвоены по числовому Legacy source ID по возрастанию внутри каждой категории. Маппинг в CSV заморожен; не регенерировать, не считать старый ID SKU. |
 | Categories | Ровно 8 без переименования: Гибкий мрамор 163, Гибкая доска 14, Гибкая керамика 14, Травертин 12, Флюиды 18, Блоки 7, Гибкий камень 12, Сопутствующие материалы 11. «Хит продаж» = отдельный `featured / hit` у 7 SKU, не категория. |
 | Price | 231 фиксированная SOURCE PRICE подтверждена владельцем как актуальная на дату решения; строковые суммы перенесены без изменения. У 20 диапазонов OWNER CONFIRMED PRICE пуст — будущая fixed-price commerce для них BLOCKED. Для 11 сопутствующих материалов числовая сумма и единица/упаковка подтверждены; minimum/step = 1. |
-| Seven surface categories (240 SKU) | PRICE UNIT / sale basis = `м²`, MIN = `1 sheet`, STEP = `1 sheet`. **226 панельных SKU** имеют подтверждённый размер `142 × 284 см` (`1.42 × 2.84 м`) и точную площадь `4.0328 м²`; **14 гибких досок** без подтверждённой площади и без формулы конверсии. |
+| Seven surface categories (240 SKU) | `price_unit = м²`, `sale_unit = sheet`, MIN = `1 sheet`, STEP = `1 sheet`. **226 панельных SKU** имеют подтверждённый размер `142 × 284 см` (`1.42 × 2.84 м`) и точную площадь листа `4.0328 м²`; **14 гибких досок** имеют `area_per_sale_unit_m2 = NULL` до подтверждения площади продаваемого формата. |
 | Accessories (11 SKU) | `OWNER CONFIRMED PRICE UNIT = SALE UNIT = шт./упаковка`; MIN = `1`; STEP = `1`; area/dimensions blank. No `м²` or `sheet`. |
 | Dimensions | `142 × 284 см` и **ровно `4.0328 м²`** утверждены владельцем для 6 категорий/226 SKU. Для 14 гибких досок — `UNRESOLVED / OWNER DATA REQUIRED`; confirmed dimensions/area остаются пустыми. Для 11 сопутствующих panel dimensions не назначены. Старое SOURCE VALUE двух «Калаката» (4.033 м²) сохранено как исторический текст, не используется для расчёта и не обобщается. |
 | Availability | Рабочие статусы `in_stock` / `on_order`; конкретным SKU пока не назначены. При пустом статусе товар **видим в каталоге и Product Detail**, публичный текст о наличии скрыт, **add-to-cart и order submit запрещены**. После назначения одного из статусов разрешение заказа зависит и от остальных заполненных коммерческих полей. Нужна повторная server-side validation перед созданием заявки; отсутствие статуса никогда не означает наличие. |
