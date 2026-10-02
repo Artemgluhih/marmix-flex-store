@@ -53,7 +53,8 @@ async function presentation(client: Client, rows: Array<{ id: string }>, allImag
   let imageQuery = client.from("product_images").select(IMAGE_FIELDS).in("product_id", ids);
   if (!allImages) imageQuery = imageQuery.eq("is_primary", true);
   const [memberships, images] = await Promise.all([
-    client.from("product_categories").select("product_id,categories!inner(id,slug,name,sort_order)").in("product_id", ids),
+    client.from("product_categories").select("product_id,categories!inner(id,slug,name,sort_order)")
+      .in("product_id", ids).eq("categories.is_published", true),
     imageQuery.order("sort_order", { ascending: true }).order("id", { ascending: true }),
   ]);
   if (memberships.error || images.error || !memberships.data || !images.data) failed();
@@ -198,6 +199,56 @@ export async function getPublishedProduct(slug: unknown): Promise<PublicProductD
   if (!normalized) return null;
   return unstable_cache(() => readProduct(normalized), ["catalog-product", normalized], {
     revalidate: TTL_SECONDS, tags: [catalogCacheTags.product(normalized)],
+  })();
+}
+
+async function readRelatedProducts(product: PublicProductDetail): Promise<PublicProduct[]> {
+  const client = createPublicSupabaseClient();
+  const seriesRows = product.series ? await client.from("products").select(PRODUCT_FIELDS)
+    .eq("series", product.series).neq("id", product.id)
+    .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
+    .order("sort_order", { ascending: true }).order("id", { ascending: true }).limit(3)
+    : { data: [] as Record<string, unknown>[], error: null };
+  if (seriesRows.error || !seriesRows.data) failed();
+  const selected = new Map<string, Record<string, unknown>>();
+  for (const row of seriesRows.data) selected.set(row.id as string, row);
+
+  // Product categories come from the guest read; explicitly constrain the joined categories too.
+  if (selected.size < 3 && product.categories.length) {
+    const categoryIds = product.categories.map(({ id }) => id);
+    const membershipIds = new Set<string>();
+    for (let offset = 0; ; offset += 500) {
+      const { data, error } = await client.from("product_categories")
+        .select("product_id,categories!inner(id)")
+        .in("category_id", categoryIds).eq("categories.is_published", true)
+        .neq("product_id", product.id)
+        .order("product_id", { ascending: true }).range(offset, offset + 499);
+      if (error || !data) failed();
+      for (const row of data) membershipIds.add(row.product_id);
+      if (data.length < 500) break;
+    }
+    if (membershipIds.size) {
+      const { data, error } = await client.from("products").select(PRODUCT_FIELDS)
+        .in("id", [...membershipIds]).neq("id", product.id)
+        .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
+        .order("sort_order", { ascending: true }).order("id", { ascending: true })
+        .limit(3 + selected.size);
+      if (error || !data) failed();
+      for (const row of data) {
+        if (selected.size === 3) break;
+        selected.set(row.id, row);
+      }
+    }
+  }
+  const rows = [...selected.values()];
+  const related = await presentation(client, rows as Array<{ id: string }>);
+  return rows.map((row) => productDto(row, related.get(row.id as string)!));
+}
+
+export async function getRelatedProducts(product: PublicProductDetail): Promise<PublicProduct[]> {
+  if (!product.series && product.categories.length === 0) return [];
+  return unstable_cache(() => readRelatedProducts(product), ["catalog-related", product.id], {
+    revalidate: TTL_SECONDS, tags: [catalogCacheTags.list, catalogCacheTags.product(product.slug)],
   })();
 }
 

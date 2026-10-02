@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { PublicProduct } from "@/lib/catalog/types";
 import styles from "./ProductGrid.module.css";
 
@@ -17,7 +18,7 @@ function Price({ product }: { product: PublicProduct }) {
   );
 }
 
-export function ProductGrid({ products, emptyMessage, emptyKind = "catalog" }: { products: PublicProduct[]; emptyMessage?: string; emptyKind?: "catalog" | "results" }) {
+export function ProductGrid({ products, emptyMessage, emptyKind = "catalog", linkToDetail = false, titleLevel = 2 }: { products: PublicProduct[]; emptyMessage?: string; emptyKind?: "catalog" | "results"; linkToDetail?: boolean; titleLevel?: 2 | 3 }) {
   if (products.length === 0) {
     return <div className={styles.empty} role="status"><h2>{emptyKind === "catalog" ? "Каталог пуст" : "Материалы не найдены"}</h2><p>{emptyMessage ?? (emptyKind === "catalog" ? "Сейчас нет опубликованных материалов." : "По выбранным параметрам ничего не найдено.")}</p></div>;
   }
@@ -39,7 +40,8 @@ export function ProductGrid({ products, emptyMessage, emptyKind = "catalog" }: {
           </div>
           <div className={styles.info}>
             {product.series && <p className={styles.series}>{product.series}</p>}
-            <h2 className={styles.name}>{product.name}</h2>
+            {titleLevel === 3 ? <h3 className={styles.name}>{linkToDetail ? <Link href={`/product/${product.slug}`}>{product.name}</Link> : product.name}</h3>
+              : <h2 className={styles.name}>{linkToDetail ? <Link href={`/product/${product.slug}`}>{product.name}</Link> : product.name}</h2>}
             <div className={styles.commercial}>
               <Price product={product} />
               {product.saleUnit === "sheet" && <span className={styles.saleUnit}>Продажа листами</span>}

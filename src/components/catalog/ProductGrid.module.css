@@ -29,6 +29,9 @@
   font: 400 25px/1.3 var(--font-display);
   overflow-wrap: anywhere;
 }
+.name a { color: inherit; text-decoration: none; }
+.name a:hover { color: var(--color-gold); }
+.name a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
 .commercial {
   display: flex;
   align-items: end;
