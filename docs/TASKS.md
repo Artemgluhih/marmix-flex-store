@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T038 — DONE, T039–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T039 — DONE, T040–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -895,7 +895,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T039
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Public catalog read layer
 - **Goal:** Создать server queries для опубликованных SKU/категорий.
 - **Why:** Одна модель должна кормить все публичные страницы.
@@ -910,6 +910,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T039): Public catalog read layer
+- **Resolution (2026-10-02):** Единый server-only `src/lib/catalog` предоставляет `listPublishedProducts`, `getPublishedProduct` и `getCatalogFacets` через существующий guest publishable client, без Admin cookies/Secret key. REAL/published/unarchived и published membership фильтруются явно поверх RLS; System All не зависит от категорий. DTO сохраняет NULL, panel `sale_unit = sheet`, source price range и только primary на списке; detail возвращает ordered media. Sort/page whitelist, bounded page size 24, deterministic `sort_order,id` и count защищают пагинацию. Публичный cache: `unstable_cache`, TTL 60 секунд и теги `catalog:list`, `catalog:facets`, `catalog:product:<slug>`, `catalog:category:<slug>`; адресную Admin revalidation подключить в будущей задаче, TTL задаёт резервный интервал revalidation. Preview live read трёх T038 REAL SKU, nullable/media/units/facets и invalid slug/page PASS; transactional RLS negative fixtures для draft/archived/TEST_ONLY/hidden category и order privacy PASS с rollback; permanent fixtures 0. Временный read-only route удалён; Production не менялась. T039 DONE; next T040, not started.
 
 ### T040 — Catalog и category routes
 

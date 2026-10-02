@@ -1,0 +1,211 @@
+import "server-only";
+
+import { unstable_cache } from "next/cache";
+import { createPublicSupabaseClient } from "@/lib/supabase/public";
+import { normalizeCatalogListParams, normalizeSlug, PUBLIC_PAGE_SIZE } from "./query-params";
+import type { CatalogListParams } from "./query-params";
+import type { CatalogFacets, PublicCategory, PublicImage, PublicProduct, PublicProductDetail } from "./types";
+
+const TTL_SECONDS = 60;
+export const catalogCacheTags = {
+  list: "catalog:list",
+  facets: "catalog:facets",
+  product: (slug: string) => `catalog:product:${slug}`,
+  category: (slug: string) => `catalog:category:${slug}`,
+} as const;
+
+const PRODUCT_FIELDS = "id,sku,slug,name,series,price_minor,currency,price_unit,sale_unit,min_quantity,quantity_step,area_per_sale_unit_m2,source_price_range,availability_status,is_featured,sort_order";
+const DETAIL_FIELDS = `${PRODUCT_FIELDS},description,width_mm,height_mm,thickness_mm,specifications,seo_title,seo_description`;
+const CATEGORY_FIELDS = "id,slug,name,sort_order";
+const IMAGE_FIELDS = "id,product_id,storage_path,alt,role,width,height,is_primary,sort_order";
+type Client = ReturnType<typeof createPublicSupabaseClient>;
+
+function failed(): never {
+  throw new Error("Не удалось загрузить публичный каталог.");
+}
+
+function categoryDto(row: { id: string; slug: string; name: string; sort_order: number }): PublicCategory {
+  return { id: row.id, slug: row.slug, name: row.name, sortOrder: row.sort_order };
+}
+
+function relatedCategory(value: unknown): PublicCategory | null {
+  if (!value || Array.isArray(value) || typeof value !== "object" || !("id" in value)) return null;
+  return categoryDto(value as { id: string; slug: string; name: string; sort_order: number });
+}
+
+function imageDto(client: Client, row: {
+  storage_path: string; alt: string | null; role: string | null;
+  width: number; height: number; is_primary: boolean; sort_order: number;
+}): PublicImage {
+  return {
+    url: client.storage.from("product-media").getPublicUrl(row.storage_path).data.publicUrl,
+    alt: row.alt, role: row.role, width: row.width, height: row.height,
+    isPrimary: row.is_primary, sortOrder: row.sort_order,
+  };
+}
+
+async function presentation(client: Client, rows: Array<{ id: string }>, allImages = false): Promise<Map<string, {
+  categories: PublicCategory[]; images: PublicImage[];
+}>> {
+  const result = new Map<string, { categories: PublicCategory[]; images: PublicImage[] }>();
+  if (!rows.length) return result;
+  const ids = rows.map(({ id }) => id);
+  let imageQuery = client.from("product_images").select(IMAGE_FIELDS).in("product_id", ids);
+  if (!allImages) imageQuery = imageQuery.eq("is_primary", true);
+  const [memberships, images] = await Promise.all([
+    client.from("product_categories").select("product_id,categories!inner(id,slug,name,sort_order)").in("product_id", ids),
+    imageQuery.order("sort_order", { ascending: true }).order("id", { ascending: true }),
+  ]);
+  if (memberships.error || images.error || !memberships.data || !images.data) failed();
+  for (const { id } of rows) result.set(id, { categories: [], images: [] });
+  for (const row of memberships.data) {
+    const category = relatedCategory(row.categories);
+    if (category) result.get(row.product_id)?.categories.push(category);
+  }
+  for (const row of images.data) result.get(row.product_id)?.images.push(imageDto(client, row));
+  for (const item of result.values()) item.categories.sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id));
+  return result;
+}
+
+function productDto(row: Record<string, unknown>, related: { categories: PublicCategory[]; images: PublicImage[] }): PublicProduct {
+  return {
+    id: row.id as string, sku: row.sku as string, slug: row.slug as string, name: row.name as string,
+    series: row.series as string | null, priceMinor: row.price_minor as number | null,
+    currency: row.currency as string, priceUnit: row.price_unit as string | null,
+    saleUnit: row.sale_unit as string | null, minQuantity: row.min_quantity as number | null,
+    quantityStep: row.quantity_step as number | null,
+    areaPerSaleUnitM2: row.area_per_sale_unit_m2 as number | null,
+    sourcePriceRange: row.source_price_range as string | null,
+    availabilityStatus: row.availability_status as string | null,
+    isFeatured: row.is_featured as boolean, sortOrder: row.sort_order as number,
+    categories: related.categories,
+    primaryImage: related.images.find((image) => image.isPrimary) ?? null,
+  };
+}
+
+async function publishedCategory(client: Client, slug: string): Promise<PublicCategory | null> {
+  const { data, error } = await client.from("categories").select(CATEGORY_FIELDS)
+    .eq("slug", slug).eq("is_published", true).maybeSingle();
+  if (error) failed();
+  return data ? categoryDto(data) : null;
+}
+
+async function readList(params: CatalogListParams) {
+  const client = createPublicSupabaseClient();
+  const category = params.categorySlug ? await publishedCategory(client, params.categorySlug) : null;
+  if (params.categorySlug && !category) return { products: [] as PublicProduct[], total: 0, page: params.page, pageSize: PUBLIC_PAGE_SIZE, category: null };
+
+  let ids: string[] | null = null;
+  if (category) {
+    ids = [];
+    for (let offset = 0; ; offset += 500) {
+      const { data, error } = await client.from("product_categories").select("product_id")
+        .eq("category_id", category.id).order("product_id", { ascending: true }).range(offset, offset + 499);
+      if (error || !data) failed();
+      ids.push(...data.map(({ product_id }) => product_id));
+      if (data.length < 500) break;
+    }
+    if (!ids.length) return { products: [] as PublicProduct[], total: 0, page: params.page, pageSize: PUBLIC_PAGE_SIZE, category };
+  }
+
+  let countQuery = client.from("products").select("id", { count: "exact", head: true })
+    .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null);
+  if (ids) countQuery = countQuery.in("id", ids);
+  const countResult = await countQuery;
+  if (countResult.error || countResult.count === null) failed();
+  const total = countResult.count;
+  if ((params.page - 1) * PUBLIC_PAGE_SIZE >= total) return {
+    products: [] as PublicProduct[], total, page: params.page, pageSize: PUBLIC_PAGE_SIZE, category,
+  };
+
+  let query = client.from("products").select(PRODUCT_FIELDS)
+    .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null);
+  if (ids) query = query.in("id", ids);
+  const { data, error } = await query.order("sort_order", { ascending: true })
+    .order("id", { ascending: true })
+    .range((params.page - 1) * PUBLIC_PAGE_SIZE, params.page * PUBLIC_PAGE_SIZE - 1);
+  if (error || !data) failed();
+  const related = await presentation(client, data);
+  return { products: data.map((row) => productDto(row, related.get(row.id)!)), total,
+    page: params.page, pageSize: PUBLIC_PAGE_SIZE, category };
+}
+
+export async function listPublishedProducts(input: {
+  page?: unknown; sort?: unknown; categorySlug?: unknown;
+} = {}) {
+  const params = normalizeCatalogListParams(input);
+  // An explicitly invalid category is never interpreted as System All.
+  if (input.categorySlug != null && !params.categorySlug) return {
+    products: [] as PublicProduct[], total: 0, page: params.page, pageSize: PUBLIC_PAGE_SIZE, category: null,
+  };
+  return unstable_cache(() => readList(params), ["catalog-list", JSON.stringify(params)], {
+    revalidate: TTL_SECONDS,
+    tags: [catalogCacheTags.list, ...(params.categorySlug ? [catalogCacheTags.category(params.categorySlug)] : [])],
+  })();
+}
+
+async function readProduct(slug: string): Promise<PublicProductDetail | null> {
+  const client = createPublicSupabaseClient();
+  const { data, error } = await client.from("products").select(DETAIL_FIELDS)
+    .eq("slug", slug).eq("catalog_kind", "REAL").eq("is_published", true)
+    .is("archived_at", null).maybeSingle();
+  if (error) failed();
+  if (!data) return null;
+  const related = (await presentation(client, [data], true)).get(data.id)!;
+  return {
+    ...productDto(data, related), description: data.description,
+    widthMm: data.width_mm, heightMm: data.height_mm, thicknessMm: data.thickness_mm,
+    specifications: data.specifications as Record<string, unknown>,
+    seoTitle: data.seo_title, seoDescription: data.seo_description,
+    images: related.images,
+  };
+}
+
+export async function getPublishedProduct(slug: unknown): Promise<PublicProductDetail | null> {
+  const normalized = normalizeSlug(slug);
+  if (!normalized) return null;
+  return unstable_cache(() => readProduct(normalized), ["catalog-product", normalized], {
+    revalidate: TTL_SECONDS, tags: [catalogCacheTags.product(normalized)],
+  })();
+}
+
+async function readFacets(): Promise<CatalogFacets> {
+  const client = createPublicSupabaseClient();
+  const prices: number[] = [];
+  const availability = new Set<string>();
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await client.from("products").select("id,price_minor,availability_status")
+      .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
+      .order("id", { ascending: true }).range(offset, offset + 499);
+    if (error || !data) failed();
+    for (const row of data) {
+      if (row.price_minor !== null) prices.push(row.price_minor);
+      if (row.availability_status !== null) availability.add(row.availability_status);
+    }
+    if (data.length < 500) break;
+  }
+  const categories = new Map<string, PublicCategory>();
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await client.from("product_categories")
+      .select("categories!inner(id,slug,name,sort_order)")
+      .order("product_id", { ascending: true }).order("category_id", { ascending: true })
+      .range(offset, offset + 499);
+    if (error || !data) failed();
+    for (const row of data) {
+      const category = relatedCategory(row.categories);
+      if (category) categories.set(category.id, category);
+    }
+    if (data.length < 500) break;
+  }
+  return {
+    categories: [...categories.values()].sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)),
+    fixedPriceMinor: prices.length ? { min: Math.min(...prices), max: Math.max(...prices) } : null,
+    availabilityStatuses: [...availability].sort(),
+  };
+}
+
+export async function getCatalogFacets(): Promise<CatalogFacets> {
+  return unstable_cache(readFacets, ["catalog-facets"], {
+    revalidate: TTL_SECONDS, tags: [catalogCacheTags.facets, catalogCacheTags.list],
+  })();
+}
