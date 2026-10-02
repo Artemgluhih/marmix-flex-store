@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T039 — DONE, T040–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T040 — DONE, T041–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -916,7 +916,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T040
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Catalog и category routes
 - **Goal:** Реализовать /catalog и /catalog/[category] на сервере.
 - **Why:** Каталог и категория — базовые маршруты магазина.
@@ -931,6 +931,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T040): Catalog и category routes
+- **Resolution (2026-10-02):** Server-rendered `/catalog` and `/catalog/[category]` use only the T039 public read layer. System All renders the three existing published REAL products with primary Next/Image, factual names, exact prices and preserved price/sale units; no Product Detail/cart/search/filter/pagination action was added. Category route returns 404 for unpublished and missing slugs without exposing hidden membership; all three existing categories remain unpublished. Positive category presentation passed through a temporary render-only route with controlled props and one existing public product, then the route was removed; no DB fixtures or mutations. Lint, typecheck, build and live route smoke PASS; owner Vercel Preview visual verification PASS for desktop/mobile, media, card/grid, breadcrumb and no horizontal overflow. Production unchanged; T040 DONE, next T041 not started.
 
 ### T041 — Search/filters/sort/pagination
 

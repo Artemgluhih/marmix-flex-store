@@ -1,0 +1,69 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 21px;
+}
+
+.card { min-width: 0; background: var(--color-card); }
+.imageFrame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.1;
+  overflow: hidden;
+  background: var(--color-disabled-surface);
+}
+.imageFrame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 650ms cubic-bezier(.2, .7, .2, 1);
+}
+.card:hover .imageFrame img { transform: scale(1.045); }
+.noImage { padding: 24px; color: var(--color-text-quiet); font-size: 13px; text-align: center; }
+.info { min-width: 0; padding: 21px 21px 19px; }
+.series { margin: 0 0 7px; color: var(--color-text-quiet); font-size: 11px; }
+.name {
+  min-width: 0;
+  margin: 0;
+  font: 400 25px/1.3 var(--font-display);
+  overflow-wrap: anywhere;
+}
+.commercial {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 21px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-border);
+}
+.price { color: var(--color-gold); font-size: 17px; font-weight: 600; line-height: 1.3; }
+.price small { color: var(--color-text-primary); font-size: 11px; font-weight: 500; white-space: nowrap; }
+.saleUnit { color: var(--color-text-quiet); font-size: 11px; line-height: 1.5; text-align: right; }
+.unknownPrice { color: var(--color-text-secondary); font-size: 13px; }
+.empty { padding: 36px 0 80px; color: var(--color-text-secondary); font-size: 15px; }
+
+@media (max-width: 1120px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .commercial { align-items: start; flex-direction: column; }
+  .saleUnit { text-align: left; }
+}
+
+@media (max-width: 620px) {
+  .grid { grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .imageFrame { aspect-ratio: 1.23; }
+  .info { padding: 19px 19px 17px; }
+  .commercial { flex-direction: row; align-items: end; }
+  .saleUnit { text-align: right; }
+}
+
+@media (max-width: 370px) {
+  .commercial { flex-direction: column; align-items: start; }
+  .saleUnit { text-align: left; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .imageFrame img { transition: none; }
+  .card:hover .imageFrame img { transform: none; }
+}
