@@ -159,6 +159,23 @@ export async function listPublishedProducts(input: CatalogListInput = {}) {
   })();
 }
 
+async function readFeaturedProducts(): Promise<PublicProduct[]> {
+  const client = createPublicSupabaseClient();
+  const { data, error } = await client.from("products").select(PRODUCT_FIELDS)
+    .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
+    .eq("is_featured", true).order("sort_order", { ascending: true })
+    .order("id", { ascending: true }).limit(3);
+  if (error || !data) failed();
+  const related = await presentation(client, data);
+  return data.map((row) => productDto(row, related.get(row.id)!));
+}
+
+export async function listPublishedFeaturedProducts(): Promise<PublicProduct[]> {
+  return unstable_cache(readFeaturedProducts, ["catalog-featured"], {
+    revalidate: TTL_SECONDS, tags: [catalogCacheTags.list],
+  })();
+}
+
 async function readProduct(slug: string): Promise<PublicProductDetail | null> {
   const client = createPublicSupabaseClient();
   const { data, error } = await client.from("products").select(DETAIL_FIELDS)
