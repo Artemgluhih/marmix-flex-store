@@ -1,0 +1,76 @@
+.product {
+  min-height: 70svh;
+  padding: 40px var(--wide-gutter) 124px;
+  border-top: 1px solid var(--color-border-quiet);
+  background: var(--color-stage);
+}
+
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  color: var(--color-text-quiet);
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.breadcrumb a { color: var(--color-text-secondary); text-decoration: none; }
+.breadcrumb a:hover { color: var(--color-gold); }
+.breadcrumb a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
+.breadcrumb [aria-current="page"] { min-width: 0; color: var(--color-text-primary); }
+
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.04fr) minmax(0, .96fr);
+  gap: clamp(36px, 6vw, 112px);
+  align-items: center;
+  max-width: 1600px;
+  margin: 58px auto 0;
+}
+.media {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  aspect-ratio: 1.08;
+  overflow: hidden;
+  background: var(--color-disabled-surface);
+}
+.media img { width: 100%; height: 100%; object-fit: cover; }
+.noImage { padding: 24px; color: var(--color-text-quiet); font-size: 13px; text-align: center; }
+.identity { min-width: 0; padding: 26px 0; }
+.series {
+  margin: 0 0 20px;
+  color: var(--color-gold);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+}
+.identity h1 {
+  margin: 0;
+  font: 400 clamp(40px, 4.3vw, 72px)/1.2 var(--font-display);
+  letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+}
+.sku { margin: 23px 0 0; color: var(--color-text-quiet); font-size: 12px; overflow-wrap: anywhere; }
+.commercial { margin-top: 52px; padding-top: 27px; border-top: 1px solid var(--color-border); }
+.price { margin: 0 0 23px; color: var(--color-gold); font-size: clamp(24px, 2.4vw, 35px); font-weight: 600; line-height: 1.4; overflow-wrap: anywhere; }
+.price span { color: var(--color-text-primary); font-size: .52em; font-weight: 500; }
+.fact { margin: 0 0 12px; color: var(--color-text-secondary); font-size: 14px; line-height: 1.6; overflow-wrap: anywhere; }
+
+@media (max-width: 800px) {
+  .product { padding: 30px 24px 87px; }
+  .stage { grid-template-columns: minmax(0, 1fr); gap: 30px; margin-top: 43px; }
+  .media { aspect-ratio: 1.2; }
+  .identity { padding: 0; }
+  .commercial { margin-top: 36px; }
+}
+@media (max-width: 620px) {
+  .product { padding: 24px 20px 80px; }
+  .stage { gap: 26px; margin-top: 35px; }
+  .media { aspect-ratio: 1.12; }
+  .identity h1 { font-size: clamp(36px, 9vw, 46px); }
+  .commercial { margin-top: 32px; }
+}
