@@ -4,8 +4,12 @@ import { CatalogFragment } from "./CatalogFragment";
 import { MotionReveal } from "./MotionReveal";
 import styles from "./page.module.css";
 import fragments from "./homeFragments.module.css";
+import { listPublishedFeaturedProducts } from "@/lib/catalog/queries";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const featuredProducts = await listPublishedFeaturedProducts();
   return (
     <>
       <MotionReveal />
@@ -47,9 +51,9 @@ export default function HomePage() {
             <figcaption><span>02 / Вблизи</span><span>Демонстрационная фактура</span></figcaption>
           </figure>
         </div>
-        <p className={styles.showcaseNote}>Изображения этого прототипа — визуализации направления, не фотографии конкретных товаров Marmix Flex.</p>
+        <p className={styles.showcaseNote}>Визуализации направления — не фотографии конкретных товаров Marmix Flex.</p>
       </section>
-      <CatalogFragment />
+      <CatalogFragment products={featuredProducts} />
       <section className={fragments.interiors} id="interiors" aria-labelledby="interiors-title">
         <div className={fragments.interiorImage} data-reveal>
           <Image src="/images/showroom/hero-room.webp" alt="" fill sizes="(max-width: 800px) 100vw, 55vw" />
@@ -58,7 +62,7 @@ export default function HomePage() {
         <div className={fragments.interiorCopy} data-reveal>
           <p className={styles.eyebrow}>03 / Применение</p>
           <h2 id="interiors-title">Поверхность,<br />которая становится<br /><em>архитектурой.</em></h2>
-          <p>Материал работает не только в образце. Его масштаб, свет и окружение создают цельное впечатление от пространства.</p>
+          <p>Масштаб, свет и окружение меняют восприятие фактуры в пространстве.</p>
           <a className={styles.textLink} href="#materials">Посмотреть материал <span aria-hidden="true">↗</span></a>
         </div>
       </section>
@@ -67,7 +71,7 @@ export default function HomePage() {
           <p className={styles.eyebrow}>Marmix Flex / Сургут</p>
           <h2 id="closing-title">Начните с<br /><em>материала.</em></h2>
           <p>Сравните фактуры, найдите свой оттенок и представьте новую поверхность в вашем пространстве.</p>
-          <a className={styles.primaryButton} href="#catalog">Вернуться к материалам <span aria-hidden="true">↗</span></a>
+          <Link className={styles.primaryButton} href="/catalog">Перейти в каталог <span aria-hidden="true">↗</span></Link>
         </div>
         <div className={fragments.closingArt} aria-hidden="true">
           <span className={fragments.artOutline} />

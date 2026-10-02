@@ -1,1650 +1,81 @@
-# Marmix Flex Redesign v2 ‚Äî Implementation TASK Plan
-
-**–°—Ç–∞—Ç—É—Å:** –ø–ª–∞–Ω —É—Ç–≤–µ—Ä–∂–¥—ë–Ω; T001‚ÄìT042 ‚Äî DONE, T043‚ÄìT074 ‚Äî TODO; M1 ‚Äî PASS; M2 ‚Äî PASS; M3 ‚Äî PASS; M4 ‚Äî PASS; Development Gate ‚Äî PASS for isolated Preview work; Production Content Gate ‚Äî BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. –¢–µ—Ö–Ω–∏—á–µ—Å–∫–∏–π source of truth ‚Äî [ARCHITECTURE.md](ARCHITECTURE.md), –≤–∏–∑—É–∞–ª—å–Ω—ã–π ‚Äî [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) —Ñ–∏–∫—Å–∏—Ä—É–µ—Ç –Ω–µ–ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–µ –±–∏–∑–Ω–µ—Å-–¥–∞–Ω–Ω—ã–µ, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) ‚Äî –∏—Å—Ç–æ—Ä–∏—é —É—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏—è, [prototype](../prototype/index.html) ‚Äî approved visual reference. –≠—Ç–æ—Ç –¥–æ–∫—É–º–µ–Ω—Ç –Ω–µ —Å–æ–∑–¥–∞—ë—Ç –ø—Ä–∏–ª–æ–∂–µ–Ω–∏–µ, SQL, –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏–∏ –∏–ª–∏ production deployment.
-
-**–ü–æ—Ä—è–¥–æ–∫ —Ä–∞–±–æ—Ç—ã:** –≤—ã–ø–æ–ª–Ω—è—Ç—å –æ–¥–Ω—É TASK –∑–∞ —Ä–∞–∑, –≤ —É–∫–∞–∑–∞–Ω–Ω–æ–º –ø–æ—Ä—è–¥–∫–µ; –ø–µ—Ä–µ–¥ –Ω–µ–π —á–∏—Ç–∞—Ç—å —ç—Ç–æ—Ç –ø—É–Ω–∫—Ç –∏ —Ç–æ–ª—å–∫–æ —Å–≤—è–∑–∞–Ω–Ω—ã–µ –∏—Å—Ç–æ—á–Ω–∏–∫–∏/—Ñ–∞–π–ª—ã, –∞ –Ω–µ –≤–µ—Å—å repository. –ï—Å–ª–∏ –Ω–µ—Ç –Ω—É–∂–Ω—ã—Ö —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã—Ö –¥–∞–Ω–Ω—ã—Ö ‚Äî –æ—Ç–º–µ—Ç–∏—Ç—å –∫–æ–Ω–∫—Ä–µ—Ç–Ω—É—é –∑–∞–¥–∞—á—É BLOCKED –∏ –∑–∞–ø—Ä–æ—Å–∏—Ç—å –∏—Ö. –ï—Å–ª–∏ —Ç—Ä–µ–±—É–µ—Ç—Å—è —Å–º–µ–Ω–∞ –∞—Ä—Ö–∏—Ç–µ–∫—Ç—É—Ä—ã: –æ—Å—Ç–∞–Ω–æ–≤–∏—Ç—å—Å—è, –æ–±–æ—Å–Ω–æ–≤–∞—Ç—å –º–∏–Ω–∏–º–∞–ª—å–Ω—É—é –ø—Ä–∞–≤–∫—É, –¥–æ–∂–¥–∞—Ç—å—Å—è —Ä–∞–∑—Ä–µ—à–µ–Ω–∏—è, –∑–∞—Ç–µ–º –∏–∑–º–µ–Ω–∏—Ç—å ARCHITECTURE.md –æ—Ç–¥–µ–ª—å–Ω—ã–º —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω—ã–º —à–∞–≥–æ–º. –ï—Å–ª–∏ —Ç—Ä–µ–±—É–µ—Ç—Å—è –∏–∑–º–µ–Ω–µ–Ω–∏–µ visual language: –æ—Ç–¥–µ–ª—å–Ω–æ–µ —è–≤–Ω–æ–µ —Ä–∞–∑—Ä–µ—à–µ–Ω–∏–µ –Ω–∞ DESIGN_SYSTEM.md –∏ —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ –∫–æ–º–ø–æ–Ω–µ–Ω—Ç—ã. –ù–∏–∫–∞–∫–∞—è TASK –Ω–µ –≤–ø—Ä–∞–≤–µ —Å–∞–º–æ—Å—Ç–æ—è—Ç–µ–ª—å–Ω–æ –∏–∑–º–µ–Ω—è—Ç—å —ç—Ç–∏ source of truth.
-
-**–ó–∞–≤–µ—Ä—à–µ–Ω–∏–µ –∫–∞–∂–¥–æ–π TASK:** implementation ‚Üí –µ—ë Required checks ‚Üí –æ–¥–∏–Ω –æ—Ç–¥–µ–ª—å–Ω—ã–π GitHub commit —á–µ—Ä–µ–∑ –æ—Ñ–∏—Ü–∏–∞–ª—å–Ω—ã–π WRITE connector ‚Üí fast-forward redesign-v2 ‚Üí —É–¥–∞–ª—ë–Ω–Ω–∞—è –ø—Ä–æ–≤–µ—Ä–∫–∞ SHA/–∏–∑–º–µ–Ω—ë–Ω–Ω–æ–≥–æ —Ñ–∞–π–ª–∞ ‚Üí DONE –∏ –æ—Å—Ç–∞–Ω–æ–≤–∫–∞. –ù–µ –º–µ–Ω—è—Ç—å main, –Ω–µ force-push, –Ω–µ —Å–º–µ—à–∏–≤–∞—Ç—å –Ω–µ—Å–∫–æ–ª—å–∫–æ –∑–∞–≤–µ—Ä—à—ë–Ω–Ω—ã—Ö TASK –≤ commit. –ü—Ä–µ–¥–ª–∞–≥–∞—Ç—å –Ω–æ–≤—É—é TASK —Ç–æ–ª—å–∫–æ –ø–æ —Å–ª–µ–¥—É—é—â–µ–º—É –∑–∞–ø—Ä–æ—Å—É –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—è. –ü—Ä–∏–≤–µ–¥—ë–Ω–Ω–æ–µ –≤ –∫–∞–∂–¥–æ–π –∑–∞–¥–∞—á–µ —Å–æ–æ–±—â–µ–Ω–∏–µ commit ‚Äî –æ—Ä–∏–µ–Ω—Ç–∏—Ä. –ó–∞–ø—Ä–µ—â–µ–Ω–æ –∑–∞–ø–∏—Å—ã–≤–∞—Ç—å —Ä–µ–∞–ª—å–Ω—ã–µ secrets, .env, PII –∏–ª–∏ –∫–ª—é—á–∏ –≤ Git; .env.example —Å–æ–¥–µ—Ä–∂–∏—Ç —Ç–æ–ª—å–∫–æ placeholders.
-
-**–ü—Ä–∏–æ—Ä–∏—Ç–µ—Ç—ã:** P0 ‚Äî –±–ª–æ–∫–µ—Ä —è–¥—Ä–∞ MVP; P1 ‚Äî –æ–±—è–∑–∞—Ç–µ–ª—å–Ω–æ–µ –∫–∞—á–µ—Å—Ç–≤–æ/–∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—è –¥–ª—è —Ç–æ–≥–æ –∂–µ MVP; P2 –∑–∞—Ä–µ–∑–µ—Ä–≤–∏—Ä–æ–≤–∞–Ω –¥–ª—è –æ—Ç–¥–µ–ª—å–Ω–æ–≥–æ post-MVP –ø–ª–∞–Ω–∞ –∏ –∑–¥–µ—Å—å –Ω–µ –∏—Å–ø–æ–ª—å–∑—É–µ—Ç—Å—è. P1 –Ω–µ –æ–∑–Ω–∞—á–∞–µ—Ç —Ä–∞–∑—Ä–µ—à–µ–Ω–∏–µ –≤—ã–ø—É—Å—Ç–∏—Ç—å MVP –±–µ–∑ –Ω–µ—ë. –î–æ–ø–æ–ª–Ω–∏—Ç–µ–ª—å–Ω—ã–π –∞–≥–µ–Ω—Ç ‚Äî NO –¥–ª—è –≤—Å–µ—Ö TASK: –Ω–µ—Ç –Ω–µ–∑–∞–≤–∏—Å–∏–º–æ–π —Ä–∞–±–æ—Ç—ã, –æ–ø—Ä–∞–≤–¥—ã–≤–∞—é—â–µ–π –¥–µ–ª–µ–≥–∏—Ä–æ–≤–∞–Ω–∏–µ –ø—Ä–∏ –ø–æ—Å–ª–µ–¥–æ–≤–∞—Ç–µ–ª—å–Ω—ã—Ö gates. –ú–∞–∫—Å–∏–º—É–º –æ–¥–∏–Ω –∞–≥–µ–Ω—Ç, –µ—Å–ª–∏ —ç—Ç–æ –ø—Ä–∞–≤–∏–ª–æ –ø–æ–∑–∂–µ —è–≤–Ω–æ –∏–∑–º–µ–Ω–∏—Ç—Å—è.
-
-**–ü—Ä–æ–≤–µ—Ä–∫–∏:** –º–∞–ª–∞—è –∫–æ–¥–æ–≤–∞—è TASK ‚Äî targeted lint, typecheck –∏ relevant smoke; security/RLS ‚Äî –ø–æ–∑–∏—Ç–∏–≤–Ω—ã–µ –∏ –Ω–µ–≥–∞—Ç–∏–≤–Ω—ã–µ targeted –ø—Ä–æ–≤–µ—Ä–∫–∏; milestone ‚Äî –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—è –≥–æ—Ç–æ–≤–æ–≥–æ —ç—Ç–∞–ø–∞ —Å –ø—Ä–µ–¥—ã–¥—É—â–∏–º; –ø–æ–ª–Ω—ã–π e2e ‚Äî –±–ª–∏–∂–µ –∫ candidate –≤ PHASE 16. –î–æ–∫—É–º–µ–Ω—Ç/–∫–æ–Ω—Ç–µ–Ω—Ç ‚Äî —Ñ–∞–∫—Ç—á–µ–∫–∏–Ω–≥ –∏ –ø—Ä–æ–≤–µ—Ä–∫–∞ —Å—Å—ã–ª–æ–∫/–¥–æ–∫–∞–∑–∞—Ç–µ–ª—å—Å—Ç–≤, –±–µ–∑ –±–µ—Å—Å–º—ã—Å–ª–µ–Ω–Ω–æ–≥–æ lint. –ö–∞–∂–¥—ã–π –∫—Ä–∏—Ç–µ—Ä–∏–π –ø—Ä–∏–Ω–∏–º–∞–µ—Ç—Å—è –ø–æ –Ω–∞–±–ª—é–¥–∞–µ–º–æ–º—É —Ä–µ–∑—É–ª—å—Ç–∞—Ç—É.
-
-## MVP required
-
-Premium public homepage; –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–π –∫–∞—Ç–∞–ª–æ–≥/–∫–∞—Ç–µ–≥–æ—Ä–∏–∏/–ø–æ–∏—Å–∫/—Ñ–∏–ª—å—Ç—Ä—ã; Product Detail; –∫–æ—Ä–∑–∏–Ω–∞; –∑–∞—è–≤–∫–∞; Supabase; –∑–∞—â–∏—â—ë–Ω–Ω—ã–µ Admin Auth, —Ç–æ–≤–∞—Ä—ã, –∫–∞—Ç–µ–≥–æ—Ä–∏–∏, —Ñ–æ—Ç–æ –∏ –∑–∞—è–≤–∫–∏; –∏–Ω—Ñ–æ—Ä–º–∞—Ü–∏–æ–Ω–Ω—ã–µ –∏ legal —Å—Ç—Ä–∞–Ω–∏—Ü—ã; SEO foundation; Yandex Metrika; desktop/mobile/tablet, security –∏ production QA. Supabase Studio ‚Äî —Ç–æ–ª—å–∫–æ technical/fallback, Custom Admin Panel ‚Äî –æ—Å–Ω–æ–≤–Ω–æ–π operational interface.
-
-## Post-MVP (–±–µ–∑ TASK –≤ —ç—Ç–æ–º –ø–ª–∞–Ω–µ)
-
-Customer accounts, wishlist, comparison, online payment, advanced CMS, –º–Ω–æ–≥–æ—É—Ä–æ–≤–Ω–µ–≤—ã–π RBAC, BI, inventory ERP, page builder, —Ç—è–∂—ë–ª—ã–µ animation. –†–∞—Å—à–∏—Ä–µ–Ω–∏–µ —Ç—Ä–µ–±—É–µ—Ç –æ—Ç–¥–µ–ª—å–Ω–æ–≥–æ —Ä–µ—à–µ–Ω–∏—è.
-
-## Milestone gates
-
-| Gate | –ü–æ—Å–ª–µ TASK | –£—Å–ª–æ–≤–∏–µ –ø—Ä–∏—ë–º–∫–∏ |
-|---|---|---|
-| M1 ‚Äî Foundation ready | T003 | Next scaffold, —à—Ä–∏—Ñ—Ç—ã/tokens, lint/typecheck/build –∏ HTTPS Preview —Ä–∞–±–æ—Ç–∞—é—Ç; —Ç–æ–ª—å–∫–æ placeholders –≤ Git; –ø—Ä–æ–≤–µ—Ä–∏—Ç—å T001‚ÄìT003. |
-| M2 ‚Äî Public visual foundation approved | T007 | Header/Hero/Showcase/Card/CTA –≤ Next –≤–∏–∑—É–∞–ª—å–Ω–æ —Å–æ–≤–ø–∞–¥–∞—é—Ç —Å —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–º prototype –Ω–∞ 1440/390, mobile menu –∏ reduced-motion –ø—Ä–æ—Ö–æ–¥—è—Ç; –ø—Ä–∏–Ω–∏–º–∞—Ç—å –ø–µ—Ä–µ–Ω–æ—Å, –Ω–µ –Ω–æ–≤–æ–µ –Ω–∞–ø—Ä–∞–≤–ª–µ–Ω–∏–µ; –ø—Ä–æ–≤–µ—Ä–∏—Ç—å T004‚ÄìT007. |
-| Development Gate ‚Äî **PASS** | T010 | T008‚ÄìT010 DONE. T011 and subsequent technical tasks may proceed in isolated Preview under the TEST_ONLY/nullable commercial rules below. |
-| Production Content Gate ‚Äî **BLOCKED** | T010; required before Phase 17 readiness | Two real commercial groups and three real legal groups remain unresolved. Production commerce, readiness and deployment are forbidden until this gate passes; selected-media quality review remains a separate pre-production check. |
-| M3 ‚Äî Supabase & Admin Auth secured ‚Äî **PASS** | T022 | T011‚ÄìT022: —Å—Ö–µ–º—ã, anon/RLS/Storage, –∑–∞–∫—Ä—ã—Ç—ã–π signup, active membership, session/guard, –Ω–µ–≥–∞—Ç–∏–≤–Ω—ã–µ security –ø—Ä–æ–≤–µ—Ä–∫–∏. |
-| M4 ‚Äî Admin catalog management operational ‚Äî **PASS** | T038 | T023‚ÄìT032, T032A, T033‚ÄìT038: dashboard, multi-category membership/legacy migration, Products/Categories CRUD –≤ —Ä–∞–º–∫–∞—Ö —Ä–∞–∑—Ä–µ—à–µ–Ω–∏–π, media upload/primary/delete –∏ –ø—Ä–æ–≤–µ—Ä–æ—á–Ω—ã–π –Ω–∞–±–æ—Ä –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã—Ö SKU —á–µ—Ä–µ–∑ Admin; –ø—Ä–æ–≤–µ—Ä–∏—Ç—å –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—é —Å M3. |
-| M5 ‚Äî Public catalog operational | T046 | T039‚ÄìT046: —Å–ø–∏—Å–∫–∏/–ø–æ–∏—Å–∫/–∫–∞—Ç–µ–≥–æ—Ä–∏–∏/Product Detail –Ω–∞ –æ–±—â–∏—Ö –¥–∞–Ω–Ω—ã—Ö, —Ç–æ–ª—å–∫–æ published, —Ä–µ–∞–ª—å–Ω—ã–µ —Ü–µ–Ω–∞/–º–µ–¥–∏–∞. –ü–æ–¥–∫–ª—é—á–µ–Ω–∏–µ add-to-cart —è–≤–ª—è–µ—Ç—Å—è T049 –∏ –≤—Ö–æ–¥–∏—Ç –≤ M6. |
-| M6 ‚Äî Cart & Order flow operational | T055 | T047‚ÄìT055: persistence, refresh —Ü–µ–Ω, server validation, idempotency, –æ–¥–Ω–∞ –ø—Ä–∏–≤–∞—Ç–Ω–∞—è –∑–∞—è–≤–∫–∞ –∏ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏–µ; –ø—Ä–æ–≤–µ—Ä–∏—Ç—å –≤–º–µ—Å—Ç–µ —Å M5. |
-| M7 ‚Äî Admin order management operational | T059 | T056‚ÄìT059: —Å—Ç–∞—Ç—É—Å/–∑–∞–º–µ—Ç–∫–∞ –≤ Admin; original snapshot –Ω–µ –∏–∑–º–µ–Ω—è–µ–º —á–µ—Ä–µ–∑ UI –∏ –ø—Ä—è–º–æ–π authenticated API; –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—è —Å M6. |
-| M8 ‚Äî Production candidate | T074 | T060‚ÄìT074: –∏–Ω—Ñ–æ—Ä–º–∞—Ü–∏–æ–Ω–Ω—ã–µ —Å—Ç—Ä–∞–Ω–∏—Ü—ã, SEO, –ú–µ—Ç—Ä–∏–∫–∞, –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏–æ–Ω–Ω—ã–π QA –∏ readiness; –≤—Å–µ M1‚ÄìM7 –ø—Ä–æ–π–¥–µ–Ω—ã, production –Ω–µ –∑–∞–ø—É—â–µ–Ω. |
-
-**M1 status: PASS.** T001‚ÄìT003 DONE; lint/typecheck/build PASS, branch HTTPS Preview READY, Prata/Manrope/tokens PASS, owner visual smoke 1440 √ó 900 –∏ 390 √ó 844 PASS; –æ—à–∏–±–æ—á–Ω—ã–π deployment –Ω–æ–≤–æ–≥–æ –ø—Ä–æ–µ–∫—Ç–∞ —É–¥–∞–ª—ë–Ω, —Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π production –Ω–µ –∏–∑–º–µ–Ω—ë–Ω.
-
-**Development Gate: PASS. Production Content Gate: BLOCKED.** T008, T009 –∏ T010 –æ—Å—Ç–∞—é—Ç—Å—è DONE; media blockers = 0. Development Gate —Ä–∞–∑—Ä–µ—à–∞–µ—Ç T011+ –∫–∞–∫ —Ç–µ—Ö–Ω–∏—á–µ—Å–∫—É—é Preview —Ä–∞–±–æ—Ç—É. Production Content Gate —Å–æ—Ö—Ä–∞–Ω—è–µ—Ç –ø—è—Ç—å —Å–≥—Ä—É–ø–ø–∏—Ä–æ–≤–∞–Ω–Ω—ã—Ö blockers: **COMMERCIAL (2)** ‚Äî –ø–ª–æ—â–∞–¥—å –ø—Ä–æ–¥–∞–≤–∞–µ–º–æ–≥–æ —Ñ–æ—Ä–º–∞—Ç–∞ –¥–ª—è 14 SKU ¬´–ì–∏–±–∫–∞—è –¥–æ—Å–∫–∞¬ª; —Ç–æ—á–Ω—ã–µ —Ü–µ–Ω—ã/–ø—Ä–∞–≤–∏–ª–∞ –≤–∞—Ä–∏–∞–Ω—Ç–æ–≤ –¥–ª—è 20 range-price SKU. **LEGAL (3)** ‚Äî seller/operator identity –∏ Privacy/consent legal sign-off; returns/claims text –∏ claims contact/legal review; –ø–æ–¥—Ä–æ–±–Ω—ã–µ delivery/pickup —É—Å–ª–æ–≤–∏—è. –≠—Ç–æ —à–µ—Å—Ç—å –æ—Ç–¥–µ–ª—å–Ω—ã—Ö —Ç–∏–ø–æ–≤ –Ω–µ–¥–æ—Å—Ç–∞—é—â–∏—Ö —Ä–µ–∞–ª—å–Ω—ã—Ö –¥–∞–Ω–Ω—ã—Ö, —Å–≥—Ä—É–ø–ø–∏—Ä–æ–≤–∞–Ω–Ω—ã—Ö –≤ –ø—è—Ç—å –æ–±–ª–∞—Å—Ç–µ–π. –ù–µ —Å—á–∏—Ç–∞—Ç—å –∏—Ö –∑–∞–∫—Ä—ã—Ç—ã–º–∏ –æ—Ç –ø–æ—è–≤–ª–µ–Ω–∏—è —Ç–µ—Å—Ç–æ–≤—ã—Ö –∑–Ω–∞—á–µ–Ω–∏–π. Owner visual review –≤—ã–±—Ä–∞–Ω–Ω—ã—Ö —É–Ω–∏–∫–∞–ª—å–Ω—ã—Ö –º–µ–¥–∏–∞ –æ–±—è–∑–∞—Ç–µ–ª–µ–Ω –ø–µ—Ä–µ–¥ production –æ—Ç–¥–µ–ª—å–Ω–æ –æ—Ç —ç—Ç–æ–≥–æ gate.
-
-**–û–±—è–∑–∞—Ç–µ–ª—å–Ω–æ–µ –ø—Ä–∞–≤–∏–ª–æ –¥–ª—è –≤—Å–µ—Ö —Å–ª–µ–¥—É—é—â–∏—Ö Preview TASK:** –Ω–µ–∏–∑–≤–µ—Å—Ç–Ω—ã–µ —Ä–µ–∞–ª—å–Ω—ã–µ owner fields –æ—Å—Ç–∞—é—Ç—Å—è `null`/unresolved; 251 —Ä–µ–∞–ª—å–Ω—ã–π SKU –Ω–µ –ø–æ–ª—É—á–∞–µ—Ç –ø—Ä–∏–¥—É–º–∞–Ω–Ω—ã—Ö prices, dimensions, availability –∏–ª–∏ legal facts. –û–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–π —Ä–µ–∞–ª—å–Ω—ã–π SKU –º–æ–∂–µ—Ç –æ—Ç–æ–±—Ä–∞–∂–∞—Ç—å—Å—è –≤ Catalog/Product Detail —Å –º–µ–¥–∏–∞ –ø—Ä–∏ –Ω–µ–ø–æ–ª–Ω—ã—Ö commercial data, –Ω–æ add-to-cart/order –∑–∞–ø—Ä–µ—â–µ–Ω—ã. `commercial_ready` (–∏–ª–∏ —ç–∫–≤–∏–≤–∞–ª–µ–Ω—Ç) –≤—ã—á–∏—Å–ª—è–µ—Ç—Å—è –Ω–∞ —Å–µ—Ä–≤–µ—Ä–µ: –Ω—É–∂–Ω—ã –ø—É–±–ª–∏–∫–∞—Ü–∏—è, –ø–æ–ª–Ω—ã–π commercial –Ω–∞–±–æ—Ä, —Ç–æ—á–Ω–∞—è –ø—Ä–∏–º–µ–Ω–∏–º–∞—è —Ü–µ–Ω–∞, –∫–æ—Ä—Ä–µ–∫—Ç–Ω–∞—è –∫–æ–Ω–≤–µ—Ä—Å–∏—è –∫–æ–ª–∏—á–µ—Å—Ç–≤–∞ –∏ `in_stock` –ª–∏–±–æ `on_order`. –û—Ç—Å—É—Ç—Å—Ç–≤–∏–µ –ª—é–±–æ–≥–æ —É—Å–ª–æ–≤–∏—è ‚Üí non-orderable. UI disabled –Ω–µ –∑–∞–º–µ–Ω—è–µ—Ç —Å–µ—Ä–≤–µ—Ä–Ω—É—é –ø—Ä–æ–≤–µ—Ä–∫—É –ø—Ä–∏ –∑–∞—è–≤–∫–µ.
-
-**TEST_ONLY fixtures:** —Ç–æ–ª—å–∫–æ –æ—Ç–¥–µ–ª—å–Ω—ã–π Preview/test –Ω–∞–±–æ—Ä –¥–ª—è targeted schema/cart/order checks, —Å —è–≤–Ω–æ–π –º–∞—Ä–∫–∏—Ä–æ–≤–∫–æ–π `TEST_ONLY`; —Å–∏–Ω—Ç–µ—Ç–∏—á–µ—Å–∫–∏–µ price/dimensions/availability/conversion –Ω–µ –ø—Ä–∏—Å–≤–∞–∏–≤–∞—Ç—å —Ä–µ–∞–ª—å–Ω—ã–º SKU. Fixtures –Ω–µ –≤—Ö–æ–¥—è—Ç –≤ production catalog –∏–ª–∏ production seed. Production seeding —Ä–µ–∞–ª—å–Ω–æ–≥–æ –∫–∞—Ç–∞–ª–æ–≥–∞ ‚Äî —Ç–æ–ª—å–∫–æ –∏–∑ owner-confirmed fields. Preview legal state ‚Äî –Ω–µ–π—Ç—Ä–∞–ª—å–Ω–æ–µ `Pending owner/legal approval` –ª–∏–±–æ –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ production legal content; –Ω–∏–∫–∞–∫–∏–µ —Ñ–∏–∫—Ç–∏–≤–Ω—ã–µ seller requisites, return policy –∏–ª–∏ consent –Ω–µ –¥–æ–ø—É—Å–∫–∞—é—Ç—Å—è. –í Preview flow –∏—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å —Ç–æ–ª—å–∫–æ —Å–∏–Ω—Ç–µ—Ç–∏—á–µ—Å–∫–∏–µ –∫–æ–Ω—Ç–∞–∫—Ç—ã, –Ω–µ —Ä–µ–∞–ª—å–Ω—ã–µ –∑–∞—è–≤–∫–∏.
-
-M1‚ÄìM7 –æ—Ü–µ–Ω–∏–≤–∞—é—Ç Preview —Ä–µ–∞–ª–∏–∑–∞—Ü–∏—é —Å —ç—Ç–∏–º–∏ –æ–≥—Ä–∞–Ω–∏—á–µ–Ω–∏—è–º–∏. –ü–µ—Ä–µ–¥ production readiness/deployment –æ–±—è–∑–∞—Ç–µ–ª–µ–Ω **PASS Production Content Gate**, —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω—ã–µ legal —Ç–µ–∫—Å—Ç—ã –∏ owner visual sign-off; —Ç–µ–∫—É—â–∏–π gate –∑–∞–ø—Ä–µ—â–∞–µ—Ç –∑–∞–ø—É—Å–∫. M8 ‚Äî –æ—Ü–µ–Ω–∫–∞ –∫–∞–Ω–¥–∏–¥–∞—Ç–∞ –ø–æ—Å–ª–µ QA, –Ω–µ –¥–µ–ø–ª–æ–π. T032 –∏—Å—Ç–æ—Ä–∏—á–µ—Å–∫–∏ DONE; T032A –∑–∞–≤–µ—Ä—à–∞–µ—Ç multi-category –ø–µ—Ä–µ—Ö–æ–¥ –≤ Phase 6. M4 ‚Äî PASS –ø–æ—Å–ª–µ –∑–∞–≤–µ—Ä—à–µ–Ω–∏—è T038: Admin shell/dashboard, Product/Category CRUD, multi-category, media flows –∏ —Ç—Ä–∏ –ø—Ä–æ–≤–µ—Ä–æ—á–Ω—ã—Ö REAL SKU –∏–Ω—Ç–µ–≥—Ä–∏—Ä–æ–≤–∞–Ω—ã –≤ Preview. T034 owner browser batch upload PASS –∏ synthetic cleanup = 0; T035 visual PASS; T036 browser delete/orphan retry/cleanup PASS; T037 representative image presentation PASS. T038 —Å–æ—Ö—Ä–∞–Ω—ë–Ω–Ω—ã–µ REAL SKU ‚Äî —Ç–æ–ª—å–∫–æ representative subset, –Ω–µ –ø–æ–ª–Ω—ã–π launch population. –°–ª–µ–¥—É—é—â–∞—è –∑–∞–¥–∞—á–∞ T039, –Ω–µ –Ω–∞—á–∞—Ç–∞.
-
-## PHASE 0 ‚Äî Project Foundation
-
-### T001 ‚Äî Next.js foundation
-
-- **ID:** T001
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Next.js foundation
-- **Goal:** –°–æ–∑–¥–∞—Ç—å –º–∏–Ω–∏–º–∞–ª—å–Ω–æ–µ Next.js App Router –ø—Ä–∏–ª–æ–∂–µ–Ω–∏–µ —Å TypeScript –∏ –ø—Ä–æ–≤–µ—Ä—è–µ–º—ã–º build.
-- **Why:** –í—Å–µ –æ—Å—Ç–∞–ª—å–Ω—ã–µ production TASK —Ç—Ä–µ–±—É—é—Ç –µ–¥–∏–Ω–æ–π –æ—Å–Ω–æ–≤—ã.
-- **Dependencies:** –Ω–µ—Ç (—Å—Ç–∞—Ä—Ç –ø—Ä–æ–µ–∫—Ç–∞).
-- **Allowed scope:** package/scripts, src/app –∏ –ø—É—Å—Ç–æ–π page/layout; gitignore.
-- **Forbidden scope:** –ü–µ—Ä–µ–Ω–æ—Å prototype, Supabase –∏ –Ω–æ–≤—ã–µ —Å—Ç—Ä–∞–Ω–∏—Ü—ã. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –°—Ç–∞–±–∏–ª—å–Ω—ã–µ –≤–µ—Ä—Å–∏–∏ –≤—ã–±—Ä–∞—Ç—å –ø—Ä–∏ —Å–æ–∑–¥–∞–Ω–∏–∏, –±–µ–∑ –ª–∏—à–Ω–µ–≥–æ framework.
-- **Acceptance criteria:** Build, typecheck, lint –ø—Ä–æ—Ö–æ–¥—è—Ç; —Å—Ç–∞—Ä—Ç–æ–≤–∞—è —Å—Ç—Ä–∞–Ω–∏—Ü–∞ –æ—Ç–∫—Ä—ã–≤–∞–µ—Ç—Å—è.
-- **Required checks:** lint, typecheck, build –∏ localhost smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T001): Next.js foundation
-
-### T002 ‚Äî Tokens, CSS Modules –∏ —à—Ä–∏—Ñ—Ç—ã
-
-- **ID:** T002
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Tokens, CSS Modules –∏ —à—Ä–∏—Ñ—Ç—ã
-- **Goal:** –ó–∞—Ñ–∏–∫—Å–∏—Ä–æ–≤–∞—Ç—å –≤ –ø—Ä–∏–ª–æ–∂–µ–Ω–∏–∏ —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ —Ç–æ–∫–µ–Ω—ã –∏ –ª–æ–∫–∞–ª—å–Ω—ã–µ Prata/Manrope.
-- **Why:** –í–∏–∑—É–∞–ª—å–Ω—ã–π –ø–µ—Ä–µ–Ω–æ—Å –¥–æ–ª–∂–µ–Ω –Ω–∞—á–∏–Ω–∞—Ç—å—Å—è —Å —Ç–æ—á–Ω—ã—Ö –æ—Å–Ω–æ–≤.
-- **Dependencies:** T001.
-- **Allowed scope:** tokens.css, global.css, next/font/local –ø–æ—Å–ª–µ –ø—Ä–æ–≤–µ—Ä–∫–∏ –ª–∏—Ü–µ–Ω–∑–∏–∏, –º–∏–Ω–∏–º–∞–ª—å–Ω–∞—è —Ç–∏–ø–æ–≥—Ä–∞—Ñ–∏–∫–∞.
-- **Forbidden scope:** –†–µ–¥–∏–∑–∞–π–Ω –∫–æ–º–ø–æ–Ω–µ–Ω—Ç–æ–≤ –∏ –ø–æ–¥–º–µ–Ω–∞ –ø–∞–ª–∏—Ç—Ä—ã. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –°–≤–µ—Ä–∏—Ç—å CSS —Å DESIGN_SYSTEM; fallback –±–µ–∑ —Å–∫–∞—á–∫–∞ –∫–æ–º–ø–æ–Ω–æ–≤–∫–∏.
-- **Acceptance criteria:** –¢–æ–∫–µ–Ω—ã –∏ —à—Ä–∏—Ñ—Ç—ã –ø–æ–¥–∫–ª—é—á–µ–Ω—ã –∫ —Ç–µ—Å—Ç–æ–≤–æ–π —Å—Ç—Ä–∞–Ω–∏—Ü–µ; lint/typecheck/build –ø—Ä–æ—Ö–æ–¥—è—Ç. –í–∏–∑—É–∞–ª—å–Ω—ã–π smoke 1440/390 –æ–±—è–∑–∞—Ç–µ–ª–µ–Ω –≤ T003 –Ω–∞ HTTPS Preview.
-- **Required checks:** lint, typecheck, build, –ª–æ–∫–∞–ª—å–Ω–∞—è –ø—Ä–æ–≤–µ—Ä–∫–∞ —à—Ä–∏—Ñ—Ç–æ–≤.
-- **Note:** Visual smoke 1440/390 deferred to T003 HTTPS Preview due environment limitation; lint/typecheck/build passed.
-- **Resolution:** Owner visual smoke HTTPS Preview –Ω–∞ 1440 √ó 900 –∏ 390 √ó 844 PASS –≤ T003; –æ—Ç–ª–æ–∂–µ–Ω–Ω–∞—è –ø—Ä–æ–≤–µ—Ä–∫–∞ –∑–∞–∫—Ä—ã—Ç–∞.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T002): Tokens, CSS Modules –∏ —à—Ä–∏—Ñ—Ç—ã
-
-### T003 ‚Äî Preview –∏ –±–µ–∑–æ–ø–∞—Å–Ω—ã–π env baseline
-
-- **ID:** T003
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Preview –∏ –±–µ–∑–æ–ø–∞—Å–Ω—ã–π env baseline
-- **Goal:** –ù–∞—Å—Ç—Ä–æ–∏—Ç—å GitHub branch Preview –∏ —à–∞–±–ª–æ–Ω –ø–µ—Ä–µ–º–µ–Ω–Ω—ã—Ö –±–µ–∑ –∑–Ω–∞—á–µ–Ω–∏–π.
-- **Why:** –ö–∞–∂–¥—ã–π —ç—Ç–∞–ø –Ω—É–∂–¥–∞–µ—Ç—Å—è –≤ –ø—Ä–æ–≤–µ—Ä—è–µ–º–æ–π HTTPS —Å—Ä–µ–¥–µ –∏ –±–µ–∑–æ–ø–∞—Å–Ω–æ–º –∫–æ–Ω—Ñ–∏–≥–µ.
-- **Dependencies:** T002.
-- **Allowed scope:** Vercel Preview –∫–æ–Ω—Ñ–∏–≥—É—Ä–∞—Ü–∏—è, env.example placeholders, base metadata.
-- **Forbidden scope:** Production deploy, —Ä–µ–∞–ª—å–Ω—ã–µ –∫–ª—é—á–∏ –≤ Git, Supabase –ø–æ–¥–∫–ª—é—á–µ–Ω–∏–µ. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Preview –æ—Ç redesign-v2, –∑–∞–∫—Ä—ã—Ç—å –∏–Ω–¥–µ–∫—Å–∏—Ä–æ–≤–∞–Ω–∏–µ –¥–æ –∑–∞–ø—É—Å–∫–∞.
-- **Acceptance criteria:** Preview –æ—Ç–∫—Ä—ã–≤–∞–µ—Ç—Å—è; foundation T002 –ø—Ä–æ–≤–µ—Ä–µ–Ω–∞ –ø—Ä–∏ 1440/390; env.example –Ω–µ —Å–æ–¥–µ—Ä–∂–∏—Ç secrets, production –Ω–µ –∑–∞—Ç—Ä–æ–Ω—É—Ç.
-- **Required checks:** lint/typecheck, HTTPS smoke, secret-path review; –æ–±—è–∑–∞—Ç–µ–ª—å–Ω–æ —á–µ—Ä–µ–∑ HTTPS Preview –ø—Ä–æ–≤–µ—Ä–∏—Ç—å Prata loaded, Manrope loaded, tokens applied, 1440px visual smoke, 390px visual smoke, no CSS/font console errors.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Verification note:** Lint/typecheck/build PASS; –±–µ–∑–æ–ø–∞—Å–Ω—ã–π .env.example –∏ –≤—Ä–µ–º–µ–Ω–Ω—ã–π noindex. HTTPS Preview —Å–≤—è–∑–∞–Ω —Å redesign-v2; Prata/Manrope/CSS –∏ –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ –æ—à–∏–±–æ–∫ —Å—Ç—Ä–∞–Ω–∏—Ü—ã –ø—Ä–æ–≤–µ—Ä–µ–Ω—ã –≤ –±—Ä–∞—É–∑–µ—Ä–µ. Owner visual smoke 1440 √ó 900 –∏ 390 √ó 844 PASS (–≤–∫–ª—é—á–∞—è –∫–∏—Ä–∏–ª–ª–∏—Ü—É, –ø–∞–ª–∏—Ç—Ä—É –∏ –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ horizontal overflow). –°–ª—É—á–∞–π–Ω–æ —Å–æ–∑–¥–∞–Ω–Ω—ã–π Production deployment –æ—Ç–¥–µ–ª—å–Ω–æ–≥–æ Preview-–ø—Ä–æ–µ–∫—Ç–∞ —É–¥–∞–ª—ë–Ω —Å —Ä–∞–∑—Ä–µ—à–µ–Ω–∏—è –≤–ª–∞–¥–µ–ª—å—Ü–∞; —Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π production –Ω–µ –º–µ–Ω—è–ª—Å—è.
-- **Suggested commit message:** task(T003): Preview –∏ –±–µ–∑–æ–ø–∞—Å–Ω—ã–π env baseline
-
-
-## PHASE 1 ‚Äî Public Visual Foundation
-
-### T004 ‚Äî Public layout, Header –∏ Footer
-
-- **ID:** T004
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Public layout, Header –∏ Footer
-- **Goal:** –ü–µ—Ä–µ–Ω–µ—Å—Ç–∏ approved –ø—É–±–ª–∏—á–Ω—É—é –æ–±–æ–ª–æ—á–∫—É, –≤–∫–ª—é—á–∞—è –º–æ–±–∏–ª—å–Ω–æ–µ –º–µ–Ω—é.
-- **Why:** –≠—Ç–æ –æ–±—â–∞—è –∫–æ–º–ø–æ–∑–∏—Ü–∏—è –≤—Å–µ—Ö —Å—Ç—Ä–∞–Ω–∏—Ü.
-- **Dependencies:** T003.
-- **Allowed scope:** Root layout, Header/nav/mobile menu/Footer –∏ –∏—Ö CSS.
-- **Forbidden scope:** –ü–µ—Ä–µ—Å–º–æ—Ç—Ä Header, business content –±–µ–∑ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏—è. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/DESIGN_SYSTEM.md; prototype/index.html, styles.css, script.js, assets; docs/ARCHITECTURE.md.
-- **Implementation notes:** –°—Å—ã–ª–∫–∏ –Ω–∞ –±—É–¥—É—â–∏–µ routes –º–æ–≥—É—Ç –∏–º–µ—Ç—å —è—Å–Ω–æ–µ –≤—Ä–µ–º–µ–Ω–Ω–æ–µ —Å–æ—Å—Ç–æ—è–Ω–∏–µ, –±–µ–∑ –ø—É—Å—Ç—ã—Ö href.
-- **Acceptance criteria:** Desktop/mobile –ø–æ–≤—Ç–æ—Ä—è—é—Ç prototype, –º–µ–Ω—é —Ä–∞–±–æ—Ç–∞–µ—Ç —Å –∫–ª–∞–≤–∏–∞—Ç—É—Ä–æ–π.
-- **Required checks:** lint, typecheck, browser smoke 1440/390.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Verification note:** Implementation commit a166973c038834388c500c9e3d74d0fa86000eb5; lint/typecheck/build PASS, HTTPS branch Preview READY. –í–ª–∞–¥–µ–ª–µ—Ü –ø—Ä–æ–≤–µ—Ä–∏–ª Chrome Responsive Mode: 1440 √ó 900, 768 √ó 900, 390 √ó 844 ‚Äî PASS; Header/Footer, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ overflow, mobile open/close, Escape, Tab, focus –∏ —Å—Å—ã–ª–∫–∏ ‚Äî PASS. Console –æ—à–∏–±–æ–∫ –ø—Ä–∏–ª–æ–∂–µ–Ω–∏—è –Ω–µ –ø–æ–∫–∞–∑–∞–ª–∞.
-- **Suggested commit message:** task(T004): Public layout, Header –∏ Footer
-
-### T005 ‚Äî Hero –∏ Material Showcase
-
-- **ID:** T005
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Hero –∏ Material Showcase
-- **Goal:** –ü–µ—Ä–µ–Ω–µ—Å—Ç–∏ –¥–≤–µ –≤–µ–¥—É—â–∏–µ —Å—Ü–µ–Ω—ã prototype –≤ Next –∫–æ–º–ø–æ–Ω–µ–Ω—Ç—ã.
-- **Why:** –û–Ω–∏ –∑–∞–¥–∞—é—Ç —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–π –≤–∏–∑—É–∞–ª—å–Ω—ã–π —è–∑—ã–∫.
-- **Dependencies:** T004.
-- **Allowed scope:** Hero/Showcase, —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ assets –∏ image sizes.
-- **Forbidden scope:** –ù–æ–≤—ã–µ —Ä–µ–Ω–¥–µ—Ä—ã, –≤—ã–º—ã—à–ª–µ–Ω–Ω—ã–µ —Ç–æ–≤–∞—Ä–Ω—ã–µ —Å–≤–æ–π—Å—Ç–≤–∞. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/DESIGN_SYSTEM.md; prototype/index.html, styles.css, script.js, assets; docs/ARCHITECTURE.md.
-- **Implementation notes:** –î–µ–º–æ –∫–∞–¥—Ä—ã —Å–æ—Ö—Ä–∞–Ω—è—Ç—å –ø—Ä–µ–∑–µ–Ω—Ç–∞—Ü–∏–æ–Ω–Ω—ã–º–∏; –Ω–µ –≤—ã–¥–∞–≤–∞—Ç—å –∑–∞ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ SKU photos –ø—Ä–∏ Preview –∏–ª–∏ production.
-- **Acceptance criteria:** –ö–æ–º–ø–æ–∑–∏—Ü–∏—è –∏ –∫–∞–¥—Ä–∏—Ä–æ–≤–∞–Ω–∏–µ —Å–æ–ø–æ—Å—Ç–∞–≤–∏–º—ã —Å prototype –Ω–∞ 1440/390.
-- **Required checks:** lint, typecheck, –≤–∏–∑—É–∞–ª—å–Ω—ã–π smoke, assets loaded.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T005): Hero –∏ Material Showcase
-
-### T006 ‚Äî Home fragments –∏ UI primitives
-
-- **ID:** T006
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Home fragments –∏ UI primitives
-- **Goal:** –ü–µ—Ä–µ–Ω–µ—Å—Ç–∏ —Ñ—Ä–∞–≥–º–µ–Ω—Ç –∫–∞—Ç–∞–ª–æ–≥–∞, Product Card, application block –∏ CTA.
-- **Why:** Home –¥–æ–ª–∂–µ–Ω –±—ã—Ç—å —Ü–µ–ª–æ—Å—Ç–Ω—ã–º visual reference.
-- **Dependencies:** T005.
-- **Allowed scope:** –ö–Ω–æ–ø–∫–∏/—Å—Å—ã–ª–∫–∏/–∫–∞—Ä—Ç–æ—á–∫–∞/CTA –∫–∞–∫ —Ñ–∞–∫—Ç–∏—á–µ—Å–∫–∏ —É—Ç–≤–µ—Ä–∂–¥–µ–Ω—ã.
-- **Forbidden scope:** –†–µ–∞–ª—å–Ω–∞—è –ø–æ–∫—É–ø–∫–∞, –Ω–æ–≤–∞—è homepage –∏–ª–∏ –¥–µ–∫–æ—Ä–∞—Ç–∏–≤–Ω—ã–µ generic cards. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/DESIGN_SYSTEM.md; prototype/index.html, styles.css, script.js, assets; docs/ARCHITECTURE.md.
-- **Implementation notes:** Price/CTA –¥–µ–º–æ —Å–æ—Å—Ç–æ—è–Ω–∏—è –Ω–µ –≤—ã–¥–∞–≤–∞—Ç—å –∑–∞ —Ä–µ–∞–ª—å–Ω—ã–µ –ø—Ä–æ–¥–∞–∂–∏.
-- **Acceptance criteria:** –¢–µ –∂–µ –±–ª–æ–∫–∏ –∏ –∏–µ—Ä–∞—Ä—Ö–∏—è, –Ω–µ—Ç –ª–æ–∂–Ω—ã—Ö –∫–æ–º–º–µ—Ä—á–µ—Å–∫–∏—Ö –¥–∞–Ω–Ω—ã—Ö.
-- **Required checks:** lint, typecheck, desktop/mobile smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T006): Home fragments –∏ UI primitives
-
-### T007 ‚Äî Responsive –∏ motion parity
-
-- **ID:** T007
-- **Priority:** P1
-- **Status:** DONE
-- **Title:** Responsive –∏ motion parity
-- **Goal:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å –ø—É–±–ª–∏—á–Ω—É—é –æ—Å–Ω–æ–≤—É –Ω–∞ —à–∏—Ä–∏–Ω–∞—Ö –∏ reduced motion.
-- **Why:** –ü–µ—Ä–µ–Ω–æ—Å –º–æ–∂–µ—Ç –Ω–µ–∑–∞–º–µ—Ç–Ω–æ —Å–ª–æ–º–∞—Ç—å mobile –∏–ª–∏ –∞–Ω–∏–º–∞—Ü–∏—é.
-- **Dependencies:** T006.
-- **Allowed scope:** CSS fixes –ø–æ —Ñ–∞–∫—Ç–∏—á–µ—Å–∫–∏–º –Ω–µ—Å–æ–≤–ø–∞–¥–µ–Ω–∏—è–º, a11y motion.
-- **Forbidden scope:** –ù–æ–≤—ã–π art direction –∏ –¥–æ–ø–æ–ª–Ω–∏—Ç–µ–ª—å–Ω—ã–µ —Å–µ–∫—Ü–∏–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/DESIGN_SYSTEM.md; prototype/index.html, styles.css, script.js, assets; docs/ARCHITECTURE.md.
-- **Implementation notes:** –°—Ä–∞–≤–Ω–µ–Ω–∏–µ —Å prototype 1440/390; tablet, overflow, console.
-- **Acceptance criteria:** –ö–æ–Ω—Ç–µ–Ω—Ç –≤–∏–¥–µ–Ω –±–µ–∑ JS, –Ω–µ—Ç overflow –∏ –æ—à–∏–±–æ–∫, reduced motion —Ä–∞–±–æ—Ç–∞–µ—Ç.
-- **Required checks:** targeted lint/typecheck, browser viewport/console smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T007): Responsive –∏ motion parity
-
-
-## PHASE 2 ‚Äî Content & Media Gate
-
-### T008 ‚Äî –ü–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏–µ —Ç–æ–≤–∞—Ä–Ω–æ–≥–æ —Å–ø—Ä–∞–≤–æ—á–Ω–∏–∫–∞
-
-- **ID:** T008
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** –ü–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏–µ —Ç–æ–≤–∞—Ä–Ω–æ–≥–æ —Å–ø—Ä–∞–≤–æ—á–Ω–∏–∫–∞
-- **Goal:** –°–≤–µ—Ä–∏—Ç—å SKU, –¥–µ–∫–æ—Ä—ã, –∫–∞—Ç–µ–≥–æ—Ä–∏–∏, –µ–¥–∏–Ω–∏—Ü—ã, —à–∞–≥, —Ä–∞–∑–º–µ—Ä, —Å–≤–æ–π—Å—Ç–≤–∞ –∏ —Å—Ç–∞—Ç—É—Å—ã.
-- **Why:** –ù–µ–ª—å–∑—è —Å—Ç—Ä–æ–∏—Ç—å –ø—Ä–æ–¥–∞–∂—É –Ω–∞ –¥–µ–º–æ–Ω—Å—Ç—Ä–∞—Ü–∏–æ–Ω–Ω–æ–º –ø—Ä–∞–π—Å–µ.
-- **Dependencies:** T007.
-- **Allowed scope:** –í–µ—Ä–∏—Ñ–∏—Ü–∏—Ä–æ–≤–∞–Ω–Ω—ã–π —Ä–µ–µ—Å—Ç—Ä –¥–∞–Ω–Ω—ã—Ö/–∏—Å—Ç–æ—á–Ω–∏–∫–æ–≤ –∏ –æ—Ç–∫—Ä—ã—Ç—ã–µ –≤–æ–ø—Ä–æ—Å—ã –±–µ–∑ —Ä–µ–∞–ª–∏–∑–∞—Ü–∏–∏.
-- **Forbidden scope:** –°–æ–∑–¥–∞–Ω–∏–µ —Ç–æ–≤–∞—Ä–æ–≤ –≤ –ë–î, –ø—Ä–µ–¥–ø–æ–ª–æ–∂–µ–Ω–∏—è –æ —Ü–µ–Ω–∞—Ö. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/CONTENT_AUDIT.md; docs/DESIGN_DIRECTIONS.md; docs/ARCHITECTURE.md.
-- **Implementation notes:** –°–æ–∑–¥–∞—Ç—å docs/CONTENT_FACTS.md: approved launch SKU set, –∏—Å—Ç–æ—á–Ω–∏–∫/–¥–∞—Ç–∞ –∫–∞–∂–¥–æ–≥–æ –∑–Ω–∞—á–µ–Ω–∏—è –∏ sign-off.
-- **Acceptance criteria:** –ï—Å—Ç—å —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω—ã–π —Ä–µ–µ—Å—Ç—Ä SKU –∏ –æ–±—è–∑–∞—Ç–µ–ª—å–Ω—ã—Ö –ø–æ–ª–µ–π –ª–∏–±–æ —è–≤–Ω—ã–π BLOCKED —Å–ø–∏—Å–æ–∫.
-- **Required checks:** –°–≤–µ—Ä–∫–∞ –≤—ã–±–æ—Ä–∫–∏ —Å –±–∏–∑–Ω–µ—Å-–∏—Å—Ç–æ—á–Ω–∏–∫–æ–º, –±–µ–∑ –∫–æ–¥–∞.
-- **Recommended model:** GPT-6 Luna Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Verification note:** Acceptance criteria –≤—ã–ø–æ–ª–Ω–µ–Ω—ã: –≤–ª–∞–¥–µ–ª–µ—Ü –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª 251 INCLUDE, 251 —Å—Ç–∞–±–∏–ª—å–Ω—ã–π SKU, 8 –∫–∞—Ç–µ–≥–æ—Ä–∏–π, 231 —Ñ–∏–∫—Å–∏—Ä–æ–≤–∞–Ω–Ω—É—é —Ü–µ–Ω—É, 226 –ø–∞–Ω–µ–ª—å–Ω—ã—Ö —Ä–∞–∑–º–µ—Ä–æ–≤ 142 √ó 284 —Å–º / 4.0328 –º¬≤, –ø—Ä–∞–≤–∏–ª–∞ —Ü–µ–Ω—ã/–∫–æ–ª–∏—á–µ—Å—Ç–≤–∞ –¥–ª—è –ø–æ–≤–µ—Ä—Ö–Ω–æ—Å—Ç–µ–π, –¥–≤–µ —Ä–∞–∑–Ω—ã–µ ¬´–ö–∞–ª–∞–∫–∞—Ç–∞¬ª, —Å—Ä–æ–∫ —Å–ª—É–∂–±—ã 30 –ª–µ—Ç –∏ availability policy. –ü–æ—Å–ª–µ owner decisions C1‚ÄìC4 –æ—Å—Ç–∞—é—Ç—Å—è –¥–≤–µ —Ä–µ–∞–ª—å–Ω—ã–µ commercial –≥—Ä—É–ø–ø—ã; accessory unit/minimum/step –∏ public slug collisions —Ä–∞–∑—Ä–µ—à–µ–Ω—ã. T009/T010 DONE, Development Gate PASS; Production Content Gate BLOCKED. T011 –æ—Å—Ç–∞—ë—Ç—Å—è TODO.
-- **Suggested commit message:** task(T008): –ü–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏–µ —Ç–æ–≤–∞—Ä–Ω–æ–≥–æ —Å–ø—Ä–∞–≤–æ—á–Ω–∏–∫–∞
-
-### T009 ‚Äî –£—Å–ª–æ–≤–∏—è –∑–∞–∫–∞–∑–∞ –∏ —é—Ä–∏–¥–∏—á–µ—Å–∫–∏–π –∫–æ–Ω—Ç–µ–Ω—Ç
-
-- **ID:** T009
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** –£—Å–ª–æ–≤–∏—è –∑–∞–∫–∞–∑–∞ –∏ —é—Ä–∏–¥–∏—á–µ—Å–∫–∏–π –∫–æ–Ω—Ç–µ–Ω—Ç
-- **Goal:** –ü–æ–¥—Ç–≤–µ—Ä–¥–∏—Ç—å –∫–æ–Ω—Ç–∞–∫—Ç—ã, –¥–æ—Å—Ç–∞–≤–∫—É, –≤–æ–∑–≤—Ä–∞—Ç, —Ü–µ–Ω—É/–æ–ø–ª–∞—Ç—É, —Å–æ–≥–ª–∞—Å–∏–µ.
-- **Why:** Checkout –∏ –ø—É–±–ª–∏—á–Ω—ã–µ —Å—Ç—Ä–∞–Ω–∏—Ü—ã —Ç—Ä–µ–±—É—é—Ç –¥–æ–∫–∞–∑—É–µ–º—ã—Ö —É—Å–ª–æ–≤–∏–π.
-- **Dependencies:** T008.
-- **Allowed scope:** –î–æ–∫—É–º–µ–Ω—Ç–∏—Ä–æ–≤–∞—Ç—å —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ —Ñ–∞–∫—Ç—ã –∏ –æ—Ç–≤–µ—Ç—Å—Ç–≤–µ–Ω–Ω–æ–µ –ª–∏—Ü–æ.
-- **Forbidden scope:** –í—ã–¥—É–º–∞–Ω–Ω—ã–µ –æ–±–µ—â–∞–Ω–∏—è, production legal –±–µ–∑ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–∏—è. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/CONTENT_AUDIT.md; docs/DESIGN_DIRECTIONS.md; docs/ARCHITECTURE.md.
-- **Implementation notes:** –î–æ–ø–æ–ª–Ω–∏—Ç—å docs/CONTENT_FACTS.md –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–º–∏ —É—Å–ª–æ–≤–∏—è–º–∏ –∏ —Ç–µ–∫—Å—Ç–æ–º —Å–æ–≥–ª–∞—Å–∏—è.
-- **Acceptance criteria:** –í—Å–µ –æ–±—è–∑–∞—Ç–µ–ª—å–Ω—ã–µ –ø–æ–ª—è/—Ç–µ–∫—Å—Ç—ã –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω—ã –ª–∏–±–æ gate –∑–∞–±–ª–æ–∫–∏—Ä–æ–≤–∞–Ω.
-- **Required checks:** –§–∞–∫—Ç—á–µ–∫–∏–Ω–≥ –∏ sign-off —Å–æ–¥–µ—Ä–∂–∞–Ω–∏—è, –±–µ–∑ –∫–æ–¥–∞.
-- **Recommended model:** GPT-6 Luna Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T009): –£—Å–ª–æ–≤–∏—è –∑–∞–∫–∞–∑–∞ –∏ —é—Ä–∏–¥–∏—á–µ—Å–∫–∏–π –∫–æ–Ω—Ç–µ–Ω—Ç
-
-### T010 ‚Äî –ú–µ–¥–∏–∞: —Å–æ–æ—Ç–≤–µ—Ç—Å—Ç–≤–∏–µ –∏ –ø—Ä–∞–≤–∞
-
-- **ID:** T010
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** –ú–µ–¥–∏–∞: —Å–æ–æ—Ç–≤–µ—Ç—Å—Ç–≤–∏–µ –∏ –ø—Ä–∞–≤–∞
-- **Goal:** –°–æ—Å—Ç–∞–≤–∏—Ç—å manifest —Ä–µ–∞–ª—å–Ω—ã—Ö texture/macro/interior –∫–∞–¥—Ä–æ–≤ –∏ –ø—Ä–∞–≤.
-- **Why:** –ë–µ–∑ –¥–æ—Å—Ç–æ–≤–µ—Ä–Ω–æ–≥–æ —Ñ–æ—Ç–æ showroom –≤–≤–æ–¥–∏—Ç –≤ –∑–∞–±–ª—É–∂–¥–µ–Ω–∏–µ.
-- **Dependencies:** T009.
-- **Allowed scope:** –°–æ–ø–æ—Å—Ç–∞–≤–ª–µ–Ω–∏–µ SKU‚Üí—Ñ–∞–π–ª—ã, alt —Ñ–∞–∫—Ç—ã, license/permission.
-- **Forbidden scope:** –ì–µ–Ω–µ—Ä–∞—Ü–∏—è ¬´—Ä–µ–∞–ª—å–Ω—ã—Ö –ø—Ä–æ–µ–∫—Ç–æ–≤¬ª, –∏–º–ø–æ—Ä—Ç –≤ Storage. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/CONTENT_AUDIT.md; docs/DESIGN_DIRECTIONS.md; docs/ARCHITECTURE.md.
-- **Implementation notes:** –î–æ–ø–æ–ª–Ω–∏—Ç—å docs/CONTENT_FACTS.md media manifest —Å –ø—Ä–∞–≤–∞–º–∏, SKU –∏ —Ä–∞–∑–ª–∏—á–∏–µ–º –ø—Ä–æ–µ–∫—Ç–∞/–≤–∏–∑—É–∞–ª–∏–∑–∞—Ü–∏–∏.
-- **Acceptance criteria:** –î–ª—è –ø—Ä–æ–¥–∞–≤–∞–µ–º—ã—Ö SKU –∏–∑–≤–µ—Å—Ç–µ–Ω primary –∏ –ø—Ä–∞–≤–æ –∏—Å–ø–æ–ª—å–∑–æ–≤–∞–Ω–∏—è –ª–∏–±–æ BLOCKED.
-- **Required checks:** –ü—Ä–æ–≤–µ—Ä–∫–∞ –∏—Å—Ç–æ—á–Ω–∏–∫–∞/–ø—Ä–∞–≤/—Ä–∞–∑—Ä–µ—à–µ–Ω–∏–π, –±–µ–∑ –∫–æ–¥–∞.
-- **Recommended model:** GPT-6 Luna Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T010): –ú–µ–¥–∏–∞: —Å–æ–æ—Ç–≤–µ—Ç—Å—Ç–≤–∏–µ –∏ –ø—Ä–∞–≤–∞
-
-
-## PHASE 3 ‚Äî Supabase Foundation
-
-### T011 ‚Äî Supabase Preview environment
-
-- **ID:** T011
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Supabase Preview environment
-- **Goal:** –ü–æ–¥–≥–æ—Ç–æ–≤–∏—Ç—å –∏–∑–æ–ª–∏—Ä–æ–≤–∞–Ω–Ω—ã–π —Ç–µ—Å—Ç–æ–≤—ã–π –ø—Ä–æ–µ–∫—Ç –∏ –±–µ–∑–æ–ø–∞—Å–Ω—ã–µ env.
-- **Why:** Schema –∏ Auth —Ç—Ä–µ–±—É—é—Ç –∑–∞—â–∏—â—ë–Ω–Ω–æ–≥–æ –æ–∫—Ä—É–∂–µ–Ω–∏—è.
-- **Dependencies:** T010; Development Gate PASS. Production Content Gate –Ω–µ —Ç—Ä–µ–±—É–µ—Ç—Å—è –¥–ª—è Preview environment.
-- **Allowed scope:** –¢–æ–ª—å–∫–æ Preview project, –ø–µ—Ä–µ–º–µ–Ω–Ω—ã–µ –≤ –∑–∞—â–∏—â—ë–Ω–Ω–æ–º —Ö—Ä–∞–Ω–∏–ª–∏—â–µ.
-- **Forbidden scope:** Production project, —Ä–µ–∞–ª—å–Ω—ã–µ —Å–µ–∫—Ä–µ—Ç—ã –≤ Git, seed. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008‚ÄìT010); Development Gate policy above.
-- **Implementation notes:** –ò–∑–æ–ª–∏—Ä–æ–≤–∞—Ç—å Preview –æ—Ç production; –ø—É–±–ª–∏—á–Ω—ã–π URL –∏ publishable key –Ω–µ secret. –ù–∏ seed, –Ω–∏ synthetic fixtures –≤ T011 –Ω–µ —Å–æ–∑–¥–∞—é—Ç—Å—è.
-- **Acceptance criteria:** Preview env –¥–æ—Å—Ç—É–ø–µ–Ω —Å–µ—Ä–≤–µ—Ä—É, production –∏–∑–æ–ª–∏—Ä–æ–≤–∞–Ω.
-- **Required checks:** env exposure check, connection smoke –±–µ–∑ PII.
-- **Resolution (2026-09-27):** –æ—Ç–¥–µ–ª—å–Ω—ã–π –ø—Ä–æ–µ–∫—Ç `marmix-flex-redesign-v2-preview` (`twuevnwxwqdjbjzwuglm`, `eu-central-1`) –≤ —Å–æ—Å—Ç–æ—è–Ω–∏–∏ ACTIVE_HEALTHY. Owner –Ω–∞—Å—Ç—Ä–æ–∏–ª –≤ —Å—É—â–µ—Å—Ç–≤—É—é—â–µ–º Vercel Preview project —Ç–æ–ª—å–∫–æ `NEXT_PUBLIC_SUPABASE_URL` –∏ `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` –∏ –≤—ã–ø–æ–ª–Ω–∏–ª Preview redeploy. –ù–∞ –≤—Ä–µ–º–µ–Ω–Ω–æ–º server-only route –≤ READY Preview deployment (ID –Ω–∞–º–µ—Ä–µ–Ω–Ω–æ –Ω–µ —Å–æ—Ö—Ä–∞–Ω—ë–Ω –≤ –¥–æ–∫—É–º–µ–Ω—Ç–∞—Ü–∏–∏) (–≤–µ—Ç–∫–∞ `redesign-v2`, commit `d8e8e76d054cd0b59181792f56422a6490b6eb41`) –Ω–∞–±–ª—é–¥–∞–ª–∏—Å—å `previewEnvironment=true`, `envPresent=true`, `supabaseReachable=true`: –ø—Ä–æ–≤–µ—Ä–∫–∞ HTTPS `/auth/v1/health` —Å publishable key –∏ —Å—Ç—Ä–æ–≥–∏–º —Å–æ–æ—Ç–≤–µ—Ç—Å—Ç–≤–∏–µ–º URL –æ—Ç–¥–µ–ª—å–Ω–æ–º—É Preview project. –û—Ç–≤–µ—Ç —Å–æ–¥–µ—Ä–∂–∞–ª —Ç–æ–ª—å–∫–æ —Ç—Ä–∏ boolean; –≤ –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã—Ö runtime logs –Ω–µ—Ç –∑–Ω–∞—á–µ–Ω–∏–π env/–∫–ª—é—á–µ–π. Public tables/migrations: 0; seed/fixtures –Ω–µ —Å–æ–∑–¥–∞–≤–∞–ª–∏—Å—å; legacy Supabase –Ω–µ –∏–∑–º–µ–Ω—ë–Ω, Vercel Production –Ω–µ –º–µ–Ω—è–ª—Å—è –ø–æ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏—é owner. –í—Ä–µ–º–µ–Ω–Ω—ã–π route —É–¥–∞–ª—ë–Ω –∏–∑ —Ñ–∏–Ω–∞–ª—å–Ω–æ–≥–æ checkout –æ—Ç–¥–µ–ª—å–Ω—ã–º cleanup commit; –Ω–∏–∫–∞–∫–∏—Ö —Å–µ–∫—Ä–µ—Ç–æ–≤ –≤ Git. Development Gate PASS, Production Content Gate BLOCKED.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T011): Supabase Preview environment
-
-### T012 ‚Äî Schema –∫–∞—Ç–∞–ª–æ–≥–∞ –∏ –∏–Ω–¥–µ–∫—Å—ã
-
-- **ID:** T012
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Schema –∫–∞—Ç–∞–ª–æ–≥–∞ –∏ –∏–Ω–¥–µ–∫—Å—ã
-- **Goal:** –°–æ–∑–¥–∞—Ç—å categories/products/product_images –ø–æ–¥ —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—É—é –º–æ–¥–µ–ª—å SKU.
-- **Why:** Admin –∏ –≤–∏—Ç—Ä–∏–Ω–∞ –¥–æ–ª–∂–Ω—ã —Ä–∞–∑–¥–µ–ª—è—Ç—å –æ–¥–Ω—É –º–æ–¥–µ–ª—å.
-- **Dependencies:** T011.
-- **Allowed scope:** –ú–∏–≥—Ä–∞—Ü–∏—è —Ç–∞–±–ª–∏—Ü, checks/uniques/FK/indexes.
-- **Forbidden scope:** Order schema, seed, UI, Auth. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008‚ÄìT010); Development Gate policy above.
-- **Implementation notes:** –†–µ–∞–ª—å–Ω—ã–µ –Ω–µ–ø–æ–ª–Ω—ã–µ commercial fields –¥–æ–ª–∂–Ω—ã –¥–æ–ø—É—Å–∫–∞—Ç—å null/unresolved –∏ visible non-orderable SKU; —É–Ω–∏–∫–∞–ª—å–Ω—ã–µ slug/SKU –∏ primary. –°–ø–æ—Å–æ–± TEST_ONLY –∏–∑–æ–ª—è—Ü–∏–∏ –∏ constraints –æ–ø—Ä–µ–¥–µ–ª–∏—Ç—å –∑–¥–µ—Å—å, –±–µ–∑ –ø—Ä–∏—Å–≤–æ–µ–Ω–∏—è synthetic –∑–Ω–∞—á–µ–Ω–∏–π —Ä–µ–∞–ª—å–Ω—ã–º SKU.
-- **Acceptance criteria:** –ú–∏–≥—Ä–∞—Ü–∏—è –≤–æ—Å–ø—Ä–æ–∏–∑–≤–æ–¥–∏–º–∞; –æ–≥—Ä–∞–Ω–∏—á–µ–Ω–∏—è –æ—Ç–∫–ª–æ–Ω—è—é—Ç –Ω–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –∏–∑–≤–µ—Å—Ç–Ω—ã–µ –∑–Ω–∞—á–µ–Ω–∏—è –∏ –¥–æ–ø—É—Å–∫–∞—é—Ç –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ —Ä–µ–∞–ª—å–Ω—ã–µ SKU —Å –ø—É—Å—Ç—ã–º–∏ –æ–±—è–∑–∞—Ç–µ–ª—å–Ω—ã–º–∏ –¥–ª—è commerce –ø–æ–ª—è–º–∏.
-- **Required checks:** migration check, targeted DB constraints.
-- **Resolution (2026-09-27):** –º–∏–≥—Ä–∞—Ü–∏—è `supabase/migrations/20260927104945_catalog_foundation.sql` –ø—Ä–∏–º–µ–Ω–µ–Ω–∞ —Ç–æ–ª—å–∫–æ –∫ Supabase Preview `twuevnwxwqdjbjzwuglm`, –µ—ë filename version —Å–æ–≤–ø–∞–¥–∞–µ—Ç —Å –∑–∞–ø–∏—Å—å—é migration history. –°–æ–∑–¥–∞–Ω—ã –ø—É—Å—Ç—ã–µ `categories`, `products`, `product_images`: UUID PK, —É–Ω–∏–∫–∞–ª—å–Ω—ã–µ category/product slug –∏ SKU, FK —Å RESTRICT, –¥–æ–ø—É—Å—Ç–∏–º—ã–µ —Ä–æ–ª–∏ –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏–π —á–µ—Ä–µ–∑ CHECK –∏ partial unique index –Ω–∞ primary. `price_minor` —Ö—Ä–∞–Ω–∏—Ç —Ç–æ–ª—å–∫–æ —Ç–æ—á–Ω—É—é —Ü–µ–Ω—É –≤ –∫–æ–ø–µ–π–∫–∞—Ö RUB; –¥–∏–∞–ø–∞–∑–æ–Ω –æ—Ç–¥–µ–ª—å–Ω–æ –≤ `source_price_range`; `price_unit` –∏ `sale_unit` —Ä–∞–∑–¥–µ–ª–µ–Ω—ã; –ø–ª–æ—â–∞–¥—å –ª–∏—Å—Ç–∞ `numeric(14,4)` –∏ –Ω–µ–∏–∑–≤–µ—Å—Ç–Ω—ã–µ –∫–æ–º–º–µ—Ä—á–µ—Å–∫–∏–µ/—Ä–∞–∑–º–µ—Ä–Ω—ã–µ –ø–æ–ª—è nullable; availability nullable —Ç–æ–ª—å–∫–æ `in_stock`/`on_order`. –û–¥–∏–Ω product = –æ–¥–∏–Ω immutable SKU. `catalog_kind` REAL/TEST_ONLY, –ø—Ä–µ—Ñ–∏–∫—Å TEST_ONLY SKU –∏ immutable trigger –æ—Ç–¥–µ–ª—è—é—Ç –±—É–¥—É—â–∏–µ fixtures; –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏—è –Ω–∞—Å–ª–µ–¥—É—é—Ç —Ç–∏–ø —á–µ—Ä–µ–∑ product FK. Public policies T014 –æ–±—è–∑–∞–Ω—ã –¥–æ–ø—É—Å–∫–∞—Ç—å —Ç–æ–ª—å–∫–æ REAL –∏ –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–µ product/category; –ø–æ–∫–∞ –≤—Å–µ —Ç—Ä–∏ —Ç–∞–±–ª–∏—Ü—ã –∏–º–µ—é—Ç RLS enabled –±–µ–∑ policies, API grants –æ—Ç–æ–∑–≤–∞–Ω—ã. Targeted DB checks (–≤–∫–ª—é—á–∞—è duplicate SKU/slug, –Ω–µ–≤–µ—Ä–Ω—ã–µ price/quantity/availability/dimensions, –≤—Ç–æ—Ä–æ–µ primary, TEST_ONLY marker) PASS –≤ —Ç—Ä–∞–Ω–∑–∞–∫—Ü–∏–∏ —Å rollback; –ø–æ –∑–∞–≤–µ—Ä—à–µ–Ω–∏–∏ –≤—Å–µ —Ç—Ä–∏ —Ç–∞–±–ª–∏—Ü—ã –ø—É—Å—Ç—ã. Seed, Auth, Storage, order schema, production –∏–∑–º–µ–Ω–µ–Ω–∏—è –æ—Ç—Å—É—Ç—Å—Ç–≤—É—é—Ç. Development Gate PASS; Production Content Gate BLOCKED.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T012): Schema –∫–∞—Ç–∞–ª–æ–≥–∞ –∏ –∏–Ω–¥–µ–∫—Å—ã
-
-### T013 ‚Äî Schema –∑–∞—è–≤–∫–∏ –∏ –Ω–µ–∏–∑–º–µ–Ω—è–µ–º–æ—Å—Ç—å
-
-- **ID:** T013
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Schema –∑–∞—è–≤–∫–∏ –∏ –Ω–µ–∏–∑–º–µ–Ω—è–µ–º–æ—Å—Ç—å
-- **Goal:** –°–æ–∑–¥–∞—Ç—å order_requests —Å–æ snapshot, —Å—Ç–∞—Ç—É—Å–∞–º–∏ –∏ —Ä–∞–∑—Ä–µ—à—ë–Ω–Ω—ã–º–∏ update columns.
-- **Why:** –ó–∞—è–≤–∫–∞ –¥–æ–ª–∂–Ω–∞ —Å–æ—Ö—Ä–∞–Ω—è—Ç—å –∏—Å—Ö–æ–¥–Ω—É—é —Ü–µ–Ω—É –Ω–∞–≤—Å–µ–≥–¥–∞.
-- **Dependencies:** T012.
-- **Allowed scope:** –¢–∞–±–ª–∏—Ü–∞, idempotency uniqueness, updated_at, grants.
-- **Forbidden scope:** Checkout API, admin UI, order_items –±–µ–∑ –Ω—É–∂–¥—ã. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008‚ÄìT010); Development Gate policy above.
-- **Implementation notes:** Column UPDATE —Ç–æ–ª—å–∫–æ status/internal_note; –∫–æ–º–º–µ—Ä—á–µ—Å–∫–∏–µ –ø–æ–ª—è immutable.
-- **Acceptance criteria:** DB –æ—Ç–≤–µ—Ä–≥–∞–µ—Ç –∏–∑–º–µ–Ω–µ–Ω–∏–µ —Å—É–º–º—ã/—Å—Ç—Ä–æ–∫ authenticated —Ä–æ–ª—å—é.
-- **Required checks:** migration check, negative column privilege tests.
-- **Resolution (2026-09-27):** Preview-only migration `supabase/migrations/20260927172948_order_requests_foundation.sql` –ø—Ä–∏–º–µ–Ω–µ–Ω–∞ –ø–æ—Å–ª–µ T012; –≤–µ—Ä—Å–∏—è —Ñ–∞–π–ª–∞ —Å–æ–≤–ø–∞–¥–∞–µ—Ç —Å migration history. –û–¥–Ω–∞ –ø—É—Å—Ç–∞—è `order_requests` —Å UUID PK, client-generated UUID `idempotency_key UNIQUE` –±–µ–∑ DB default, –æ–±—è–∑–∞—Ç–µ–ª—å–Ω—ã–º opaque `request_hash bytea` (32‚Äì64 –±–∞–π—Ç–∞), `name/phone` NOT NULL, nullable `city/email/comment/internal_note`, —è–≤–Ω—ã–º `consent_at`, –Ω–µ–ø—É—Å—Ç—ã–º JSONB array `items_snapshot`, `total_minor bigint >= 0`, RUB, —Å—Ç–∞—Ç—É—Å–∞–º–∏ `new/in_progress/completed/cancelled` –∏ –∏–Ω–¥–µ–∫—Å–æ–º –æ—á–µ—Ä–µ–¥–∏ `(status, created_at DESC, id)`. –¢—Ä–∏–≥–≥–µ—Ä –ë–î –º–µ–Ω—è–µ—Ç `updated_at` –∏ –∑–∞–ø—Ä–µ—â–∞–µ—Ç –ª—é–±—ã–µ –∏–∑–º–µ–Ω–µ–Ω–∏—è –∫—Ä–æ–º–µ `status/internal_note`, –≤–∫–ª—é—á–∞—è customer/commercial snapshot –∏ idempotency. Anon CRUD –æ—Ç—Å—É—Ç—Å—Ç–≤—É–µ—Ç; authenticated –ø–æ–ª—É—á–∞–µ—Ç —Ç–æ–ª—å–∫–æ column-level UPDATE(status,internal_note), –±–µ–∑ table-level UPDATE/DELETE/INSERT –∏ –±–µ–∑ SELECT –¥–æ RLS/grants T014; service_role —Ç–æ–ª—å–∫–æ SELECT/INSERT –¥–ª—è –±—É–¥—É—â–µ–≥–æ server-only API. RLS enabled –±–µ–∑ policies –¥–æ T014. Constraint, privilege, trigger –∏ negative role tests PASS; synthetic —Å—Ç—Ä–æ–∫–∏ –±—ã–ª–∏ —Ç–æ–ª—å–∫–æ –≤ transaction —Å rollback, –≤ –∑–∞—è–≤–∫–∞—Ö 0 —Å—Ç—Ä–æ–∫. Legacy/production Supabase –Ω–µ –∏–∑–º–µ–Ω—ë–Ω; Development Gate PASS, Production Content Gate BLOCKED.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T013): Schema –∑–∞—è–≤–∫–∏ –∏ –Ω–µ–∏–∑–º–µ–Ω—è–µ–º–æ—Å—Ç—å
-
-### T014 ‚Äî RLS –ø—É–±–ª–∏–∫–∞—Ü–∏–∏ –∏ –ø—Ä–∏–≤–∞—Ç–Ω–æ—Å—Ç–∏
-
-- **ID:** T014
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** RLS –ø—É–±–ª–∏–∫–∞—Ü–∏–∏ –∏ –ø—Ä–∏–≤–∞—Ç–Ω–æ—Å—Ç–∏
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å –ø—É–±–ª–∏—á–Ω—ã–µ read policies –∏ –∑–∞–∫—Ä—ã—Ç—å –∑–∞—è–≤–∫–∏.
-- **Why:** –ü—Ä—è–º–∞—è Data API –Ω–µ –¥–æ–ª–∂–Ω–∞ –æ–±—Ö–æ–¥–∏—Ç—å —Å–∞–π—Ç.
-- **Dependencies:** T013.
-- **Allowed scope:** RLS/grants –¥–ª—è –∫–∞—Ç–∞–ª–æ–≥–∞ –∏ –∑–∞–∫–∞–∑–æ–≤.
-- **Forbidden scope:** Admin policies –¥–æ membership, seed, frontend. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008‚ÄìT010); Development Gate policy above.
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å —Å–≤—è–∑–∏ –ø—Ä–æ–¥—É–∫—Ç‚Üî–∫–∞—Ç–µ–≥–æ—Ä–∏—è‚Üî–∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏–µ; –ø—É–±–ª–∏—á–Ω—ã–µ policies/grants –∏—Å–∫–ª—é—á–∞—é—Ç `products.catalog_kind = 'TEST_ONLY'` —á–µ—Ä–µ–∑ —è–≤–Ω–æ–µ `catalog_kind = 'REAL'` –∏ –ø—Ä–æ–≤–µ—Ä—è—é—Ç –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—É—é –∫–∞—Ç–µ–≥–æ—Ä–∏—é. T012 –æ—Å—Ç–∞–≤–∏–ª–∞ API –¥–æ—Å—Ç—É–ø –∑–∞–∫—Ä—ã—Ç—ã–º –¥–æ —ç—Ç–æ–π –∑–∞–¥–∞—á–∏.
-- **Acceptance criteria:** anon –≤–∏–¥–∏—Ç —Ç–æ–ª—å–∫–æ –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–µ –∏ –Ω–µ —á–∏—Ç–∞–µ—Ç/–º–µ–Ω—è–µ—Ç orders.
-- **Required checks:** targeted anon/authenticated denial tests.
-- **Resolution (2026-09-28):** Preview migration `supabase/migrations/20260928040650_public_catalog_rls_privacy.sql` –ø—Ä–∏–º–µ–Ω–µ–Ω–∞, filename version —Å–æ–≤–ø–∞–¥–∞–µ—Ç —Å migration history. RLS –≤–∫–ª—é—á–µ–Ω–∞ –Ω–∞ –≤—Å–µ—Ö —á–µ—Ç—ã—Ä—ë—Ö —Ç–∞–±–ª–∏—Ü–∞—Ö; `anon` –∏ ordinary `authenticated` –∏–º–µ—é—Ç —Ç–æ–ª—å–∫–æ SELECT –¥–ª—è `categories/products/product_images`. Public policies –ø–æ–∫–∞–∑—ã–≤–∞—é—Ç —Ç–æ–ª—å–∫–æ –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—É—é –∫–∞—Ç–µ–≥–æ—Ä–∏—é, –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–π –Ω–µ–∞—Ä—Ö–∏–≤–Ω—ã–π REAL —Ç–æ–≤–∞—Ä –≤ –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏ –∏ –µ–≥–æ –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏—è; –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–π TEST_ONLY —Å–∫—Ä—ã—Ç. –î–ª—è `order_requests` –Ω–µ—Ç policies: anon CRUD –∑–∞–∫—Ä—ã—Ç, authenticated –±–µ–∑ SELECT/INSERT/DELETE/table-level UPDATE, –∞ T013 column-level UPDATE(status,internal_note) –æ—Å—Ç–∞—ë—Ç—Å—è –±–µ–∑ RLS-–¥–æ—Å—Ç—É–ø–∞ –¥–æ T017. Role simulation –ø—Ä–æ–≤–µ—Ä–∏–ª–∞ SQL grants –∏ RLS –≤–º–µ—Å—Ç–µ: public read PASS, –∑–∞–∫—Ä—ã—Ç—ã–π –∫–∞—Ç–∞–ª–æ–≥/orders –∏ mutations DENIED, authenticated status UPDATE –∑–∞—Ç—Ä–æ–Ω—É–ª 0 —Å—Ç—Ä–æ–∫. Synthetic —Å—Ç—Ä–æ–∫–∏ –≤ —Ç—Ä–∞–Ω–∑–∞–∫—Ü–∏–∏ —Å ROLLBACK, –ø–æ—Å–ª–µ —Ç–µ—Å—Ç–∞ 0 —Å—Ç—Ä–æ–∫ –≤–æ –≤—Å–µ—Ö —á–µ—Ç—ã—Ä—ë—Ö —Ç–∞–±–ª–∏—Ü–∞—Ö; legacy/production Supabase –Ω–µ –∏–∑–º–µ–Ω—ë–Ω. Security advisor –ø–æ–∫–∞–∑—ã–≤–∞–µ—Ç —Ç–æ–ª—å–∫–æ –æ–∂–∏–¥–∞–µ–º—ã–π INFO `rls_enabled_no_policy` –¥–ª—è –ø—Ä–∏–≤–∞—Ç–Ω–æ–π —Ç–∞–±–ª–∏—Ü—ã –∑–∞—è–≤–æ–∫. Development Gate PASS; Production Content Gate BLOCKED.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T014): RLS –ø—É–±–ª–∏–∫–∞—Ü–∏–∏ –∏ –ø—Ä–∏–≤–∞—Ç–Ω–æ—Å—Ç–∏
-
-### T015 ‚Äî Storage bucket baseline
-
-- **ID:** T015
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Storage bucket baseline
-- **Goal:** –°–æ–∑–¥–∞—Ç—å product media bucket –∏ –Ω–∞—á–∞–ª—å–Ω—ã–µ –æ–≥—Ä–∞–Ω–∏—á–µ–Ω–∏—è.
-- **Why:** Image delivery –∑–∞–≤–∏—Å–∏—Ç –æ—Ç –±–µ–∑–æ–ø–∞—Å–Ω–æ–≥–æ —Ö—Ä–∞–Ω–µ–Ω–∏—è.
-- **Dependencies:** T014.
-- **Allowed scope:** Bucket MIME/size, –ø—É–±–ª–∏—á–Ω—ã–π read, –∑–∞–ø—Ä–µ—Ç –ø—É–±–ª–∏—á–Ω—ã—Ö mutations.
-- **Forbidden scope:** Admin upload UI –∏ admin Storage write policies. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008‚ÄìT010); Development Gate policy above.
-- **Implementation notes:** –ù–µ –∑–∞–≥—Ä—É–∂–∞—Ç—å –Ω–µ–ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ –∫–∞–¥—Ä—ã; –∫–ª—é—á–∏ –∏ –ø—Ä–µ—Ñ–∏–∫—Å—ã —Ñ–∏–∫—Å–∏—Ä–æ–≤–∞–Ω—ã.
-- **Acceptance criteria:** anon –º–æ–∂–µ—Ç —á–∏—Ç–∞—Ç—å —Ä–∞–∑—Ä–µ—à—ë–Ω–Ω—ã–π asset, –Ω–µ –º–æ–∂–µ—Ç upload/delete.
-- **Required checks:** Storage policy negative tests.
-- **Resolution (2026-09-28):** –í –æ—Ç–¥–µ–ª—å–Ω–æ–º Supabase Preview –ø—Ä–∏–º–µ–Ω–µ–Ω–∞ migration `supabase/migrations/20260928044406_product_media_bucket_baseline.sql` —Å —Å–æ–≤–ø–∞–¥–∞—é—â–µ–π migration history: –æ–¥–∏–Ω `product-media` bucket, public object URL, MIME —Ç–æ–ª—å–∫–æ `image/jpeg`, `image/png`, `image/webp`, `image/avif`, –º–∞–∫—Å–∏–º–∞–ª—å–Ω—ã–π —Ä–∞–∑–º–µ—Ä 12 MiB (12 582 912 –±–∞–π—Ç). –≠—Ç–æ —Ç–µ—Ö–Ω–∏—á–µ—Å–∫–∏–π –ª–∏–º–∏—Ç bucket, –Ω–µ –∫–æ–º–º–µ—Ä—á–µ—Å–∫–∏–π —Ñ–∞–∫—Ç. –ë—É–¥—É—â–∏–µ Admin –ø—É—Ç–∏ –≥–µ–Ω–µ—Ä–∏—Ä—É—é—Ç—Å—è –ø–æ–¥ `products/<product-id>/<generated-file-key>.<ext>`; raw user path –Ω–µ –¥–æ–ø—É—Å–∫–∞–µ—Ç—Å—è. –ò–∑–≤–µ—Å—Ç–Ω—ã–π URL –ø—É–±–ª–∏—á–Ω–æ–≥–æ bucket –¥–æ—Å—Ç—É–ø–µ–Ω –≤—Å–µ–º: –≤ –Ω–µ–≥–æ –º–æ–∂–Ω–æ –∑–∞–≥—Ä—É–∂–∞—Ç—å —Ç–æ–ª—å–∫–æ owner-approved media —Å –ø—Ä–∞–≤–∞–º–∏ –Ω–∞ –ø—É–±–ª–∏—á–Ω—ã–π –ø–æ–∫–∞–∑, –Ω–µ confidential drafts. Storage `objects` RLS –≤–∫–ª—é—á–µ–Ω–∞ –∏ policies –æ—Ç—Å—É—Ç—Å—Ç–≤—É—é—Ç: anon/authenticated upload, overwrite –∏ delete –Ω–µ –ø–æ–ª—É—á–∞—é—Ç –¥–æ—Å—Ç—É–ø–∞ –¥–æ admin membership/policies –±—É–¥—É—â–∏—Ö TASK. –¢–µ—Ö–Ω–∏—á–µ—Å–∫–∏–π TEST_ONLY PNG —á–µ—Ä–µ–∑ –¥–æ–≤–µ—Ä–µ–Ω–Ω—É—é Preview –ø–∞–Ω–µ–ª—å –¥–∞–ª HTTP 200 public URL –∏ —Å–æ–≤–ø–∞–¥–µ–Ω–∏–µ –±–∞–π—Ç–æ–≤; SVG –æ—Ç–∫–ª–æ–Ω—ë–Ω MIME restriction; –ª–∏–º–∏—Ç —Ñ–∞–π–ª–∞ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω –∫–æ–Ω—Ñ–∏–≥—É—Ä–∞—Ü–∏–µ–π bucket. SQL role smoke –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª denied mutations –¥–ª—è anon –∏ ordinary authenticated; PNG —É–¥–∞–ª—ë–Ω, –æ–±—ä–µ–∫—Ç–æ–≤ 0, —Ä–µ–∞–ª—å–Ω—ã–µ –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏—è –∏ product_images rows –Ω–µ –¥–æ–±–∞–≤–ª—è–ª–∏—Å—å. Legacy/production Storage –Ω–µ –º–µ–Ω—è–ª—Å—è; Development Gate PASS, Production Content Gate BLOCKED.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T015): Storage bucket baseline
-
-### T016 ‚Äî Server clients –∏ env boundary
-
-- **ID:** T016
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Server clients –∏ env boundary
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å –æ—Ç–¥–µ–ª—å–Ω—ã–µ public –∏ secret Supabase clients.
-- **Why:** Secret –Ω—É–∂–µ–Ω —Ç–æ–ª—å–∫–æ –ø—É–±–ª–∏—á–Ω–æ–º—É endpoint –∑–∞—è–≤–∫–∏.
-- **Dependencies:** T015.
-- **Allowed scope:** server-only clients, –∫–æ–Ω—Ñ–∏–≥, —Ç–∏–ø—ã –æ—à–∏–±–æ–∫, –ø—Ä–æ–≤–µ—Ä–∫–∞ env.
-- **Forbidden scope:** Order endpoint, auth, –±—Ä–∞—É–∑–µ—Ä–Ω—ã–π secret. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed facts docs/CONTENT_FACTS.md (T008‚ÄìT010); Development Gate policy above.
-- **Implementation notes:** Public read –≤—Å–µ–≥–¥–∞ –±–µ–∑ admin cookies; secret client –Ω–µ —ç–∫—Å–ø–æ—Ä—Ç–∏—Ä–æ–≤–∞—Ç—å –≤ client.
-- **Acceptance criteria:** Build –Ω–µ –≤–∫–ª—é—á–∞–µ—Ç secret; anon/secret boundaries –ø—Ä–æ–≤–µ—Ä–µ–Ω—ã.
-- **Required checks:** typecheck, bundle boundary, targeted DB smoke.
-- **Resolution (2026-09-29):** Public client –∏—Å–ø–æ–ª—å–∑—É–µ—Ç —Ç–æ–ª—å–∫–æ Preview URL –∏ publishable key, –±–µ–∑ cookies –∏ user session; catalog SELECT PASS, –¥–æ—Å—Ç—É–ø –∫ `order_requests` DENIED. –û—Ç–¥–µ–ª—å–Ω—ã–π `server-only` Secret client —Å–æ–∑–¥–∞–Ω —Ç–æ–ª—å–∫–æ –¥–ª—è –±—É–¥—É—â–µ–≥–æ server-side Order API, –±–µ–∑ browser import; env –ø—Ä–æ–≤–µ—Ä—è—é—Ç—Å—è –ø—Ä–∏ –∏—Å–ø–æ–ª—å–∑–æ–≤–∞–Ω–∏–∏ –∏ –Ω–æ—Ä–º–∞–ª–∏–∑—É—é—Ç—Å—è —á–µ—Ä–µ–∑ `trim()`. Secret server smoke –Ω–∞ `order_requests SELECT id LIMIT 1` ‚Äî PASS (HTTP 200, owner/authorized Vercel verification –Ω–∞ deployed Preview); –ø—É—Å—Ç–æ–π —Ä–µ–∑—É–ª—å—Ç–∞—Ç –¥–æ–ø—É—Å—Ç–∏–º, –∑–∞–ø–∏—Å–∏ –Ω–µ —Å–æ–∑–¥–∞–≤–∞–ª–∏—Å—å. Secret catalog SELECT –∑–∞–∫—Ä—ã—Ç grants –ø–æ –ø—Ä–æ–µ–∫—Ç—É –∏ –Ω–µ —è–≤–ª—è–µ—Ç—Å—è —Ç–µ—Å—Ç–æ–º Secret client. –í—Ä–µ–º–µ–Ω–Ω—ã–π Preview diagnostic route —É–¥–∞–ª—ë–Ω; lint, typecheck, build, bundle/Git secret scans PASS. Production –±–µ–∑ –∏–∑–º–µ–Ω–µ–Ω–∏–π. Development Gate PASS, Production Content Gate BLOCKED; —Å–ª–µ–¥—É—é—â–∞—è TASK T017.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T016): Server clients –∏ env boundary
-
-
-## PHASE 4 ‚Äî Admin Authentication
-
-### T017 ‚Äî admin_users –∏ admin RLS
-
-- **ID:** T017
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** admin_users –∏ admin RLS
-- **Goal:** –°–æ–∑–¥–∞—Ç—å –µ–¥–∏–Ω—É—é —Ç–∞–±–ª–∏—Ü—É –¥–æ–ø—É—Å–∫–∞ –∞–¥–º–∏–Ω–æ–≤ –∏ –ø–æ–ª–∏—Ç–∏–∫–∏ membership.
-- **Why:** Auth account —Å–∞–º –ø–æ —Å–µ–±–µ –Ω–µ –¥–∞—ë—Ç –ø—Ä–∞–≤.
-- **Dependencies:** T016.
-- **Allowed scope:** –ú–∏–≥—Ä–∞—Ü–∏—è admin_users, SELECT own, deny self-write, RLS –∞–¥–º–∏–Ω—Å–∫–∏—Ö —Ç–∞–±–ª–∏—Ü.
-- **Forbidden scope:** Login UI, –Ω–æ–≤—ã–µ —Ä–æ–ª–∏, public signup. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** Order UPDATE —Ç–æ–ª—å–∫–æ status/internal_note; catalogue CRUD —Ç–æ–ª—å–∫–æ active admin.
-- **Acceptance criteria:** –ù–µ-admin authenticated –Ω–µ –≤–∏–¥–∏—Ç –∑–∞—è–≤–∫–∏/—á–µ—Ä–Ω–æ–≤–∏–∫–∏ –∏ –Ω–µ –º–µ–Ω—è–µ—Ç –∫–∞—Ç–∞–ª–æ–≥.
-- **Required checks:** RLS negative/positive tests.
-- **Resolution (2026-09-29):** Preview migration `supabase/migrations/20260929052535_admin_users_and_admin_rls.sql` applied with matching history. `admin_users` uses Auth UUID PK/FK (`ON DELETE CASCADE`), active flag and own-row SELECT under RLS; anon has no access, authenticated has no membership writes. Existing public T014 SELECT remains intact. Only active membership grants private catalog SELECT and scoped category/product INSERT/UPDATE, image-row INSERT/UPDATE/DELETE, order SELECT and T013 column-only status/internal_note UPDATE. Catalog/category physical DELETE, order INSERT/DELETE and immutable snapshot UPDATE remain denied; Storage policies unchanged. Targeted active/non-admin/inactive and anon RLS tests passed with synthetic Auth/catalog/order rows rolled back; permanent test accounts/rows 0. Public Data API catalog SELECT PASS, order and membership access denied; security advisor had no findings. Development Gate PASS, Production Content Gate BLOCKED; next T018.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T017): admin_users –∏ admin RLS
-
-### T018 ‚Äî Auth config –∏ –ø–µ—Ä–≤—ã–π admin
-
-- **ID:** T018
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Auth config –∏ –ø–µ—Ä–≤—ã–π admin
-- **Goal:** –û—Ç–∫–ª—é—á–∏—Ç—å —Ä–µ–≥–∏—Å—Ç—Ä–∞—Ü–∏—é –∏ –±–µ–∑–æ–ø–∞—Å–Ω–æ –∑–∞–≤–µ—Å—Ç–∏ –ø–µ—Ä–≤–æ–≥–æ –≤–ª–∞–¥–µ–ª—å—Ü–∞.
-- **Why:** –õ—é–±–æ–π –ø–æ—Å–µ—Ç–∏—Ç–µ–ª—å –Ω–µ –¥–æ–ª–∂–µ–Ω —Å–æ–∑–¥–∞–≤–∞—Ç—å admin account.
-- **Dependencies:** T017.
-- **Allowed scope:** Email/password config, —Ä—É—á–Ω–æ–π invite/create –∏ membership –≤ Preview.
-- **Forbidden scope:** –ü—É–±–ª–∏—á–Ω–∞—è —Ñ–æ—Ä–º–∞ sign-up, production credentials. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** Account —Å–æ–∑–¥–∞—ë—Ç –≤–ª–∞–¥–µ–ª–µ—Ü —Ç–µ—Ö–Ω–∏—á–µ—Å–∫–∏–º –∫–∞–Ω–∞–ª–æ–º, –±–µ–∑ —Å–µ–∫—Ä–µ—Ç–∞ –≤ commit.
-- **Acceptance criteria:** Sign-up –æ—Ç–∫–ª–æ–Ω—è–µ—Ç—Å—è; —Ç–æ–ª—å–∫–æ –≤–Ω–µ—Å—ë–Ω–Ω—ã–π UUID –∏–º–µ–µ—Ç membership.
-- **Required checks:** signup denial, login/admin membership smoke.
-- **Resolution (2026-09-29):** Supabase Preview public settings –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–∞—é—Ç `disable_signup=true`, email/password provider –≤–∫–ª—é—á—ë–Ω, phone/external providers –≤—ã–∫–ª—é—á–µ–Ω—ã. –ü—É–±–ª–∏—á–Ω—ã–π `signUp` —Å —É–Ω–∏–∫–∞–ª—å–Ω—ã–º —Å–∏–Ω—Ç–µ—Ç–∏—á–µ—Å–∫–∏–º –∞–¥—Ä–µ—Å–æ–º –æ—Ç–∫–ª–æ–Ω—ë–Ω `signup_disabled`; anonymous sign-in –æ—Ç–∫–ª–æ–Ω—ë–Ω `anonymous_provider_disabled`, —Ç–µ—Å—Ç–æ–≤—ã–µ –∞–∫–∫–∞—É–Ω—Ç—ã –Ω–µ —Å–æ–∑–¥–∞–Ω—ã. –í–ª–∞–¥–µ–ª–µ—Ü –≤—Ä—É—á–Ω—É—é provisioned –µ–¥–∏–Ω—Å—Ç–≤–µ–Ω–Ω—ã–π –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–π Preview email/password Auth user —á–µ—Ä–µ–∑ Dashboard; trusted management SQL –¥–æ–±–∞–≤–∏–ª —Ä–æ–≤–Ω–æ –æ–¥–Ω—É active membership —Å —Ç–µ–º –∂–µ UUID. –û—Ç–¥–µ–ª—å–Ω—ã–µ Auth account –∏ membership –ø—Ä–æ–≤–µ—Ä–µ–Ω—ã –±–µ–∑ –≤—ã–≤–æ–¥–∞ email, password, hash –∏–ª–∏ token; –ø–æ–ª–Ω–æ—Ü–µ–Ω–Ω—ã–π password login/session ‚Äî T020. T017 own-row SELECT –∏ active-membership policies —Å–æ—Ö—Ä–∞–Ω–µ–Ω—ã, self-write grants –æ—Ç—Å—É—Ç—Å—Ç–≤—É—é—Ç; non-admin –Ω–µ –ø–æ–ª—É—á–∞–µ—Ç admin rights. Production Auth –Ω–µ –º–µ–Ω—è–ª—Å—è, Development Gate PASS, Production Content Gate BLOCKED. Supabase security advisor –ø–æ–∫–∞–∑—ã–≤–∞–µ—Ç WARN –æ –≤—ã–∫–ª—é—á–µ–Ω–Ω–æ–π leaked-password protection; –Ω–∞—Å—Ç—Ä–æ–π–∫–∞ –Ω–µ –º–µ–Ω—è–ª–∞—Å—å –≤ T018 –∏ —Ç—Ä–µ–±—É–µ—Ç –æ—Ç–¥–µ–ª—å–Ω–æ–≥–æ Auth security review –ø–µ—Ä–µ–¥ production. –°–ª–µ–¥—É—é—â–∞—è TASK T019.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T018): Auth config –∏ –ø–µ—Ä–≤—ã–π admin
-
-### T019 ‚Äî SSR session refresh
-
-- **ID:** T019
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** SSR session refresh
-- **Goal:** –ù–∞—Å—Ç—Ä–æ–∏—Ç—å cookie-based Auth –∏ –æ–±–Ω–æ–≤–ª–µ–Ω–∏–µ session –Ω–∞ /admin.
-- **Why:** Admin –¥–æ–ª–∂–µ–Ω —Å–æ—Ö—Ä–∞–Ω—è—Ç—å session –±–µ–∑ –¥–æ–≤–µ—Ä–∏—è –∫ client state.
-- **Dependencies:** T018.
-- **Allowed scope:** @supabase/ssr, proxy/middleware –ø–æ –≤–µ—Ä—Å–∏–∏ Next.
-- **Forbidden scope:** –ê–≤—Ç–æ—Ä–∏–∑–∞—Ü–∏—è –ø–æ getSession –±–µ–∑ –≤–µ—Ä–∏—Ñ–∏–∫–∞—Ü–∏–∏, public auth. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** No-store –Ω–∞ admin HTML/Set-Cookie, –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π refresh.
-- **Acceptance criteria:** Valid session –æ–±–Ω–æ–≤–ª—è–µ—Ç—Å—è; –∏—Å—Ç—ë–∫—à–∞—è –Ω–µ —Ä–∞—Å–∫—Ä—ã–≤–∞–µ—Ç –¥–∞–Ω–Ω—ã–µ.
-- **Required checks:** auth session integration, cache header check.
-- **Resolution (2026-09-29):** Installed pinned `@supabase/ssr` and added a request-scoped, server-only cookie Auth client using only the Preview URL and publishable key. Next 16 `src/proxy.ts` runs only on `/admin` and descendants, calls `getUser()` for session verification/refresh, forwards updated request cookies and returns all response Set-Cookie values with cookie attributes and private/no-store cache headers. It is session maintenance, not an admin authorization guard; membership checks remain T021. Targeted matcher, cookie propagation (including consecutive writes), server Auth adapter, no-session and malformed-cookie tests passed without real credentials or token output. Local HTTP requests without a session and with synthetic malformed cookie returned safely with no Set-Cookie and no private data. Public catalog and Order-only Secret clients remain separate and unchanged; no login UI or admin data access was added. Real password-login/browser session integration is required in T020 when its flow exists. Development Gate PASS; Production Content Gate BLOCKED; Production unchanged. The existing Preview leaked-password protection warning remains for pre-production security review. Next T020.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T019): SSR session refresh
-
-### T020 ‚Äî Admin login –∏ logout
-
-- **ID:** T020
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Admin login –∏ logout
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å –≤—Ö–æ–¥/–≤—ã—Ö–æ–¥ –∏ —Å–æ–æ–±—â–µ–Ω–∏—è –æ–± –æ—à–∏–±–∫–µ –±–µ–∑ enumeration.
-- **Why:** –í–ª–∞–¥–µ–ª–µ—Ü –¥–æ–ª–∂–µ–Ω —É–ø—Ä–∞–≤–ª—è—Ç—å –¥–æ—Å—Ç—É–ø–æ–º —Å —Ä–∞–±–æ—á–∏—Ö —É—Å—Ç—Ä–æ–π—Å—Ç–≤.
-- **Dependencies:** T019.
-- **Allowed scope:** /admin/login, password flow, signOut, –±–µ–∑–æ–ø–∞—Å–Ω—ã–π redirect.
-- **Forbidden scope:** Registration, password –≤ –ª–æ–≥–∞—Ö, Admin shell. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –ü–æ—Å–ª–µ –≤—Ö–æ–¥–∞ –ø—Ä–æ–≤–µ—Ä—è—Ç—å active membership; non-admin signOut.
-- **Acceptance criteria:** Admin –≤—Ö–æ–¥–∏—Ç/–≤—ã—Ö–æ–¥–∏—Ç; non-admin –Ω–µ –ø—Ä–æ—Ö–æ–¥–∏—Ç, –æ—à–∏–±–∫–µ –Ω–µ—Ç PII.
-- **Required checks:** login/logout browser smoke –∏ –Ω–µ–≥–∞—Ç–∏–≤–Ω—ã–π auth —Ç–µ—Å—Ç.
-- **Resolution (2026-09-29):** Preview `/admin/login` uses server-side Supabase password Auth, verifies the user with `getUser()` and checks active `admin_users` membership through the authenticated JWT/RLS before redirecting to a safe local path. Invalid credentials and non-admin membership yield the same generic error; non-admin sessions are cleared. Owner confirmed real admin login and a browser Auth session. Owner then confirmed real Preview logout through the existing POST `logoutAction`: the browser returned to `/admin/login`, and a subsequent visit remained on the login form instead of accepting the signed-out session. The temporary Preview-only `TEST_ONLY` logout route used for this smoke was removed. Targeted negative auth, redirect, cookie-propagation, no-session and cross-origin checks passed; lint, typecheck, build and secret-path review passed. No credentials, cookies, tokens or session values were recorded. This login/logout flow does not add the T021 admin guard or Admin shell. Development Gate PASS; Production Content Gate BLOCKED; Production unchanged. Next T021.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T020): Admin login –∏ logout
-
-### T021 ‚Äî requireAdmin –∏ guard mutations
-
-- **ID:** T021
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** requireAdmin –∏ guard mutations
-- **Goal:** –ó–∞—â–∏—Ç–∏—Ç—å /admin/* –∏ —à–∞–±–ª–æ–Ω –≤—Å–µ—Ö –±—É–¥—É—â–∏—Ö Server Actions.
-- **Why:** Guard –≤ layout –Ω–µ –∑–∞—â–∏—â–∞–µ—Ç –ø—Ä—è–º–æ–π –≤—ã–∑–æ–≤ mutation.
-- **Dependencies:** T020.
-- **Allowed scope:** Server requireAdmin, layout guard, origin/session checks.
-- **Forbidden scope:** –û–±—Ö–æ–¥ RLS secret client, UI-only role check. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** getUser + membership –ø—Ä–∏ –∫–∞–∂–¥–æ–º –¥–µ–π—Å—Ç–≤–∏–∏; redirect —Ç–æ–ª—å–∫–æ –ª–æ–∫–∞–ª—å–Ω—ã–π.
-- **Acceptance criteria:** –ë–µ–∑ –∞–∫—Ç–∏–≤–Ω–æ–π session –ª—é–±–æ–π admin route/action –æ—Ç–∫–∞–∑–∞–Ω.
-- **Required checks:** direct action denial, expired/revoked tests.
-- **Resolution (2026-09-29):** Added server-only `requireAdmin()` and independent `requireAdminMutation()` for future Admin actions/handlers. Every invocation uses the request-scoped cookie Auth client, `getUser()` and an uncached own-row `admin_users` read under the user JWT/T017 RLS; only active membership returns a minimal user ID and authenticated client. The `(workspace)` layout invokes the page guard before children, is dynamic/no-store/noindex, and leaves `/admin/login` outside the group. No session or inactive/non-admin membership redirects to the login route; the existing login flow clears a valid non-admin session. Mutation guard checks strict request Origin against host/forwarded protocol before checking Auth and denies by safe redirect; non-admin mutation denial attempts local signOut. Direct-invocation harness covered active, no-session, invalid/expired, non-admin and revoked membership, same/cross-origin, safe return path and T020 login/logout. No Auth fixture or DB row was created. Preview anon catalog SELECT PASS, anon orders denied; Storage has zero write policies/objects; one real Auth user and matching membership remain, synthetic accounts 0. Lint/typecheck/build and bundle/Git secret scans PASS. T019 proxy and T020 behavior retained; no Admin shell, Storage policy or Production change. Development Gate PASS; Production Content Gate BLOCKED. Next T022.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T021): requireAdmin –∏ guard mutations
-
-### T022 ‚Äî Admin Auth security gate
-
-- **ID:** T022
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Admin Auth security gate
-- **Goal:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å —Ä–µ–≥–∏—Å—Ç—Ä–∞—Ü–∏—é, –æ—Ç–∑—ã–≤ —Ä–æ–ª–∏, —Å–µ—Å—Å–∏—é –∏ –≤—Å–µ –ø—Ä–∞–≤–∞.
-- **Why:** –ü–µ—Ä–µ–¥ CRUD –Ω—É–∂–µ–Ω –¥–æ–∫–∞–∑–∞–Ω–Ω—ã–π security baseline.
-- **Dependencies:** T021.
-- **Allowed scope:** –¢–æ–ª—å–∫–æ targeted auth/RLS/CSRF/Storage denial scenarios.
-- **Forbidden scope:** Admin UI –∏–ª–∏ –Ω–æ–≤—ã–µ —Ä–æ–ª–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å –ø—Ä—è–º—ã–µ PostgREST –∑–∞–ø—Ä–æ—Å—ã –ø–æ–¥ anon –∏ non-admin.
-- **Acceptance criteria:** –í—Å–µ –Ω–µ–≥–∞—Ç–∏–≤–Ω—ã–µ —Å—Ü–µ–Ω–∞—Ä–∏–∏ –∑–∞–∫—Ä—ã—Ç—ã; M3 –º–æ–∂–Ω–æ –ø—Ä–∏–Ω–∏–º–∞—Ç—å.
-- **Required checks:** security integration suite –∏ remote Preview smoke.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T022): Admin Auth security gate
-- **Resolution (2026-09-29):** Preview security integration and remote smoke PASS: public signup and anonymous sign-in denied; session/login/logout and server mutation guard regressions PASS; cross-origin mutation denied; private catalog and order access require active membership; immutable order snapshot and Storage mutation baseline preserved. Owner-authorized direct PostgREST JWT verification: active admin sees own active membership and can SELECT orders; separate authenticated non-admin sees empty membership and order results, and self-escalation INSERT is denied (HTTP 403). Anon order access and catalog mutation denied. Temporary non-admin Auth user removed; final Preview counts: one real Auth user with one matching active membership, zero unlinked/synthetic accounts, zero catalog/order test rows and zero Storage objects. Security Advisor has zero blocking findings. Its leaked-password protection WARN remains a separate pre-production Auth item; M3 PASS does not change Production Content Gate BLOCKED. Production unchanged. Next T023.
-
-
-## PHASE 5 ‚Äî Admin Shell
-
-### T023 ‚Äî Admin shell –∏ –Ω–∞–≤–∏–≥–∞—Ü–∏—è
-
-- **ID:** T023
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Admin shell –∏ –Ω–∞–≤–∏–≥–∞—Ü–∏—è
-- **Goal:** –°–¥–µ–ª–∞—Ç—å —Ä–∞–±–æ—á–∏–π layout Marmix Flex –¥–ª—è /admin.
-- **Why:** –û–ø–µ—Ä–∞—Ü–∏–∏ —Ç—Ä–µ–±—É—é—Ç –ø–æ–Ω—è—Ç–Ω–æ–π –Ω–∞–≤–∏–≥–∞—Ü–∏–∏ –±–µ–∑ showroom –¥–µ–∫–æ—Ä–∞.
-- **Dependencies:** T022.
-- **Allowed scope:** Desktop/tablet/phone shell, menu, logout affordance.
-- **Forbidden scope:** Redesign –ø—É–±–ª–∏—á–Ω—ã—Ö –∫–æ–º–ø–æ–Ω–µ–Ω—Ç–æ–≤ –∏ data mutations. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Manrope, graphite, restrained gold –∏ —è–≤–Ω–æ–µ –∞–∫—Ç–∏–≤–Ω–æ–µ –º–µ–Ω—é.
-- **Acceptance criteria:** –ó–∞—â–∏—â—ë–Ω–Ω—ã–µ –º–∞—Ä—à—Ä—É—Ç—ã –¥–æ—Å—Ç—É–ø–Ω—ã —Å keyboard; mobile usable.
-- **Required checks:** lint, typecheck, viewport smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T023): Admin shell –∏ –Ω–∞–≤–∏–≥–∞—Ü–∏—è
-- **Resolution (2026-09-30):** Protected `/admin` shell, desktop sidebar, tablet/mobile drawer, route state, existing server logout action, local public-site link and neutral landing page implemented in Preview. T021 server guard, dynamic/no-store/noindex and separate login retained. Lint, typecheck, build and Git secret-path checks PASS. READY HTTPS Preview for the `redesign-v2` implementation commit; unauthenticated `/admin` redirects to login, login and public home return successfully, admin response is private/no-store and noindex. Owner completed authenticated visual verification after real login: desktop/mobile navigation, keyboard/focus, visible logout and public-site link PASS; 390/768/1024/1440/1920/2560 PASS; horizontal overflow and visual breakage absent. Credentials were not shared. T023 DONE. T024 remains TODO; gates and M3 unchanged.
-
-### T024 ‚Äî Operational dashboard
-
-- **ID:** T024
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Operational dashboard
-- **Goal:** –í—ã–≤–µ—Å—Ç–∏ –Ω–æ–≤—ã–µ/–≤ —Ä–∞–±–æ—Ç–µ –∑–∞—è–≤–∫–∏ –∏ –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–µ/—Å–∫—Ä—ã—Ç—ã–µ —Ç–æ–≤–∞—Ä—ã.
-- **Why:** –í–ª–∞–¥–µ–ª–µ—Ü –¥–æ–ª–∂–µ–Ω –≤–∏–¥–µ—Ç—å –æ—á–µ—Ä–µ–¥—å –∏ —Å–æ—Å—Ç–æ—è–Ω–∏–µ –∫–∞—Ç–∞–ª–æ–≥–∞.
-- **Dependencies:** T023.
-- **Allowed scope:** –°–µ—Ä–≤–µ—Ä–Ω—ã–µ count queries –ø–æ–¥ admin RLS, –ø–µ—Ä–µ—Ö–æ–¥—ã –≤ —Å–ø–∏—Å–∫–∏.
-- **Forbidden scope:** BI –≥—Ä–∞—Ñ–∏–∫–∏, –∫–ª–∏–µ–Ω—Ç—Å–∫–∏–π secret. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –û—Ç–¥–µ–ª—å–Ω–æ –æ–±–æ–∑–Ω–∞—á–∞—Ç—å –∞—Ä—Ö–∏–≤–Ω—ã–µ –∏ –Ω–µ–æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–µ —Ç–æ–≤–∞—Ä—ã.
-- **Acceptance criteria:** –°—á—ë—Ç—á–∏–∫–∏ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω—ã —Å –¥–∞–Ω–Ω—ã–º–∏; —Å—Å—ã–ª–∫–∏ –≤–µ–¥—É—Ç –≤ —Ä–∞–∑–¥–µ–ª—ã.
-- **Required checks:** targeted count integration, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T024): Operational dashboard
-- **Resolution (2026-09-30):** READY HTTPS Preview dashboard reads five exact `head` counts after a fresh `requireAdmin()` under authenticated user JWT/T017 RLS: new and in-progress orders, published and hidden unarchived REAL products, and archived REAL products. No PII, Secret client, hardcoded metrics or production data. Empty Preview returns honest zero; query errors throw a generic server error. Transactional authenticated role smoke with a visible TEST_ONLY product confirmed it is excluded; rollback left zero catalog/order rows. Direct Preview counts are all zero. Missing `/admin/orders` and `/admin/products` routes remain non-clickable future destinations according to T023 navigation, without 404 links or list implementation. Lint/typecheck/build and secret scan PASS; unauthenticated `/admin` redirects to login, login/public home smoke PASS, private/no-store/noindex retained. Owner verified after real admin login: counters readable, orders/catalog separation understandable, zero state and no PII PASS; desktop and mobile 390 PASS, no horizontal overflow, visual consistency with T023 PASS. Credentials were not shared. T024 DONE. T025 remains TODO; gates and M3 unchanged.
-
-### T025 ‚Äî Admin states –∏ responsive
-
-- **ID:** T025
-- **Priority:** P1
-- **Status:** DONE
-- **Title:** Admin states –∏ responsive
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å loading/error/empty –∏ –ø—Ä–æ–≤–µ—Ä–∏—Ç—å —Ä–∞–±–æ—á–∏–µ —à–∏—Ä–∏–Ω—ã.
-- **Why:** –û–ø–µ—Ä–∞—Ü–∏–æ–Ω–Ω—ã–π –∏–Ω—Ç–µ—Ä—Ñ–µ–π—Å –¥–æ–ª–∂–µ–Ω –±—ã—Ç—å –ø–æ–Ω—è—Ç–µ–Ω –ø—Ä–∏ —Å–±–æ–µ.
-- **Dependencies:** T024.
-- **Allowed scope:** UI —Å–æ—Å—Ç–æ—è–Ω–∏—è Admin shell/dashboard, desktop/tablet/phone.
-- **Forbidden scope:** –ù–æ–≤—ã–µ —Ñ—É–Ω–∫—Ü–∏–∏ –∫–∞—Ç–∞–ª–æ–≥–∞ –∏–ª–∏ orders. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –ë–µ–∑ –∫—ç—à–∏—Ä–æ–≤–∞–Ω–∏—è PII; —Ä–∞–±–æ—Ç–∞ –º—ã—à—å—é –∏ –∫–ª–∞–≤–∏–∞—Ç—É—Ä–æ–π.
-- **Acceptance criteria:** –ù–µ—Ç –ø—É—Å—Ç–æ–≥–æ –Ω–µ–º–æ–≥–æ —ç–∫—Ä–∞–Ω–∞, overflow –∏ –æ—à–∏–±–æ–∫ –∫–æ–Ω—Å–æ–ª–∏.
-- **Required checks:** browser smoke 1440/tablet/390, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T025): Admin states –∏ responsive
-- **Resolution (2026-09-30):** READY Preview adds restrained route loading, safe error/retry and honest fully empty group notes. T024 exact count queries, REAL/TEST_ONLY semantics and Admin RLS remain unchanged. Controlled local harness verified loading, retry, zeros and generic failure instead of a false zero; lint/typecheck/build PASS. Guest `/admin` redirects to login, public homepage smoke PASS. Owner verified after real admin login: 390/768/1024/1440 and 1920/2560 sanity, keyboard/focus, mobile drawer, zero state and T023/T024 visual consistency PASS; horizontal overflow NO. Production unchanged. T025 DONE; M3 and Development Gate PASS; Production Content Gate BLOCKED. Next T026, not started.
-
-
-## PHASE 6 ‚Äî Admin Catalog Management
-
-### T026 ‚Äî Products list
-
-- **ID:** T026
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Products list
-- **Goal:** –°–æ–∑–¥–∞—Ç—å /admin/products —Å –≤–∏–¥–∏–º—ã–º —Å—Ç–∞—Ç—É—Å–æ–º –∏ –∫–ª—é—á–µ–≤—ã–º–∏ –ø–æ–ª—è–º–∏.
-- **Why:** –û–ø–µ—Ä–∞—Ü–∏–∏ –Ω–∞—á–∏–Ω–∞—é—Ç—Å—è —Å –æ–±–∑–æ—Ä–∞ SKU.
-- **Dependencies:** T025.
-- **Allowed scope:** Server list, –∫–æ–ª–æ–Ω–∫–∏ SKU/name/category/price/status.
-- **Forbidden scope:** –§–æ—Ä–º—ã —Ä–µ–¥–∞–∫—Ç–∏—Ä–æ–≤–∞–Ω–∏—è –∏ –ø—É–±–ª–∏—á–Ω–∞—è –≤–∏—Ç—Ä–∏–Ω–∞. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** –ù–∏–∫–∞–∫–∏—Ö PII, no-store; —á—Ç–µ–Ω–∏–µ —Ç–æ–ª—å–∫–æ active admin.
-- **Acceptance criteria:** –°–ø–∏—Å–æ–∫ —Ä–∞–∑–ª–∏—á–∞–µ—Ç published/unpublished/archived.
-- **Required checks:** lint, typecheck, guarded list smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T026): Products list
-- **Resolution (2026-09-30):** READY Preview `/admin/products` reads only REAL rows after `requireAdmin()` through the authenticated JWT/T017 RLS client, with one category relation select, stable order and no Secret client. The list presents SKU, name, category, exact RUB price or neutral null state, and published/hidden/archived status; desktop table and compact mobile presentation share T023‚ÄìT025 shell and states. Empty Preview products/categories remain 0. Targeted TEST_ONLY published/hidden/archived, null-price and category checks ran in a rollback transaction; permanent synthetic rows 0. Local rendering/query/error harness, lint/typecheck/build, guest redirect and public smoke PASS. Owner after real login verified desktop/mobile list, all field/status labels, null and empty states, active navigation, 390/768/1024/1440, no horizontal overflow and T023‚ÄìT025 visual consistency. T026 DONE; M3 and Development Gate PASS; Production Content Gate BLOCKED. Next T027, not started.
-
-### T027 ‚Äî Products search –∏ filters
-
-- **ID:** T027
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Products search –∏ filters
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å –ø–æ–∏—Å–∫/—Ñ–∏–ª—å—Ç—Ä—ã/—Å–æ—Ä—Ç–∏—Ä–æ–≤–∫—É —Å–ø–∏—Å–∫–∞ —Ç–æ–≤–∞—Ä–æ–≤.
-- **Why:** –ö–∞—Ç–∞–ª–æ–≥–æ–º –Ω–µ–≤–æ–∑–º–æ–∂–Ω–æ —É–ø—Ä–∞–≤–ª—è—Ç—å –±–µ–∑ –Ω–∞—Ö–æ–∂–¥–µ–Ω–∏—è SKU.
-- **Dependencies:** T026.
-- **Allowed scope:** GET –ø–∞—Ä–∞–º–µ—Ç—Ä—ã –¥–ª—è admin —Å–ø–∏—Å–∫–∞, pagination.
-- **Forbidden scope:** Public catalog filters –∏ –Ω–æ–≤—ã–µ –∞—Ç—Ä–∏–±—É—Ç—ã. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** Whitelist –ø–∞—Ä–∞–º–µ—Ç—Ä–æ–≤, –Ω–µ –≥—Ä—É–∑–∏—Ç—å –≤—Å–µ —Ç–æ–≤–∞—Ä—ã –≤ browser.
-- **Acceptance criteria:** –§–∏–ª—å—Ç—Ä –ø–æ SKU/—Å—Ç–∞—Ç—É—Å—É/–∫–∞—Ç–µ–≥–æ—Ä–∏–∏ –∏ –¥–∞—Ç–∞/–ø–æ—Ä—è–¥–æ–∫ —Ä–∞–±–æ—Ç–∞—é—Ç.
-- **Required checks:** targeted query tests, browser smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T027): Products search –∏ filters
-- **Resolution (2026-09-30):** READY Preview `/admin/products` uses server-side, whitelisted GET search by SKU/name, publication/category filters, stable sorting and exact-count pagination for REAL products under authenticated admin RLS. Invalid and out-of-range parameters normalize safely; TEST_ONLY is excluded, and the empty catalog is distinguished from no search matches. Targeted query/URL/count checks, lint/typecheck/build, guest redirect and public smoke PASS; temporary test rows rolled back. Owner after real admin login verified search, status/category/sort/reset controls, pagination and no-result state, 390/768/1024/1440, no horizontal overflow and T026/Admin shell consistency. Production unchanged; M3 and Development Gate PASS; Production Content Gate BLOCKED. Next T028, not started.
-
-### T028 ‚Äî Create product
-
-- **ID:** T028
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Create product
-- **Goal:** –°–æ–∑–¥–∞—Ç—å SKU —á–µ—Ä–µ–∑ –∑–∞—â–∏—â—ë–Ω–Ω—É—é —Ñ–æ—Ä–º—É.
-- **Why:** Admin Panel ‚Äî –æ—Å–Ω–æ–≤–Ω–æ–π —Å–ø–æ—Å–æ–± –Ω–∞–ø–æ–ª–Ω–µ–Ω–∏—è –∫–∞—Ç–∞–ª–æ–≥–∞.
-- **Dependencies:** T027.
-- **Allowed scope:** name/slug/SKU/category/series/price/unit/min/step –∏ draft save.
-- **Forbidden scope:** –ó–∞–≥—Ä—É–∑–∫–∞ –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏–π, –ø—É–±–ª–∏–∫–∞—Ü–∏—è –±–µ–∑ –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã—Ö –¥–∞–Ω–Ω—ã—Ö. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** –°–µ—Ä–≤–µ—Ä–Ω–∞—è –≤–∞–ª–∏–¥–∞—Ü–∏—è, DB constraints, initial unpublished.
-- **Acceptance criteria:** –ù–æ–≤—ã–π draft –ø–æ—è–≤–ª—è–µ—Ç—Å—è –≤ admin, anon –µ–≥–æ –Ω–µ –≤–∏–¥–∏—Ç.
-- **Required checks:** form/action validation, RLS denial, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T028): Create product
-- **Resolution (2026-09-30):** READY Preview `/admin/products/new` is guarded by `requireAdmin()` and an independent same-origin `requireAdminMutation()` action using the authenticated JWT under T017 RLS. It validates name, stable SKU, slug, existing category, optional series, exact RUB-to-kopeck price, constrained price/sale units and positive integer minimum/step. The action inserts only REAL, unpublished, unarchived drafts; unknown commerce stays NULL. Unique SKU/slug conflicts return safe field errors, and the list is revalidated after save. Targeted validation and transactional TEST_ONLY active-admin insert/read, anon invisibility and non-admin/anon denial checks PASS with rollback; permanent synthetic rows 0. Lint/typecheck/build and guarded Preview route/public smoke PASS. Owner after real login verified form, empty-category state, labels/validation, 390/768/1024/1440, no overflow and Admin visual consistency. Preview has no categories yet; the form disables save until one exists, without blocking T028. Production unchanged; M3 and Development Gate PASS, Production Content Gate BLOCKED. Next T029, not started.
-
-### T029 ‚Äî Edit product properties
-
-- **ID:** T029
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Edit product properties
-- **Goal:** –†–µ–¥–∞–∫—Ç–∏—Ä–æ–≤–∞—Ç—å –æ–ø–∏—Å–∞–Ω–∏–µ, —Ä–∞–∑–º–µ—Ä—ã, specs, attributes –∏ SEO.
-- **Why:** –¢–æ–≤–∞—Ä –¥–æ–ª–∂–µ–Ω –æ–±—Å–ª—É–∂–∏–≤–∞—Ç—å—Å—è –±–µ–∑ Studio.
-- **Dependencies:** T028.
-- **Allowed scope:** –§–æ—Ä–º–∞ –∏ action –¥–ª—è –ø–æ–ª–µ–π –æ–¥–Ω–æ–π products row.
-- **Forbidden scope:** Image operations, schema change. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä—è—Ç—å –∫–æ–Ω—Ç—Ä–æ–ª–∏—Ä—É–µ–º—ã–µ –∑–Ω–∞—á–µ–Ω–∏—è –∏ –ø—Ä–∞–≤–∞ admin –ø–µ—Ä–µ–¥ save.
-- **Acceptance criteria:** –ü–æ—Å–ª–µ reload —Å–æ—Ö—Ä–∞–Ω—è—é—Ç—Å—è –ø–æ–ª—è, –Ω–µ–≤–µ—Ä–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ –æ—Ç–∫–ª–æ–Ω–µ–Ω—ã.
-- **Required checks:** targeted mutation/validation, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T029): Edit product properties
-- **Resolution (2026-09-30):** –∑–∞—â–∏—â—ë–Ω–Ω—ã–π `/admin/products/[id]` —Ä–µ–¥–∞–∫—Ç–∏—Ä—É–µ—Ç —Ç–æ–ª—å–∫–æ –æ–ø–∏—Å–∞–Ω–∏–µ, nullable —Ä–∞–∑–º–µ—Ä—ã/–ø–ª–æ—â–∞–¥—å, –∫–æ–Ω—Ç—Ä–æ–ª–∏—Ä—É–µ–º—ã–µ —Ö–∞—Ä–∞–∫—Ç–µ—Ä–∏—Å—Ç–∏–∫–∏/–∞—Ç—Ä–∏–±—É—Ç—ã –∏ SEO –æ–¥–Ω–æ–π —Å—Ç—Ä–æ–∫–∏ —á–µ—Ä–µ–∑ authenticated admin JWT –∏ T017 RLS. –ù–µ–∑–∞–≤–∏—Å–∏–º—ã–π same-origin mutation guard, —Å—Ç—Ä–æ–≥–∞—è –ø—Ä–æ–≤–µ—Ä–∫–∞ –ø–æ–ª–µ–π –∏ —è–≤–Ω—ã–π allowlist –∏—Å–∫–ª—é—á–∞—é—Ç mass assignment: SKU/slug, —Ü–µ–Ω–∞, –ø—É–±–ª–∏–∫–∞—Ü–∏—è –∏ –∞—Ä—Ö–∏–≤ –Ω–µ –º–µ–Ω—è—é—Ç—Å—è. –¢—Ä–∞–Ω–∑–∞–∫—Ü–∏–æ–Ω–Ω—ã–µ Preview TEST_ONLY —Ç–µ—Å—Ç—ã —Å ROLLBACK –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª–∏ —Å–æ—Ö—Ä–∞–Ω–µ–Ω–∏–µ/–ø–æ–≤—Ç–æ—Ä–Ω–æ–µ —á—Ç–µ–Ω–∏–µ —Å–≤–æ–π—Å—Ç–≤, –≤–∞–ª–∏–¥–∞—Ü–∏—é, –æ—Ç–∫–∞–∑ anon/non-admin –∏ –Ω–µ–∏–∑–º–µ–Ω–Ω–æ—Å—Ç—å –ø—É–±–ª–∏–∫–∞—Ü–∏–∏/–∞—Ä—Ö–∏–≤–∞; –ø–æ—Å—Ç–æ—è–Ω–Ω—ã—Ö synthetic products/categories/rows ‚Äî 0. Lint/typecheck/build –∏ guarded Preview/public smoke PASS. Owner –ø–æ—Å–ª–µ —Ä–µ–∞–ª—å–Ω–æ–≥–æ admin login –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª layout, –≥—Ä—É–ø–ø–∏—Ä–æ–≤–∫—É, —Ä–∞–∑–º–µ—Ä—ã, —Ö–∞—Ä–∞–∫—Ç–µ—Ä–∏—Å—Ç–∏–∫–∏/–∞—Ç—Ä–∏–±—É—Ç—ã, SEO, –æ—à–∏–±–∫–∏, 390/768/1024/1440, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ overflow –∏ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω–æ—Å—Ç—å —Å Admin shell. –í—Ä–µ–º–µ–Ω–Ω—ã–π Preview-only visual-check route —É–¥–∞–ª—ë–Ω –ø–æ—Å–ª–µ –ø—Ä–æ–≤–µ—Ä–∫–∏; —Ä–µ–∞–ª—å–Ω—ã–π editor —Å–æ—Ö—Ä–∞–Ω—ë–Ω. Production unchanged; Development Gate PASS; Production Content Gate BLOCKED. Next T030, not started.
-
-### T030 ‚Äî Publication –∏ assortment states
-
-- **ID:** T030
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Publication –∏ assortment states
-- **Goal:** –î–∞—Ç—å unpublish/restore/archive, featured, availability –∏ sort order.
-- **Why:** –ü—É–±–ª–∏–∫–∞—Ü–∏—è –¥–æ–ª–∂–Ω–∞ –±—ã—Ç—å —É–ø—Ä–∞–≤–ª—è–µ–º–æ–π –∏ –æ–±—Ä–∞—Ç–∏–º–æ–π.
-- **Dependencies:** T029.
-- **Allowed scope:** –û–ø–µ—Ä–∞—Ü–∏–∏ –Ω–∞–¥ —Ç–µ–∫—É—â–∏–º–∏ products, –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏–µ –ø—Ä–∏ –∞—Ä—Ö–∏–≤–µ.
-- **Forbidden scope:** Physical delete, inventory ERP. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** –ê—Ä—Ö–∏–≤–Ω—ã–π SKU –Ω–µ –ø—É–±–ª–∏–∫–æ–≤–∞—Ç—å; slug –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–≥–æ SKU –Ω–µ–∏–∑–º–µ–Ω–µ–Ω –¥–æ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω–æ–≥–æ redirect –º–µ—Ö–∞–Ω–∏–∑–º–∞; revalidate public.
-- **Acceptance criteria:** –°—Ç–∞—Ç—É—Å—ã –∏ –ø–æ—Ä—è–¥–æ–∫ –æ—Ç—Ä–∞–∂–∞—é—Ç—Å—è –≤ –∞–¥–º–∏–Ω–∫–µ –∏ RLS; —É–¥–∞–ª–µ–Ω–∏–π –Ω–µ—Ç.
-- **Required checks:** targeted state/RLS tests, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T030): Publication –∏ assortment states
-- **Resolution (2026-09-30):** Product Editor –ø–æ–ª—É—á–∏–ª –æ—Ç–¥–µ–ª—å–Ω—É—é —Å–µ–∫—Ü–∏—é –ø—É–±–ª–∏–∫–∞—Ü–∏–∏ –∏ –∞—Å—Å–æ—Ä—Ç–∏–º–µ–Ω—Ç–∞: —è–≤–Ω—ã–µ publish/unpublish, archive —Å –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏–µ–º –∏ restore –±–µ–∑ –∞–≤—Ç–æ–ø—É–±–ª–∏–∫–∞—Ü–∏–∏, nullable availability, `is_featured` –∏ nonnegative integer sort_order. Server Actions –≤—ã–∑—ã–≤–∞—é—Ç same-origin `requireAdminMutation()` –∏ —Ä–∞–±–æ—Ç–∞—é—Ç –ø–æ–¥ authenticated admin JWT/T017 RLS —Å —è–≤–Ω–æ–π allowlist. –ê—Ä—Ö–∏–≤–∏—Ä–æ–≤–∞–Ω–∏–µ –∞—Ç–æ–º–∞—Ä–Ω–æ —Å–Ω–∏–º–∞–µ—Ç –ø—É–±–ª–∏–∫–∞—Ü–∏—é; –ø–æ–ø—ã—Ç–∫–∞ –æ–ø—É–±–ª–∏–∫–æ–≤–∞—Ç—å –∞—Ä—Ö–∏–≤–Ω—ã–π SKU –æ—Ç–≤–µ—Ä–≥–∞–µ—Ç—Å—è. –§–∏–∑–∏—á–µ—Å–∫–æ–≥–æ DELETE –Ω–µ—Ç. –¢—Ä–∞–Ω–∑–∞–∫—Ü–∏–æ–Ω–Ω—ã–µ Preview TEST_ONLY –ø—Ä–æ–≤–µ—Ä–∫–∏ –ø–µ—Ä–µ—Ö–æ–¥–æ–≤, RLS –∏ –æ—Ç—Ä–∏—Ü–∞—Ç–µ–ª—å–Ω—ã—Ö —Å—Ü–µ–Ω–∞—Ä–∏–µ–≤ –∑–∞–≤–µ—Ä—à–∏–ª–∏—Å—å ROLLBACK; –ø–æ—Å—Ç–æ—è–Ω–Ω—ã—Ö synthetic products/categories/rows ‚Äî 0. –ü–æ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω–æ–π owner –∑–∞–º–µ–Ω–µ –ø–æ–∑–∏—Ç–∏–≤–Ω—ã–π REAL public path –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω –¥–µ–π—Å—Ç–≤—É—é—â–µ–π T014 policy –∏ —Ä–∞–Ω–µ–µ –≤—ã–ø–æ–ª–Ω–µ–Ω–Ω—ã–º–∏ RLS checks; –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–π TEST_ONLY –Ω–µ–≤–∏–¥–∏–º anon by design. Lint/typecheck/build, guarded Preview/public smoke PASS. Owner –ø–æ—Å–ª–µ —Ä–µ–∞–ª—å–Ω–æ–≥–æ login –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª controls, archive confirmation, archived/restore presentation, 390/768/1024/1440, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ overflow –∏ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω–æ—Å—Ç—å —Å Admin shell. –í—Ä–µ–º–µ–Ω–Ω—ã–π no-write visual-check route —É–¥–∞–ª—ë–Ω. Production/main unchanged; M3 –∏ Development Gate PASS; Production Content Gate BLOCKED. Next T031, not started.
-
-### T031 ‚Äî Category management
-
-- **ID:** T031
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Category management
-- **Goal:** –°–æ–∑–¥–∞—Ç—å —Å–ø–∏—Å–æ–∫ –∏ create/edit –∫–∞—Ç–µ–≥–æ—Ä–∏–π.
-- **Why:** Admin –¥–æ–ª–∂–µ–Ω —É–ø—Ä–∞–≤–ª—è—Ç—å –Ω–∞–≤–∏–≥–∞—Ü–∏–µ–π –∫–∞—Ç–∞–ª–æ–≥–∞.
-- **Dependencies:** T030.
-- **Allowed scope:** /admin/categories, title/slug/description/sort/SEO/status.
-- **Forbidden scope:** Nested taxonomy, —É–¥–∞–ª–µ–Ω–∏–µ –∏—Å–ø–æ–ª—å–∑—É–µ–º–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** –í–∞–ª–∏–¥–∞—Ü–∏—è slug –∏ –¥—É–±–ª–∏–∫–∞—Ç–æ–≤; draft status.
-- **Acceptance criteria:** –ö–∞—Ç–µ–≥–æ—Ä–∏—è —Å–æ–∑–¥–∞—ë—Ç—Å—è/–º–µ–Ω—è–µ—Ç—Å—è –∏–∑ Admin, anon –≤–∏–¥–∏—Ç —Ç–æ–ª—å–∫–æ published.
-- **Required checks:** action validation, guarded route smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T031): Category management
-- **Resolution (2026-10-01):** `/admin/categories` –ø—Ä–µ–¥–æ—Å—Ç–∞–≤–ª—è–µ—Ç —Å–ø–∏—Å–æ–∫, —á–µ—Å—Ç–Ω–æ–µ –ø—É—Å—Ç–æ–µ —Å–æ—Å—Ç–æ—è–Ω–∏–µ –∏ –æ–±—â—É—é create/edit —Ñ–æ—Ä–º—É —Å –ø—Ä–æ–≤–µ—Ä–∫–æ–π title/slug/sort/SEO, –±–µ–∑–æ–ø–∞—Å–Ω–æ–π –æ–±—Ä–∞–±–æ—Ç–∫–æ–π –¥—É–±–ª–∏—Ä–æ–≤–∞–Ω–Ω–æ–≥–æ slug, draft –ø—Ä–∏ —Å–æ–∑–¥–∞–Ω–∏–∏ –∏ –∑–∞–ø—Ä–µ—Ç–æ–º —Å–º–µ–Ω—ã slug –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏. –ß—Ç–µ–Ω–∏–µ –∏ –∏–∑–º–µ–Ω–µ–Ω–∏—è –∏—Å–ø–æ–ª—å–∑—É—é—Ç `requireAdmin()` / same-origin `requireAdminMutation()`, authenticated JWT –∏ T017 RLS; –ø–æ–ª—è –∑–∞–ø–∏—Å–∏ –æ–≥—Ä–∞–Ω–∏—á–µ–Ω—ã —è–≤–Ω—ã–º allowlist. –¢—Ä–∞–Ω–∑–∞–∫—Ü–∏–æ–Ω–Ω—ã–µ Preview TEST_ONLY –ø—Ä–æ–≤–µ—Ä–∫–∏ create/edit/duplicate, anon visibility, admin/non-admin –¥–æ—Å—Ç—É–ø–∞ –∏ –∑–∞–ø—Ä–µ—Ç–∞ DELETE –ø—Ä–æ—à–ª–∏ —Å ROLLBACK; –ø–æ—Å—Ç–æ—è–Ω–Ω—ã—Ö synthetic categories/products/rows ‚Äî 0. Lint/typecheck/build –∏ guest/public smoke PASS; T028‚ÄìT030 –Ω–µ –∏–∑–º–µ–Ω–µ–Ω—ã. –í–ª–∞–¥–µ–ª–µ—Ü –ø–æ—Å–ª–µ —Ä–µ–∞–ª—å–Ω–æ–≥–æ login –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª —Å–ø–∏—Å–æ–∫, empty/create/edit, –ø–æ–ª—è –∏ —Å—Ç–∞—Ç—É—Å, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ Delete –∏ –≤–ª–æ–∂–µ–Ω–Ω–æ—Å—Ç–∏, 390/768/1024/1440, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ overflow, —á–∏—Å—Ç—É—é console –∏ —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω–æ—Å—Ç—å —Å Admin shell. –í—Ä–µ–º–µ–Ω–Ω—ã–π no-write visual harness —É–¥–∞–ª—ë–Ω. Production/main unchanged; M3 –∏ Development Gate PASS; Production Content Gate BLOCKED. Next T032, not started.
-
-### T032 ‚Äî Category publication behavior
-
-- **ID:** T032
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Category publication behavior
-- **Goal:** –ó–∞–∫—Ä–µ–ø–∏—Ç—å –≤–∏–¥–∏–º–æ—Å—Ç—å –¥–æ—á–µ—Ä–Ω–∏—Ö SKU –∏ –ø—Ä–µ–¥—É–ø—Ä–µ–∂–¥–µ–Ω–∏—è.
-- **Why:** –°–∫—Ä—ã—Ç–∏–µ –∫–∞—Ç–µ–≥–æ—Ä–∏–∏ –≤–ª–∏—è–µ—Ç –Ω–∞ –≤—Å–µ –ø—Ä–æ–¥—É–∫—Ç—ã.
-- **Dependencies:** T031.
-- **Allowed scope:** UI count affected, unpublish/republish confirmation, redirect note.
-- **Forbidden scope:** –ö–∞—Å–∫–∞–¥–Ω–æ–µ —É–¥–∞–ª–µ–Ω–∏–µ, –º–æ–ª—á–∞–ª–∏–≤–∞—è —Å–º–µ–Ω–∞ URL. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008).
-- **Implementation notes:** –ü–æ–¥—á–∏–Ω—ë–Ω–Ω—ã–µ is_published –Ω–µ –º–µ–Ω—è—Ç—å; public RLS —Å–∫—Ä—ã–≤–∞–µ—Ç category; slug –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏ –Ω–µ –º–µ–Ω—è—Ç—å –±–µ–∑ redirect –º–µ—Ö–∞–Ω–∏–∑–º–∞.
-- **Acceptance criteria:** –°–∫—Ä—ã—Ç—ã–µ —Ç–æ–≤–∞—Ä—ã –∏—Å—á–µ–∑–∞—é—Ç, –∑–∞—Ç–µ–º –≤–æ–∑–≤—Ä–∞—â–∞—é—Ç—Å—è –ø–æ –ø—Ä–∞–≤–∏–ª—É; –¥–∞–Ω–Ω—ã–µ —Å–æ—Ö—Ä–∞–Ω–µ–Ω—ã.
-- **Required checks:** category/product visibility integration.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T032): Category publication behavior
-- **Resolution (2026-10-01):** –û—Ç–¥–µ–ª—å–Ω—ã–µ server actions –ø—É–±–ª–∏–∫—É—é—Ç/—Å–∫—Ä—ã–≤–∞—é—Ç —Ç–æ–ª—å–∫–æ `categories.is_published` –ø–æ—Å–ª–µ `requireAdminMutation()`, authenticated admin JWT/T017 RLS –∏ same-origin guard; –æ–±—ã—á–Ω–∞—è —Ñ–æ—Ä–º–∞ T031 –±–æ–ª—å—à–µ –Ω–µ –º–µ–Ω—è–µ—Ç publication state. –¢–æ—á–Ω–∞—è server-side count –≤—ã–±–æ—Ä–∫–∞ –æ—Ö–≤–∞—Ç—ã–≤–∞–µ—Ç —Ç–æ–ª—å–∫–æ REAL, published, non-archived children; –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏—è –æ–±—ä—è—Å–Ω—è—é—Ç –≤–æ–∑–≤—Ä–∞—Ç –≤–∏–¥–∏–º–æ—Å—Ç–∏ –±–µ–∑ —É–¥–∞–ª–µ–Ω–∏—è/–∞—Ä—Ö–∏–≤–∞/—Å–º–µ–Ω—ã —Å—Ç–∞—Ç—É—Å–∞ —Ç–æ–≤–∞—Ä–æ–≤. Published slug –∑–∞—â–∏—â—ë–Ω –æ—Ç —Å–∫—Ä—ã—Ç–æ–π —Å–º–µ–Ω—ã. –¢—Ä–∞–Ω–∑–∞–∫—Ü–∏–æ–Ω–Ω—ã–µ Preview TEST_ONLY –ø—Ä–æ–≤–µ—Ä–∫–∏ –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª–∏ category hide/republish, anon visibility –ø–æ T014, –Ω–µ–∏–∑–º–µ–Ω–Ω–æ—Å—Ç—å –≤—Å–µ—Ö –ø–æ–ª–µ–π —Ç—Ä—ë—Ö child rows, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ cascade –∏ –∑–∞–ø—Ä–µ—Ç DELETE; TEST_ONLY –ø—Ä–æ–¥—É–∫—Ç—ã –æ—Å—Ç–∞—é—Ç—Å—è anon hidden –ø–æ –¥–∏–∑–∞–π–Ω—É, REAL positive path –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω T014 policy –∏ –ø—Ä–µ–¥—ã–¥—É—â–∏–º–∏ RLS checks. Non-admin/anon mutations denied; –≤—Å–µ fixtures –æ—Ç–∫–∞—Ç–∏–ª–∏—Å—å, permanent synthetic categories/products/rows 0. Lint/typecheck/build –∏ guarded/public smoke PASS. –í–ª–∞–¥–µ–ª–µ—Ü –ø–æ—Å–ª–µ —Ä–µ–∞–ª—å–Ω–æ–≥–æ login –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª –æ–±–∞ —Å–æ—Å—Ç–æ—è–Ω–∏—è, count, –ø—Ä–µ–¥—É–ø—Ä–µ–∂–¥–µ–Ω–∏—è, slug note, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ Delete, 390/768/1024/1440, –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ overflow, —á–∏—Å—Ç—É—é console –∏ Admin consistency. –í—Ä–µ–º–µ–Ω–Ω—ã–π no-write visual harness —É–¥–∞–ª—ë–Ω; —Ä–µ–∞–ª—å–Ω–∞—è T032 —Ä–µ–∞–ª–∏–∑–∞—Ü–∏—è —Å–æ—Ö—Ä–∞–Ω–µ–Ω–∞. Production/main unchanged; M3 –∏ Development Gate PASS; Production Content Gate BLOCKED. T032A supersedes only the global product visibility dependency on category; T032 remains historically DONE. Next T032A, not started.
-
-
-### T032A ‚Äî Multi-category catalog model
-
-- **ID:** T032A
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Multi-category catalog model
-- **Goal:** –ü–µ—Ä–µ–≤–µ—Å—Ç–∏ Preview –Ω–∞ many-to-many –∫–∞—Ç–µ–≥–æ—Ä–∏–∏ –±–µ–∑ –∫–æ–ø–∏—Ä–æ–≤–∞–Ω–∏—è —Ç–æ–≤–∞—Ä–æ–≤; –∑–∞–∫—Ä–µ–ø–∏—Ç—å —Å–∏—Å—Ç–µ–º–Ω–æ–µ ¬´–í—Å–µ —Ç–æ–≤–∞—Ä—ã¬ª, –±–µ–∑–æ–ø–∞—Å–Ω–æ–µ —É–¥–∞–ª–µ–Ω–∏–µ –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—å—Å–∫–∏—Ö –∫–∞—Ç–µ–≥–æ—Ä–∏–π –∏ –Ω–æ–≤—É—é –ø—É–±–ª–∏—á–Ω—É—é –≤–∏–¥–∏–º–æ—Å—Ç—å.
-- **Why:** –û–¥–∏–Ω SKU –æ—Å—Ç–∞—ë—Ç—Å—è –æ–¥–Ω–æ–π —Å—Ç—Ä–æ–∫–æ–π –ø—Ä–æ–¥—É–∫—Ç–∞ –ø—Ä–∏ 0, 1 –∏–ª–∏ –Ω–µ—Å–∫–æ–ª—å–∫–∏—Ö –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—å—Å–∫–∏—Ö –∫–∞—Ç–µ–≥–æ—Ä–∏—è—Ö; –≥–ª–æ–±–∞–ª—å–Ω—ã–π –∫–∞—Ç–∞–ª–æ–≥ –Ω–µ –∑–∞–≤–∏—Å–∏—Ç –æ—Ç —Å–æ—Å—Ç–æ—è–Ω–∏—è –æ–¥–Ω–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏.
-- **Dependencies:** T032.
-- **Allowed scope:** Preview migration/backfill, grants/RLS, –º–∏–Ω–∏–º–∞–ª—å–Ω–∞—è –∞–¥–∞–ø—Ç–∞—Ü–∏—è –∑–∞—Ç—Ä–æ–Ω—É—Ç—ã—Ö Admin flows –∏ public query boundary; targeted tests –∏ cleanup.
-- **Forbidden scope:** Production, synthetic REAL SKU, –¥—É–±–ª–∏ —Ç–æ–≤–∞—Ä–æ–≤/—Ü–µ–Ω/–∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏–π/SEO/commercial data, –∏–∑–º–µ–Ω–µ–Ω–∏–µ order/media/Auth, —Ä–µ–¥–∏–∑–∞–π–Ω Admin, –Ω–∞—á–∞–ª–æ T033 –∏–ª–∏ —Å–æ—Å–µ–¥–Ω–µ–π TASK.
-- **Source of truth:** docs/ARCHITECTURE.md (—Ü–µ–ª–µ–≤–∞—è T032A –º–æ–¥–µ–ª—å); T012/T014/T017 –∏ T024/T026‚ÄìT032 –∫–∞–∫ legacy implementation baseline.
-- **Schema/migration:** `product_categories(product_id FK, category_id FK)` —Å composite UNIQUE –∏ –∏–Ω–¥–µ–∫—Å–∞–º–∏ product/category lookup. –î–æ —É–¥–∞–ª–µ–Ω–∏—è `products.category_id` –ø–µ—Ä–µ–Ω–µ—Å—Ç–∏ –∫–∞–∂–¥—É—é —Å—É—â–µ—Å—Ç–≤—É—é—â—É—é –Ω–µ–ø—É—Å—Ç—É—é —Å–≤—è–∑—å, –¥–æ–∫–∞–∑–∞—Ç—å –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ –ø–æ—Ç–µ—Ä—å/–¥—É–±–ª–µ–π –∏ –ø–µ—Ä–µ–∫–ª—é—á–∏—Ç—å Admin/query/RLS; –Ω–µ –æ—Å—Ç–∞–≤–ª—è—Ç—å dual source of truth. –î–æ–ø—É—Å—Ç–∏—Ç—å 0 user categories. Category DELETE —É–¥–∞–ª—è–µ—Ç —Ç–æ–ª—å–∫–æ –µ—ë membership rows (–¥–æ–ø—É—Å—Ç–∏–º category‚Üírelation cascade), –±–µ–∑ product cascade.
-- **System All:** ¬´–í—Å–µ —Ç–æ–≤–∞—Ä—ã¬ª –≤—Å–µ–≥–¥–∞ —Å—É—â–µ—Å—Ç–≤—É–µ—Ç –∫–∞–∫ —Å–∏—Å—Ç–µ–º–Ω–æ–µ –ø—Ä–µ–¥—Å—Ç–∞–≤–ª–µ–Ω–∏–µ, –Ω–µ —Å—Ç—Ä–æ–∫–∞ `categories`, –Ω–µ editable slug –∏ –±–µ–∑ per-product membership. `/catalog` —Å–æ–¥–µ—Ä–∂–∏—Ç –≤—Å–µ –¥–æ–ø—É—Å—Ç–∏–º—ã–µ REAL published non-archived products. –í `/admin/categories` –æ–Ω–æ –ø–µ—Ä–≤—ã–º, —Å badge ¬´–°–∏—Å—Ç–µ–º–Ω–∞—è¬ª –∏ count –≤—Å–µ—Ö operational products; Edit/Publish/Unpublish/Delete –æ—Ç—Å—É—Ç—Å—Ç–≤—É—é—Ç. `/product/[slug]` —Ç–æ–∂–µ –Ω–µ –∑–∞–≤–∏—Å–∏—Ç –æ—Ç –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—å—Å–∫–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏.
-- **Admin changes:** T028/T029 product create/edit –≤–∞–ª–∏–¥–∏—Ä—É—é—Ç 0+ category IDs server-side –∏ –º–µ–Ω—è—é—Ç —Ç–æ–ª—å–∫–æ memberships —Ç–æ–π –∂–µ product row; duplicate membership –∑–∞–ø—Ä–µ—â–µ–Ω–∞. –ê–¥–∞–ø—Ç–∏—Ä–æ–≤–∞—Ç—å T024 dashboard, T026 list/category presentation, T027 category filter, T028 create, T029 editor, T030 state controls, T031 category management, T032 publication UI –±–µ–∑ –ª–∏—à–Ω–µ–≥–æ —Ä–µ–¥–∏–∑–∞–π–Ω–∞. Category delete confirmation —Å–æ–¥–µ—Ä–∂–∏—Ç –Ω–∞–∑–≤–∞–Ω–∏–µ –∏ —Ç–æ—á–Ω—ã–π count —Å–≤—è–∑–∞–Ω–Ω—ã—Ö products: ¬´–ë—É–¥–µ—Ç —É–¥–∞–ª–µ–Ω–∞ —Ç–æ–ª—å–∫–æ –∫–∞—Ç–µ–≥–æ—Ä–∏—è –∏ –µ—ë —Å–≤—è–∑–∏. –°–∞–º–∏ —Ç–æ–≤–∞—Ä—ã –æ—Å—Ç–∞–Ω—É—Ç—Å—è –≤ ¬´–í—Å–µ —Ç–æ–≤–∞—Ä—ã¬ª –∏ –¥—Ä—É–≥–∏—Ö –∫–∞—Ç–µ–≥–æ—Ä–∏—è—Ö¬ª. Product flags/commercial fields/images/SEO —Å–æ—Ö—Ä–∞–Ω—è—é—Ç—Å—è.
-- **Public/RLS target:** anon `products` SELECT —Ç–æ–ª—å–∫–æ REAL published non-archived –±–µ–∑ –æ–±—è–∑–∞—Ç–µ–ª—å–Ω–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏; anon `categories` SELECT —Ç–æ–ª—å–∫–æ published user categories; anon `product_categories` SELECT —Ç–æ–ª—å–∫–æ relation public-visible product + published category. `/catalog/[category]` –≤—ã–±–∏—Ä–∞–µ—Ç —Ç–æ–ª—å–∫–æ —Å–≤—è–∑–∞–Ω–Ω—ã–µ —Ç–æ–≤–∞—Ä—ã –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏. Hide/delete –ø–æ–ª—å–∑–æ–≤–∞—Ç–µ–ª—å—Å–∫–æ–π –∫–∞—Ç–µ–≥–æ—Ä–∏–∏ —Å–∫—Ä—ã–≤–∞–µ—Ç —Ç–æ–ª—å–∫–æ –µ—ë –º–∞—Ä—à—Ä—É—Ç/—Å–ø–∏—Å–æ–∫; `/catalog`, Product Detail –∏ –¥—Ä—É–≥–∏–µ memberships –Ω–µ –º–µ–Ω—è—é—Ç—Å—è. Active admin –ø–æ–ª—É—á–∞–µ—Ç membership SELECT/INSERT/DELETE –∏ category CRUD —á–µ—Ä–µ–∑ authenticated JWT/RLS; anon/non-admin mutation DENIED; Admin Secret client –Ω–µ –∏—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å. Published category slug –æ—Å—Ç–∞—ë—Ç—Å—è –∑–∞—â–∏—â—ë–Ω–Ω—ã–º.
-- **Acceptance criteria:** many-to-many schema –∏ legacy backfill PASS; –æ–¥–∏–Ω product UUID –≤ –Ω–µ—Å–∫–æ–ª—å–∫–∏—Ö –∫–∞—Ç–µ–≥–æ—Ä–∏—è—Ö –±–µ–∑ –∫–æ–ø–∏–π; duplicate membership DENIED; 0 user categories –¥–æ–ø—É—Å—Ç–∏–º—ã –∏ –ø—Ä–æ–¥—É–∫—Ç –æ—Å—Ç–∞—ë—Ç—Å—è –≤ ¬´–í—Å–µ —Ç–æ–≤–∞—Ä—ã¬ª; —Å–∏—Å—Ç–µ–º–Ω—ã–π –ø—É–Ω–∫—Ç –Ω–µ edit/hide/delete; –æ–±—ã—á–Ω–∞—è –∫–∞—Ç–µ–≥–æ—Ä–∏—è —É–¥–∞–ª—è–µ—Ç—Å—è —Ç–æ–ª—å–∫–æ –≤–º–µ—Å—Ç–µ —Å–æ —Å–≤–æ–∏–º–∏ —Å–≤—è–∑—è–º–∏, product –∏ –æ—Å—Ç–∞–ª—å–Ω—ã–µ memberships —Å–æ—Ö—Ä–∞–Ω—è—é—Ç—Å—è; hide/delete –Ω–µ –º–µ–Ω—è–µ—Ç product flags –∏–ª–∏ –≥–ª–æ–±–∞–ª—å–Ω—É—é –≤–∏–¥–∏–º–æ—Å—Ç—å; T024/T026‚ÄìT032 regressions PASS; anon/non-admin membership mutation DENIED; permanent synthetic rows 0; Production unchanged.
-- **Required checks:** Preview TEST_ONLY transaction —Å –æ–±—è–∑–∞—Ç–µ–ª—å–Ω—ã–º rollback: product —Å 0, 1, 3 categories; duplicate membership DENIED; remove one link –∏ delete category —Å–æ—Ö—Ä–∞–Ω—è—é—Ç product –∏ –¥—Ä—É–≥–∏–µ links; –æ–¥–∏–Ω product UUID –∏–∑ —Ä–∞–∑–Ω—ã—Ö –∫–∞—Ç–µ–≥–æ—Ä–∏–π –∏ —Ä–µ–¥–∞–∫—Ç–∏—Ä–æ–≤–∞–Ω–∏–µ —Ç–æ–π –∂–µ row; ¬´–í—Å–µ —Ç–æ–≤–∞—Ä—ã¬ª –≤—Å–µ–≥–¥–∞ –≤–∫–ª—é—á–∞–µ—Ç product; hide —Å–æ—Ö—Ä–∞–Ω—è–µ—Ç —Ñ–ª–∞–≥–∏; delete count –≤–µ—Ä–Ω—ã–π. –ü—Ä–æ–≤–µ—Ä–∏—Ç—å public RLS –¥–ª—è –≥–ª–æ–±–∞–ª—å–Ω–æ–≥–æ –∏ category route (TEST_ONLY –æ—Å—Ç–∞—ë—Ç—Å—è —Å–∫—Ä—ã—Ç anon), –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ synthetic REAL rows; backfill integrity, anon/non-admin mutation denial, Admin T024/T026‚ÄìT032 regressions, permanent synthetic cleanup. Lint, typecheck, build, responsive 390/768/1024/1440, horizontal overflow NO, console clean. –¢–æ–ª—å–∫–æ Preview; Production unchanged.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T032A): multi-category catalog model
-- **Resolution (2026-10-01):** Preview migration applied with legacy backfill integrity guard (zero legacy products), composite membership key/FKs/index/RLS/grants verified and `products.category_id` removed. Transactional TEST_ONLY 0/1/3 membership, duplicate denial, relation removal/category deletion preserving the same product and other links, category hide, anon isolation and active/non-admin boundaries PASS with rollback; permanent synthetic products/categories/relations 0. Admin flows T024/T026‚ÄìT032 adapted without product duplication; global REAL published non-archived visibility no longer depends on a user category. Product Create/Edit use compact multiselect with existing `category_ids` validation. Lint/typecheck/build PASS. Owner after real admin login confirmed System All, Create/Edit dropdown and 0/multiple/remove states, internal scroll, keyboard/Escape/outside click, delete and publication warnings, 390/768/1024/1440, no overflow, clean console and Admin consistency. Temporary Preview-only no-write visual harness removed. Production/main unchanged; Development Gate PASS, Production Content Gate BLOCKED. Next T033, not started.
-
-
-## PHASE 7 ‚Äî Admin Media Management
-
-### T033 ‚Äî Admin Storage policies
-
-- **ID:** T033
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Admin Storage policies
-- **Goal:** –†–∞–∑—Ä–µ—à–∏—Ç—å media –æ–ø–µ—Ä–∞—Ü–∏–∏ —Ç–æ–ª—å–∫–æ –∞–∫—Ç–∏–≤–Ω–æ–º—É admin.
-- **Why:** Browser upload –¥–æ–ª–∂–µ–Ω —Ä–∞–±–æ—Ç–∞—Ç—å –±–µ–∑ secret.
-- **Dependencies:** T032A.
-- **Allowed scope:** INSERT/SELECT/DELETE policies –≤ –±–∞–∫–µ—Ç–µ –∏ –¥–æ–ø—É—Å—Ç–∏–º–æ–º –ø—Ä–µ—Ñ–∏–∫—Å–µ.
-- **Forbidden scope:** –ü—É–±–ª–∏—á–Ω—ã–π upload, –ø—Ä–æ–∏–∑–≤–æ–ª—å–Ω—ã–µ –ø—É—Ç–∏, secret –≤ browser. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T010).
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å allowlist MIME/size –∏ –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–µ –ø–µ—Ä–µ–∑–∞–ø–∏—Å–∏.
-- **Acceptance criteria:** anon/non-admin –Ω–µ –∑–∞–≥—Ä—É–∂–∞–µ—Ç/—É–¥–∞–ª—è–µ—Ç; admin –º–æ–∂–µ—Ç.
-- **Required checks:** Storage RLS positive/negative tests.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T033): Admin Storage policies
-- **Resolution (2026-10-01):** Preview-only migration `20261001065527_admin_storage_policies.sql` applied with matching history. Three narrow `storage.objects` policies permit active authenticated admin INSERT/SELECT/DELETE only in `product-media/products/<UUID>/<generated-key>.<ext>`; no UPDATE/upsert policy. Existing public bucket, 12 MiB limit and four image MIME types unchanged. Owner verified the real admin JWT through a temporary Preview-only same-origin endpoint: upload, scoped list, delete, public URL read and cleanup PASS; anon upload/delete, wrong bucket/prefix, unsupported MIME and overwrite DENIED, original bytes unchanged. Non-admin writes remain denied by the active-membership RLS predicate; no broad mutation policy was added. The diagnostic endpoint was removed after verification. Permanent test objects, synthetic DB rows and temporary Auth accounts are 0; one real active admin remains. Security Advisor has no blocking findings; the existing leaked-password warning remains a pre-production item. Production unchanged. Next T034, not started.
-
-### T034 ‚Äî Media upload –∏ preview
-
-- **ID:** T034
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Media upload –∏ preview
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å –∑–∞–≥—Ä—É–∑–∫—É –∏ –ø—Ä–µ–¥–ø—Ä–æ—Å–º–æ—Ç—Ä –≤ Product Editor.
-- **Why:** –†–µ–¥–∞–∫—Ç–æ—Ä –Ω–µ –¥–æ–ª–∂–µ–Ω –≤–≤–æ–¥–∏—Ç—å Storage paths.
-- **Dependencies:** T033.
-- **Allowed scope:** Client admin Auth upload, safe generated path, preview/validation.
-- **Forbidden scope:** –ö–∞—Ç–∞–ª–æ–≥ image gallery, –Ω–æ–≤—ã–µ media buckets. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T010).
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä—è—Ç—å —Ä–∞–∑–º–µ—Ä, —Ñ–æ—Ä–º–∞—Ç, –ø—Ä–∞–≤–∞; –æ—à–∏–±–∫—É upload –ø–æ–∫–∞–∑–∞—Ç—å.
-- **Acceptance criteria:** –§–æ—Ç–æ –∑–∞–≥—Ä—É–∑–∏–ª–æ—Å—å –∏ –ø—Ä–∏–≤—è–∑–∞–ª–æ—Å—å –∫ –Ω—É–∂–Ω–æ–º—É SKU; –ø—É—Ç—å —Å–∫—Ä—ã—Ç –æ—Ç UI.
-- **Required checks:** upload smoke, typecheck, policy denial.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T034): Media upload –∏ preview
-
-- **Progress (2026-10-01):** Preview-only migration `20261001073651_media_draft_nullable.sql` applied with matching history after confirming zero existing image rows; only `product_images.role` and `alt` became nullable for draft media. No semantic defaults or T035 controls. Product Editor now uses browser publishable key with authenticated cookie session for Storage upload, generated per-product UUID path and no upsert; a same-origin guarded Server Action verifies existing product, exact path, object metadata and dimensions before inserting a draft relation with NULL role/alt. Partial metadata failure attempts object cleanup; ambiguous response is checked before deletion. Existing images and preview, multi-file picker with individual previews/status, local per-file format/size validation and safe errors implemented. Each successful file gets its own object key and stable image row ID; failures are isolated, and later additions append without product duplication. Before upload, each queued file has a keyboard-accessible local-only ¬´–£–±—Ä–∞—Ç—å¬ª action; uploaded images have no Delete control (T036). Validation/path cases and transactional authenticated admin 1/3/repeat image rows on one product with rollback PASS; that earlier test left no fixtures. Prior T033 real-admin Storage API smoke proves its RLS boundary; owner visual and real-admin browser batch upload/link, reload and repeat addition PASS. Lint/typecheck/build PASS, Security Advisor has no new blocking findings. Temporary no-write media-review screen removed in cleanup changes. Four linked image rows and TEST_ONLY product deleted after Storage image removal. Dashboard folder placeholders removed via Storage UI. Direct Preview verification: synthetic products 0, `product_images` 0, `product-media` Storage objects 0. T034 DONE; Production untouched; T035 not started.
-
-### T035 ‚Äî Image metadata –∏ primary
-
-- **ID:** T035
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Image metadata –∏ primary
-- **Goal:** –†–µ–¥–∞–∫—Ç–∏—Ä–æ–≤–∞—Ç—å alt/role/order/primary –¥–ª—è –∏–∑–æ–±—Ä–∞–∂–µ–Ω–∏–π —Ç–æ–≤–∞—Ä–∞.
-- **Why:** –§–∞–∫—Ç—É—Ä—ã –∏ –∏–Ω—Ç–µ—Ä—å–µ—Ä –∏–º–µ—é—Ç —Ä–∞–∑–Ω—É—é —Å–µ–º–∞–Ω—Ç–∏–∫—É.
-- **Dependencies:** T034.
-- **Allowed scope:** product_images mutation, reorder, one primary.
-- **Forbidden scope:** –ê–≤—Ç–æ–º–∞—Ç–∏—á–µ—Å–∫–æ–µ —Å–æ—á–∏–Ω–µ–Ω–∏–µ alt/—Ö–∞—Ä–∞–∫—Ç–µ—Ä–∏—Å—Ç–∏–∫. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T010).
-- **Implementation notes:** –ù–µ–π—Ç—Ä–∞–ª—å–Ω—ã–π –æ–±—Ä–∞–∑–µ—Ü primary; —É—á–∏—Ç—ã–≤–∞—Ç—å –¥–∏–∑–∞–π–Ω-—Å–∏—Å—Ç–µ–º—É.
-- **Acceptance criteria:** –ü–æ—Å–ª–µ reload –ø–æ—Ä—è–¥–æ–∫ –∏ primary —Å–æ—Ö—Ä–∞–Ω—è—é—Ç—Å—è, –ø—É–±–ª–∏–∫–∞—Ü–∏—è —Ç—Ä–µ–±—É–µ—Ç primary.
-- **Required checks:** targeted DB constraint and editor smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T035): Image metadata –∏ primary
-
-- **Resolution (2026-10-01):** Preview migrations `20261001124018_media_metadata_primary.sql` –∏ `20261001124304_product_media_publication_guard.sql` –ø—Ä–∏–º–µ–Ω–µ–Ω—ã —Å matching history: SECURITY INVOKER + RLS, active membership, exact image set/ownership validation, atomic order/alt/role/primary save under product row lock and existing unique-primary index; publish transition requires primary and complete alt/role, –±–µ–∑ backfill REAL. Product Editor uses compact media cards, drag handle, keyboard/mobile reorder, main preview, explicit primary, controlled roles and alt; T034 multiple upload/queue/append preserved. No uploaded-image Delete. Transactional TEST_ONLY reorder/persistence, primary transition/uniqueness, alt/role, foreign-image/non-admin/validation/publication checks PASS with rollback; products/images/Storage after tests 0. Owner real-admin visual verification PASS for 1/3/8 image cards, drag and keyboard/mobile reorder, primary/metadata/save states, T034 queue, 390/768/1024/1440, no overflow and clean console. Temporary no-write review screen and preview-only branch removed. Lint/typecheck/build PASS; Production unchanged. T035 DONE; next T036, not started.
-
-### T036 ‚Äî Safe image removal
-
-- **ID:** T036
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Safe image removal
-- **Goal:** –£–¥–∞–ª—è—Ç—å –º–µ–¥–∏–∞ –±–µ–∑ –±–∏—Ç—ã—Ö –ø—É–±–ª–∏—á–Ω—ã—Ö —Å—Å—ã–ª–æ–∫.
-- **Why:** Storage –∏ —Ç–∞–±–ª–∏—Ü–∞ –∏–∑–º–µ–Ω—è—é—Ç—Å—è —Ä–∞–∑–¥–µ–ª—å–Ω–æ.
-- **Dependencies:** T035.
-- **Allowed scope:** detach‚ÜíStorage delete, –ø—Ä–µ–¥—É–ø—Ä–µ–∂–¥–µ–Ω–∏–µ –∏ retry orphan cleanup.
-- **Forbidden scope:** –£–¥–∞–ª–µ–Ω–∏–µ –µ–¥–∏–Ω—Å—Ç–≤–µ–Ω–Ω–æ–≥–æ primary –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–≥–æ SKU. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T010).
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä—è—Ç—å –ø—Ä–∏–Ω–∞–¥–ª–µ–∂–Ω–æ—Å—Ç—å path/product, –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–∞—Ç—å —É–¥–∞–ª–µ–Ω–∏–µ.
-- **Acceptance criteria:** –ü–æ—Å–ª–µ —É–¥–∞–ª–µ–Ω–∏—è –ø—É–±–ª–∏—á–Ω—ã–π –∫–∞–¥—Ä –Ω–µ –±–∏—Ç—ã–π; –æ—Ç–∫–∞–∑ –æ—Å—Ç–∞–≤–ª—è–µ—Ç —è—Å–Ω–æ–µ —Å–æ—Å—Ç–æ—è–Ω–∏–µ.
-- **Required checks:** failure-mode smoke, Storage policy tests.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T036): Safe image removal
-
-- **Progress (2026-10-01):** Preview migration `20261001140002_protect_published_primary_delete.sql` applied with matching history; a direct authenticated DB DELETE of a published primary is denied without changing RLS/Storage policies. Product Editor has per-image confirmation, guarded exact-row detach before single-object Storage removal, explicit partial-failure warning, scoped orphan scan/retry, and a guarded no-write Preview review screen. Transactional TEST_ONLY direct DB matrix for non-primary, published primary denial, draft primary and last draft image PASS with rollback. Owner visual/responsive verification PASS for confirmation, published-primary block, draft deletion states, failure warning and retry at 390/768/1024/1440, no overflow/console error. A temporary guarded Preview-only browser smoke prepares three technical images on one TEST_ONLY product through the owner's normal admin session: normal deletion B, primary preservation A, controlled Storage failure after C detach and real orphan retry. The simulation is restricted to that fixture and never changes schema/RLS/Storage policies. Lint/typecheck/build PASS. Owner real-admin browser B deletion and C failure/retry PASS. Direct Preview verification confirms B/C image rows and objects absent, C public URL no longer serves an image, A primary row/object intact and orphan count 0. Retry now checks actual object absence before reporting success. Temporary smoke/no-write routes and fault simulation removed. Owner final A deletion, confirmation and reload persistence PASS. Direct Preview DB/Storage verification: A relation/object absent; A and C public URLs no longer serve images. Trusted exact-ID TEST_ONLY product cleanup completed only after confirming no image rows, memberships or Storage objects. Final synthetic products 0, test image rows 0, product-media Storage objects 0 and orphans 0. Temporary routes and fault simulation removed; lint/typecheck/build PASS. T036 DONE; Production unchanged; next T037 not started.
-
-### T037 ‚Äî Media presentation verification
-
-- **ID:** T037
-- **Priority:** P1
-- **Status:** DONE
-- **Title:** Media presentation verification
-- **Goal:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å —Ñ–∞–∫—Ç—É—Ä—É, –∫–∞–¥—Ä—ã –∏ –ø—Ä–æ–∏–∑–≤–æ–¥–∏—Ç–µ–ª—å–Ω–æ—Å—Ç—å –º–µ–¥–∏–∞.
-- **Why:** Dark Gold Showroom –∑–∞–≤–∏—Å–∏—Ç –æ—Ç –ø—Ä–∞–≤–¥–æ–ø–æ–¥–æ–±–Ω–æ–≥–æ –º–∞—Ç–µ—Ä–∏–∞–ª–∞.
-- **Dependencies:** T036.
-- **Allowed scope:** Next/Image sizes/remotePatterns/crops/lazy/LCP review.
-- **Forbidden scope:** –ò–∑–º–µ–Ω–µ–Ω–∏–µ –ø–∞–ª–∏—Ç—Ä—ã –∏–ª–∏ —Ü–≤–µ—Ç–∞ –ø—Ä–æ–¥—É–∫—Ç–∞. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T010).
-- **Implementation notes:** –°–æ–ø–æ—Å—Ç–∞–≤–∏—Ç—å –Ω–µ–π—Ç—Ä–∞–ª—å–Ω—ã–π –ø—Ä–æ–¥—É–∫—Ç–æ–≤—ã–π –∫–∞–¥—Ä —Å manifest.
-- **Acceptance criteria:** 1440/390 —Ñ–æ—Ç–æ –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã, –ø—Ä–∞–≤–∞ –∏ alt –ø—Ä–æ–≤–µ—Ä–µ–Ω—ã.
-- **Required checks:** image network/console smoke, target performance.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T037): Media presentation verification
-
-- **Resolution (2026-10-02):** Next/Image uses a narrow Preview `product-media/products/**` Storage remote pattern; Admin media previews use recorded image dimensions and responsive sizes, while local showroom Hero alone preloads and secondary media stays lazy. A temporary no-write Preview review of T010 manifest product primary/detail and neutral interior/application sources verified rights, role, alt, crop, network and color presentation. Owner visual verification PASS for representative large/card/detail/interior frames, texture/color fidelity, the 656√ó656 primary presentation, 390/768/1024/1440 and 1920/2560 sanity, no stretch/overflow or application console errors. The temporary route and three exact source patterns were removed after verification. T034‚ÄìT036 mutation logic, schema and RLS unchanged; Production unchanged. This representative PASS is **not** full Production quality approval of the unique media set; selected assets still require pre-production owner sign-off. T037 DONE; next T038, not started.
-
-### T038 ‚Äî Verified catalog population
-
-- **ID:** T038
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Verified catalog population
-- **Goal:** –í–≤–µ—Å—Ç–∏ –Ω–µ–±–æ–ª—å—à–æ–π –ø—Ä–æ–≤–µ—Ä–æ—á–Ω—ã–π –Ω–∞–±–æ—Ä —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã—Ö SKU —á–µ—Ä–µ–∑ Admin Panel.
-- **Why:** M4 —Ç—Ä–µ–±—É–µ—Ç –ø—Ä–æ–≤–µ—Ä–∏—Ç—å —Ä–µ–∞–ª—å–Ω—ã–µ –æ–ø–µ—Ä–∞—Ü–∏–∏ –Ω–∞ –Ω–∞—Å—Ç–æ—è—â–∏—Ö –¥–∞–Ω–Ω—ã—Ö.
-- **Dependencies:** T037.
-- **Allowed scope:** –ù–µ–±–æ–ª—å—à–æ–π –Ω–∞–±–æ—Ä —Ä–µ–∞–ª—å–Ω—ã—Ö SKU –∏–∑ docs/CONTENT_FACTS.md —Å —Ç–æ–ª—å–∫–æ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–º–∏ –ø–æ–ª—è–º–∏ —á–µ—Ä–µ–∑ Admin –≤ Preview; –ø—Ä–æ–≤–µ—Ä–∫–∞ –ø–æ–ª–Ω–æ–≥–æ launch –∞—Å—Å–æ—Ä—Ç–∏–º–µ–Ω—Ç–∞ ‚Äî –ø–µ—Ä–µ–¥ production readiness.
-- **Forbidden scope:** –ü—Ä—è–º–æ–π seed –±–µ–∑ –ø—Ä–∏—á–∏–Ω—ã, –≤—ã–º—ã—à–ª–µ–Ω–Ω—ã–µ —Ü–µ–Ω—ã. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –ò—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å —Ñ–æ—Ä–º—ã admin; –Ω–µ–ø–æ–ª–Ω—ã–π —Ä–µ–∞–ª—å–Ω—ã–π SKU –º–æ–∂–µ—Ç –±—ã—Ç—å visible non-orderable. –û—Ç–¥–µ–ª—å–Ω—ã–µ TEST_ONLY fixtures –¥–ª—è —Ä–∞—Å—á—ë—Ç–æ–≤ –Ω–µ —Å–º–µ—à–∏–≤–∞—Ç—å —Å —Ä–µ–µ—Å—Ç—Ä–æ–º. –ü–æ–ª–Ω–æ—Ç—É launch –∞—Å—Å–æ—Ä—Ç–∏–º–µ–Ω—Ç–∞ –ø—Ä–æ–≤–µ—Ä—è—Ç—å –ø–µ—Ä–µ–¥ production readiness.
-- **Acceptance criteria:** –ü—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–π –Ω–∞–±–æ—Ä —Ç–æ–≤–∞—Ä–æ–≤ –¥–æ—Å—Ç—É–ø–µ–Ω, –ø—É–±–ª–∏–∫–∞—Ü–∏—è –∏ media —Ä–∞–±–æ—Ç–∞—é—Ç.
-- **Required checks:** –≤—ã–±–æ—Ä–æ—á–Ω–∞—è —Å–≤–µ—Ä–∫–∞ —Ä–µ–µ—Å—Ç—Ä–∞‚Üîadmin‚Üîpublic read.
-- **Recommended model:** GPT-6 Luna Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T038): Verified catalog population
-- **Resolution (2026-10-02):** Owner correction –æ–±–Ω–æ–≤–∏–ª–∞ source of truth: 226 confirmed panel SKU –∏–º–µ—é—Ç `price_unit = –º¬≤`, `sale_unit = sheet`, min/step 1 –∏ –ø–ª–æ—â–∞–¥—å –ª–∏—Å—Ç–∞ 4.0328 –º¬≤; 14 ¬´–ì–∏–±–∫–∞—è –¥–æ—Å–∫–∞¬ª –∏–º–µ—é—Ç —Ç–µ –∂–µ units/min/step, –Ω–æ `area_per_sale_unit_m2 = NULL`; accessories —Å–æ—Ö—Ä–∞–Ω—è—é—Ç –æ–±–µ –µ–¥–∏–Ω–∏—Ü—ã `—à—Ç./—É–ø–∞–∫–æ–≤–∫–∞` –∏ min/step 1. –ß–µ—Ä–µ–∑ Custom Admin –≤ isolated Preview –≤–Ω–µ—Å–µ–Ω—ã –∏ –æ—Å—Ç–∞–≤–ª–µ–Ω—ã —Ç—Ä–∏ REAL SKU: `MF-MAR-0086` (–ê–∑—É—Ä), `MF-TRV-0003` (–¢—Ä–∞–≤–µ—Ä—Ç–∏–Ω 1), `MF-ACC-0005` (–ö–ª–µ–π –¥–ª—è –≥–∏–±–∫–æ–≥–æ –∫–∞–º–Ω—è –±–∞–∑–æ–≤—ã–π 3 –∫–≥). –ò—Ö Registry‚ÜíAdmin/DB round-trip PASS, —Ç–æ—á–Ω—ã–µ –∫–∞—Ç–µ–≥–æ—Ä–∏–∏/memberships –∏ manifest media PASS; —É –∫–∞–∂–¥–æ–≥–æ –æ–¥–Ω–∞ product row, –æ–¥–Ω–∞ membership –∏ –æ–¥–Ω–æ primary media —Å owner-confirmed `neutral_texture`/alt. –í—Å–µ —Ç—Ä–∏ published –∏ –≤–∏–¥–Ω—ã anon —Å–æ–≥–ª–∞—Å–Ω–æ —Å—É—â–µ—Å—Ç–≤—É—é—â–µ–π T014/T032A –º–æ–¥–µ–ª–∏; –ø—Ä–µ–¥—ã–¥—É—â–∏–π targeted draft/unpublished smoke –ø–æ–¥—Ç–≤–µ—Ä–¥–∏–ª anon denial –∏ –∑–∞–ø–∏—Å—å –±—ã–ª–∞ –≤–æ–∑–≤—Ä–∞—â–µ–Ω–∞ –≤ published. Availability –æ—Å—Ç–∞—ë—Ç—Å—è NULL, featured=false, unresolved values NULL; —Ç–µ—Å—Ç–æ–≤—ã–µ TEST_ONLY products/categories/images=0, orphan objects=0. Dashboard –ø–æ–∫–∞–∑—ã–≤–∞–µ—Ç 3 published, 0 hidden/archived; Products list —Å–æ–¥–µ—Ä–∂–∏—Ç —Ä–æ–≤–Ω–æ —Ç—Ä–∏ –±–µ–∑ –¥—É–±–ª–µ–π; Categories —Å–æ–¥–µ—Ä–∂–∏—Ç —Ç–æ–ª—å–∫–æ —Ç—Ä–∏ owner-requested user categories –ø–ª—é—Å virtual ¬´–í—Å–µ —Ç–æ–≤–∞—Ä—ã¬ª, category/product/media/admin integration PASS. Owner data verification PASS. –≠—Ç–∏ —Ç—Ä–∏ –∑–∞–ø–∏—Å–∏ –æ—Å—Ç–∞—é—Ç—Å—è –≤ Preview –∏ –Ω–µ –æ–∑–Ω–∞—á–∞—é—Ç –ø–æ–ª–Ω—ã–π 251-SKU launch import –∏–ª–∏ Production media approval. Full catalog completeness –ø—Ä–æ–≤–µ—Ä—è–µ—Ç—Å—è –ø–µ—Ä–µ–¥ Production Readiness. M4 PASS; Development Gate PASS; Production Content Gate BLOCKED; T038 DONE; next T039, not started; Production unchanged.
-
-
-## PHASE 8 ‚Äî Public Catalog
-
-### T039 ‚Äî Public catalog read layer
-
-- **ID:** T039
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Public catalog read layer
-- **Goal:** –°–æ–∑–¥–∞—Ç—å server queries –¥–ª—è –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã—Ö SKU/–∫–∞—Ç–µ–≥–æ—Ä–∏–π.
-- **Why:** –û–¥–Ω–∞ –º–æ–¥–µ–ª—å –¥–æ–ª–∂–Ω–∞ –∫–æ—Ä–º–∏—Ç—å –≤—Å–µ –ø—É–±–ª–∏—á–Ω—ã–µ —Å—Ç—Ä–∞–Ω–∏—Ü—ã.
-- **Dependencies:** T038.
-- **Allowed scope:** list/get/facets, —Ç–∏–ø—ã, –±–µ–∑–æ–ø–∞—Å–Ω—ã–µ query params.
-- **Forbidden scope:** –ü—Ä—è–º–æ–π browser –¥–æ—Å—Ç—É–ø –∫ order_requests, UI. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** Public client –Ω–µ –ø–µ—Ä–µ–Ω–æ—Å–∏—Ç admin cookies, cache —è–≤–Ω—ã–π.
-- **Acceptance criteria:** Queries –≤–æ–∑–≤—Ä–∞—â–∞—é—Ç —Ç–æ–ª—å–∫–æ –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–µ –∏ –≤–∞–ª–∏–¥–Ω—ã–π sort/page.
-- **Required checks:** targeted query/RLS integration, typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T039): Public catalog read layer
-- **Resolution (2026-10-02):** –ï–¥–∏–Ω—ã–π server-only `src/lib/catalog` –ø—Ä–µ–¥–æ—Å—Ç–∞–≤–ª—è–µ—Ç `listPublishedProducts`, `getPublishedProduct` –∏ `getCatalogFacets` —á–µ—Ä–µ–∑ —Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π guest publishable client, –±–µ–∑ Admin cookies/Secret key. REAL/published/unarchived –∏ published membership —Ñ–∏–ª—å—Ç—Ä—É—é—Ç—Å—è —è–≤–Ω–æ –ø–æ–≤–µ—Ä—Ö RLS; System All –Ω–µ –∑–∞–≤–∏—Å–∏—Ç –æ—Ç –∫–∞—Ç–µ–≥–æ—Ä–∏–π. DTO —Å–æ—Ö—Ä–∞–Ω—è–µ—Ç NULL, panel `sale_unit = sheet`, source price range –∏ —Ç–æ–ª—å–∫–æ primary –Ω–∞ —Å–ø–∏—Å–∫–µ; detail –≤–æ–∑–≤—Ä–∞—â–∞–µ—Ç ordered media. Sort/page whitelist, bounded page size 24, deterministic `sort_order,id` –∏ count –∑–∞—â–∏—â–∞—é—Ç –ø–∞–≥–∏–Ω–∞—Ü–∏—é. –ü—É–±–ª–∏—á–Ω—ã–π cache: `unstable_cache`, TTL 60 —Å–µ–∫—É–Ω–¥ –∏ —Ç–µ–≥–∏ `catalog:list`, `catalog:facets`, `catalog:product:<slug>`, `catalog:category:<slug>`; –∞–¥—Ä–µ—Å–Ω—É—é Admin revalidation –ø–æ–¥–∫–ª—é—á–∏—Ç—å –≤ –±—É–¥—É—â–µ–π –∑–∞–¥–∞—á–µ, TTL –∑–∞–¥–∞—ë—Ç —Ä–µ–∑–µ—Ä–≤–Ω—ã–π –∏–Ω—Ç–µ—Ä–≤–∞–ª revalidation. Preview live read —Ç—Ä—ë—Ö T038 REAL SKU, nullable/media/units/facets –∏ invalid slug/page PASS; transactional RLS negative fixtures –¥–ª—è draft/archived/TEST_ONLY/hidden category –∏ order privacy PASS —Å rollback; permanent fixtures 0. –í—Ä–µ–º–µ–Ω–Ω—ã–π read-only route —É–¥–∞–ª—ë–Ω; Production –Ω–µ –º–µ–Ω—è–ª–∞—Å—å. T039 DONE; next T040, not started.
-
-### T040 ‚Äî Catalog –∏ category routes
-
-- **ID:** T040
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Catalog –∏ category routes
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å /catalog –∏ /catalog/[category] –Ω–∞ —Å–µ—Ä–≤–µ—Ä–µ.
-- **Why:** –ö–∞—Ç–∞–ª–æ–≥ –∏ –∫–∞—Ç–µ–≥–æ—Ä–∏—è ‚Äî –±–∞–∑–æ–≤—ã–µ –º–∞—Ä—à—Ä—É—Ç—ã –º–∞–≥–∞–∑–∏–Ω–∞.
-- **Dependencies:** T039.
-- **Allowed scope:** ProductGrid, category summary, breadcrumb, 404.
-- **Forbidden scope:** Product Detail, cart, –Ω–æ–≤—ã–µ –∫–∞—Ç–µ–≥–æ—Ä–∏–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –£—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–π Card/spacing; –¥–∞–Ω–Ω—ã–µ –∏–∑ T039.
-- **Acceptance criteria:** –û–±–∞ route –ø–æ–∫–∞–∑—ã–≤–∞—é—Ç —Ç–æ–ª—å–∫–æ visible SKU, –Ω–µ—Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π slug 404.
-- **Required checks:** lint/typecheck, route smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T040): Catalog –∏ category routes
-- **Resolution (2026-10-02):** Server-rendered `/catalog` and `/catalog/[category]` use only the T039 public read layer. System All renders the three existing published REAL products with primary Next/Image, factual names, exact prices and preserved price/sale units; no Product Detail/cart/search/filter/pagination action was added. Category route returns 404 for unpublished and missing slugs without exposing hidden membership; all three existing categories remain unpublished. Positive category presentation passed through a temporary render-only route with controlled props and one existing public product, then the route was removed; no DB fixtures or mutations. Lint, typecheck, build and live route smoke PASS; owner Vercel Preview visual verification PASS for desktop/mobile, media, card/grid, breadcrumb and no horizontal overflow. Production unchanged; T040 DONE, next T041 not started.
-
-### T041 ‚Äî Search/filters/sort/pagination
-
-- **ID:** T041
-- **Priority:** P0
-- **Status:** DONE
-- **Title:** Search/filters/sort/pagination
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å –∫–∞—Ç–∞–ª–æ–≥–æ–≤—ã–µ –≤—ã–±–æ—Ä–∫–∏ –ø–æ —Ä–µ–∞–ª—å–Ω—ã–º –¥–∞–Ω–Ω—ã–º.
-- **Why:** –ü–æ—Å–µ—Ç–∏—Ç–µ–ª—å –¥–æ–ª–∂–µ–Ω –Ω–∞—Ö–æ–¥–∏—Ç—å –∏ —Å—Ä–∞–≤–Ω–∏–≤–∞—Ç—å –º–∞—Ç–µ—Ä–∏–∞–ª—ã.
-- **Dependencies:** T040.
-- **Allowed scope:** GET URL q/price/status/verified facets/sort/page.
-- **Forbidden scope:** –î–µ–∫–æ—Ä–∞—Ç–∏–≤–Ω—ã–µ —Ñ–∏–ª—å—Ç—Ä—ã –∏ –ø–æ–∏—Å–∫ –æ—Ç–¥–µ–ª—å–Ω—ã–º —Å–µ—Ä–≤–∏—Å–æ–º. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –ü—É—Å—Ç—ã–µ –∑–Ω–∞—á–µ–Ω–∏—è –Ω–µ –ø–æ–∫–∞–∑—ã–≤–∞—Ç—å, whitelist URL, browser back.
-- **Acceptance criteria:** –ö–æ–º–±–∏–Ω–∞—Ü–∏–∏ –≤–æ—Å–ø—Ä–æ–∏–∑–≤–æ–¥–∏–º—ã URL –∏ –Ω–µ –ø–æ–∫–∞–∑—ã–≤–∞—é—Ç hidden SKU.
-- **Required checks:** targeted query tests, 1440/390 smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T041): Search/filters/sort/pagination
-- **Resolution (2026-10-02):** GET URL state on `/catalog` uses one extended T039 normalizer and server-only public queries for name/SKU search, exact `price_minor` ranges, factual status/published-category facets, whitelisted default/price sorting and fixed-size page navigation. Invalid input is normalized safely; out-of-range pages remain empty; price NULL sorts last and `id` breaks ties. Forms reset page on new criteria, pagination links retain active criteria, and empty category/status facets render no options. Live read-only Preview tests covered the three REAL SKU, min/max/combined prices, search, sort, hidden category, invalid values and no-results; parser/link tests covered page bounds, preserved URL state and page reset. READY Preview browser search/reset/sort/direct URL/refresh/Back/Forward/keyboard/console PASS. Owner visual verification PASS for 390/768/1024/1440, no overflow, factual facets and unchanged T040 cards. No product/category/schema/RLS/Storage/Production mutation; T041 DONE, T042 not started.
-
-### T042 ‚Äî Catalog states –∏ responsive
-
-- **ID:** T042
-- **Priority:** P1
-- **Status:** DONE
-- **Title:** Catalog states –∏ responsive
-- **Goal:** –ó–∞–≤–µ—Ä—à–∏—Ç—å –∫–∞—Ä—Ç–æ—á–∫–∏/empty/loading/error –≤ –∫–∞—Ç–∞–ª–æ–≥–µ.
-- **Why:** –û—Ç–∫–∞–∑ –∏ –ø—É—Å—Ç–∞—è –≤—ã–¥–∞—á–∞ –¥–æ–ª–∂–Ω—ã –æ–±—ä—è—Å–Ω—è—Ç—å—Å—è.
-- **Dependencies:** T041.
-- **Allowed scope:** Product Card —Å —Ü–µ–Ω–æ–π/–µ–¥–∏–Ω–∏—Ü–µ–π, –æ–¥–∏–Ω —Å—Ç–æ–ª–±–µ—Ü mobile.
-- **Forbidden scope:** Hover-only price, redesign card. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –ù–∞ mobile —Ü–µ–Ω—ã/–¥–µ–π—Å—Ç–≤–∏—è –≤–∏–¥–Ω—ã –±–µ–∑ hover.
-- **Acceptance criteria:** –ù–µ—Ç overflow; —Å–æ—Å—Ç–æ—è–Ω–∏—è –∏ skeleton —Å–æ–æ—Ç–≤–µ—Ç—Å—Ç–≤—É—é—Ç –¥–∞–Ω–Ω—ã–º.
-- **Required checks:** lint/typecheck, viewport/console smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T042): Catalog states –∏ responsive
-- **Resolution (2026-10-02):** T040 Product Card composition retained; long names/price units wrap, NULL price uses a neutral dash with accessible label, NULL media has a neutral empty frame, and missing availability does not become a badge or claim. Existing Next/Image primary mapping and lazy card loading preserved. Catalog-only loading mirrors image/card dimensions without screen-reader noise, true zero published products and filtered no-results use separate messages, and route errors keep a generic retry without backend details. Read-only READY Preview showed the three owner-confirmed REAL SKU with exact prices/units, loaded primary images, hidden-category 404, search/price/sort/reset/URL behavior, and no app console errors. Render-only Preview checked empty/no-results/error/loading/long and NULL states without DB writes; owner visual verification PASS at 360‚Äì370/390/768/1024/1440/1920/2560 with no page overflow and Dark Gold Showroom consistency. Temporary review route removed before final commit. Lint/typecheck/build and final catalog route smoke PASS; Supabase data/schema/RLS/Storage and Production unchanged; permanent TEST_ONLY 0. T042 DONE; T043 not started.
-
-### T043 ‚Äî Home —Å –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–º–∏ –¥–∞–Ω–Ω—ã–º–∏
-
-- **ID:** T043
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Home —Å –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–º–∏ –¥–∞–Ω–Ω—ã–º–∏
-- **Goal:** –°–≤—è–∑–∞—Ç—å homepage —Å approved featured SKU, –∫–∞–¥—Ä–∞–º–∏ –∏ —Ç–µ–∫—Å—Ç–æ–º.
-- **Why:** –î–µ–º–æ–Ω—Å—Ç—Ä–∞—Ü–∏–æ–Ω–Ω—ã–µ —Ü–µ–Ω—ã/—Ñ–æ—Ç–æ –Ω–µ –≥–æ–¥—è—Ç—Å—è –¥–ª—è release.
-- **Dependencies:** T042.
-- **Allowed scope:** Featured read, —Ñ–∞–∫—Ç–∏—á–µ—Å–∫–∏–π –∫–æ–Ω—Ç–µ–Ω—Ç T008‚ÄìT010.
-- **Forbidden scope:** –°–º–µ–Ω–∞ –∫–æ–º–ø–æ–∑–∏—Ü–∏–∏ –∏–ª–∏ —Å–æ–∑–¥–∞–Ω–∏–µ –Ω–æ–≤—ã—Ö –æ–±–µ—â–∞–Ω–∏–π. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –ü—Ä–∏ –æ—Ç—Å—É—Ç—Å—Ç–≤–∏–∏ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω–æ–≥–æ –∫–æ–Ω—Ç–µ–Ω—Ç–∞ –ø–æ–∫–∞–∑—ã–≤–∞—Ç—å –±–µ–∑–æ–ø–∞—Å–Ω–æ–µ —Å–æ—Å—Ç–æ—è–Ω–∏–µ.
-- **Acceptance criteria:** Home –Ω–µ –≤—ã–¥–∞—ë—Ç placeholder –∑–∞ —Ç–æ–≤–∞—Ä/–ø—Ä–æ–µ–∫—Ç; CTA –≤–µ–¥—ë—Ç –≤ –∫–∞—Ç–∞–ª–æ–≥.
-- **Required checks:** content diff, desktop/mobile browser smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T043): Home —Å –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–º–∏ –¥–∞–Ω–Ω—ã–º–∏
-
-
-## PHASE 9 ‚Äî Product Detail
-
-### T044 ‚Äî Product route –∏ —Å–µ—Ä–≤–µ—Ä–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ
-
-- **ID:** T044
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Product route –∏ —Å–µ—Ä–≤–µ—Ä–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å /product/[slug] –¥–ª—è –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω–æ–≥–æ SKU.
-- **Why:** –≠—Ç–æ —Ç–æ—á–∫–∞ –ø—Ä–∏–Ω—è—Ç–∏—è —Ä–µ—à–µ–Ω–∏—è –æ –∑–∞—è–≤–∫–µ.
-- **Dependencies:** T043.
-- **Allowed scope:** Server query, title/series/price/unit/status/404.
-- **Forbidden scope:** –ö–æ—Ä–∑–∏–Ω–∞, schema changes. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –ê—Ä—Ö–∏–≤–Ω—ã–µ –∏ —Å–∫—Ä—ã—Ç—ã–µ category SKU –Ω–µ –≤–∏–¥–Ω—ã.
-- **Acceptance criteria:** –¢–æ–≤–∞—Ä —á–∏—Ç–∞–µ–º, —Ü–µ–Ω—ã –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã, hidden slug 404.
-- **Required checks:** route/RLS smoke, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T044): Product route –∏ —Å–µ—Ä–≤–µ—Ä–Ω—ã–µ –¥–∞–Ω–Ω—ã–µ
-
-### T045 ‚Äî Gallery, specs –∏ related
-
-- **ID:** T045
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Gallery, specs –∏ related
-- **Goal:** –ü–æ–∫–∞–∑–∞—Ç—å —Ç–æ—á–Ω—É—é —Ñ–∞–∫—Ç—É—Ä—É, –ø—Ä–∏–º–µ–Ω–µ–Ω–∏–µ –∏ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–µ —Å–≤–æ–π—Å—Ç–≤–∞.
-- **Why:** –ê—Ç–º–æ—Å—Ñ–µ—Ä–∞ –¥–æ–ª–∂–Ω–∞ –ø–æ–¥–¥–µ—Ä–∂–∏–≤–∞—Ç—å —Ç–µ—Ö–Ω–∏—á–µ—Å–∫–∏–π –≤—ã–±–æ—Ä.
-- **Dependencies:** T044.
-- **Allowed scope:** Image gallery island, specs, related same series/category.
-- **Forbidden scope:** –í—ã–º—ã—à–ª–µ–Ω–Ω—ã–µ —Ö–∞—Ä–∞–∫—Ç–µ—Ä–∏—Å—Ç–∏–∫–∏ –∏ —Ç—è–∂—ë–ª—ã–π animation runtime. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –§–∞–∫—Ç—É—Ä—ã —Ä–µ–∞–ª–∏—Å—Ç–∏—á–Ω—ã, lazy –Ω–∏–∂–µ fold, keyboard controls.
-- **Acceptance criteria:** Gallery —Ä–∞–±–æ—Ç–∞–µ—Ç 1440/390, alt/–¥–∞–Ω–Ω—ã–µ –≤–µ—Ä–Ω—ã.
-- **Required checks:** typecheck, gallery/asset browser smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T045): Gallery, specs –∏ related
-
-### T046 ‚Äî Quantity UI –∏ –ø–æ–∫—É–ø–∞—Ç–µ–ª—å—Å–∫–∏–π –±–ª–æ–∫
-
-- **ID:** T046
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Quantity UI –∏ –ø–æ–∫—É–ø–∞—Ç–µ–ª—å—Å–∫–∏–π –±–ª–æ–∫
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å –≤—ã–±–æ—Ä –∫–æ–ª–∏—á–µ—Å—Ç–≤–∞ –ø–æ —à–∞–≥—É –∏ —è—Å–Ω–æ–µ –±—É–¥—É—â–µ–µ –¥–µ–π—Å—Ç–≤–∏–µ.
-- **Why:** –¶–µ–Ω–∞ –∏ –µ–¥–∏–Ω–∏—Ü–∞ –¥–æ–ª–∂–Ω—ã –±—ã—Ç—å –ø–æ–Ω—è—Ç–Ω—ã –¥–æ Cart.
-- **Dependencies:** T045.
-- **Allowed scope:** –í—ã—á–∏—Å–ª–µ–Ω–∏–µ –≤–∏–¥–∏–º–æ–≥–æ –∏—Ç–æ–≥–∞, disabled –µ—Å–ª–∏ –Ω–µ–¥–æ—Å—Ç—É–ø–Ω–æ.
-- **Forbidden scope:** –§–∏–∫—Ç–∏–≤–Ω–æ–µ –¥–æ–±–∞–≤–ª–µ–Ω–∏–µ –¥–æ cart state –∏ online payment. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –î–ª—è –Ω–µ–ø–æ–ª–Ω–æ–≥–æ —Ä–µ–∞–ª—å–Ω–æ–≥–æ SKU –Ω–µ –ø–æ–∫–∞–∑—ã–≤–∞—Ç—å –≤—ã—á–∏—Å–ª–µ–Ω–Ω—ã–π –∏—Ç–æ–≥, –æ—Å—Ç–∞–≤–∏—Ç—å –¥–µ–π—Å—Ç–≤–∏–µ disabled; add-to-cart –∑–∞–ø–ª–∞–Ω–∏—Ä–æ–≤–∞–Ω –≤ T049 –ø–æ—Å–ª–µ cart model.
-- **Acceptance criteria:** –®–∞–≥/–º–∏–Ω–∏–º—É–º —Ä–∞–±–æ—Ç–∞—é—Ç, –¥–µ–π—Å—Ç–≤–∏–µ –¥–æ T049 —á–µ—Å—Ç–Ω–æ –Ω–µ–¥–æ—Å—Ç—É–ø–Ω–æ.
-- **Required checks:** targeted quantity tests, viewport smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T046): Quantity UI –∏ –ø–æ–∫—É–ø–∞—Ç–µ–ª—å—Å–∫–∏–π –±–ª–æ–∫
-
-
-## PHASE 10 ‚Äî Cart
-
-### T047 ‚Äî Cart state model
-
-- **ID:** T047
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Cart state model
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å –º–æ–¥–µ–ª—å —Å—Ç—Ä–æ–∫ –∫–æ—Ä–∑–∏–Ω—ã –∏ –æ–ø–µ—Ä–∞—Ü–∏–∏.
-- **Why:** –ù–µ–∞–≤—Ç–æ—Ä–∏—Ç–µ—Ç–Ω—ã–π client cart —Ç—Ä–µ–±—É–µ—Ç —á—ë—Ç–∫–∏—Ö –ø—Ä–∞–≤–∏–ª.
-- **Dependencies:** T046.
-- **Allowed scope:** product_id, quantity, display snapshot, add/update/remove API.
-- **Forbidden scope:** Backend cart –∏ auth shoppers. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Versioned shape, price –Ω–∏–∫–æ–≥–¥–∞ –Ω–µ –∏—Å—Ç–æ—á–Ω–∏–∫ –∑–∞–∫–∞–∑–∞.
-- **Acceptance criteria:** –û–ø–µ—Ä–∞—Ü–∏–∏ –∏–¥–µ–º–ø–æ—Ç–µ–Ω—Ç–Ω—ã –≤ UI, –Ω–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–µ –∫–æ–ª–∏—á–µ—Å—Ç–≤–∞ –æ—Ç–∫–ª–æ–Ω–µ–Ω—ã.
-- **Required checks:** unit tests –Ω–∞ quantity/state, typecheck.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T047): Cart state model
-
-### T048 ‚Äî localStorage –∏ hydration
-
-- **ID:** T048
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** localStorage –∏ hydration
-- **Goal:** –°–æ—Ö—Ä–∞–Ω–∏—Ç—å –∫–æ—Ä–∑–∏–Ω—É –º–µ–∂–¥—É –ø–æ—Å–µ—â–µ–Ω–∏—è–º–∏ –±–µ–∑ SSR mismatch.
-- **Why:** –°–æ—Å—Ç–æ—è–Ω–∏–µ browser –Ω–µ–¥–æ—Å—Ç—É–ø–Ω–æ Server Components.
-- **Dependencies:** T047.
-- **Allowed scope:** Version migration, safe parse, hydration loading.
-- **Forbidden scope:** Cookie cart, DB —Ç–∞–±–ª–∏—Ü–∞. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –ü—Ä–∏ –ø–æ–≤—Ä–µ–∂–¥–µ–Ω–∏–∏ reset —Å –ø–æ–Ω—è—Ç–Ω—ã–º —Å–æ–æ–±—â–µ–Ω–∏–µ–º.
-- **Acceptance criteria:** Reload —Å–æ—Ö—Ä–∞–Ω—è–µ—Ç —Å—Ç—Ä–æ–∫–∏; broken storage –Ω–µ –ª–æ–º–∞–µ—Ç —Å—Ç—Ä–∞–Ω–∏—Ü—É.
-- **Required checks:** storage/hydration targeted tests.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T048): localStorage –∏ hydration
-
-### T049 ‚Äî Add/remove/update –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—è
-
-- **ID:** T049
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Add/remove/update –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—è
-- **Goal:** –ü–æ–¥–∫–ª—é—á–∏—Ç—å Product Detail –∏ –∫–∞—Ä—Ç–æ—á–∫–∏ –∫ –∫–æ—Ä–∑–∏–Ω–µ.
-- **Why:** –ü–æ–∫—É–ø–∫–∞ –¥–æ–ª–∂–Ω–∞ —Ä–∞–±–æ—Ç–∞—Ç—å, –∫–æ–≥–¥–∞ state –≥–æ—Ç–æ–≤.
-- **Dependencies:** T048.
-- **Allowed scope:** –ö–Ω–æ–ø–∫–∏ –¥–æ–±–∞–≤–∏—Ç—å/—É–¥–∞–ª–∏—Ç—å/–∏–∑–º–µ–Ω–∏—Ç—å, count –≤ header.
-- **Forbidden scope:** Checkout API, analytics. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –£—á–∏—Ç—ã–≤–∞—Ç—å —à–∞–≥, —Å—Ç–∞—Ç—É—Å –∏ commercial_ready; —Ä–µ–∞–ª—å–Ω—ã–π non-orderable SKU –Ω–µ –¥–æ–±–∞–≤–ª—è—Ç—å. UI guard –Ω–µ –∑–∞–º–µ–Ω—è–µ—Ç —Å–µ—Ä–≤–µ—Ä–Ω—É—é –ø—Ä–æ–≤–µ—Ä–∫—É –Ω–∞ order submit.
-- **Acceptance criteria:** –ò–∑ —Ç–æ–≤–∞—Ä–∞ –º–æ–∂–Ω–æ –¥–æ–±–∞–≤–∏—Ç—å –∏ —É–¥–∞–ª–∏—Ç—å; count —Å–∏–Ω—Ö—Ä–æ–Ω–µ–Ω.
-- **Required checks:** interaction smoke 1440/390, typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T049): Add/remove/update –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏—è
-
-### T050 ‚Äî Cart page –∏ price refresh
-
-- **ID:** T050
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Cart page –∏ price refresh
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å /cart —Å –ø—Ä–æ–≤–µ—Ä–∫–æ–π —Ç–µ–∫—É—â–µ–≥–æ SKU/—Ü–µ–Ω—ã.
-- **Why:** –ü–µ—Ä–µ–¥ –æ—Ç–ø—Ä–∞–≤–∫–æ–π –ø–æ–∫—É–ø–∞—Ç–µ–ª—å –≤–∏–¥–∏—Ç –∞–∫—Ç—É–∞–ª—å–Ω—ã–π –∏—Ç–æ–≥.
-- **Dependencies:** T049.
-- **Allowed scope:** Items, quantity, empty/unavailable/changed price states.
-- **Forbidden scope:** –°–æ–∑–¥–∞–Ω–∏–µ order –∏–ª–∏ backend cart. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –ü—Ä–∏ —Ä–∞—Å—Ö–æ–∂–¥–µ–Ω–∏–∏ —è–≤–Ω–æ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–∞—Ç—å –Ω–æ–≤—É—é —Ü–µ–Ω—É –ø–µ—Ä–µ–¥ checkout; –µ—Å–ª–∏ real SKU —Å—Ç–∞–ª non-orderable, –Ω–µ –≤—ã—á–∏—Å–ª—è—Ç—å —Ñ–∏–∫—Ç–∏–≤–Ω—ã–π –∏—Ç–æ–≥ –∏ –Ω–µ –¥–æ–ø—É—Å–∫–∞—Ç—å –∫ –∑–∞—è–≤–∫–µ.
-- **Acceptance criteria:** –£–¥–∞–ª—ë–Ω–Ω—ã–π SKU –æ—Ç–º–µ—á–µ–Ω, –∏—Ç–æ–≥ –ø–µ—Ä–µ—Å—á–∏—Ç–∞–Ω –ø–æ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–º –¥–∞–Ω–Ω—ã–º.
-- **Required checks:** targeted refresh tests, browser smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T050): Cart page –∏ price refresh
-
-
-## PHASE 11 ‚Äî Checkout / Order Request
-
-### T051 ‚Äî Checkout form –∏ consent
-
-- **ID:** T051
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Checkout form –∏ consent
-- **Goal:** –°–¥–µ–ª–∞—Ç—å /checkout —Å –º–∏–Ω–∏–º–∞–ª—å–Ω—ã–º–∏ –∫–æ–Ω—Ç–∞–∫—Ç–Ω—ã–º–∏ –ø–æ–ª—è–º–∏.
-- **Why:** –ó–∞—è–≤–∫–∞ –¥–æ–ª–∂–Ω–∞ –±—ã—Ç—å –ø—Ä–æ—Å—Ç–æ–π –∏ –∑–∞–∫–æ–Ω–Ω–æ–π.
-- **Dependencies:** T050.
-- **Allowed scope:** Preview —Ñ–æ—Ä–º–∞ –¥–ª—è name/phone/city/email, optional comment, summary, client loading/errors; –º–µ—Å—Ç–æ –¥–ª—è –±—É–¥—É—â–µ–≥–æ —é—Ä–∏–¥–∏—á–µ—Å–∫–∏ —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω–æ–≥–æ —Å–æ–≥–ª–∞—Å–∏—è.
-- **Forbidden scope:** –û–ø–ª–∞—Ç–∞, –ª–∏—à–Ω–∏–µ –ø–µ—Ä—Å–æ–Ω–∞–ª—å–Ω—ã–µ –ø–æ–ª—è, backend mutations. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts –∏ pending legal review T009.
-- **Implementation notes:** –ü—Ä–∏ session/cart –ø—Ä–æ–±–ª–µ–º–µ —Å–æ—Ö—Ä–∞–Ω–∏—Ç—å –ø–æ–Ω—è—Ç–Ω—ã–π –ø—É—Ç—å –Ω–∞–∑–∞–¥.
-- **Acceptance criteria:** Preview —Ñ–æ—Ä–º–∞ –¥–æ—Å—Ç—É–ø–Ω–∞ –¥–ª—è TEST_ONLY —Å—Ü–µ–Ω–∞—Ä–∏–µ–≤, –Ω–µ–≤–µ—Ä–Ω—ã–µ –ø–æ–ª—è –æ—Ç–º–µ—á–µ–Ω—ã; legal copy –æ—Å—Ç–∞—ë—Ç—Å—è Pending owner/legal approval, –±–µ–∑ —Ñ–∏–∫—Ç–∏–≤–Ω–æ–≥–æ —Ç–µ–∫—Å—Ç–∞ consent –∏ –±–µ–∑ production submit.
-- **Required checks:** form validation, a11y and browser smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T051): Checkout form –∏ consent
-
-### T052 ‚Äî Order API validation boundary
-
-- **ID:** T052
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Order API validation boundary
-- **Goal:** –°–æ–∑–¥–∞—Ç—å POST /api/order-requests —Å —Å–µ—Ä–≤–µ—Ä–Ω–æ–π –ø—Ä–æ–≤–µ—Ä–∫–æ–π.
-- **Why:** Browser price –Ω–µ–ª—å–∑—è –ø—Ä–∏–Ω–∏–º–∞—Ç—å –Ω–∞ –≤–µ—Ä—É.
-- **Dependencies:** T051.
-- **Allowed scope:** Schema parsing, allowed origin/type/body, limits.
-- **Forbidden scope:** DB insert, payment, admin API. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts –∏ pending legal review T009.
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å quantity, step, phone –∏ SKU; production consent –ø—Ä–æ–≤–µ—Ä—è—Ç—å –ª–∏—à—å –ø–æ —é—Ä–∏–¥–∏—á–µ—Å–∫–∏ —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω–æ–º—É —Ç–µ–∫—Å—Ç—É. Preview –æ–≥—Ä–∞–Ω–∏—á–∏—Ç—å TEST_ONLY —Å—Ü–µ–Ω–∞—Ä–∏–µ–º.
-- **Acceptance criteria:** –ù–µ–≤–µ—Ä–Ω—ã–π payload –Ω–µ –≤—ã–∑—ã–≤–∞–µ—Ç –∑–∞–ø–∏—Å—å –∏ –≤–æ–∑–≤—Ä–∞—â–∞–µ—Ç –±–µ–∑–æ–ø–∞—Å–Ω—É—é –æ—à–∏–±–∫—É.
-- **Required checks:** targeted invalid payload/security tests.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T052): Order API validation boundary
-
-### T053 ‚Äî Fresh price –∏ idempotency
-
-- **ID:** T053
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Fresh price –∏ idempotency
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å –∞–∫—Ç—É–∞–ª—å–Ω—É—é –ø—Ä–æ–≤–µ—Ä–∫—É –∏ –∑–∞—â–∏—Ç—É –ø–æ–≤—Ç–æ—Ä–Ω–æ–π –æ—Ç–ø—Ä–∞–≤–∫–∏.
-- **Why:** –†–µ—Ç—Ä–∞–π –∏ –∏–∑–º–µ–Ω–µ–Ω–∏–µ –ø—Ä–∞–π—Å–∞ –Ω–µ –¥–æ–ª–∂–Ω—ã —É–¥–≤–∞–∏–≤–∞—Ç—å –∑–∞—è–≤–∫—É.
-- **Dependencies:** T052.
-- **Allowed scope:** Uncached product read, canonical hash, unique key, 409.
-- **Forbidden scope:** –ò–∑–º–µ–Ω–µ–Ω–∏–µ commercial snapshot –ø–æ—Å–ª–µ –∑–∞–ø–∏—Å–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts –∏ pending legal review T009.
-- **Implementation notes:** –°—É—â–µ—Å—Ç–≤—É—é—â–∏–π –∫–ª—é—á —Å–Ω–∞—á–∞–ª–∞ —Å–æ–ø–æ—Å—Ç–∞–≤–∏—Ç—å —Å payload hash.
-- **Acceptance criteria:** Changed price‚Üí409, identical retry‚Üí—Ç–æ—Ç –∂–µ –Ω–æ–º–µ—Ä, –∏–Ω–æ–π payload‚Üíconflict.
-- **Required checks:** race/idempotency/price targeted tests –Ω–∞ TEST_ONLY fixtures –∏ –æ—Ç—Ä–∏—Ü–∞—Ç–µ–ª—å–Ω—ã–π —Ç–µ—Å—Ç real non-orderable SKU; –∞–∫—Ç—É–∞–ª—å–Ω–∞—è —Å–µ—Ä–≤–µ—Ä–Ω–∞—è eligibility –ø—Ä–æ–≤–µ—Ä–∫–∞.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T053): Fresh price –∏ idempotency
-
-### T054 ‚Äî Private order insert –∏ outcomes
-
-- **ID:** T054
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Private order insert –∏ outcomes
-- **Goal:** –ó–∞–ø–∏—Å–∞—Ç—å –æ–¥–Ω—É order_requests row –∏ –≤–µ—Ä–Ω—É—Ç—å –±–µ–∑–æ–ø–∞—Å–Ω—ã–π —Ä–µ–∑—É–ª—å—Ç–∞—Ç.
-- **Why:** –ó–∞–≤–µ—Ä—à–∞–µ—Ç –ø—É—Ç—å –∑–∞—è–≤–∫–∏ –±–µ–∑ —á–∞—Å—Ç–∏—á–Ω—ã—Ö –∑–∞–∫–∞–∑–æ–≤.
-- **Dependencies:** T053.
-- **Allowed scope:** Server-only secret insert, success/error/retry UI.
-- **Forbidden scope:** Public SELECT orders, order_items, payment. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts –∏ pending legal review T009.
-- **Implementation notes:** Secret –Ω–µ –≤ bundle; –æ—Ç–≤–µ—Ç –±–µ–∑ –∫–æ–Ω—Ç–∞–∫—Ç–æ–≤/internal note. –í Preview —Å–æ–∑–¥–∞–≤–∞—Ç—å —Ç–æ–ª—å–∫–æ TEST_ONLY –∑–∞—è–≤–∫–∏ —Å —Å–∏–Ω—Ç–µ—Ç–∏—á–µ—Å–∫–∏–º–∏ –∫–æ–Ω—Ç–∞–∫—Ç–∞–º–∏; production commerce –∑–∞–∫—Ä—ã—Ç –¥–æ Production Content Gate PASS.
-- **Acceptance criteria:** –ó–∞—è–≤–∫–∞ –ø–æ—è–≤–ª—è–µ—Ç—Å—è —Ç–æ–ª—å–∫–æ –æ–¥–∏–Ω —Ä–∞–∑, —É—Å–ø–µ—Ö/—Å–±–æ–π –ø–æ–Ω—è—Ç–Ω—ã.
-- **Required checks:** integration submit/RLS/bundle checks.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T054): Private order insert –∏ outcomes
-
-### T055 ‚Äî Order flow integration gate
-
-- **ID:** T055
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Order flow integration gate
-- **Goal:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å Product‚ÜíCart‚ÜíCheckout‚ÜíConfirmation.
-- **Why:** –ü–æ—Å–ª–µ –Ω–µ—Å–∫–æ–ª—å–∫–∏—Ö TASK –Ω—É–∂–Ω—ã –ø—Ä–æ–≤–µ—Ä–∫–∏ —Å—Ç—ã–∫–æ–≤.
-- **Dependencies:** T054.
-- **Allowed scope:** –°—Ü–µ–Ω–∞—Ä–∏–∏ –Ω–æ—Ä–º–∞–ª—å–Ω—ã–π, –Ω–µ–¥–æ—Å—Ç—É–ø–Ω—ã–π, changed price, retry.
-- **Forbidden scope:** –ü–æ–ª–Ω—ã–π e2e –≤—Å–µ–≥–æ —Å–∞–π—Ç–∞ –∏ –Ω–æ–≤—ã–µ —Ñ—É–Ω–∫—Ü–∏–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; owner-confirmed order facts –∏ pending legal review T009.
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä—è—Ç—å 1440/390 –∏ console/network —ç—Ç–æ–≥–æ flow.
-- **Acceptance criteria:** M6 –ø—Ä–æ–≤–µ—Ä—è–µ—Ç –ø—Ä–∏–≤–∞—Ç–Ω—ã–π –∏ —Å—Ç–∞–±–∏–ª—å–Ω—ã–π Preview flow –Ω–∞ TEST_ONLY fixtures; —Ä–µ–∞–ª—å–Ω—ã–µ SKU –±–µ–∑ –ø–æ–ª–Ω–æ–≥–æ commercial –Ω–∞–±–æ—Ä–∞ –æ—Ç–≤–µ—Ä–≥–∞—é—Ç—Å—è —Å–µ—Ä–≤–µ—Ä–æ–º. Production commerce –æ—Å—Ç–∞—ë—Ç—Å—è –∑–∞–±–ª–æ–∫–∏—Ä–æ–≤–∞–Ω.
-- **Required checks:** targeted browser integration + security checks.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T055): Order flow integration gate
-
-
-## PHASE 12 ‚Äî Admin Orders
-
-### T056 ‚Äî Admin orders list
-
-- **ID:** T056
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Admin orders list
-- **Goal:** –†–µ–∞–ª–∏–∑–æ–≤–∞—Ç—å /admin/orders —Å–æ —Å—Ç–∞—Ç—É—Å–æ–º –∏ –¥–∞—Ç–æ–π.
-- **Why:** –ú–µ–Ω–µ–¥–∂–µ—Ä –¥–æ–ª–∂–µ–Ω –≤–∏–¥–µ—Ç—å –Ω–æ–≤—ã–µ –æ–±—Ä–∞—â–µ–Ω–∏—è —Å—Ä–∞–∑—É.
-- **Dependencies:** T055.
-- **Allowed scope:** Server-only guarded list, status filter/date sort.
-- **Forbidden scope:** Public order API, BI dashboard. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –í—ã–≤–æ–¥–∏—Ç—å –Ω–æ–º–µ—Ä/–¥–∞—Ç—É/—Å—Ç–∞—Ç—É—Å/–∫–æ–Ω—Ç–∞–∫—Ç –±–µ–∑ cache.
-- **Acceptance criteria:** Admin –≤–∏–¥–∏—Ç –∑–∞—è–≤–∫–∏; anon/non-admin –Ω–µ –≤–∏–¥–∏—Ç.
-- **Required checks:** guarded list/RLS tests, lint/typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T056): Admin orders list
-
-### T057 ‚Äî Order detail snapshot
-
-- **ID:** T057
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Order detail snapshot
-- **Goal:** –ü–æ–∫–∞–∑–∞—Ç—å /admin/orders/[id] —Å –Ω–µ–∏–∑–º–µ–Ω—ë–Ω–Ω—ã–º–∏ —Å—Ç—Ä–æ–∫–∞–º–∏.
-- **Why:** –û–±—Ä–∞–±–æ—Ç–∫–∞ —Ç—Ä–µ–±—É–µ—Ç —Ç–æ—á–Ω–æ–≥–æ —Å–æ—Å—Ç–∞–≤–∞ –∏ —É—Å–ª–æ–≤–∏–π –∑–∞—è–≤–∫–∏.
-- **Dependencies:** T056.
-- **Allowed scope:** –ü–æ–∑–∏—Ü–∏–∏/qty/—Ü–µ–Ω–∞/unit/–∏—Ç–æ–≥/–∏–º—è/—Ç–µ–ª–µ—Ñ–æ–Ω/comment.
-- **Forbidden scope:** –†–µ–¥–∞–∫—Ç–∏—Ä–æ–≤–∞–Ω–∏–µ —Ç–æ–≤–∞—Ä–æ–≤, —Ü–µ–Ω—ã, –∫–æ–Ω—Ç–∞–∫—Ç–∞. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –î–∞–Ω–Ω—ã–µ —Ç–æ–ª—å–∫–æ –∏–∑ items_snapshot, –Ω–µ –∏–∑ —Ç–µ–∫—É—â–µ–≥–æ –ø—Ä–∞–π—Å–∞.
-- **Acceptance criteria:** –ê–¥–º–∏–Ω –≤–∏–¥–∏—Ç –∏—Å—Ç–æ—Ä–∏—é —Ü–µ–Ω—ã –¥–∞–∂–µ –ø–æ—Å–ª–µ –∏–∑–º–µ–Ω–µ–Ω–∏—è —Ç–æ–≤–∞—Ä–∞.
-- **Required checks:** detail snapshot integration, no public leak.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T057): Order detail snapshot
-
-### T058 ‚Äî Status –∏ internal note
-
-- **ID:** T058
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Status –∏ internal note
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å –æ–ø–µ—Ä–∞—Ü–∏–æ–Ω–Ω–æ–µ –∏–∑–º–µ–Ω–µ–Ω–∏–µ —Å—Ç–∞—Ç—É—Å–∞ –∏ –ø—Ä–∏–≤–∞—Ç–Ω–æ–π –∑–∞–º–µ—Ç–∫–∏.
-- **Why:** –ó–∞–∫–∞–∑ –ø—Ä–æ—Ö–æ–¥–∏—Ç new‚Üíin_progress‚Üícompleted/cancelled.
-- **Dependencies:** T057.
-- **Allowed scope:** Guarded action, server validation, updated_at.
-- **Forbidden scope:** –õ—é–±—ã–µ –∏–∑–º–µ–Ω–µ–Ω–∏—è –∫–æ–º–º–µ—Ä—á–µ—Å–∫–∏—Ö –ø–æ–ª–µ–π –∏–ª–∏ –ø—É–±–ª–∏—á–Ω—ã–π –≤—ã–≤–æ–¥ –∑–∞–º–µ—Ç–∫–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –û–±—Ä–∞–±–∞—Ç—ã–≤–∞—Ç—å –∫–æ–Ω—Ñ–ª–∏–∫—Ç —Å—Ç–∞—Ç—É—Å–∞/–æ—Ç—Å—É—Ç—Å—Ç–≤—É—é—â–∏–π ID –±–µ–∑–æ–ø–∞—Å–Ω–æ.
-- **Acceptance criteria:** –°–æ—Ö—Ä–∞–Ω—ë–Ω–Ω—ã–π —Å—Ç–∞—Ç—É—Å/–∑–∞–º–µ—Ç–∫–∞ –≤–∏–¥–Ω—ã –∞–¥–º–∏–Ω—É, snapshot –Ω–µ –∏–∑–º–µ–Ω—ë–Ω.
-- **Required checks:** column privilege, mutation/transition tests.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T058): Status –∏ internal note
-
-### T059 ‚Äî Orders privacy gate
-
-- **ID:** T059
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Orders privacy gate
-- **Goal:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å –ø—Ä—è–º–æ–π API –∏ –ø–æ–ª–Ω—ã–π —É–ø—Ä–∞–≤–ª–µ–Ω—á–µ—Å–∫–∏–π —Å—Ü–µ–Ω–∞—Ä–∏–π.
-- **Why:** PII –∏ commercial snapshot ‚Äî –∫—Ä–∏—Ç–∏—á–µ—Å–∫–∞—è –≥—Ä–∞–Ω–∏—Ü–∞.
-- **Dependencies:** T058.
-- **Allowed scope:** –ü–æ–∑–∏—Ç–∏–≤–Ω—ã–µ admin –∏ –Ω–µ–≥–∞—Ç–∏–≤–Ω—ã–µ anon/non-admin —Ç–µ—Å—Ç—ã.
-- **Forbidden scope:** –ù–æ–≤—ã–µ –ø–æ–ª—è –∑–∞–∫–∞–∑–∞, CRM, –∏–Ω—Ç–µ–≥—Ä–∞—Ü–∏–∏. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å internal_note –≤–æ –≤—Å–µ—Ö –ø—É–±–ª–∏—á–Ω—ã—Ö –æ—Ç–≤–µ—Ç–∞—Ö/–ª–æ–≥–∞—Ö.
-- **Acceptance criteria:** M7: —Ç–æ–ª—å–∫–æ admin –≤–∏–¥–∏—Ç –∏ –æ–±–Ω–æ–≤–ª—è–µ—Ç —Ä–∞–∑—Ä–µ—à—ë–Ω–Ω—ã–µ –ø–æ–ª—è.
-- **Required checks:** targeted RLS/security + browser order smoke.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T059): Orders privacy gate
-
-
-## PHASE 13 ‚Äî Information Pages
-
-### T060 ‚Äî Applications –∏ About
-
-- **ID:** T060
-- **Priority:** P1
-- **Status:** TODO
-- **Title:** Applications –∏ About
-- **Goal:** –°–æ–∑–¥–∞—Ç—å —Å—Ç—Ä–∞–Ω–∏—Ü—ã –ø—Ä–∏–º–µ–Ω–µ–Ω–∏—è –∏ –∫–æ–º–ø–∞–Ω–∏–∏ –Ω–∞ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω–æ–º –∫–æ–Ω—Ç–µ–Ω—Ç–µ.
-- **Why:** –ù–∞–≤–∏–≥–∞—Ü–∏—è –¥–æ–ª–∂–Ω–∞ –æ–±—ä—è—Å–Ω—è—Ç—å –º–∞—Ç–µ—Ä–∏–∞–ª –∏ –±—Ä–µ–Ω–¥.
-- **Dependencies:** T059.
-- **Allowed scope:** /applications, /about, —Ä–µ–∞–ª—å–Ω—ã–µ —Ñ–æ—Ç–æ/–ø–æ–¥–ø–∏—Å–∏.
-- **Forbidden scope:** –õ–æ–∂–Ω—ã–µ –∫–µ–π—Å—ã/—Å–µ—Ä—Ç–∏—Ñ–∏–∫–∞—Ç—ã, –Ω–æ–≤—ã–π visual language. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/CONTENT_AUDIT.md; T008‚ÄìT010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –ö–æ–Ω—Ç–µ–Ω—Ç –∏–∑ T008‚ÄìT010; —Ä–µ–∞–ª–∏–∑–∞—Ü–∏—é –æ—Ç–ª–∏—á–∞—Ç—å –æ—Ç –≤–∏–∑—É–∞–ª–∏–∑–∞—Ü–∏–∏.
-- **Acceptance criteria:** –°—Ç—Ä–∞–Ω–∏—Ü—ã –¥–æ—Å—Ç—É–ø–Ω—ã/–∞–¥–∞–ø—Ç–∏–≤–Ω—ã, –æ–±–µ—â–∞–Ω–∏—è –ø—Ä–æ–≤–µ—Ä–µ–Ω—ã.
-- **Required checks:** content fact check, lint/typecheck, browser smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T060): Applications –∏ About
-
-### T061 ‚Äî Delivery –∏ Contacts
-
-- **ID:** T061
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Delivery –∏ Contacts
-- **Goal:** –û–ø—É–±–ª–∏–∫–æ–≤–∞—Ç—å –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–µ —É—Å–ª–æ–≤–∏—è –∏ —Å–ø–æ—Å–æ–±—ã —Å–≤—è–∑–∏.
-- **Why:** –ü–µ—Ä–µ–¥ –∑–∞—è–≤–∫–æ–π –ø–æ—Å–µ—Ç–∏—Ç–µ–ª—å –¥–æ–ª–∂–µ–Ω –ø–æ–Ω–∏–º–∞—Ç—å –ø–æ–ª—É—á–µ–Ω–∏–µ —Ç–æ–≤–∞—Ä–∞.
-- **Dependencies:** T060.
-- **Allowed scope:** Preview /delivery –∏ /contacts —Å –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã–º–∏ —Ç–µ–ª–µ—Ñ–æ–Ω–∞–º–∏ –∏ –≥–æ—Ä–æ–¥–∞–º–∏; –Ω–µ–π—Ç—Ä–∞–ª—å–Ω–æ–µ pending —Å–æ—Å—Ç–æ—è–Ω–∏–µ –¥–ª—è –Ω–µ—É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã—Ö –ø–æ–¥—Ä–æ–±–Ω–æ—Å—Ç–µ–π.
-- **Forbidden scope:** –ù–µ–ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω–∞—è –±–µ—Å–ø–ª–∞—Ç–Ω–∞—è –¥–æ—Å—Ç–∞–≤–∫–∞ –∏ —É—Å—Ç–∞—Ä–µ–≤—à–∏–µ –∫–æ–Ω—Ç–∞–∫—Ç—ã. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/CONTENT_AUDIT.md; T008‚ÄìT010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –£—Å–ª–æ–≤–∏—è –¥–æ—Å—Ç–∞–≤–∫–∏/—Å–∞–º–æ–≤—ã–≤–æ–∑–∞ –∏ –∞–¥—Ä–µ—Å–∞ –Ω–µ –ø—Ä–∏–¥—É–º—ã–≤–∞—Ç—å; –∏—Ö production copy —Ç–æ–ª—å–∫–æ –ø–æ—Å–ª–µ owner/legal sign-off.
-- **Acceptance criteria:** Preview –ø–æ–∫–∞–∑—ã–≤–∞–µ—Ç –¥–≤–∞ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω—ã—Ö —Ç–µ–ª–µ—Ñ–æ–Ω–∞ –∏ –≥–æ—Ä–æ–¥–∞, –±–µ–∑ –≤—ã–¥—É–º–∞–Ω–Ω–æ–≥–æ –∞–¥—Ä–µ—Å–∞/—Å—Ä–æ–∫–æ–≤/—Å—Ç–æ–∏–º–æ—Å—Ç–∏; production copy –æ—Å—Ç–∞—ë—Ç—Å—è pending.
-- **Required checks:** link/contact check, responsive smoke.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T061): Delivery –∏ Contacts
-
-### T062 ‚Äî Privacy –∏ Terms
-
-- **ID:** T062
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Privacy –∏ Terms
-- **Goal:** –ü–æ–¥–≥–æ—Ç–æ–≤–∏—Ç—å –º–∞—Ä—à—Ä—É—Ç—ã Privacy –∏ Terms –≤ Preview; production —Ç–µ–∫—Å—Ç—ã —Ç–æ–ª—å–∫–æ –ø–æ—Å–ª–µ legal sign-off.
-- **Why:** –§–æ—Ä–º–∞ –∑–∞—è–≤–∫–∏ —Å PII —Ç—Ä–µ–±—É–µ—Ç –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã—Ö —Å—Å—ã–ª–æ–∫.
-- **Dependencies:** T061.
-- **Allowed scope:** Preview routes /privacy –∏ /terms —Å –Ω–µ–π—Ç—Ä–∞–ª—å–Ω—ã–º pending state; –±—É–¥—É—â–∞—è –ø–æ–¥—Å—Ç–∞–Ω–æ–≤–∫–∞ —É—Ç–≤–µ—Ä–∂–¥—ë–Ω–Ω–æ–π —Ä–µ–¥–∞–∫—Ü–∏–∏.
-- **Forbidden scope:** –°–∞–º–æ—Å—Ç–æ—è—Ç–µ–ª—å–Ω–æ–µ —Å–æ—á–∏–Ω–µ–Ω–∏–µ —é—Ä–∏–¥–∏—á–µ—Å–∫–∏—Ö –æ–±–µ—â–∞–Ω–∏–π. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/CONTENT_AUDIT.md; T008‚ÄìT010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** –ü–æ–∫–∞ —Ç–µ–∫—Å—Ç—ã –Ω–µ —É—Ç–≤–µ—Ä–∂–¥–µ–Ω—ã, Preview –ø–æ–∫–∞–∑—ã–≤–∞–µ—Ç —Ç–æ–ª—å–∫–æ Pending owner/legal approval; –Ω–∏–∫–∞–∫–æ–≥–æ –≤—ã–º—ã—à–ª–µ–Ω–Ω–æ–≥–æ consent/return policy. Production content –æ—Å—Ç–∞—ë—Ç—Å—è BLOCKED.
-- **Acceptance criteria:** Preview –º–∞—Ä—à—Ä—É—Ç—ã –¥–æ—Å—Ç—É–ø–Ω—ã —Å —á–µ—Å—Ç–Ω—ã–º pending state; production checkout consent –∏ legal pages –Ω–µ –≥–æ—Ç–æ–≤—ã –±–µ–∑ –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω–æ–π –ø–æ–ª–∏—Ç–∏–∫–∏ –∏ sign-off.
-- **Required checks:** legal sign-off, link/metadata checks.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T062): Privacy –∏ Terms
-
-
-## PHASE 14 ‚Äî SEO
-
-### T063 ‚Äî Base metadata –∏ canonical
-
-- **ID:** T063
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Base metadata –∏ canonical
-- **Goal:** –ù–∞—Å—Ç—Ä–æ–∏—Ç—å titles/descriptions –∏ canonical —Å—Ç–∞—Ç–∏—á–Ω—ã—Ö —Å—Ç—Ä–∞–Ω–∏—Ü.
-- **Why:** –ü–æ–∏—Å–∫–æ–≤–∏–∫–∏ –¥–æ–ª–∂–Ω—ã –ø–æ–ª—É—á–∞—Ç—å —Ç–æ—á–Ω—ã–µ –∞–¥—Ä–µ—Å–∞ –∏ —Å–Ω–∏–ø–ø–µ—Ç—ã.
-- **Dependencies:** T062.
-- **Allowed scope:** Metadata API –¥–ª—è –ø—É–±–ª–∏—á–Ω—ã—Ö info routes –∏ –≥–ª–∞–≤–Ω–æ–π.
-- **Forbidden scope:** –ü—Ä–æ–¥–≤–∏–∂–µ–Ω–∏–µ –Ω–µ–ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã—Ö —Ö–∞—Ä–∞–∫—Ç–µ—Ä–∏—Å—Ç–∏–∫. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –û–¥–∏–Ω production SITE_URL, noindex cart/checkout/admin.
-- **Acceptance criteria:** Canonical –∫–æ—Ä—Ä–µ–∫—Ç–µ–Ω, –ø—Ä–∏–≤–∞—Ç–Ω—ã–µ routes –∏—Å–∫–ª—é—á–µ–Ω—ã.
-- **Required checks:** metadata HTML check, typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T063): Base metadata –∏ canonical
-
-### T064 ‚Äî Dynamic SEO –∏ indexing
-
-- **ID:** T064
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Dynamic SEO –∏ indexing
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å —Ç–æ–≤–∞—Ä–Ω—ã–µ/–∫–∞—Ç–µ–≥–æ—Ä–∏–π–Ω—ã–µ meta, OG, sitemap, robots.
-- **Why:** –î–∏–Ω–∞–º–∏—á–µ—Å–∫–∏–π –∫–∞—Ç–∞–ª–æ–≥ —Ç—Ä–µ–±—É–µ—Ç —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω–æ–π –∏–Ω–¥–µ–∫—Å–∞—Ü–∏–∏.
-- **Dependencies:** T063.
-- **Allowed scope:** generateMetadata, canonical, Open Graph, –æ–ø—É–±–ª–∏–∫–æ–≤–∞–Ω–Ω—ã–µ URL.
-- **Forbidden scope:** –ò–Ω–¥–µ–∫—Å–∞—Ü–∏—è —á–µ—Ä–Ω–æ–≤–∏–∫–æ–≤/Preview –∏ —Ñ–∏–ª—å—Ç—Ä–æ–≤. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –¢–æ–≤–∞—Ä–Ω—ã–µ —Ü–µ–Ω—ã/–æ–ø–∏—Å–∞–Ω–∏—è —Ç–æ–ª—å–∫–æ verified; admin noindex.
-- **Acceptance criteria:** Sitemap –±–µ–∑ —Å–∫—Ä—ã—Ç—ã—Ö SKU; Preview noindex.
-- **Required checks:** sitemap/robots/OG targeted checks.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T064): Dynamic SEO –∏ indexing
-
-### T065 ‚Äî Structured data
-
-- **ID:** T065
-- **Priority:** P1
-- **Status:** TODO
-- **Title:** Structured data
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å Breadcrumb –∏ Product/Offer JSON-LD –ø–æ —Ñ–∞–∫—Ç–∞–º.
-- **Why:** –ü–æ–∏—Å–∫–æ–≤—ã–µ –¥–∞–Ω–Ω—ã–µ –¥–æ–ª–∂–Ω—ã —Å–æ–≤–ø–∞–¥–∞—Ç—å —Å –≤–∏—Ç—Ä–∏–Ω–æ–π.
-- **Dependencies:** T064.
-- **Allowed scope:** Schema –æ—Ç published product –∏ verified price/status.
-- **Forbidden scope:** Ratings/reviews/availability –±–µ–∑ –¥–∞–Ω–Ω—ã—Ö. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008‚ÄìT010).
-- **Implementation notes:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å –µ–¥–∏–Ω–∏—Ü—É –ø—Ä–æ–¥–∞–∂–∏ –∏ —Å—É–º–º—ã –∏–∑ –ë–î.
-- **Acceptance criteria:** JSON-LD –≤–∞–ª–∏–¥–µ–Ω, —á–µ—Ä–Ω–æ–≤–∏–∫–∏ –Ω–µ –≤—ã–≤–æ–¥—è—Ç Product.
-- **Required checks:** structured data validator + typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T065): Structured data
-
-
-## PHASE 15 ‚Äî Yandex Metrika
-
-### T066 ‚Äî Metrika adapter –∏ pageviews
-
-- **ID:** T066
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Metrika adapter –∏ pageviews
-- **Goal:** –ü–æ–¥–∫–ª—é—á–∏—Ç—å production-only adapter –∏ –∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π route tracking.
-- **Why:** –°–æ–±—ã—Ç–∏—è SPA –Ω–µ–ª—å–∑—è —Å—á–∏—Ç–∞—Ç—å –ø–æ–≤—Ç–æ—Ä–Ω–æ.
-- **Dependencies:** T065.
-- **Allowed scope:** Script gating/consent, pageview handling.
-- **Forbidden scope:** –ú–µ—Ç—Ä–∏–∫–∞ –Ω–∞ Preview –∏ cookie PII payload. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –ú–∞–ª—ã–π client island, –∫–æ–Ω—Ñ–∏–≥ –∏–∑ production env.
-- **Acceptance criteria:** –û–¥–∏–Ω pageview –Ω–∞ –Ω–∞–≤–∏–≥–∞—Ü–∏—é; Preview –Ω–µ –æ—Ç–ø—Ä–∞–≤–ª—è–µ—Ç.
-- **Required checks:** network event smoke, typecheck.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T066): Metrika adapter –∏ pageviews
-
-### T067 ‚Äî Catalog/product/cart goals
-
-- **ID:** T067
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Catalog/product/cart goals
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å catalog_view/product_view/add_to_cart/remove_from_cart.
-- **Why:** –í–æ—Ä–æ–Ω–∫–∞ –≤—ã–±–æ—Ä–∞ –¥–æ–ª–∂–Ω–∞ –∏–∑–º–µ—Ä—è—Ç—å—Å—è –±–µ–∑ PII.
-- **Dependencies:** T066.
-- **Allowed scope:** –°–æ–±—ã—Ç–∏—è –ø–æ—Å–ª–µ —Ñ–∞–∫—Ç–∏—á–µ—Å–∫–æ–≥–æ –¥–µ–π—Å—Ç–≤–∏—è –∏ –∫–æ—Ä—Ä–µ–∫—Ç–Ω–æ–≥–æ route.
-- **Forbidden scope:** –î–≤–æ–π–Ω–æ–π event –ø—Ä–∏ rerender, customer identifiers. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –ò—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å —Ü–µ–Ω—Ç—Ä–∞–ª–∏–∑–æ–≤–∞–Ω–Ω—ã–π adapter –∏ —Å—Ç–∞–±–∏–ª—å–Ω—ã–µ —Ü–µ–ª–∏.
-- **Acceptance criteria:** –¶–µ–ª–∏ –æ—Ç–ø—Ä–∞–≤–ª—è—é—Ç—Å—è –ø–æ –æ–¥–Ω–æ–º—É —Ä–∞–∑—É, –±–µ–∑ –ø–æ–∏—Å–∫–∞/–∫–æ–Ω—Ç–∞–∫—Ç–æ–≤.
-- **Required checks:** network event checks, no PII payload.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T067): Catalog/product/cart goals
-
-### T068 ‚Äî Checkout/contact goals
-
-- **ID:** T068
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Checkout/contact goals
-- **Goal:** –î–æ–±–∞–≤–∏—Ç—å begin_checkout/order_submit/contact_click/phone_click.
-- **Why:** –ó–∞–≤–µ—Ä—à–µ–Ω–∏–µ –∑–∞—è–≤–∫–∏ –∏ –∫–æ–Ω—Ç–∞–∫—Ç–Ω—ã–µ –¥–µ–π—Å—Ç–≤–∏—è –≤–∞–∂–Ω—ã –±–∏–∑–Ω–µ—Å—É.
-- **Dependencies:** T067.
-- **Allowed scope:** –°–æ–±—ã—Ç–∏–µ success –ø–æ—Å–ª–µ server response, idempotency dedupe.
-- **Forbidden scope:** Purchase event –¥–æ –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω–∏—è, —Ç–µ–ª–µ—Ñ–æ–Ω –≤ params. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md.
-- **Implementation notes:** –ö–æ–Ω—Ç—Ä–æ–ª—å —Å–æ–≥–ª–∞—Å–∏—è –∏ —É—Å–ª–æ–≤–∏—è production-only.
-- **Acceptance criteria:** Retry –Ω–µ –¥—É–±–ª–∏—Ä—É–µ—Ç order_submit, –∑–Ω–∞—á–µ–Ω–∏—è –±–µ–∑ PII.
-- **Required checks:** network privacy/idempotency checks.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T068): Checkout/contact goals
-
-
-## PHASE 16 ‚Äî Integrated QA
-
-### T069 ‚Äî Public integrated QA
-
-- **ID:** T069
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Public integrated QA
-- **Goal:** –ü—Ä–æ–π—Ç–∏ –∫–∞—Ç–∞–ª–æ–≥‚Üí—Ç–æ–≤–∞—Ä‚Üí–∫–æ—Ä–∑–∏–Ω–∞‚Üí–∑–∞—è–≤–∫–∞ —Å –æ—à–∏–±–∫–∞–º–∏.
-- **Why:** –†–∞–∑—Ä–æ–∑–Ω–µ–Ω–Ω—ã–µ smoke –Ω–µ –ø—Ä–æ–≤–µ—Ä—è—é—Ç –≤–µ—Å—å MVP.
-- **Dependencies:** T068.
-- **Allowed scope:** Desktop/mobile e2e, network, empty/conflict/retry.
-- **Forbidden scope:** –†–µ–¥–∏–∑–∞–π–Ω –∏ –Ω–æ–≤—ã–µ —Ñ—É–Ω–∫—Ü–∏–∏ –ø–æ —Ö–æ–¥—É QA. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; prototype/.
-- **Implementation notes:** –§–∏–∫—Å–∏—Ä–æ–≤–∞—Ç—å –∏ –∏—Å–ø—Ä–∞–≤–ª—è—Ç—å –ª–∏—à—å –Ω–∞–π–¥–µ–Ω–Ω—ã–µ –¥–µ—Ñ–µ–∫—Ç—ã –æ—Ç–¥–µ–ª—å–Ω—ã–º–∏ commit –≤ –ø—Ä–µ–¥–µ–ª–∞—Ö TASK.
-- **Acceptance criteria:** –ü–æ–ª–Ω—ã–π –ø—É–±–ª–∏—á–Ω—ã–π —Å—Ü–µ–Ω–∞—Ä–∏–π –∏ console/network —á–∏—Å—Ç—ã–µ.
-- **Required checks:** full public e2e, typecheck, targeted fixes.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T069): Public integrated QA
-
-### T070 ‚Äî Admin integrated security QA
-
-- **ID:** T070
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Admin integrated security QA
-- **Goal:** –ü—Ä–æ–π—Ç–∏ login‚Üícatalog/media‚Üíorders –∏ –ø—Ä—è–º—ã–µ –∑–∞–ø—Ä–µ—Ç—ã.
-- **Why:** Auth/RLS –º–æ–∂–µ—Ç –ª–æ–º–∞—Ç—å—Å—è –Ω–∞ —Å—Ç—ã–∫–∞—Ö.
-- **Dependencies:** T069.
-- **Allowed scope:** Admin E2E, anon/non-admin policies, session expiry, snapshot.
-- **Forbidden scope:** –ù–æ–≤—ã–µ —Ä–æ–ª–∏ –∏ –æ–±—Ö–æ–¥ –ø—Ä–æ–≤–µ—Ä–æ–∫ —á–µ—Ä–µ–∑ secret. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; prototype/.
-- **Implementation notes:** –¢–µ—Å—Ç–∏—Ä–æ–≤–∞—Ç—å Storage upload/delete –∏ revoked admin.
-- **Acceptance criteria:** Admin flow —Ä–∞–±–æ—Ç–∞–µ—Ç, –ø—É–±–ª–∏—á–Ω—ã–π –¥–æ—Å—Ç—É–ø –∫ PII/CRUD –∑–∞–∫—Ä—ã—Ç.
-- **Required checks:** full admin e2e + RLS/CSRF matrix.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T070): Admin integrated security QA
-
-### T071 ‚Äî Visual, a11y –∏ performance QA
-
-- **ID:** T071
-- **Priority:** P1
-- **Status:** TODO
-- **Title:** Visual, a11y –∏ performance QA
-- **Goal:** –ü—Ä–æ–≤–µ—Ä–∏—Ç—å approved visual –∏ —Ä–∞–±–æ—á–∏–µ —É—Å—Ç—Ä–æ–π—Å—Ç–≤–∞.
-- **Why:** Heavy media –∏ motion –Ω–µ –¥–æ–ª–∂–Ω—ã –º–µ—à–∞—Ç—å –ø–æ–∫—É–ø–∫–µ.
-- **Dependencies:** T070.
-- **Allowed scope:** 1440/390/tablet, keyboard, reduced motion, LCP/CLS.
-- **Forbidden scope:** –ò–∑–º–µ–Ω–µ–Ω–∏–µ DESIGN_SYSTEM –±–µ–∑ —Ä–∞–∑—Ä–µ—à–µ–Ω–∏—è. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; prototype/.
-- **Implementation notes:** Compare prototype, –∏—Å–ø—Ä–∞–≤–∏—Ç—å –∫–æ–Ω–∫—Ä–µ—Ç–Ω—ã–µ –±–∞–≥–∏.
-- **Acceptance criteria:** –ù–µ—Ç –≥–æ—Ä–∏–∑–æ–Ω—Ç–∞–ª—å–Ω–æ–≥–æ overflow, –Ω–∞—Ä—É—à–µ–Ω–∏–π –Ω–∞–≤–∏–≥–∞—Ü–∏–∏ –∏ –∫—Ä–∏—Ç–∏—á–Ω—ã—Ö regressions.
-- **Required checks:** browser visual/a11y/performance milestone.
-- **Recommended model:** GPT-6 Sol Medium
-- **Reasoning level:** Medium
-- **Additional agent:** NO
-- **Suggested commit message:** task(T071): Visual, a11y –∏ performance QA
-
-
-## PHASE 17 ‚Äî Production Readiness
-
-### T072 ‚Äî Supabase production environment
-
-- **ID:** T072
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Supabase production environment
-- **Goal:** –ü–æ–¥–≥–æ—Ç–æ–≤–∏—Ç—å –æ—Ç–¥–µ–ª—å–Ω—ã–µ production –ë–î/Auth/Storage –∏ –∑–∞—â–∏—â—ë–Ω–Ω—ã–µ env.
-- **Why:** –†–µ–ª–∏–∑ –Ω–µ –¥–æ–ª–∂–µ–Ω –∏—Å–ø–æ–ª—å–∑–æ–≤–∞—Ç—å Preview –¥–∞–Ω–Ω—ã–µ –∏–ª–∏ —É—á—ë—Ç–Ω—ã–µ –∑–∞–ø–∏—Å–∏.
-- **Dependencies:** T071; Production Content Gate PASS –∏ –æ—Ç–¥–µ–ª—å–Ω–æ–µ —Ä–∞–∑—Ä–µ—à–µ–Ω–∏–µ –Ω–∞ production readiness.
-- **Allowed scope:** Production Supabase project, –ø—Ä–æ–≤–µ—Ä–µ–Ω–Ω—ã–µ migrations/RLS/Storage/Auth config, Vercel Production env.
-- **Forbidden scope:** Production web deploy, —Ä–µ–∞–ª—å–Ω—ã–µ PII/—Å–µ–∫—Ä–µ—Ç—ã –≤ Git. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010); —Ä–µ–∑—É–ª—å—Ç–∞—Ç—ã M1‚ÄìM7.
-- **Implementation notes:** –í–ª–∞–¥–µ–ª–µ—Ü –≤—Ä—É—á–Ω—É—é provision initial admin; —Å—Ä–∞–≤–Ω–∏—Ç—å grants/policies —Å Preview.
-- **Acceptance criteria:** Production –æ–∫—Ä—É–∂–µ–Ω–∏–µ –∏–∑–æ–ª–∏—Ä–æ–≤–∞–Ω–æ, —Å—Ö–µ–º–∞ –∏ auth/RLS –ø—Ä–æ—Ö–æ–¥—è—Ç smoke.
-- **Required checks:** migration/RLS/auth/env smoke, secret audit.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T072): Supabase production environment
-
-### T073 ‚Äî Production readiness evidence
-
-- **ID:** T073
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Production readiness evidence
-- **Goal:** –°–≤–µ—Ä–∏—Ç—å Preview, –ø–æ–ª–Ω—ã–π launch –∫–æ–Ω—Ç–µ–Ω—Ç –∏ —É—Å–ª–æ–≤–∏—è –∑–∞–ø—É—Å–∫–∞.
-- **Why:** Production candidate —Ç—Ä–µ–±—É–µ—Ç –¥–æ–∫–∞–∑–∞–Ω–Ω—ã—Ö gates, –Ω–µ —Ç–æ–ª—å–∫–æ –∫–æ–Ω—Ñ–∏–≥—É—Ä–∞—Ü–∏–∏.
-- **Dependencies:** T072.
-- **Allowed scope:** Preview QA evidence, –ø–æ–ª–Ω—ã–π —Å–æ–≥–ª–∞—Å–æ–≤–∞–Ω–Ω—ã–π –∞—Å—Å–æ—Ä—Ç–∏–º–µ–Ω—Ç, SEO/analytics, –±–∏–∑–Ω–µ—Å sign-off.
-- **Forbidden scope:** –ó–∞–ø—É—Å–∫ production, –Ω–æ–≤—ã–µ features, —Ä–µ–¥–∏–∑–∞–π–Ω. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010); —Ä–µ–∑—É–ª—å—Ç–∞—Ç—ã M1‚ÄìM7.
-- **Implementation notes:** –í–ª–∞–¥–µ–ª–µ—Ü –∑–∞–ø–æ–ª–Ω–∏–ª launch –∫–∞—Ç–∞–ª–æ–≥ —á–µ—Ä–µ–∑ Admin; –ø–µ—Ä–µ—á–∏—Å–ª–∏—Ç—å –±–ª–æ–∫–µ—Ä—ã.
-- **Acceptance criteria:** –í—Å–µ M1‚ÄìM7, Production Content Gate PASS, legal sign-off –∏ –ø–æ–ª–Ω—ã–π owner-confirmed launch content –ø–æ–¥—Ç–≤–µ—Ä–∂–¥–µ–Ω—ã; –ø—Ä–∏ BLOCKED –Ω–µ –æ–±—ä—è–≤–ª—è—Ç—å production candidate.
-- **Required checks:** readiness matrix, Preview smoke, content/security review.
-- **Recommended model:** GPT-6 Sol High
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T073): Production readiness evidence
-
-### T074 ‚Äî Final release candidate review
-
-- **ID:** T074
-- **Priority:** P0
-- **Status:** TODO
-- **Title:** Final release candidate review
-- **Goal:** –ù–µ–∑–∞–≤–∏—Å–∏–º–æ –æ—Ü–µ–Ω–∏—Ç—å –≥–æ—Ç–æ–≤–Ω–æ—Å—Ç—å MVP –∫ production.
-- **Why:** –ü–µ—Ä–µ–¥ –¥–æ—Ä–æ–≥–∏–º –ø–µ—Ä–µ—Ö–æ–¥–æ–º –Ω—É–∂–µ–Ω –ø–æ—Å–ª–µ–¥–Ω–∏–π –∫—Ä–∏—Ç–∏—á–µ—Å–∫–∏–π –≤–∑–≥–ª—è–¥.
-- **Dependencies:** T073.
-- **Allowed scope:** Architecture/design/security/content/QA evidence –∏ blocker decision.
-- **Forbidden scope:** Deploy, merge main, –Ω–æ–≤–æ–µ –ø—Ä–∏–ª–æ–∂–µ–Ω–∏–µ. –ù–µ –Ω–∞—á–∏–Ω–∞—Ç—å —Å–æ—Å–µ–¥–Ω—é—é TASK.
-- **Source of truth:** docs/ARCHITECTURE.md; docs/DESIGN_SYSTEM.md; docs/CONTENT_FACTS.md (T008‚ÄìT010); —Ä–µ–∑—É–ª—å—Ç–∞—Ç—ã M1‚ÄìM7.
-- **Implementation notes:** Astra —Ç–æ–ª—å–∫–æ –∑–¥–µ—Å—å; –∑–∞—Ñ–∏–∫—Å–∏—Ä–æ–≤–∞—Ç—å go/no-go –∏ –æ—Å—Ç–∞—Ç–æ—á–Ω—ã–µ —Ä–∏—Å–∫–∏.
-- **Acceptance criteria:** M8: production candidate —Ç–æ–ª—å–∫–æ –ø—Ä–∏ PASS Production Content Gate –∏ –æ—Å—Ç–∞–ª—å–Ω—ã—Ö readiness checks; –∏–Ω–∞—á–µ —Ç–æ—á–Ω—ã–π blocker –∏ NO-GO. Production –Ω–µ –∑–∞–ø—É—â–µ–Ω.
-- **Required checks:** final security/performance/functional review.
-- **Recommended model:** GPT-6 Astra
-- **Reasoning level:** High
-- **Additional agent:** NO
-- **Suggested commit message:** task(T074): Final release candidate review
-
-## Self-review –ø–µ—Ä–µ–¥ commit
-
-- –ü—Ä–æ–≤–µ—Ä–∏—Ç—å, —á—Ç–æ –∫–∞–∂–¥–∞—è TASK –æ–≥—Ä–∞–Ω–∏—á–µ–Ω–∞ –æ–¥–Ω–æ–π —Ü–µ–ª—å—é, –∑–∞–≤–∏—Å–∏–º–æ—Å—Ç–∏ —Å—Å—ã–ª–∞—é—Ç—Å—è –Ω–∞ —Å—É—â–µ—Å—Ç–≤—É—é—â–∏–π ID –∏ gate –Ω–µ –ø—Ä–æ–ø—É—â–µ–Ω.
-- –ü–æ–¥—Ç–≤–µ—Ä–¥–∏—Ç—å: Admin Auth –¥–æ admin mutations; schema/RLS –¥–æ Admin –∏ –ø—É–±–ª–∏—á–Ω–æ–≥–æ –∫–∞—Ç–∞–ª–æ–≥–∞; –∫–∞—Ç–∞–ª–æ–≥ –∏ Admin –∏—Å–ø–æ–ª—å–∑—É—é—Ç –æ–¥–Ω—É –º–æ–¥–µ–ª—å SKU; order status –Ω–µ –º–µ–Ω—è–µ—Ç –∏—Å—Ö–æ–¥–Ω—ã–π snapshot.
-- –£–±–µ–¥–∏—Ç—å—Å—è, —á—Ç–æ P1 –æ—Å—Ç–∞—ë—Ç—Å—è —á–∞—Å—Ç—å—é MVP, High –Ω–∞–∑–Ω–∞—á–µ–Ω —Ç–æ–ª—å–∫–æ security/data/state –∑–∞–¥–∞—á–∞–º, Astra ‚Äî –ø–æ—Å–ª–µ–¥–Ω–µ–º—É review; –¥–æ–ø–æ–ª–Ω–∏—Ç–µ–ª—å–Ω—ã—Ö –∞–≥–µ–Ω—Ç–æ–≤ –Ω–µ—Ç.
-- M8 –Ω–∞—Å—Ç—É–ø–∞–µ—Ç –ø–æ—Å–ª–µ QA, production deployment –Ω–µ –≤—Ö–æ–¥–∏—Ç –≤ —ç—Ç–æ—Ç –ø–ª–∞–Ω –±–µ–∑ –æ—Ç–¥–µ–ª—å–Ω–æ–≥–æ —Ä–∞–∑—Ä–µ—à–µ–Ω–∏—è.
+Y™Áäx-ÆÈ‹j◊ù¢Îi∫⁄+äßj[hëÈ‹¢ÈÌÁ_6È:-jZ.∂õ≠ñ)ﬁ≥R2÷&÷óÇf∆WÇ&VFW6ñv‚c"(	Bñ◊∆V÷VÁFFñˆ‚D4≤∆‡†¢¢≠
+--=¢¢¢˝Ω“=--]mM”≤C(	5CC2(	BDÙ‰R¬CCN(	5CsB(	BDÙDÛ≤”(	B53≤”"(	B53≤”2(	B53≤”B(	B53≤FWfV∆˜÷VÁBvFR(	B52f˜"ó6ˆ∆FVB&WfñWrv˜&≥≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR(	B$ƒÙ4¥TC¢GvÚ6ˆ÷÷W&6ñ¬ÊBFá&VR∆Vv¬w&˜W2&V÷ñ‚‚÷VFñ&ñváG2ˆ÷ñÊr&∆ˆ6∂W'2&R≤6V∆V7FVB÷÷VFñfó7V¬V∆óGí&WfñWr&V÷ñÁ2&R◊&ˆGV7Fñˆ‚&WVó&V÷VÁB‚
+-]]›ç}]≠çí6˜W&6RˆbG'WFÇ(	B¥$4ÑïDT5EU$RÊ÷E“Ñ$4ÑïDT5EU$RÊ÷Bí¬-ç}=ΩÕ›Ωí(	B¥DU4îtÂı5ï5DT“Ê÷E“ÑDU4îtÂı5ï5DT“Ê÷Bí‚¥4ÙÂDTÂEÙTDïBÊ÷E“Ñ4ÙÂDTÂEÙTDïBÊ÷BíMç≠ç=]"›]˝Ì-]]››ΩRç}›]›M››ΩR¬¥DU4îtÂÙDï$T5DîÙÂ2Ê÷E“ÑDU4îtÂÙDï$T5DîÙÂ2Ê÷Bí(	Bç-Ìç‚=--]mM]›çÚ¬∑&˜F˜GóU“Ç‚‚˜&˜F˜GóRˆñÊFWÇÊáF÷¬í(	B&˜fVBfó7V¬&VfW&VÊ6R‚
+›-Ì"MÌ≠=Õ]›"›RÌ}M"˝çΩÌm]›çR¬5¬¬ç›-]=mçÇçΩÇ&ˆGV7Fñˆ‚FW∆˜ñ÷VÁB‡†¢¢≠	˝Ì˝MÌ¢Ì-≥¢¢¢-Ω˝ÌΩ›˝-¬ÌM›2D4≤}r¬"=≠}››Ì¬˝Ì˝M≠S≤˝]]B›]í}ç--¬›-Ì"˝=›≠"Ç-ÌΩÕ≠‚-˝}››ΩRç-Ì}›ç≠Ç˝MùΩ≤¬›R-]¬&W˜6óF˜'í‚	]ΩÇ›]"›=m›ΩR=--]mM››ΩRM››ΩR(	BÌ-Õ]-ç-¬≠Ì›≠]-›=‚}M}2$ƒÙ4¥TBÇ}˝Ìç-¬çR‚	]ΩÇ-]=]-ÚÕ]›]ç-]≠-=≥¢Ì-›Ì-ç-ÕÚ¬ÌÌ›Ì--¬Õç›çÕΩÕ›=‚˝-≠2¬MÌmM-ÕÚ}]ç]›çÚ¬}-]¬ç}Õ]›ç-¬$4ÑïDT5EU$RÊ÷BÌ-M]ΩÕ›Ω¬Ì=ΩÌ-››Ω¬ç=Ì¬‚	]ΩÇ-]=]-Úç}Õ]›]›çRfó7V¬∆ÊwVvS¢Ì-M]ΩÕ›ÌR˝-›ÌR}]ç]›çR›DU4îtÂı5ï5DT“Ê÷BÇ=--]mM››ΩR≠ÌÕ˝Ì›]›-≤‚	›ç≠≠ÚD4≤›R-˝-RÕÌ-Ì˝-]ΩÕ›‚ç}Õ]›˝-¬›-Ç6˜W&6RˆbG'WFÇ‡†¢¢≠	}-]ç]›çR≠mMÌíD4≥¢¢¢ñ◊∆V÷VÁFFñˆ‚(i"]&WVó&VB6ÜV6∑2(i"ÌMç“Ì-M]ΩÕ›ΩívóDáV"6ˆ÷÷óB}]]rÌMçmçΩÕ›Ωíu$ïDR6ˆÊÊV7F˜"(i"f7B÷f˜'v&B&VFW6ñv‚◊c"(i"=MΩ››Ú˝Ì-]≠4Ñ˝ç}Õ]›››Ì=‚MùΩ(i"DÙ‰RÇÌ-›Ì-≠‚	›RÕ]›˝-¬÷ñ‚¬›Rf˜&6R◊W6Ç¬›RÕ]çç--¬›]≠ÌΩÕ≠‚}-]ç››ΩRD4≤"6ˆ÷÷óB‚	˝]MΩ=-¬›Ì-=‚D4≤-ÌΩÕ≠‚˝‚Ω]M=Ìù]Õ2}˝Ì2˝ÌΩÕ}Ì--]ΩÚ‚	˝ç-]M››ÌR"≠mMÌí}M}RÌÌù]›çR6ˆ÷÷óB(	BÌç]›-ç‚	}˝]ù]›‚}˝çΩ--¬]ΩÕ›ΩR6V7&WG2¬ÊVÁb¬îíçΩÇ≠ΩÌ}Ç"vóC≤ÊVÁbÊWÜ◊∆RÌM]mç"-ÌΩÕ≠‚∆6VÜˆ∆FW'2‡†¢¢≠	˝çÌç-]-≥¢¢¢(	BΩÌ≠]˝M’e≤(	BÌ˝}-]ΩÕ›ÌR≠}]--‚˝ç›-]=mçÚMΩÚ-Ì=‚mR’e≤"}]}]-çÌ-“MΩÚÌ-M]ΩÕ›Ì=‚˜7B‘’e˝Ω›Ç}M]¬›Rç˝ÌΩÕ}=]-Ú‚›RÌ}›}]"}]ç]›çR-Ω˝=-ç-¬’e]r›]‚	MÌ˝ÌΩ›ç-]ΩÕ›Ωí=]›"(	B‰ÚMΩÚ-]RD4≥¢›]"›]}-ççÕÌíÌ-≤¬Ì˝-MΩ-Ìù]íM]Ω]=çÌ-›çR˝Ç˝ÌΩ]MÌ--]ΩÕ›ΩRvFW2‚	Õ≠çÕ=¬ÌMç“=]›"¬]ΩÇ›-‚˝-çΩ‚˝Ì}mR˝-›‚ç}Õ]›ç-Ú‡†¢¢≠	˝Ì-]≠É¢¢¢ÕΩÚ≠ÌMÌ-ÚD4≤(	BF&vWFVB∆ñÁB¬GóV6ÜV6≤Ç&V∆WfÁB6÷ˆ∂S≤6V7W&óGíı$≈2(	B˝Ì}ç-ç-›ΩRÇ›]=-ç-›ΩRF&vWFVB˝Ì-]≠É≤÷ñ∆W7FˆÊR(	Bç›-]=mçÚ=Ì-Ì-Ì=‚›-˝˝]MΩM=ùç√≤˝ÌΩ›ΩíS&R(	BΩçmR¢6ÊFñFFR"Ñ4Rb‚	MÌ≠=Õ]›"˝≠Ì›-]›"(	BM≠-}]≠ç›2Ç˝Ì-]≠ΩΩÌ¢˝MÌ≠}-]ΩÕ-"¬]r]ÕΩΩ]››Ì=‚∆ñÁB‚	≠mMΩí≠ç-]çí˝ç›çÕ]-Ú˝‚›ΩÌM]ÕÌÕ2]}=ΩÕ--2‡†¢22’e&WVó&V@†•&V÷óV“V&∆ñ2Üˆ÷WvS≤˝ÌM--]mM››Ωí≠-ΩÌ2˝≠-]=ÌçÇ˝˝Ìç¢˝MçΩÕ-≥≤&ˆGV7BFWFñ√≤≠Ì}ç›≤}˝-≠≤7W&6S≤}ùçù››ΩRF÷ñ‚WFÇ¬-Ì-≤¬≠-]=ÌçÇ¬MÌ-‚Ç}˝-≠É≤ç›MÌÕmçÌ››ΩRÇ∆Vv¬-›çm≥≤4TÚf˜VÊFFñˆ„≤ñÊFWÇ÷WG&ñ∂≤FW6∑F˜ˆ÷ˆ&ñ∆R˜F&∆WB¬6V7W&óGíÇ&ˆGV7Fñˆ‚‚7W&6R7GVFñÚ(	B-ÌΩÕ≠‚FV6ÜÊñ6¬ˆf∆∆&6≤¬7W7Fˆ“F÷ñ‚ÊV¬(	BÌ›Ì-›Ìí˜W&FñˆÊ¬ñÁFW&f6R‡†¢22˜7B‘’eç]rD4≤"›-Ì¬˝Ω›Rê†§7W7Fˆ÷W"66˜VÁG2¬vó6Ü∆ó7B¬6ˆ◊&ó6ˆ‚¬ˆÊ∆ñÊRñ÷VÁB¬GfÊ6VB4’2¬Õ›Ì=Ì=Ì-›]-Ωí$$2¬$í¬ñÁfVÁF˜'íU%¬vR'Vñ∆FW"¬-˝mΩΩRÊñ÷Fñˆ‚‚
+çç]›çR-]=]"Ì-M]ΩÕ›Ì=‚]ç]›çÚ‡†¢22÷ñ∆W7FˆÊRvFW0†ß¬vFR¬	˝ÌΩRD4≤¬
+=ΩÌ-çR˝çÕ≠Ç¿ß¬““◊¬““◊¬““◊¿ß¬”(	Bf˜VÊFFñˆ‚&VGí¬C2¬ÊWáB66ffˆ∆B¬ççM-≤˜Fˆ∂VÁ2¬∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆BÇÖEE2&WfñWrÌ-Ì#≤-ÌΩÕ≠‚∆6VÜˆ∆FW'2"vóC≤˝Ì-]ç-¬C(	5C2‚¿ß¬”"(	BV&∆ñ2fó7V¬f˜VÊFFñˆ‚&˜fVB¬Cr¬ÜVFW"ÙÜW&Úı6Ü˜v66RÙ6&BÙ5D"ÊWáB-ç}=ΩÕ›‚Ì-˝MÌ"=--]mM››Ω¬&˜F˜GóR›CCÛ3ì¬÷ˆ&ñ∆R÷VÁRÇ&VGV6VB÷÷˜Fñˆ‚˝Ì]ÌM˝#≤˝ç›çÕ-¬˝]]›Ì¬›R›Ì-ÌR›˝-Ω]›çS≤˝Ì-]ç-¬CN(	5Cr‚¿ß¬FWfV∆˜÷VÁBvFR(	B¢•52¢¢¬C¬Cé(	5CDÙ‰R‚CÊB7V'6WVVÁBFV6ÜÊñ6¬F6∑2÷í&ˆ6VVBñ‚ó6ˆ∆FVB&WfñWrVÊFW"FÜRDU5EÙÙ‰≈íˆÁV∆∆&∆R6ˆ÷÷W&6ñ¬'V∆W2&V∆˜r‚¿ß¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR(	B¢§$ƒÙ4¥TB¢¢¬C≤&WVó&VB&Vf˜&RÜ6Rr&VFñÊW72¬GvÚ&V¬6ˆ÷÷W&6ñ¬w&˜W2ÊBFá&VR&V¬∆Vv¬w&˜W2&V÷ñ‚VÁ&W6ˆ«fVB‚&ˆGV7Fñˆ‚6ˆ÷÷W&6R¬&VFñÊW72ÊBFW∆˜ñ÷VÁB&Rf˜&&ñFFV‚VÁFñ¬FÜó2vFR76W3≤6V∆V7FVB÷÷VFñV∆óGí&WfñWr&V÷ñÁ26W&FR&R◊&ˆGV7Fñˆ‚6ÜV6≤‚¿ß¬”2(	B7W&6RbF÷ñ‚WFÇ6V7W&VB(	B¢•52¢¢¬C#"¬C(	5C##¢]]Õ≤¬Êˆ‚ı$≈2ı7F˜&vR¬}≠Ω-Ωí6ñvÁW¬7FófR÷V÷&W'6Üó¬6W76ñˆ‚ˆwV&B¬›]=-ç-›ΩR6V7W&óGí˝Ì-]≠Ç‚¿ß¬”B(	BF÷ñ‚6F∆ˆr÷ÊvV÷VÁB˜W&FñˆÊ¬(	B¢•52¢¢¬C3Ç¬C#>(	5C3"¬C3$¬C3>(	5C3É¢F6Ü&ˆ&B¬◊V«Fí÷6FVv˜'í÷V÷&W'6Üóˆ∆Vv7í÷ñw&Fñˆ‚¬&ˆGV7G2Ù6FVv˜&ñW25%TB"Õ≠R}]ç]›çí¬÷VFñW∆ˆB˜&ñ÷'íˆFV∆WFRÇ˝Ì-]Ì}›Ωí›Ì˝ÌM--]mM››ΩR4µR}]]rF÷ñ„≤˝Ì-]ç-¬ç›-]=mç‚”2‚¿ß¬”R(	BV&∆ñ26F∆ˆr˜W&FñˆÊ¬¬CCb¬C3û(	5CCc¢˝ç≠Ç˝˝Ìç¢˝≠-]=ÌçÇı&ˆGV7BFWFñ¬›ÌùçRM››ΩR¬-ÌΩÕ≠‚V&∆ó6ÜVB¬]ΩÕ›ΩRm]›˝Õ]Mç‚	˝ÌM≠ΩÌ}]›çRFB◊FÚ÷6'B˝-Ω˝]-ÚCCíÇ-]ÌMç""”b‚¿ß¬”b(	B6'Bb˜&FW"f∆˜r˜W&FñˆÊ¬¬CSR¬CC~(	5CSS¢W'6ó7FVÊ6R¬&Vg&W6Çm]“¬6W'fW"f∆ñFFñˆ‚¬ñFV◊˜FVÊ7í¬ÌM›˝ç--›Ú}˝-≠Ç˝ÌM--]mM]›çS≤˝Ì-]ç-¬-Õ]-R”R‚¿ß¬”r(	BF÷ñ‚˜&FW"÷ÊvV÷VÁB˜W&FñˆÊ¬¬CSí¬CSn(	5CSì¢--=˝}Õ]-≠"F÷ñ„≤˜&ñvñÊ¬6Ê6Ü˜B›Rç}Õ]›˝]¬}]]rTíÇ˝˝ÕÌíWFÜVÁFñ6FVBì≤ç›-]=mçÚ”b‚¿ß¬”Ç(	B&ˆGV7Fñˆ‚6ÊFñFFR¬CsB¬Cc(	5CsC¢ç›MÌÕmçÌ››ΩR-›çm≤¬4TÚ¬	Õ]-ç≠¬ç›-]=mçÌ››ΩíÇ&VFñÊW73≤-R”(	4”r˝ÌùM]›≤¬&ˆGV7Fñˆ‚›R}˝=ù]“‚¿†¢¢§”7FGW3¢52‚¢¢C(	5C2DÙ‰S≤∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B52¬'&Ê6ÇÖEE2&WfñWr$TEí¬&FÙ÷Á&˜R˜Fˆ∂VÁ252¬˜vÊW"fó7V¬6÷ˆ∂RCC9rìÇ3ì9rÉCB53≤ÌççÌ}›ΩíFW∆˜ñ÷VÁB›Ì-Ì=‚˝Ì]≠-=MΩ“¬=ù]--=Ìùçí&ˆGV7Fñˆ‚›Rç}Õ]›“‡†¢¢§FWfV∆˜÷VÁBvFS¢52‚&ˆGV7Fñˆ‚6ˆÁFVÁBvFS¢$ƒÙ4¥TB‚¢¢CÇ¬CíÇCÌ-Ì-ÚDÙ‰S≤÷VFñ&∆ˆ6∂W'2“‚FWfV∆˜÷VÁBvFR}]ç]"C≤≠¢-]]›ç}]≠=‚&WfñWrÌ-2‚&ˆGV7Fñˆ‚6ˆÁFVÁBvFRÌ]›˝]"˝˝-¬==˝˝çÌ-››ΩR&∆ˆ6∂W'3¢¢§4Ù‘‘U$4î¬É"í¢¢(	B˝ΩÌùM¬˝ÌM-]ÕÌ=‚MÌÕ-MΩÚB4µR*Ω	=ç≠ÚMÌ≠+≥≤-Ì}›ΩRm]›≤˝˝-çΩ-ç›-Ì"MΩÚ#&ÊvR◊&ñ6R4µR‚¢§ƒTt¬É2í¢¢(	B6V∆∆W"ˆ˜W&F˜"ñFVÁFóGíÇ&óf7íˆ6ˆÁ6VÁB∆Vv¬6ñv‚÷ˆfc≤&WGW&Á2ˆ6∆ñ◊2FWáBÇ6∆ñ◊26ˆÁF7Bˆ∆Vv¬&WfñWs≤˝ÌMÌ›ΩRFV∆ófW'í˜ñ6∑W=ΩÌ-çÚ‚
+›-‚ç]-¬Ì-M]ΩÕ›ΩR-ç˝Ì"›]MÌ-ÌùçR]ΩÕ›ΩRM››ΩR¬==˝˝çÌ-››ΩR"˝˝-¬ÌΩ-]í‚	›R}ç--¬çR}≠Ω-ΩÕÇÌ"˝Ì˝-Ω]›çÚ-]-Ì-ΩR}›}]›çí‚˜vÊW"fó7V¬&WfñWr-Ω››ΩR=›ç≠ΩÕ›ΩRÕ]MçÌ˝}-]Ω]“˝]]B&ˆGV7Fñˆ‚Ì-M]ΩÕ›‚Ì"›-Ì=‚vFR‡†¢¢≠	Ì˝}-]ΩÕ›ÌR˝-çΩ‚MΩÚ-]RΩ]M=ÌùçR&WfñWrD4≥¢¢¢›]ç}-]-›ΩR]ΩÕ›ΩR˜vÊW"fñV∆G2Ì-Ì-ÚÁV∆∆˜VÁ&W6ˆ«fVC≤#S]ΩÕ›Ωí4µR›R˝ÌΩ=}]"˝çM=Õ››ΩR&ñ6W2¬Fñ÷VÁ6ñˆÁ2¬fñ∆&ñ∆óGíçΩÇ∆Vv¬f7G2‚	Ì˝=Ωç≠Ì-››Ωí]ΩÕ›Ωí4µRÕÌm]"Ì-Ìm-ÕÚ"6F∆ˆrı&ˆGV7BFWFñ¬Õ]Mç˝Ç›]˝ÌΩ›ΩR6ˆ÷÷W&6ñ¬FF¬›‚FB◊FÚ÷6'Bˆ˜&FW"}˝]ù]›≤‚6ˆ÷÷W&6ñ≈˜&VGñççΩÇ›≠-ç-Ω]›"í-Ω}çΩ˝]-Ú›]-]S¢›=m›≤˝=Ωç≠mçÚ¬˝ÌΩ›Ωí6ˆ÷÷W&6ñ¬›Ì¬-Ì}›Ú˝çÕ]›çÕÚm]›¬≠Ì]≠-›Ú≠Ì›-]çÚ≠ÌΩç}]--ÇñÂ˜7Fˆ6∂Ωç‚ˆÂˆ˜&FW&‚	Ì-=---çRΩÌÌ=‚=ΩÌ-çÚ(i"Êˆ‚÷˜&FW&&∆R‚TíFó6&∆VB›R}Õ]›˝]"]-]›=‚˝Ì-]≠2˝Ç}˝-≠R‡†¢¢•DU5EÙÙ‰≈ífóáGW&W3¢¢¢-ÌΩÕ≠‚Ì-M]ΩÕ›Ωí&WfñWr˜FW7B›ÌMΩÚF&vWFVB66ÜV÷ˆ6'Bˆ˜&FW"6ÜV6∑2¬˝-›ÌíÕ≠çÌ-≠ÌíDU5EÙÙ‰≈ñ≤ç›-]-ç}]≠çR&ñ6RˆFñ÷VÁ6ñˆÁ2ˆfñ∆&ñ∆óGíˆ6ˆÁfW'6ñˆ‚›R˝ç-ç--¬]ΩÕ›Ω¬4µR‚fóáGW&W2›R-]ÌM˝""&ˆGV7Fñˆ‚6F∆ˆrçΩÇ&ˆGV7Fñˆ‚6VVB‚&ˆGV7Fñˆ‚6VVFñÊr]ΩÕ›Ì=‚≠-ΩÌ=(	B-ÌΩÕ≠‚çr˜vÊW"÷6ˆÊfó&÷VBfñV∆G2‚&WfñWr∆Vv¬7FFR(	B›]ù-ΩÕ›ÌRVÊFñÊr˜vÊW"ˆ∆Vv¬&˜f∆Ωç‚Ì-=---çR&ˆGV7Fñˆ‚∆Vv¬6ˆÁFVÁC≤›ç≠≠çRMç≠-ç-›ΩR6V∆∆W"&WVó6óFW2¬&WGW&‚ˆ∆ñ7íçΩÇ6ˆÁ6VÁB›RMÌ˝=≠Ì-Ú‚	"&WfñWrf∆˜rç˝ÌΩÕ}Ì--¬-ÌΩÕ≠‚ç›-]-ç}]≠çR≠Ì›-≠-≤¬›R]ΩÕ›ΩR}˝-≠Ç‡†§”(	4”rÌm]›ç-Ì"&WfñWr]Ωç}mç‚›-çÕÇÌ=›ç}]›ç˝ÕÇ‚	˝]]B&ˆGV7Fñˆ‚&VFñÊW72ˆFW∆˜ñ÷VÁBÌ˝}-]Ω]“¢•52&ˆGV7Fñˆ‚6ˆÁFVÁBvFR¢¢¬Ì=ΩÌ-››ΩR∆Vv¬-]≠-≤Ç˜vÊW"fó7V¬6ñv‚÷ˆfc≤-]≠=ùçívFR}˝]ù]"}˝=¢‚”Ç(	BÌm]›≠≠›MçM-˝ÌΩR¬›RM]˝ΩÌí‚C3"ç-Ìç}]≠ÇDÙ‰S≤C3$}-]ç]"◊V«Fí÷6FVv˜'í˝]]]ÌB"Ü6Rb‚”B(	B52˝ÌΩR}-]ç]›çÚC3É¢F÷ñ‚6ÜV∆¬ˆF6Ü&ˆ&B¬&ˆGV7BÙ6FVv˜'í5%TB¬◊V«Fí÷6FVv˜'í¬÷VFñf∆˜w2Ç-Ç˝Ì-]Ì}›ΩR$T¬4µRç›-]=çÌ-›≤"&WfñWr‚C3B˜vÊW"'&˜w6W"&F6ÇW∆ˆB52Ç7ñÁFÜWFñ26∆VÁW“≤C3Rfó7V¬53≤C3b'&˜w6W"FV∆WFRˆ˜'Ü‚&WG'íˆ6∆VÁW53≤C3r&W&W6VÁFFófRñ÷vR&W6VÁFFñˆ‚52‚C3ÇÌ]›››ΩR$T¬4µR(	B-ÌΩÕ≠‚&W&W6VÁFFófR7V'6WB¬›R˝ÌΩ›Ωí∆VÊ6Ç˜V∆Fñˆ‚‚
+Ω]M=ÌùÚ}M}C3í¬›R›}-‡†¢22Ñ4R(	B&ˆ¶V7Bf˜VÊFFñˆ‡†¢222C(	BÊWáBÊß2f˜VÊFFñˆ‡†¢“¢§îC¢¢¢C¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢ÊWáBÊß2f˜VÊFFñˆ‡¢“¢§vˆ√¢¢¢
+Ì}M-¬Õç›çÕΩÕ›ÌRÊWáBÊß2&˜WFW"˝çΩÌm]›çRGóU67&óBÇ˝Ì-]˝]ÕΩ¬'Vñ∆B‡¢“¢•váì¢¢¢	-RÌ-ΩÕ›ΩR&ˆGV7Fñˆ‚D4≤-]=Ì"]Mç›ÌíÌ›Ì-≤‡¢“¢§FWVÊFVÊ6ñW3¢¢¢›]"ç-"˝Ì]≠-í‡¢“¢§∆∆˜vVB66˜S¢¢¢6∂vR˜67&óG2¬7&2ˆÇ˝=-ÌívRˆ∆ñ˜WC≤vóFñvÊ˜&R‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	˝]]›Ì&˜F˜GóR¬7W&6RÇ›Ì-ΩR-›çm≤‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72ÙDU4îtÂı5ï5DT“Ê÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+-çΩÕ›ΩR-]çÇ-Ω-¬˝ÇÌ}M›çÇ¬]rΩçç›]=‚g&÷Wv˜&≤‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢'Vñ∆B¬GóV6ÜV6≤¬∆ñÁB˝Ì]ÌM˝#≤--Ì-Ú-›çmÌ-≠Ω-]-Ú‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬'Vñ∆BÇ∆ˆ6∆Ü˜7B6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCì¢ÊWáBÊß2f˜VÊFFñˆ‡†¢222C"(	BFˆ∂VÁ2¬552÷ˆGV∆W2ÇççM-∞†¢“¢§îC¢¢¢C ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢Fˆ∂VÁ2¬552÷ˆGV∆W2ÇççM-∞¢“¢§vˆ√¢¢¢	}Mç≠çÌ--¬"˝çΩÌm]›çÇ=--]mM››ΩR-Ì≠]›≤ÇΩÌ≠ΩÕ›ΩR&FÙ÷Á&˜R‡¢“¢•váì¢¢¢	-ç}=ΩÕ›Ωí˝]]›ÌMÌΩm]“›}ç›-ÕÚ-Ì}›ΩRÌ›Ì"‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C‡¢“¢§∆∆˜vVB66˜S¢¢¢Fˆ∂VÁ2Ê772¬v∆ˆ&¬Ê772¬ÊWáBˆfˆÁBˆ∆ˆ6¬˝ÌΩR˝Ì-]≠ÇΩçm]›}çÇ¬Õç›çÕΩÕ›Ú-ç˝Ì=Mç≠‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢
+]Mç}ù“≠ÌÕ˝Ì›]›-Ì"Ç˝ÌMÕ]›˝Ωç-≤‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72ÙDU4îtÂı5ï5DT“Ê÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+-]ç-¬552DU4îtÂı5ï5DT”≤f∆∆&6≤]r≠}≠≠ÌÕ˝Ì›Ì-≠Ç‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢
+-Ì≠]›≤ÇççM-≤˝ÌM≠ΩÌ}]›≤¢-]-Ì-Ìí-›çmS≤∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B˝Ì]ÌM˝"‚	-ç}=ΩÕ›Ωí6÷ˆ∂RCCÛ3ìÌ˝}-]Ω]“"C2›ÖEE2&WfñWr‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬'Vñ∆B¬ΩÌ≠ΩÕ›Ú˝Ì-]≠ççM-Ì"‡¢“¢§Ê˜FS¢¢¢fó7V¬6÷ˆ∂RCCÛ3ìFVfW'&VBFÚC2ÖEE2&WfñWrGVRVÁfó&ˆÊ÷VÁB∆ñ÷óFFñˆ„≤∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B76VB‡¢“¢•&W6ˆ«WFñˆ„¢¢¢˜vÊW"fó7V¬6÷ˆ∂RÖEE2&WfñWr›CC9rìÇ3ì9rÉCB52"C3≤Ì-ΩÌm]››Ú˝Ì-]≠}≠Ω-‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC"ì¢Fˆ∂VÁ2¬552÷ˆGV∆W2ÇççM-∞†¢222C2(	B&WfñWrÇ]}Ì˝›ΩíVÁb&6V∆ñÊP†¢“¢§îC¢¢¢C0¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢&WfñWrÇ]}Ì˝›ΩíVÁb&6V∆ñÊP¢“¢§vˆ√¢¢¢	›-Ìç-¬vóDáV"'&Ê6Ç&WfñWrÇçΩÌ“˝]]Õ]››ΩR]r}›}]›çí‡¢“¢•váì¢¢¢	≠mMΩí›-Ú›=mM]-Ú"˝Ì-]˝]ÕÌíÖEE2]MRÇ]}Ì˝›Ì¬≠Ì›Mç=R‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C"‡¢“¢§∆∆˜vVB66˜S¢¢¢fW&6V¬&WfñWr≠Ì›Mç==mçÚ¬VÁbÊWÜ◊∆R∆6VÜˆ∆FW'2¬&6R÷WFFF‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢&ˆGV7Fñˆ‚FW∆˜í¬]ΩÕ›ΩR≠ΩÌ}Ç"vóB¬7W&6R˝ÌM≠ΩÌ}]›çR‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72ÙDU4îtÂı5ï5DT“Ê÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢&WfñWrÌ"&VFW6ñv‚◊c"¬}≠Ω-¬ç›M]≠çÌ-›çRM‚}˝=≠‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢&WfñWrÌ-≠Ω-]-Û≤f˜VÊFFñˆ‚C"˝Ì-]]›˝ÇCCÛ3ì≤VÁbÊWÜ◊∆R›RÌM]mç"6V7&WG2¬&ˆGV7Fñˆ‚›R}-Ì›="‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB˜GóV6ÜV6≤¬ÖEE26÷ˆ∂R¬6V7&WB◊FÇ&WfñWs≤Ì˝}-]ΩÕ›‚}]]rÖEE2&WfñWr˝Ì-]ç-¬&F∆ˆFVB¬÷Á&˜R∆ˆFVB¬Fˆ∂VÁ2∆ñVB¬CCÇfó7V¬6÷ˆ∂R¬3ìÇfó7V¬6÷ˆ∂R¬ÊÚ552ˆfˆÁB6ˆÁ6ˆ∆RW'&˜'2‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•fW&ñfñ6Fñˆ‚Ê˜FS¢¢¢∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B53≤]}Ì˝›ΩíÊVÁbÊWÜ◊∆RÇ-]Õ]››ΩíÊˆñÊFWÇ‚ÖEE2&WfñWr-˝}“&VFW6ñv‚◊c#≤&FÙ÷Á&˜RÙ552ÇÌ-=---çRÌççÌ¢-›çm≤˝Ì-]]›≤"=}]R‚˜vÊW"fó7V¬6÷ˆ∂RCC9rìÇ3ì9rÉCB52ç-≠ΩÌ}Ú≠ççΩΩçm2¬˝Ωç-2ÇÌ-=---çRÜ˜&ó¶ˆÁF¬˜fW&f∆˜rí‚
+Ω=}ù›‚Ì}M››Ωí&ˆGV7Fñˆ‚FW∆˜ñ÷VÁBÌ-M]ΩÕ›Ì=‚&WfñWr›˝Ì]≠-=MΩ“}]ç]›çÚ-ΩM]ΩÕm≤=ù]--=Ìùçí&ˆGV7Fñˆ‚›RÕ]›˝ΩÚ‡¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC2ì¢&WfñWrÇ]}Ì˝›ΩíVÁb&6V∆ñÊP††¢22Ñ4R(	BV&∆ñ2fó7V¬f˜VÊFFñˆ‡†¢222CB(	BV&∆ñ2∆ñ˜WB¬ÜVFW"Çfˆ˜FW †¢“¢§îC¢¢¢C@¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢V&∆ñ2∆ñ˜WB¬ÜVFW"Çfˆ˜FW ¢“¢§vˆ√¢¢¢	˝]]›]-Ç&˜fVB˝=Ωç}›=‚ÌÌΩÌ}≠2¬-≠ΩÌ}ÚÕÌçΩÕ›ÌRÕ]›‚‡¢“¢•váì¢¢¢
+›-‚ÌùÚ≠ÌÕ˝Ì}çmçÚ-]R-›çb‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C2‡¢“¢§∆∆˜vVB66˜S¢¢¢&ˆ˜B∆ñ˜WB¬ÜVFW"ˆÊbˆ÷ˆ&ñ∆R÷VÁRÙfˆ˜FW"ÇçR552‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	˝]]ÕÌ-ÜVFW"¬'W6ñÊW726ˆÁFVÁB]r˝ÌM--]mM]›çÚ‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72ÙDU4îtÂı5ï5DT“Ê÷C≤&˜F˜GóRˆñÊFWÇÊáF÷¬¬7Gñ∆W2Ê772¬67&óBÊß2¬76WG3≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+ΩΩ≠Ç›=M=ùçR&˜WFW2ÕÌ=="çÕ]-¬˝›ÌR-]Õ]››ÌRÌ-Ì˝›çR¬]r˝=-ΩRá&Vb‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢FW6∑F˜ˆ÷ˆ&ñ∆R˝Ì--Ì˝Ì"&˜F˜GóR¬Õ]›‚Ì-]"≠Ω-ç-=Ìí‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬'&˜w6W"6÷ˆ∂RCCÛ3ì‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•fW&ñfñ6Fñˆ‚Ê˜FS¢¢¢ñ◊∆V÷VÁFFñˆ‚6ˆ÷÷óBccìs633ÉÉ3C3ÉÜ3S3ñS6CsFCfÉcV#S≤∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B52¬ÖEE2'&Ê6Ç&WfñWr$TEí‚	-ΩM]Ω]b˝Ì-]ç≤6á&ˆ÷R&W7ˆÁ6ófR÷ˆFS¢CC9rì¬scÇ9rì¬3ì9rÉCB(	B53≤ÜVFW"Ùfˆ˜FW"¬Ì-=---çR˜fW&f∆˜r¬÷ˆ&ñ∆R˜V‚ˆ6∆˜6R¬W66R¬F"¬fˆ7W2ÇΩΩ≠Ç(	B52‚6ˆÁ6ˆ∆RÌççÌ¢˝çΩÌm]›çÚ›R˝Ì≠}Ω‡¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCBì¢V&∆ñ2∆ñ˜WB¬ÜVFW"Çfˆ˜FW †¢222CR(	BÜW&ÚÇ÷FW&ñ¬6Ü˜v66P†¢“¢§îC¢¢¢CP¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢ÜW&ÚÇ÷FW&ñ¬6Ü˜v66P¢“¢§vˆ√¢¢¢	˝]]›]-ÇM-R-]M=ùçRm]›≤&˜F˜GóR"ÊWáB≠ÌÕ˝Ì›]›-≤‡¢“¢•váì¢¢¢	Ì›Ç}MÌ"=--]mM››Ωí-ç}=ΩÕ›Ωí˝}Ω¢‡¢“¢§FWVÊFVÊ6ñW3¢¢¢CB‡¢“¢§∆∆˜vVB66˜S¢¢¢ÜW&Úı6Ü˜v66R¬=--]mM››ΩR76WG2Çñ÷vR6ó¶W2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	›Ì-ΩR]›M]≤¬-ΩÕΩçΩ]››ΩR-Ì-›ΩR-Ìù--‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72ÙDU4îtÂı5ï5DT“Ê÷C≤&˜F˜GóRˆñÊFWÇÊáF÷¬¬7Gñ∆W2Ê772¬67&óBÊß2¬76WG3≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	M]Õ‚≠M≤Ì]›˝-¬˝]}]›-mçÌ››ΩÕÉ≤›R-ΩM--¬}˝ÌM--]mM››ΩR4µRÜ˜F˜2˝Ç&WfñWrçΩÇ&ˆGV7Fñˆ‚‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	≠ÌÕ˝Ì}çmçÚÇ≠MçÌ-›çRÌ˝Ì--çÕ≤&˜F˜GóR›CCÛ3ì‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬-ç}=ΩÕ›Ωí6÷ˆ∂R¬76WG2∆ˆFVB‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCRì¢ÜW&ÚÇ÷FW&ñ¬6Ü˜v66P†¢222Cb(	BÜˆ÷Rg&v÷VÁG2ÇTí&ñ÷óFófW0†¢“¢§îC¢¢¢C`¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢Üˆ÷Rg&v÷VÁG2ÇTí&ñ÷óFófW0¢“¢§vˆ√¢¢¢	˝]]›]-ÇM=Õ]›"≠-ΩÌ=¬&ˆGV7B6&B¬∆ñ6Fñˆ‚&∆ˆ6≤Ç5D‡¢“¢•váì¢¢¢Üˆ÷RMÌΩm]“Ω-¬m]ΩÌ-›Ω¬fó7V¬&VfW&VÊ6R‡¢“¢§FWVÊFVÊ6ñW3¢¢¢CR‡¢“¢§∆∆˜vVB66˜S¢¢¢	≠›Ì˝≠Ç˝ΩΩ≠Ç˝≠-Ì}≠Ù5D≠¢M≠-ç}]≠Ç=--]mM]›≤‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢
+]ΩÕ›Ú˝Ì≠=˝≠¬›Ì-ÚÜˆ÷WvRçΩÇM]≠Ì-ç-›ΩRvVÊW&ñ26&G2‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72ÙDU4îtÂı5ï5DT“Ê÷C≤&˜F˜GóRˆñÊFWÇÊáF÷¬¬7Gñ∆W2Ê772¬67&óBÊß2¬76WG3≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢&ñ6RÙ5DM]Õ‚Ì-Ì˝›çÚ›R-ΩM--¬}]ΩÕ›ΩR˝ÌMmÇ‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢
+-RmRΩÌ≠ÇÇç]]çÚ¬›]"ΩÌm›ΩR≠ÌÕÕ]}]≠çRM››ΩR‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬FW6∑F˜ˆ÷ˆ&ñ∆R6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCbì¢Üˆ÷Rg&v÷VÁG2ÇTí&ñ÷óFófW0†¢222Cr(	B&W7ˆÁ6ófRÇ÷˜Fñˆ‚&óGê†¢“¢§îC¢¢¢Cp¢“¢•&ñ˜&óGì¢¢¢¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢&W7ˆÁ6ófRÇ÷˜Fñˆ‚&óGê¢“¢§vˆ√¢¢¢	˝Ì-]ç-¬˝=Ωç}›=‚Ì›Ì-2›ççç›RÇ&VGV6VB÷˜Fñˆ‚‡¢“¢•váì¢¢¢	˝]]›ÌÕÌm]"›]}Õ]-›‚ΩÌÕ-¬÷ˆ&ñ∆RçΩÇ›çÕmç‚‡¢“¢§FWVÊFVÊ6ñW3¢¢¢Cb‡¢“¢§∆∆˜vVB66˜S¢¢¢552fóÜW2˝‚M≠-ç}]≠ç¬›]Ì-˝M]›ç˝¬¬í÷˜Fñˆ‚‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	›Ì-Ωí'BFó&V7Fñˆ‚ÇMÌ˝ÌΩ›ç-]ΩÕ›ΩR]≠mçÇ‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72ÙDU4îtÂı5ï5DT“Ê÷C≤&˜F˜GóRˆñÊFWÇÊáF÷¬¬7Gñ∆W2Ê772¬67&óBÊß2¬76WG3≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+-›]›çR&˜F˜GóRCCÛ3ì≤F&∆WB¬˜fW&f∆˜r¬6ˆÁ6ˆ∆R‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	≠Ì›-]›"-çM]“]r•2¬›]"˜fW&f∆˜rÇÌççÌ¢¬&VGV6VB÷˜Fñˆ‚Ì-]"‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢F&vWFVB∆ñÁB˜GóV6ÜV6≤¬'&˜w6W"fñWw˜'Bˆ6ˆÁ6ˆ∆R6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCrì¢&W7ˆÁ6ófRÇ÷˜Fñˆ‚&óGê††¢22Ñ4R"(	B6ˆÁFVÁBb÷VFñvFP†¢222CÇ(	B	˝ÌM--]mM]›çR-Ì-›Ì=‚˝-Ì}›ç≠ †¢“¢§îC¢¢¢CÄ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢	˝ÌM--]mM]›çR-Ì-›Ì=‚˝-Ì}›ç≠ ¢“¢§vˆ√¢¢¢
+-]ç-¬4µR¬M]≠Ì≤¬≠-]=ÌçÇ¬]Mç›çm≤¬ç2¬}Õ]¬-Ìù--Ç--=≤‡¢“¢•váì¢¢¢	›]ΩÕ}Ú-Ìç-¬˝ÌMm2›M]ÕÌ›-mçÌ››Ì¬˝ùR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢Cr‡¢“¢§∆∆˜vVB66˜S¢¢¢	-]çMçmçÌ-››Ωí]]-M››ΩR˝ç-Ì}›ç≠Ì"ÇÌ-≠Ω-ΩR-Ì˝Ì≤]r]Ωç}mçÇ‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢
+Ì}M›çR-Ì-Ì""		B¬˝]M˝ÌΩÌm]›çÚ‚m]›R‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù4ÙÂDTÂEÙTDïBÊ÷C≤Fˆ72ÙDU4îtÂÙDï$T5DîÙÂ2Ê÷C≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+Ì}M-¬Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷C¢&˜fVB∆VÊ6Ç4µR6WB¬ç-Ì}›ç¢˝M-≠mMÌ=‚}›}]›çÚÇ6ñv‚÷ˆfb‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	]-¬Ì=ΩÌ-››Ωí]]-4µRÇÌ˝}-]ΩÕ›ΩR˝ÌΩ]íΩç‚˝-›Ωí$ƒÙ4¥TB˝çÌ¢‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢
+-]≠-ΩÌ≠Çç}›]›ç-Ì}›ç≠Ì¬¬]r≠ÌM‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b«VÊ÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•fW&ñfñ6Fñˆ‚Ê˜FS¢¢¢66WFÊ6R7&óFW&ñ-Ω˝ÌΩ›]›≥¢-ΩM]Ω]b˝ÌM--]Mç≤#Sî‰4≈TDR¬#S-çΩÕ›Ωí4µR¬Ç≠-]=Ìçí¬#3Mç≠çÌ-››=‚m]›2¬##b˝›]ΩÕ›ΩR}Õ]Ì"C"9r#ÉB¬ÚB„3#ÇÃ+"¬˝-çΩm]›≤˝≠ÌΩç}]--MΩÚ˝Ì-]]›Ì-]í¬M-R}›ΩR*Ω	≠Ω≠-+≤¬Ì¢Ω=m≤3Ω]"Çfñ∆&ñ∆óGíˆ∆ñ7í‚	˝ÌΩR˜vÊW"FV6ó6ñˆÁ23(	43BÌ-Ì-ÚM-R]ΩÕ›ΩR6ˆ÷÷W&6ñ¬==˝˝≥≤66W76˜'íVÊóBˆ÷ñÊñ◊V“˜7FWÇV&∆ñ26«Vr6ˆ∆∆ó6ñˆÁ2}]ç]›≤‚CíıCDÙ‰R¬FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚CÌ--ÚDÙDÚ‡¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCÇì¢	˝ÌM--]mM]›çR-Ì-›Ì=‚˝-Ì}›ç≠ †¢222Cí(	B
+=ΩÌ-çÚ}≠}ÇÌçMç}]≠çí≠Ì›-]› †¢“¢§îC¢¢¢Cê¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢
+=ΩÌ-çÚ}≠}ÇÌçMç}]≠çí≠Ì›-]› ¢“¢§vˆ√¢¢¢	˝ÌM--]Mç-¬≠Ì›-≠-≤¬MÌ--≠2¬-Ì}-"¬m]›2˝Ì˝Ω-2¬Ì=ΩçR‡¢“¢•váì¢¢¢6ÜV6∂˜WBÇ˝=Ωç}›ΩR-›çm≤-]=Ì"MÌ≠}=]ÕΩR=ΩÌ-çí‡¢“¢§FWVÊFVÊ6ñW3¢¢¢CÇ‡¢“¢§∆∆˜vVB66˜S¢¢¢	MÌ≠=Õ]›-çÌ--¬=--]mM››ΩRM≠-≤ÇÌ--]---]››ÌRΩçm‚‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	-ΩM=Õ››ΩRÌ]ù›çÚ¬&ˆGV7Fñˆ‚∆Vv¬]rÌ=ΩÌ-›çÚ‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù4ÙÂDTÂEÙTDïBÊ÷C≤Fˆ72ÙDU4îtÂÙDï$T5DîÙÂ2Ê÷C≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	MÌ˝ÌΩ›ç-¬Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷B˝ÌM--]mM››ΩÕÇ=ΩÌ-ç˝ÕÇÇ-]≠-Ì¬Ì=ΩçÚ‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	-RÌ˝}-]ΩÕ›ΩR˝ÌΩÚ˝-]≠-≤˝ÌM--]mM]›≤Ωç‚vFR}ΩÌ≠çÌ-“‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢
+M≠-}]≠ç›2Ç6ñv‚÷ˆfbÌM]m›çÚ¬]r≠ÌM‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b«VÊ÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCíì¢
+=ΩÌ-çÚ}≠}ÇÌçMç}]≠çí≠Ì›-]› †¢222C(	B	Õ]Mç¢ÌÌ--]---çRÇ˝- †¢“¢§îC¢¢¢C ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢	Õ]Mç¢ÌÌ--]---çRÇ˝- ¢“¢§vˆ√¢¢¢
+Ì--ç-¬÷ÊñfW7B]ΩÕ›ΩRFWáGW&Rˆ÷7&ÚˆñÁFW&ñ˜"≠MÌ"Ç˝"‡¢“¢•váì¢¢¢	]rMÌ-Ì-]›Ì=‚MÌ-‚6Ü˜w&ˆˆ“--ÌMç""}Ω=mM]›çR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢Cí‡¢“¢§∆∆˜vVB66˜S¢¢¢
+Ì˝Ì--Ω]›çR4µ^(i-MùΩ≤¬«BM≠-≤¬∆ñ6VÁ6R˜W&÷ó76ñˆ‚‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	=]›]mçÚ*Ω]ΩÕ›ΩR˝Ì]≠-Ì,+≤¬çÕ˝Ì""7F˜&vR‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù4ÙÂDTÂEÙTDïBÊ÷C≤Fˆ72ÙDU4îtÂÙDï$T5DîÙÂ2Ê÷C≤Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	MÌ˝ÌΩ›ç-¬Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷B÷VFñ÷ÊñfW7B˝-ÕÇ¬4µRÇ}Ωç}ç]¬˝Ì]≠-˝-ç}=Ωç}mçÇ‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	MΩÚ˝ÌM-]ÕΩR4µRç}-]-]“&ñ÷'íÇ˝-‚ç˝ÌΩÕ}Ì-›çÚΩç‚$ƒÙ4¥TB‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢	˝Ì-]≠ç-Ì}›ç≠˝˝"˝}]ç]›çí¬]r≠ÌM‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b«VÊ÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCì¢	Õ]Mç¢ÌÌ--]---çRÇ˝- ††¢22Ñ4R2(	B7W&6Rf˜VÊFFñˆ‡†¢222C(	B7W&6R&WfñWrVÁfó&ˆÊ÷VÁ@†¢“¢§îC¢¢¢C¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢7W&6R&WfñWrVÁfó&ˆÊ÷VÁ@¢“¢§vˆ√¢¢¢	˝ÌM=Ì-Ì-ç-¬ç}ÌΩçÌ-››Ωí-]-Ì-Ωí˝Ì]≠"Ç]}Ì˝›ΩRVÁb‡¢“¢•váì¢¢¢66ÜV÷ÇWFÇ-]=Ì"}ùçù››Ì=‚Ì≠=m]›çÚ‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C≤FWfV∆˜÷VÁBvFR52‚&ˆGV7Fñˆ‚6ˆÁFVÁBvFR›R-]=]-ÚMΩÚ&WfñWrVÁfó&ˆÊ÷VÁB‡¢“¢§∆∆˜vVB66˜S¢¢¢
+-ÌΩÕ≠‚&WfñWr&ˆ¶V7B¬˝]]Õ]››ΩR"}ùçù››Ì¬]›çΩçùR‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢&ˆGV7Fñˆ‚&ˆ¶V7B¬]ΩÕ›ΩR]≠]-≤"vóB¬6VVB‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤˜vÊW"÷6ˆÊfó&÷VBf7G2Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCé(	5Cì≤FWfV∆˜÷VÁBvFRˆ∆ñ7í&˜fR‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	ç}ÌΩçÌ--¬&WfñWrÌ"&ˆGV7Fñˆ„≤˝=Ωç}›ΩíU$¬ÇV&∆ó6Ü&∆R∂Wí›R6V7&WB‚	›Ç6VVB¬›Ç7ñÁFÜWFñ2fóáGW&W2"C›RÌ}MÌ-Ú‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢&WfñWrVÁbMÌ-=˝]“]-]2¬&ˆGV7Fñˆ‚ç}ÌΩçÌ-“‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢VÁbWá˜7W&R6ÜV6≤¬6ˆÊÊV7Fñˆ‚6÷ˆ∂R]rîí‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#rì¢¢¢Ì-M]ΩÕ›Ωí˝Ì]≠"÷&÷óÇ÷f∆WÇ◊&VFW6ñv‚◊c"◊&WfñWvÜGwVWfÁwáwF¶&ßßwVv∆÷¬WR÷6VÁG&¬”í"Ì-Ì˝›çÇ5DïdUÙÑT≈DÖí‚˜vÊW"›-Ìç≤"=ù]--=Ìù]¬fW&6V¬&WfñWr&ˆ¶V7B-ÌΩÕ≠‚‰UÖEıT$ƒî5ı5U$4UıU$∆Ç‰UÖEıT$ƒî5ı5U$4UıT$ƒï4Ñ$ƒUÙ¥UñÇ-Ω˝ÌΩ›ç≤&WfñWr&VFW∆˜í‚	›-]Õ]››Ì¬6W'fW"÷ˆÊ«í&˜WFR"$TEí&WfñWrFW∆˜ñ÷VÁBÑîB›Õ]]››‚›RÌ]›“"MÌ≠=Õ]›-mçÇíç-]-≠&VFW6ñv‚◊c&¬6ˆ÷÷óBCÜSÜSsfCSF6C#SìÉsì&cScC#&cCì#fV#Cí›ΩÌMΩç¬&WfñWtVÁfó&ˆÊ÷VÁC◊G'VV¬VÁe&W6VÁC◊G'VV¬7W&6U&V6Ü&∆S◊G'VV¢˝Ì-]≠ÖEE2ˆWFÇ˜cˆÜV«FÜV&∆ó6Ü&∆R∂WíÇ-Ì=ç¬ÌÌ--]---ç]¬U$¬Ì-M]ΩÕ›ÌÕ2&WfñWr&ˆ¶V7B‚	Ì--]"ÌM]m≤-ÌΩÕ≠‚-Ç&ˆˆ∆V„≤"˝Ì-]]››ΩR'VÁFñ÷R∆ˆw2›]"}›}]›çíVÁb˝≠ΩÌ}]í‚V&∆ñ2F&∆W2ˆ÷ñw&FñˆÁ3¢≤6VVBˆfóáGW&W2›RÌ}M-Ωç√≤∆Vv7í7W&6R›Rç}Õ]›“¬fW&6V¬&ˆGV7Fñˆ‚›RÕ]›˝ΩÚ˝‚˝ÌM--]mM]›ç‚˜vÊW"‚	-]Õ]››Ωí&˜WFR=MΩ“çrMç›ΩÕ›Ì=‚6ÜV6∂˜WBÌ-M]ΩÕ›Ω¬6∆VÁW6ˆ÷÷óC≤›ç≠≠çR]≠]-Ì""vóB‚FWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCì¢7W&6R&WfñWrVÁfó&ˆÊ÷VÁ@†¢222C"(	B66ÜV÷≠-ΩÌ=Çç›M]≠∞†¢“¢§îC¢¢¢C ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢66ÜV÷≠-ΩÌ=Çç›M]≠∞¢“¢§vˆ√¢¢¢
+Ì}M-¬6FVv˜&ñW2˜&ˆGV7G2˜&ˆGV7Eˆñ÷vW2˝ÌB=--]mM››=‚ÕÌM]Ω¬4µR‡¢“¢•váì¢¢¢F÷ñ‚Ç-ç-ç›MÌΩm›≤}M]Ω˝-¬ÌM›2ÕÌM]Ω¬‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C‡¢“¢§∆∆˜vVB66˜S¢¢¢	Õç=mçÚ-Ωçb¬6ÜV6∑2˜VÊóVW2Ùd≤ˆñÊFWÜW2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢˜&FW"66ÜV÷¬6VVB¬Tí¬WFÇ‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤˜vÊW"÷6ˆÊfó&÷VBf7G2Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCé(	5Cì≤FWfV∆˜÷VÁBvFRˆ∆ñ7í&˜fR‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+]ΩÕ›ΩR›]˝ÌΩ›ΩR6ˆ÷÷W&6ñ¬fñV∆G2MÌΩm›≤MÌ˝=≠-¬ÁV∆¬˜VÁ&W6ˆ«fVBÇfó6ñ&∆RÊˆ‚÷˜&FW&&∆R4µS≤=›ç≠ΩÕ›ΩR6«Vrı4µRÇ&ñ÷'í‚
+˝ÌÌDU5EÙÙ‰≈íç}ÌΩ˝mçÇÇ6ˆÁ7G&ñÁG2Ì˝]M]Ωç-¬}M]¬¬]r˝ç-Ì]›çÚ7ñÁFÜWFñ2}›}]›çí]ΩÕ›Ω¬4µR‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	Õç=mçÚ-Ì˝Ìç}-ÌMçÕ≤Ì=›ç}]›çÚÌ-≠ΩÌ›˝Ì"›]≠Ì]≠-›ΩRç}-]-›ΩR}›}]›çÚÇMÌ˝=≠Ì"˝ÌM--]mM››ΩR]ΩÕ›ΩR4µR˝=-ΩÕÇÌ˝}-]ΩÕ›ΩÕÇMΩÚ6ˆ÷÷W&6R˝ÌΩ˝ÕÇ‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢÷ñw&Fñˆ‚6ÜV6≤¬F&vWFVBD"6ˆÁ7G&ñÁG2‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#rì¢¢¢Õç=mçÚ7W&6Rˆ÷ñw&FñˆÁ2Û##cì#sCìCUˆ6F∆ˆuˆf˜VÊFFñˆ‚Á7∆˝çÕ]›]›-ÌΩÕ≠‚¢7W&6R&WfñWrGwVWfÁwáwF¶&ßßwVv∆÷¬]fñ∆VÊ÷RfW'6ñˆ‚Ì-˝M]"}˝çÕ‚÷ñw&Fñˆ‚Üó7F˜'í‚
+Ì}M›≤˝=-ΩR6FVv˜&ñW6¬&ˆGV7G6¬&ˆGV7Eˆñ÷vW6¢UTîB≤¬=›ç≠ΩÕ›ΩR6FVv˜'í˜&ˆGV7B6«VrÇ4µR¬d≤$U5E$î5B¬MÌ˝=-çÕΩRÌΩÇç}Ìm]›çí}]]r4ÑT4≤Ç'Fñ¬VÊóVRñÊFWÇ›&ñ÷'í‚&ñ6Uˆ÷ñÊ˜&]›ç"-ÌΩÕ≠‚-Ì}›=‚m]›2"≠Ì˝]ù≠R%T#≤Mç˝}Ì“Ì-M]ΩÕ›‚"6˜W&6U˜&ñ6U˜&ÊvV≤&ñ6U˜VÊóFÇ6∆U˜VÊóF}M]Ω]›≥≤˝ΩÌùM¬Ωç-ÁV÷W&ñ2ÉB√BñÇ›]ç}-]-›ΩR≠ÌÕÕ]}]≠çR˝}Õ]›ΩR˝ÌΩÚÁV∆∆&∆S≤fñ∆&ñ∆óGíÁV∆∆&∆R-ÌΩÕ≠‚ñÂ˜7Fˆ6∂ˆˆÂˆ˜&FW&‚	ÌMç“&ˆGV7B“ÌMç“ñ÷◊WF&∆R4µR‚6F∆ˆuˆ∂ñÊF$T¬ıDU5EÙÙ‰≈í¬˝]Mç≠DU5EÙÙ‰≈í4µRÇñ÷◊WF&∆RG&ñvvW"Ì-M]Ω˝Ì"=M=ùçRfóáGW&W3≤ç}Ìm]›çÚ›Ω]M=Ì"-çÚ}]]r&ˆGV7Bd≤‚V&∆ñ2ˆ∆ñ6ñW2CBÌ˝}›≤MÌ˝=≠-¬-ÌΩÕ≠‚$T¬ÇÌ˝=Ωç≠Ì-››ΩR&ˆGV7Bˆ6FVv˜'ì≤˝Ì≠-R-Ç-Ωçm≤çÕ]Ì"$≈2VÊ&∆VB]rˆ∆ñ6ñW2¬íw&ÁG2Ì-Ì}-›≤‚F&vWFVBD"6ÜV6∑2ç-≠ΩÌ}ÚGW∆ñ6FR4µR˜6«Vr¬›]-]›ΩR&ñ6R˜VÁFóGíˆfñ∆&ñ∆óGíˆFñ÷VÁ6ñˆÁ2¬--ÌÌR&ñ÷'í¬DU5EÙÙ‰≈í÷&∂W"í52"-›}≠mçÇ&ˆ∆∆&6≥≤˝‚}-]ç]›çÇ-R-Ç-Ωçm≤˝=-≤‚6VVB¬WFÇ¬7F˜&vR¬˜&FW"66ÜV÷¬&ˆGV7Fñˆ‚ç}Õ]›]›çÚÌ-=---=Ì"‚FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC"ì¢66ÜV÷≠-ΩÌ=Çç›M]≠∞†¢222C2(	B66ÜV÷}˝-≠ÇÇ›]ç}Õ]›˝]ÕÌ-¿†¢“¢§îC¢¢¢C0¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢66ÜV÷}˝-≠ÇÇ›]ç}Õ]›˝]ÕÌ-¿¢“¢§vˆ√¢¢¢
+Ì}M-¬˜&FW%˜&WVW7G2‚6Ê6Ü˜B¬--=ÕÇÇ}]ç››ΩÕÇWFFR6ˆ«V÷Á2‡¢“¢•váì¢¢¢	}˝-≠MÌΩm›Ì]›˝-¬ç]ÌM›=‚m]›2›-]=M‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C"‡¢“¢§∆∆˜vVB66˜S¢¢¢
+-Ωçm¬ñFV◊˜FVÊ7íVÊóVVÊW72¬WFFVEˆB¬w&ÁG2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢6ÜV6∂˜WBí¬F÷ñ‚Tí¬˜&FW%ˆóFV◊2]r›=mM≤‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤˜vÊW"÷6ˆÊfó&÷VBf7G2Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCé(	5Cì≤FWfV∆˜÷VÁBvFRˆ∆ñ7í&˜fR‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢6ˆ«V÷‚UDDR-ÌΩÕ≠‚7FGW2ˆñÁFW&Ê≈ˆÊ˜FS≤≠ÌÕÕ]}]≠çR˝ÌΩÚñ÷◊WF&∆R‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢D"Ì--]=]"ç}Õ]›]›çR=ÕÕ≤˝-Ì¢WFÜVÁFñ6FVBÌΩÕ‚‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢÷ñw&Fñˆ‚6ÜV6≤¬ÊVvFófR6ˆ«V÷‚&ófñ∆VvRFW7G2‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#rì¢¢¢&WfñWr÷ˆÊ«í÷ñw&Fñˆ‚7W&6Rˆ÷ñw&FñˆÁ2Û##cì#ss#ìCÖˆ˜&FW%˜&WVW7G5ˆf˜VÊFFñˆ‚Á7∆˝çÕ]›]›˝ÌΩRC#≤-]çÚMùΩÌ-˝M]"÷ñw&Fñˆ‚Üó7F˜'í‚	ÌM›˝=-Ú˜&FW%˜&WVW7G6UTîB≤¬6∆ñVÁB÷vVÊW&FVBUTîBñFV◊˜FVÊ7ïˆ∂WíT‰ïTV]rD"FVfV«B¬Ì˝}-]ΩÕ›Ω¬˜VR&WVW7EˆÜ6Ç'óFVÉ3.(	3cBù-í¬Ê÷R˜ÜˆÊV‰ıBÂTƒ¬¬ÁV∆∆&∆R6óGíˆV÷ñ¬ˆ6ˆ÷÷VÁBˆñÁFW&Ê≈ˆÊ˜FV¬˝-›Ω¬6ˆÁ6VÁEˆF¬›]˝=-Ω¬•4Ù‰"'&íóFV◊5˜6Ê6Ü˜F¬F˜F≈ˆ÷ñÊ˜"&ñvñÁB„“¬%T"¬--=ÕÇÊWrˆñÂ˜&ˆw&W72ˆ6ˆ◊∆WFVBˆ6Ê6V∆∆VFÇç›M]≠Ì¬Ì}]]MÇá7FGW2¬7&VFVEˆBDU42¬ñBñ‚
+-ç==]		BÕ]›˝]"WFFVEˆFÇ}˝]ù]"ΩÌΩRç}Õ]›]›çÚ≠ÌÕR7FGW2ˆñÁFW&Ê≈ˆÊ˜FV¬-≠ΩÌ}Ú7W7Fˆ÷W"ˆ6ˆ÷÷W&6ñ¬6Ê6Ü˜BÇñFV◊˜FVÊ7í‚Êˆ‚5%TBÌ-=---=]#≤WFÜVÁFñ6FVB˝ÌΩ=}]"-ÌΩÕ≠‚6ˆ«V÷‚÷∆WfV¬UDDRá7FGW2∆ñÁFW&Ê≈ˆÊ˜FRí¬]rF&∆R÷∆WfV¬UDDRÙDTƒUDRÙîÂ4U%BÇ]r4TƒT5BM‚$≈2ˆw&ÁG2CC≤6W'fñ6U˜&ˆ∆R-ÌΩÕ≠‚4TƒT5BÙîÂ4U%BMΩÚ=M=ù]=‚6W'fW"÷ˆÊ«íí‚$≈2VÊ&∆VB]rˆ∆ñ6ñW2M‚CB‚6ˆÁ7G&ñÁB¬&ófñ∆VvR¬G&ñvvW"ÇÊVvFófR&ˆ∆RFW7G253≤7ñÁFÜWFñ2-Ì≠ÇΩΩÇ-ÌΩÕ≠‚"G&Á67Fñˆ‚&ˆ∆∆&6≤¬"}˝-≠R-Ì¢‚∆Vv7í˜&ˆGV7Fñˆ‚7W&6R›Rç}Õ]›”≤FWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC2ì¢66ÜV÷}˝-≠ÇÇ›]ç}Õ]›˝]ÕÌ-¿†¢222CB(	B$≈2˝=Ωç≠mçÇÇ˝ç--›Ì-Ä†¢“¢§îC¢¢¢C@¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢$≈2˝=Ωç≠mçÇÇ˝ç--›Ì-Ä¢“¢§vˆ√¢¢¢	MÌ-ç-¬˝=Ωç}›ΩR&VBˆ∆ñ6ñW2Ç}≠Ω-¬}˝-≠Ç‡¢“¢•váì¢¢¢	˝˝ÕÚFFí›RMÌΩm›Ì]ÌMç-¬ù"‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C2‡¢“¢§∆∆˜vVB66˜S¢¢¢$≈2ˆw&ÁG2MΩÚ≠-ΩÌ=Ç}≠}Ì"‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢F÷ñ‚ˆ∆ñ6ñW2M‚÷V÷&W'6Üó¬6VVB¬g&ˆÁFVÊB‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤˜vÊW"÷6ˆÊfó&÷VBf7G2Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCé(	5Cì≤FWfV∆˜÷VÁBvFRˆ∆ñ7í&˜fR‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	˝Ì-]ç-¬-˝}Ç˝ÌM=≠.(iM≠-]=Ìç˛(iMç}Ìm]›çS≤˝=Ωç}›ΩRˆ∆ñ6ñW2ˆw&ÁG2ç≠ΩÌ}Ì"&ˆGV7G2Ê6F∆ˆuˆ∂ñÊB“uDU5EÙÙ‰≈ív}]]r˝-›ÌR6F∆ˆuˆ∂ñÊB“u$T¬vÇ˝Ì-]˝Ì"Ì˝=Ωç≠Ì-››=‚≠-]=Ìç‚‚C"Ì--çΩíMÌ-=Ú}≠Ω-Ω¬M‚›-Ìí}M}Ç‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢Êˆ‚-çMç"-ÌΩÕ≠‚Ì˝=Ωç≠Ì-››ÌRÇ›R}ç-]"˝Õ]›˝]"˜&FW'2‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢F&vWFVBÊˆ‚ˆWFÜVÁFñ6FVBFVÊñ¬FW7G2‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#Çì¢¢¢&WfñWr÷ñw&Fñˆ‚7W&6Rˆ÷ñw&FñˆÁ2Û##cì#ÉCcS˜V&∆ñ5ˆ6F∆ˆu˜&«5˜&óf7íÁ7∆˝çÕ]›]›¬fñ∆VÊ÷RfW'6ñˆ‚Ì-˝M]"÷ñw&Fñˆ‚Üó7F˜'í‚$≈2-≠ΩÌ}]››-]R}]-ΩR-ΩçmS≤ÊˆÊÇ˜&FñÊ'íWFÜVÁFñ6FVFçÕ]Ì"-ÌΩÕ≠‚4TƒT5BMΩÚ6FVv˜&ñW2˜&ˆGV7G2˜&ˆGV7Eˆñ÷vW6‚V&∆ñ2ˆ∆ñ6ñW2˝Ì≠}Ω-Ì"-ÌΩÕ≠‚Ì˝=Ωç≠Ì-››=‚≠-]=Ìç‚¬Ì˝=Ωç≠Ì-››Ωí›]]ç-›Ωí$T¬-Ì-"Ì˝=Ωç≠Ì-››Ìí≠-]=ÌçÇÇ]=‚ç}Ìm]›çÛ≤Ì˝=Ωç≠Ì-››ΩíDU5EÙÙ‰≈í≠Ω"‚	MΩÚ˜&FW%˜&WVW7G6›]"ˆ∆ñ6ñW3¢Êˆ‚5%TB}≠Ω"¬WFÜVÁFñ6FVB]r4TƒT5BÙîÂ4U%BÙDTƒUDR˜F&∆R÷∆WfV¬UDDR¬C26ˆ«V÷‚÷∆WfV¬UDDRá7FGW2∆ñÁFW&Ê≈ˆÊ˜FRíÌ--Ú]r$≈2›MÌ-=˝M‚Cr‚&ˆ∆R6ñ◊V∆Fñˆ‚˝Ì-]çΩ5¬w&ÁG2Ç$≈2-Õ]-S¢V&∆ñ2&VB52¬}≠Ω-Ωí≠-ΩÌ2ˆ˜&FW'2Ç◊WFFñˆÁ2DT‰îTB¬WFÜVÁFñ6FVB7FGW2UDDR}-Ì›=≤-Ì¢‚7ñÁFÜWFñ2-Ì≠Ç"-›}≠mçÇ$Ùƒƒ$4≤¬˝ÌΩR-]--Ì¢-‚-]R}]-ΩR-ΩçmS≤∆Vv7í˜&ˆGV7Fñˆ‚7W&6R›Rç}Õ]›“‚6V7W&óGíGfó6˜"˝Ì≠}Ω-]"-ÌΩÕ≠‚ÌmçM]ÕΩíî‰dÚ&«5ˆVÊ&∆VEˆÊı˜ˆ∆ñ7ñMΩÚ˝ç--›Ìí-Ωçm≤}˝-Ì¢‚FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCBì¢$≈2˝=Ωç≠mçÇÇ˝ç--›Ì-Ä†¢222CR(	B7F˜&vR'V6∂WB&6V∆ñÊP†¢“¢§îC¢¢¢CP¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢7F˜&vR'V6∂WB&6V∆ñÊP¢“¢§vˆ√¢¢¢
+Ì}M-¬&ˆGV7B÷VFñ'V6∂WBÇ›}ΩÕ›ΩRÌ=›ç}]›çÚ‡¢“¢•váì¢¢¢ñ÷vRFV∆ófW'í}-çç"Ì"]}Ì˝›Ì=‚]›]›çÚ‡¢“¢§FWVÊFVÊ6ñW3¢¢¢CB‡¢“¢§∆∆˜vVB66˜S¢¢¢'V6∂WB‘î‘R˜6ó¶R¬˝=Ωç}›Ωí&VB¬}˝]"˝=Ωç}›ΩR◊WFFñˆÁ2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢F÷ñ‚W∆ˆBTíÇF÷ñ‚7F˜&vRw&óFRˆ∆ñ6ñW2‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤˜vÊW"÷6ˆÊfó&÷VBf7G2Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCé(	5Cì≤FWfV∆˜÷VÁBvFRˆ∆ñ7í&˜fR‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	›R}==m-¬›]˝ÌM--]mM››ΩR≠M≥≤≠ΩÌ}ÇÇ˝]Mç≠≤Mç≠çÌ-›≤‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢Êˆ‚ÕÌm]"}ç--¬}]ç››Ωí76WB¬›RÕÌm]"W∆ˆBˆFV∆WFR‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢7F˜&vRˆ∆ñ7íÊVvFófRFW7G2‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#Çì¢¢¢	"Ì-M]ΩÕ›Ì¬7W&6R&WfñWr˝çÕ]›]›÷ñw&Fñˆ‚7W&6Rˆ÷ñw&FñˆÁ2Û##cì#ÉCCCe˜&ˆGV7Eˆ÷VFñˆ'V6∂WEˆ&6V∆ñÊRÁ7∆Ì-˝MÌù]í÷ñw&Fñˆ‚Üó7F˜'ì¢ÌMç“&ˆGV7B÷÷VFñ'V6∂WB¬V&∆ñ2ˆ&¶V7BU$¬¬‘î‘R-ÌΩÕ≠‚ñ÷vRˆßVv¬ñ÷vR˜Êv¬ñ÷vR˜vV'¬ñ÷vRˆfñf¬Õ≠çÕΩÕ›Ωí}Õ]"÷î"É"SÉ"ì"ù"í‚
+›-‚-]]›ç}]≠çíΩçÕç"'V6∂WB¬›R≠ÌÕÕ]}]≠çíM≠"‚	=M=ùçRF÷ñ‚˝=-Ç=]›]ç=Ì-Ú˝ÌB&ˆGV7G2Û«&ˆGV7B÷ñC‚Û∆vVÊW&FVB÷fñ∆R÷∂Wì‚„∆WáCÊ≤&rW6W"FÇ›RMÌ˝=≠]-Ú‚	ç}-]-›ΩíU$¬˝=Ωç}›Ì=‚'V6∂WBMÌ-=˝]“-]√¢"›]=‚ÕÌm›‚}==m-¬-ÌΩÕ≠‚˜vÊW"÷&˜fVB÷VFñ˝-ÕÇ›˝=Ωç}›Ωí˝Ì≠r¬›R6ˆÊfñFVÁFñ¬G&gG2‚7F˜&vRˆ&¶V7G6$≈2-≠ΩÌ}]›Çˆ∆ñ6ñW2Ì-=---=Ì#¢Êˆ‚ˆWFÜVÁFñ6FVBW∆ˆB¬˜fW'w&óFRÇFV∆WFR›R˝ÌΩ=}Ì"MÌ-=˝M‚F÷ñ‚÷V÷&W'6Üó˜ˆ∆ñ6ñW2=M=ùçRD4≤‚
+-]]›ç}]≠çíDU5EÙÙ‰≈í‰r}]]rMÌ-]]››=‚&WfñWr˝›]Ω¬M≤ÖEE#V&∆ñ2U$¬ÇÌ-˝M]›çRù-Ì#≤5drÌ-≠ΩÌ›“‘î‘R&W7G&ñ7Fñˆ„≤ΩçÕç"MùΩ˝ÌM--]mM“≠Ì›Mç==mç]í'V6∂WB‚5¬&ˆ∆R6÷ˆ∂R˝ÌM--]Mç≤FVÊñVB◊WFFñˆÁ2MΩÚÊˆ‚Ç˜&FñÊ'íWFÜVÁFñ6FVC≤‰r=MΩ“¬Ì≠]≠-Ì"¬]ΩÕ›ΩRç}Ìm]›çÚÇ&ˆGV7Eˆñ÷vW2&˜w2›RMÌ-Ω˝Ωç¬‚∆Vv7í˜&ˆGV7Fñˆ‚7F˜&vR›RÕ]›˝ΩÛ≤FWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCRì¢7F˜&vR'V6∂WB&6V∆ñÊP†¢222Cb(	B6W'fW"6∆ñVÁG2ÇVÁb&˜VÊF'ê†¢“¢§îC¢¢¢C`¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢6W'fW"6∆ñVÁG2ÇVÁb&˜VÊF'ê¢“¢§vˆ√¢¢¢
+]Ωç}Ì--¬Ì-M]ΩÕ›ΩRV&∆ñ2Ç6V7&WB7W&6R6∆ñVÁG2‡¢“¢•váì¢¢¢6V7&WB›=m]“-ÌΩÕ≠‚˝=Ωç}›ÌÕ2VÊGˆñÁB}˝-≠Ç‡¢“¢§FWVÊFVÊ6ñW3¢¢¢CR‡¢“¢§∆∆˜vVB66˜S¢¢¢6W'fW"÷ˆÊ«í6∆ñVÁG2¬≠Ì›Mç2¬-ç˝≤ÌççÌ¢¬˝Ì-]≠VÁb‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢˜&FW"VÊGˆñÁB¬WFÇ¬=}]›Ωí6V7&WB‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤˜vÊW"÷6ˆÊfó&÷VBf7G2Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCé(	5Cì≤FWfV∆˜÷VÁBvFRˆ∆ñ7í&˜fR‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢V&∆ñ2&VB-]=M]rF÷ñ‚6ˆˆ∂ñW3≤6V7&WB6∆ñVÁB›R›≠˝Ì-çÌ--¬"6∆ñVÁB‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢'Vñ∆B›R-≠ΩÌ}]"6V7&WC≤Êˆ‚˜6V7&WB&˜VÊF&ñW2˝Ì-]]›≤‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢GóV6ÜV6≤¬'VÊF∆R&˜VÊF'í¬F&vWFVBD"6÷ˆ∂R‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢V&∆ñ26∆ñVÁBç˝ÌΩÕ}=]"-ÌΩÕ≠‚&WfñWrU$¬ÇV&∆ó6Ü&∆R∂Wí¬]r6ˆˆ∂ñW2ÇW6W"6W76ñˆ„≤6F∆ˆr4TƒT5B52¬MÌ-=Ú¢˜&FW%˜&WVW7G6DT‰îTB‚	Ì-M]ΩÕ›Ωí6W'fW"÷ˆÊ«ñ6V7&WB6∆ñVÁBÌ}M“-ÌΩÕ≠‚MΩÚ=M=ù]=‚6W'fW"◊6ñFR˜&FW"í¬]r'&˜w6W"ñ◊˜'C≤VÁb˝Ì-]˝Ì-Ú˝Çç˝ÌΩÕ}Ì-›çÇÇ›ÌÕΩç}=Ì-Ú}]]rG&ñ“Çñ‚6V7&WB6W'fW"6÷ˆ∂R›˜&FW%˜&WVW7G24TƒT5BñBƒî‘ïB(	B52ÑÖEE#¬˜vÊW"ˆWFÜ˜&ó¶VBfW&6V¬fW&ñfñ6Fñˆ‚›FW∆˜ñVB&WfñWrì≤˝=-Ìí]}=ΩÕ-"MÌ˝=-ç¬¬}˝çÇ›RÌ}M-Ωç¬‚6V7&WB6F∆ˆr4TƒT5B}≠Ω"w&ÁG2˝‚˝Ì]≠-2Ç›R˝-Ω˝]-Ú-]-Ì¬6V7&WB6∆ñVÁB‚	-]Õ]››Ωí&WfñWrFñvÊ˜7Fñ2&˜WFR=MΩ”≤∆ñÁB¬GóV6ÜV6≤¬'Vñ∆B¬'VÊF∆RÙvóB6V7&WB66Á252‚&ˆGV7Fñˆ‚]rç}Õ]›]›çí‚FWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TC≤Ω]M=ÌùÚD4≤Cr‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCbì¢6W'fW"6∆ñVÁG2ÇVÁb&˜VÊF'ê††¢22Ñ4RB(	BF÷ñ‚WFÜVÁFñ6Fñˆ‡†¢222Cr(	BF÷ñÂ˜W6W'2ÇF÷ñ‚$≈0†¢“¢§îC¢¢¢Cp¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢F÷ñÂ˜W6W'2ÇF÷ñ‚$≈0¢“¢§vˆ√¢¢¢
+Ì}M-¬]Mç›=‚-Ωçm2MÌ˝=≠MÕç›Ì"Ç˝ÌΩç-ç≠Ç÷V÷&W'6Üó‡¢“¢•váì¢¢¢WFÇ66˜VÁB¬˝‚]R›RM"˝"‡¢“¢§FWVÊFVÊ6ñW3¢¢¢Cb‡¢“¢§∆∆˜vVB66˜S¢¢¢	Õç=mçÚF÷ñÂ˜W6W'2¬4TƒT5B˜v‚¬FVÁí6V∆b◊w&óFR¬$≈2MÕç›≠çR-Ωçb‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢∆ˆvñ‚Tí¬›Ì-ΩRÌΩÇ¬V&∆ñ26ñvÁW‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢˜&FW"UDDR-ÌΩÕ≠‚7FGW2ˆñÁFW&Ê≈ˆÊ˜FS≤6F∆ˆwVR5%TB-ÌΩÕ≠‚7FófRF÷ñ‚‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	›R÷F÷ñ‚WFÜVÁFñ6FVB›R-çMç"}˝-≠Ç˝}]›Ì-ç≠ÇÇ›RÕ]›˝]"≠-ΩÌ2‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢$≈2ÊVvFófR˜˜6óFófRFW7G2‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢&WfñWr÷ñw&Fñˆ‚7W&6Rˆ÷ñw&FñˆÁ2Û##cì#ìS#S3UˆF÷ñÂ˜W6W'5ˆÊEˆF÷ñÂ˜&«2Á7∆∆ñVBvóFÇ÷F6ÜñÊrÜó7F˜'í‚F÷ñÂ˜W6W'6W6W2WFÇUTîB≤Ùd≤ÜÙ‚DTƒUDR444DVí¬7FófRf∆rÊB˜v‚◊&˜r4TƒT5BVÊFW"$≈3≤Êˆ‚Ü2ÊÚ66W72¬WFÜVÁFñ6FVBÜ2ÊÚ÷V÷&W'6Üów&óFW2‚WÜó7FñÊrV&∆ñ2CB4TƒT5B&V÷ñÁ2ñÁF7B‚ˆÊ«í7FófR÷V÷&W'6Üów&ÁG2&ófFR6F∆ˆr4TƒT5BÊB66˜VB6FVv˜'í˜&ˆGV7BîÂ4U%BıUDDR¬ñ÷vR◊&˜rîÂ4U%BıUDDRÙDTƒUDR¬˜&FW"4TƒT5BÊBC26ˆ«V÷‚÷ˆÊ«í7FGW2ˆñÁFW&Ê≈ˆÊ˜FRUDDR‚6F∆ˆrˆ6FVv˜'íáó6ñ6¬DTƒUDR¬˜&FW"îÂ4U%BÙDTƒUDRÊBñ÷◊WF&∆R6Ê6Ü˜BUDDR&V÷ñ‚FVÊñVC≤7F˜&vRˆ∆ñ6ñW2VÊ6ÜÊvVB‚F&vWFVB7FófRˆÊˆ‚÷F÷ñ‚ˆñÊ7FófRÊBÊˆ‚$≈2FW7G276VBvóFÇ7ñÁFÜWFñ2WFÇˆ6F∆ˆrˆ˜&FW"&˜w2&ˆ∆∆VB&6≥≤W&÷ÊVÁBFW7B66˜VÁG2˜&˜w2‚V&∆ñ2FFí6F∆ˆr4TƒT5B52¬˜&FW"ÊB÷V÷&W'6Üó66W72FVÊñVC≤6V7W&óGíGfó6˜"ÜBÊÚfñÊFñÊw2‚FWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TC≤ÊWáBCÇ‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCrì¢F÷ñÂ˜W6W'2ÇF÷ñ‚$≈0†¢222CÇ(	BWFÇ6ˆÊfñrÇ˝]-ΩíF÷ñ‡†¢“¢§îC¢¢¢CÄ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢WFÇ6ˆÊfñrÇ˝]-ΩíF÷ñ‡¢“¢§vˆ√¢¢¢	Ì-≠ΩÌ}ç-¬]=ç-mç‚Ç]}Ì˝›‚}-]-Ç˝]-Ì=‚-ΩM]ΩÕm‡¢“¢•váì¢¢¢	ΩÌÌí˝Ì]-ç-]Ω¬›RMÌΩm]“Ì}M--¬F÷ñ‚66˜VÁB‡¢“¢§FWVÊFVÊ6ñW3¢¢¢Cr‡¢“¢§∆∆˜vVB66˜S¢¢¢V÷ñ¬˜77v˜&B6ˆÊfñr¬=}›ÌíñÁfóFRˆ7&VFRÇ÷V÷&W'6Üó"&WfñWr‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	˝=Ωç}›ÚMÌÕ6ñv‚◊W¬&ˆGV7Fñˆ‚7&VFVÁFñ«2‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢66˜VÁBÌ}M"-ΩM]Ω]b-]]›ç}]≠ç¬≠›ΩÌ¬¬]r]≠]-"6ˆ÷÷óB‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢6ñv‚◊WÌ-≠ΩÌ›˝]-Û≤-ÌΩÕ≠‚-›]››ΩíUTîBçÕ]]"÷V÷&W'6Üó‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢6ñvÁWFVÊñ¬¬∆ˆvñ‚ˆF÷ñ‚÷V÷&W'6Üó6÷ˆ∂R‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢7W&6R&WfñWrV&∆ñ26WGFñÊw2˝ÌM--]mMÌ"Fó6&∆U˜6ñvÁW◊G'VV¬V÷ñ¬˜77v˜&B&˜fñFW"-≠ΩÌ}“¬ÜˆÊRˆWáFW&Ê¬&˜fñFW'2-Ω≠ΩÌ}]›≤‚	˝=Ωç}›Ωí6ñvÂW=›ç≠ΩÕ›Ω¬ç›-]-ç}]≠ç¬M]Ì¬Ì-≠ΩÌ›“6ñvÁWˆFó6&∆VF≤ÊˆÁñ÷˜W26ñv‚÷ñ‚Ì-≠ΩÌ›“ÊˆÁñ÷˜W5˜&˜fñFW%ˆFó6&∆VF¬-]-Ì-ΩR≠≠=›-≤›RÌ}M›≤‚	-ΩM]Ω]b-=}›=‚&˜fó6ñˆÊVB]Mç›--]››Ωí˝ÌM--]mM››Ωí&WfñWrV÷ñ¬˜77v˜&BWFÇW6W"}]]rF6Ü&ˆ&C≤G'W7FVB÷ÊvV÷VÁB5¬MÌ-ç≤Ì-›‚ÌM›27FófR÷V÷&W'6Üó-]¬mRUTîB‚	Ì-M]ΩÕ›ΩRWFÇ66˜VÁBÇ÷V÷&W'6Üó˝Ì-]]›≤]r-Ω-ÌMV÷ñ¬¬77v˜&B¬Ü6ÇçΩÇFˆ∂V„≤˝ÌΩ›Ìm]››Ωí77v˜&B∆ˆvñ‚˜6W76ñˆ‚(	BC#‚Cr˜v‚◊&˜r4TƒT5BÇ7FófR÷÷V÷&W'6Üóˆ∆ñ6ñW2Ì]›]›≤¬6V∆b◊w&óFRw&ÁG2Ì-=---=Ì#≤Êˆ‚÷F÷ñ‚›R˝ÌΩ=}]"F÷ñ‚&ñváG2‚&ˆGV7Fñˆ‚WFÇ›RÕ]›˝ΩÚ¬FWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚7W&6R6V7W&óGíGfó6˜"˝Ì≠}Ω-]"t$‚‚-Ω≠ΩÌ}]››Ìí∆V∂VB◊77v˜&B&˜FV7Fñˆ„≤›-Ìù≠›RÕ]›˝Ω¬"CÇÇ-]=]"Ì-M]ΩÕ›Ì=‚WFÇ6V7W&óGí&WfñWr˝]]B&ˆGV7Fñˆ‚‚
+Ω]M=ÌùÚD4≤Cí‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCÇì¢WFÇ6ˆÊfñrÇ˝]-ΩíF÷ñ‡†¢222Cí(	B55"6W76ñˆ‚&Vg&W6Ä†¢“¢§îC¢¢¢Cê¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢55"6W76ñˆ‚&Vg&W6Ä¢“¢§vˆ√¢¢¢	›-Ìç-¬6ˆˆ∂ñR÷&6VBWFÇÇÌ›Ì-Ω]›çR6W76ñˆ‚›ˆF÷ñ‚‡¢“¢•váì¢¢¢F÷ñ‚MÌΩm]“Ì]›˝-¬6W76ñˆ‚]rMÌ-]çÚ¢6∆ñVÁB7FFR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢CÇ‡¢“¢§∆∆˜vVB66˜S¢¢¢7W&6R˜77"¬&˜áíˆ÷ñFF∆Wv&R˝‚-]çÇÊWáB‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	--Ìç}mçÚ˝‚vWE6W76ñˆ‚]r-]çMç≠mçÇ¬V&∆ñ2WFÇ‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢ÊÚ◊7F˜&R›F÷ñ‚ÖD‘¬ı6WB‘6ˆˆ∂ñR¬≠Ì]≠-›Ωí&Vg&W6Ç‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢f∆ñB6W76ñˆ‚Ì›Ì-Ω˝]-Û≤ç-≠çÚ›R≠Ω-]"M››ΩR‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢WFÇ6W76ñˆ‚ñÁFVw&Fñˆ‚¬66ÜRÜVFW"6ÜV6≤‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢ñÁ7F∆∆VBñÊÊVB7W&6R˜77&ÊBFFVB&WVW7B◊66˜VB¬6W'fW"÷ˆÊ«í6ˆˆ∂ñRWFÇ6∆ñVÁBW6ñÊrˆÊ«íFÜR&WfñWrU$¬ÊBV&∆ó6Ü&∆R∂Wí‚ÊWáBb7&2˜&˜áíÁG6'VÁ2ˆÊ«íˆ‚ˆF÷ñÊÊBFW66VÊFÁG2¬6∆«2vWEW6W"Çñf˜"6W76ñˆ‚fW&ñfñ6Fñˆ‚˜&Vg&W6Ç¬f˜'v&G2WFFVB&WVW7B6ˆˆ∂ñW2ÊB&WGW&Á2∆¬&W7ˆÁ6R6WB‘6ˆˆ∂ñRf«VW2vóFÇ6ˆˆ∂ñRGG&ñ'WFW2ÊB&ófFRˆÊÚ◊7F˜&R66ÜRÜVFW'2‚óBó26W76ñˆ‚÷ñÁFVÊÊ6R¬Ê˜B‚F÷ñ‚WFÜ˜&ó¶Fñˆ‚wV&C≤÷V÷&W'6Üó6ÜV6∑2&V÷ñ‚C#‚F&vWFVB÷F6ÜW"¬6ˆˆ∂ñR&˜vFñˆ‚ÜñÊ6«VFñÊr6ˆÁ6V7WFófRw&óFW2í¬6W'fW"WFÇFFW"¬ÊÚ◊6W76ñˆ‚ÊB÷∆f˜&÷VB÷6ˆˆ∂ñRFW7G276VBvóFÜ˜WB&V¬7&VFVÁFñ«2˜"Fˆ∂V‚˜WGWB‚∆ˆ6¬ÖEE&WVW7G2vóFÜ˜WB6W76ñˆ‚ÊBvóFÇ7ñÁFÜWFñ2÷∆f˜&÷VB6ˆˆ∂ñR&WGW&ÊVB6fV«ívóFÇÊÚ6WB‘6ˆˆ∂ñRÊBÊÚ&ófFRFF‚V&∆ñ26F∆ˆrÊB˜&FW"÷ˆÊ«í6V7&WB6∆ñVÁG2&V÷ñ‚6W&FRÊBVÊ6ÜÊvVC≤ÊÚ∆ˆvñ‚Tí˜"F÷ñ‚FF66W72v2FFVB‚&V¬77v˜&B÷∆ˆvñ‚ˆ'&˜w6W"6W76ñˆ‚ñÁFVw&Fñˆ‚ó2&WVó&VBñ‚C#vÜV‚óG2f∆˜rWÜó7G2‚FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TC≤&ˆGV7Fñˆ‚VÊ6ÜÊvVB‚FÜRWÜó7FñÊr&WfñWr∆V∂VB◊77v˜&B&˜FV7Fñˆ‚v&ÊñÊr&V÷ñÁ2f˜"&R◊&ˆGV7Fñˆ‚6V7W&óGí&WfñWr‚ÊWáBC#‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖCíì¢55"6W76ñˆ‚&Vg&W6Ä†¢222C#(	BF÷ñ‚∆ˆvñ‚Ç∆ˆv˜W@†¢“¢§îC¢¢¢C# ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢F÷ñ‚∆ˆvñ‚Ç∆ˆv˜W@¢“¢§vˆ√¢¢¢
+]Ωç}Ì--¬-]ÌB˝-Ω]ÌBÇÌÌù]›çÚÌÌçç≠R]rVÁV÷W&Fñˆ‚‡¢“¢•váì¢¢¢	-ΩM]Ω]bMÌΩm]“=˝-Ω˝-¬MÌ-=˝Ì¬Ì}çR=-Ìù-"‡¢“¢§FWVÊFVÊ6ñW3¢¢¢Cí‡¢“¢§∆∆˜vVB66˜S¢¢¢ˆF÷ñ‚ˆ∆ˆvñ‚¬77v˜&Bf∆˜r¬6ñv‰˜WB¬]}Ì˝›Ωí&VFó&V7B‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢&Vvó7G&Fñˆ‚¬77v˜&B"ΩÌ=R¬F÷ñ‚6ÜV∆¬‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	˝ÌΩR-]ÌM˝Ì-]˝-¬7FófR÷V÷&W'6Üó≤Êˆ‚÷F÷ñ‚6ñv‰˜WB‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢F÷ñ‚-]ÌMç"˝-Ω]ÌMç#≤Êˆ‚÷F÷ñ‚›R˝Ì]ÌMç"¬Ìçç≠R›]"îí‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ˆvñ‚ˆ∆ˆv˜WB'&˜w6W"6÷ˆ∂RÇ›]=-ç-›ΩíWFÇ-]"‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢&WfñWrˆF÷ñ‚ˆ∆ˆvñÊW6W26W'fW"◊6ñFR7W&6R77v˜&BWFÇ¬fW&ñfñW2FÜRW6W"vóFÇvWEW6W"ÇñÊB6ÜV6∑27FófRF÷ñÂ˜W6W'6÷V÷&W'6ÜóFá&˜VvÇFÜRWFÜVÁFñ6FVB•uBı$≈2&Vf˜&R&VFó&V7FñÊrFÚ6fR∆ˆ6¬FÇ‚ñÁf∆ñB7&VFVÁFñ«2ÊBÊˆ‚÷F÷ñ‚÷V÷&W'6ÜóññV∆BFÜR6÷RvVÊW&ñ2W'&˜#≤Êˆ‚÷F÷ñ‚6W76ñˆÁ2&R6∆V&VB‚˜vÊW"6ˆÊfó&÷VB&V¬F÷ñ‚∆ˆvñ‚ÊB'&˜w6W"WFÇ6W76ñˆ‚‚˜vÊW"FÜV‚6ˆÊfó&÷VB&V¬&WfñWr∆ˆv˜WBFá&˜VvÇFÜRWÜó7FñÊrı5B∆ˆv˜WD7FñˆÊ¢FÜR'&˜w6W"&WGW&ÊVBFÚˆF÷ñ‚ˆ∆ˆvñÊ¬ÊB7V'6WVVÁBfó6óB&V÷ñÊVBˆ‚FÜR∆ˆvñ‚f˜&“ñÁ7FVBˆb66WFñÊrFÜR6ñvÊVB÷˜WB6W76ñˆ‚‚FÜRFV◊˜&'í&WfñWr÷ˆÊ«íDU5EÙÙ‰≈ñ∆ˆv˜WB&˜WFRW6VBf˜"FÜó26÷ˆ∂Rv2&V÷˜fVB‚F&vWFVBÊVvFófRWFÇ¬&VFó&V7B¬6ˆˆ∂ñR◊&˜vFñˆ‚¬ÊÚ◊6W76ñˆ‚ÊB7&˜72÷˜&ñvñ‚6ÜV6∑276VC≤∆ñÁB¬GóV6ÜV6≤¬'Vñ∆BÊB6V7&WB◊FÇ&WfñWr76VB‚ÊÚ7&VFVÁFñ«2¬6ˆˆ∂ñW2¬Fˆ∂VÁ2˜"6W76ñˆ‚f«VW2vW&R&V6˜&FVB‚FÜó2∆ˆvñ‚ˆ∆ˆv˜WBf∆˜rFˆW2Ê˜BFBFÜRC#F÷ñ‚wV&B˜"F÷ñ‚6ÜV∆¬‚FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TC≤&ˆGV7Fñˆ‚VÊ6ÜÊvVB‚ÊWáBC#‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#ì¢F÷ñ‚∆ˆvñ‚Ç∆ˆv˜W@†¢222C#(	B&WVó&TF÷ñ‚ÇwV&B◊WFFñˆÁ0†¢“¢§îC¢¢¢C#¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢&WVó&TF÷ñ‚ÇwV&B◊WFFñˆÁ0¢“¢§vˆ√¢¢¢	}ùç-ç-¬ˆF÷ñ‚Ú¢ÇçΩÌ“-]R=M=ùçR6W'fW"7FñˆÁ2‡¢“¢•váì¢¢¢wV&B"∆ñ˜WB›R}ùçù]"˝˝ÕÌí-Ω}Ì"◊WFFñˆ‚‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#‡¢“¢§∆∆˜vVB66˜S¢¢¢6W'fW"&WVó&TF÷ñ‚¬∆ñ˜WBwV&B¬˜&ñvñ‚˜6W76ñˆ‚6ÜV6∑2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	Ì]ÌB$≈26V7&WB6∆ñVÁB¬Tí÷ˆÊ«í&ˆ∆R6ÜV6≤‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢vWEW6W"≤÷V÷&W'6Üó˝Ç≠mMÌ¬M]ù--çÉ≤&VFó&V7B-ÌΩÕ≠‚ΩÌ≠ΩÕ›Ωí‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	]r≠-ç-›Ìí6W76ñˆ‚ΩÌÌíF÷ñ‚&˜WFRˆ7Fñˆ‚Ì-≠}“‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢Fó&V7B7Fñˆ‚FVÊñ¬¬Wáó&VB˜&Wfˆ∂VBFW7G2‡¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢FFVB6W'fW"÷ˆÊ«í&WVó&TF÷ñ‚ÇñÊBñÊFWVÊFVÁB&WVó&TF÷ñ‰◊WFFñˆ‚Çñf˜"gWGW&RF÷ñ‚7FñˆÁ2ˆÜÊF∆W'2‚WfW'íñÁfˆ6Fñˆ‚W6W2FÜR&WVW7B◊66˜VB6ˆˆ∂ñRWFÇ6∆ñVÁB¬vWEW6W"ÇñÊB‚VÊ66ÜVB˜v‚◊&˜rF÷ñÂ˜W6W'6&VBVÊFW"FÜRW6W"•uBıCr$≈3≤ˆÊ«í7FófR÷V÷&W'6Üó&WGW&Á2÷ñÊñ÷¬W6W"îBÊBWFÜVÁFñ6FVB6∆ñVÁB‚FÜRáv˜&∑76Rñ∆ñ˜WBñÁfˆ∂W2FÜRvRwV&B&Vf˜&R6Üñ∆G&V‚¬ó2GñÊ÷ñ2ˆÊÚ◊7F˜&RˆÊˆñÊFWÇ¬ÊB∆VfW2ˆF÷ñ‚ˆ∆ˆvñÊ˜WG6ñFRFÜRw&˜W‚ÊÚ6W76ñˆ‚˜"ñÊ7FófRˆÊˆ‚÷F÷ñ‚÷V÷&W'6Üó&VFó&V7G2FÚFÜR∆ˆvñ‚&˜WFS≤FÜRWÜó7FñÊr∆ˆvñ‚f∆˜r6∆V'2f∆ñBÊˆ‚÷F÷ñ‚6W76ñˆ‚‚◊WFFñˆ‚wV&B6ÜV6∑27G&ñ7B&WVW7B˜&ñvñ‚vñÁ7BÜ˜7Bˆf˜'v&FVB&˜Fˆ6ˆ¬&Vf˜&R6ÜV6∂ñÊrWFÇÊBFVÊñW2'í6fR&VFó&V7C≤Êˆ‚÷F÷ñ‚◊WFFñˆ‚FVÊñ¬GFV◊G2∆ˆ6¬6ñv‰˜WB‚Fó&V7B÷ñÁfˆ6Fñˆ‚Ü&ÊW726˜fW&VB7FófR¬ÊÚ◊6W76ñˆ‚¬ñÁf∆ñBˆWáó&VB¬Êˆ‚÷F÷ñ‚ÊB&Wfˆ∂VB÷V÷&W'6Üó¬6÷Rˆ7&˜72÷˜&ñvñ‚¬6fR&WGW&‚FÇÊBC#∆ˆvñ‚ˆ∆ˆv˜WB‚ÊÚWFÇfóáGW&R˜"D"&˜rv27&VFVB‚&WfñWrÊˆ‚6F∆ˆr4TƒT5B52¬Êˆ‚˜&FW'2FVÊñVC≤7F˜&vRÜ2¶W&Úw&óFRˆ∆ñ6ñW2ˆˆ&¶V7G3≤ˆÊR&V¬WFÇW6W"ÊB÷F6ÜñÊr÷V÷&W'6Üó&V÷ñ‚¬7ñÁFÜWFñ266˜VÁG2‚∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆BÊB'VÊF∆RÙvóB6V7&WB66Á252‚Cí&˜áíÊBC#&VÜfñ˜"&WFñÊVC≤ÊÚF÷ñ‚6ÜV∆¬¬7F˜&vRˆ∆ñ7í˜"&ˆGV7Fñˆ‚6ÜÊvR‚FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚ÊWáBC#"‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#ì¢&WVó&TF÷ñ‚ÇwV&B◊WFFñˆÁ0†¢222C#"(	BF÷ñ‚WFÇ6V7W&óGívFP†¢“¢§îC¢¢¢C# ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢F÷ñ‚WFÇ6V7W&óGívFP¢“¢§vˆ√¢¢¢	˝Ì-]ç-¬]=ç-mç‚¬Ì-}Ω"ÌΩÇ¬]ç‚Ç-R˝-‡¢“¢•váì¢¢¢	˝]]B5%TB›=m]“MÌ≠}››Ωí6V7W&óGí&6V∆ñÊR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#‡¢“¢§∆∆˜vVB66˜S¢¢¢
+-ÌΩÕ≠‚F&vWFVBWFÇı$≈2Ù55$bı7F˜&vRFVÊñ¬66VÊ&ñ˜2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢F÷ñ‚TíçΩÇ›Ì-ΩRÌΩÇ‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	˝Ì-]ç-¬˝˝ÕΩR˜7Fu$U5B}˝Ì≤˝ÌBÊˆ‚ÇÊˆ‚÷F÷ñ‚‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	-R›]=-ç-›ΩRm]›çÇ}≠Ω-≥≤”2ÕÌm›‚˝ç›çÕ-¬‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢6V7W&óGíñÁFVw&Fñˆ‚7VóFRÇ&V÷˜FR&WfñWr6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬ÜñvÄ¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢ÜñvÄ¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#"ì¢F÷ñ‚WFÇ6V7W&óGívFP¢“¢•&W6ˆ«WFñˆ‚É##b”í”#íì¢¢¢&WfñWr6V7W&óGíñÁFVw&Fñˆ‚ÊB&V÷˜FR6÷ˆ∂R53¢V&∆ñ26ñvÁWÊBÊˆÁñ÷˜W26ñv‚÷ñ‚FVÊñVC≤6W76ñˆ‚ˆ∆ˆvñ‚ˆ∆ˆv˜WBÊB6W'fW"◊WFFñˆ‚wV&B&Vw&W76ñˆÁ253≤7&˜72÷˜&ñvñ‚◊WFFñˆ‚FVÊñVC≤&ófFR6F∆ˆrÊB˜&FW"66W72&WVó&R7FófR÷V÷&W'6Üó≤ñ÷◊WF&∆R˜&FW"6Ê6Ü˜BÊB7F˜&vR◊WFFñˆ‚&6V∆ñÊR&W6W'fVB‚˜vÊW"÷WFÜ˜&ó¶VBFó&V7B˜7Fu$U5B•uBfW&ñfñ6Fñˆ„¢7FófRF÷ñ‚6VW2˜v‚7FófR÷V÷&W'6ÜóÊB6‚4TƒT5B˜&FW'3≤6W&FRWFÜVÁFñ6FVBÊˆ‚÷F÷ñ‚6VW2V◊Gí÷V÷&W'6ÜóÊB˜&FW"&W7V«G2¬ÊB6V∆b÷W66∆Fñˆ‚îÂ4U%Bó2FVÊñVBÑÖEEC2í‚Êˆ‚˜&FW"66W72ÊB6F∆ˆr◊WFFñˆ‚FVÊñVB‚FV◊˜&'íÊˆ‚÷F÷ñ‚WFÇW6W"&V÷˜fVC≤fñÊ¬&WfñWr6˜VÁG3¢ˆÊR&V¬WFÇW6W"vóFÇˆÊR÷F6ÜñÊr7FófR÷V÷&W'6Üó¬¶W&ÚVÊ∆ñÊ∂VB˜7ñÁFÜWFñ266˜VÁG2¬¶W&Ú6F∆ˆrˆ˜&FW"FW7B&˜w2ÊB¶W&Ú7F˜&vRˆ&¶V7G2‚6V7W&óGíGfó6˜"Ü2¶W&Ú&∆ˆ6∂ñÊrfñÊFñÊw2‚óG2∆V∂VB◊77v˜&B&˜FV7Fñˆ‚t$‚&V÷ñÁ26W&FR&R◊&ˆGV7Fñˆ‚WFÇóFV”≤”252FˆW2Ê˜B6ÜÊvR&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚&ˆGV7Fñˆ‚VÊ6ÜÊvVB‚ÊWáBC#2‡††¢22Ñ4RR(	BF÷ñ‚6ÜV∆¿†¢222C#2(	BF÷ñ‚6ÜV∆¬Ç›-ç=mç†¢“¢§îC¢¢¢C#0¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢F÷ñ‚6ÜV∆¬Ç›-ç=mç¢“¢§vˆ√¢¢¢
+M]Ω-¬Ì}çí∆ñ˜WB÷&÷óÇf∆WÇMΩÚˆF÷ñ‚‡¢“¢•váì¢¢¢	Ì˝]mçÇ-]=Ì"˝Ì›˝-›Ìí›-ç=mçÇ]r6Ü˜w&ˆˆ“M]≠Ì‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#"‡¢“¢§∆∆˜vVB66˜S¢¢¢FW6∑F˜˜F&∆WB˜ÜˆÊR6ÜV∆¬¬÷VÁR¬∆ˆv˜WBff˜&FÊ6R‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢&VFW6ñv‚˝=Ωç}›ΩR≠ÌÕ˝Ì›]›-Ì"ÇFF◊WFFñˆÁ2‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72ÙDU4îtÂı5ï5DT“Ê÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢÷Á&˜R¬w&ÜóFR¬&W7G&ñÊVBvˆ∆BÇ˝-›ÌR≠-ç-›ÌRÕ]›‚‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	}ùçù››ΩRÕç=-≤MÌ-=˝›≤∂Wñ&ˆ&C≤÷ˆ&ñ∆RW6&∆R‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬fñWw˜'B6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#2ì¢F÷ñ‚6ÜV∆¬Ç›-ç=mç¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢&˜FV7FVBˆF÷ñÊ6ÜV∆¬¬FW6∑F˜6ñFV&"¬F&∆WBˆ÷ˆ&ñ∆RG&vW"¬&˜WFR7FFR¬WÜó7FñÊr6W'fW"∆ˆv˜WB7Fñˆ‚¬∆ˆ6¬V&∆ñ2◊6óFR∆ñÊ≤ÊBÊWWG&¬∆ÊFñÊrvRñ◊∆V÷VÁFVBñ‚&WfñWr‚C#6W'fW"wV&B¬GñÊ÷ñ2ˆÊÚ◊7F˜&RˆÊˆñÊFWÇÊB6W&FR∆ˆvñ‚&WFñÊVB‚∆ñÁB¬GóV6ÜV6≤¬'Vñ∆BÊBvóB6V7&WB◊FÇ6ÜV6∑252‚$TEíÖEE2&WfñWrf˜"FÜR&VFW6ñv‚◊c&ñ◊∆V÷VÁFFñˆ‚6ˆ÷÷óC≤VÊWFÜVÁFñ6FVBˆF÷ñÊ&VFó&V7G2FÚ∆ˆvñ‚¬∆ˆvñ‚ÊBV&∆ñ2Üˆ÷R&WGW&‚7V66W76gV∆«í¬F÷ñ‚&W7ˆÁ6Ró2&ófFRˆÊÚ◊7F˜&RÊBÊˆñÊFWÇ‚˜vÊW"6ˆ◊∆WFVBWFÜVÁFñ6FVBfó7V¬fW&ñfñ6Fñˆ‚gFW"&V¬∆ˆvñ„¢FW6∑F˜ˆ÷ˆ&ñ∆RÊfñvFñˆ‚¬∂Wñ&ˆ&Bˆfˆ7W2¬fó6ñ&∆R∆ˆv˜WBÊBV&∆ñ2◊6óFR∆ñÊ≤53≤3ìÛscÇÛ#BÛCCÛì#Û#Sc53≤Ü˜&ó¶ˆÁF¬˜fW&f∆˜rÊBfó7V¬'&V∂vR'6VÁB‚7&VFVÁFñ«2vW&RÊ˜B6Ü&VB‚C#2DÙ‰R‚C#B&V÷ñÁ2DÙDÛ≤vFW2ÊB”2VÊ6ÜÊvVB‡†¢222C#B(	B˜W&FñˆÊ¬F6Ü&ˆ&@†¢“¢§îC¢¢¢C#@¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢˜W&FñˆÊ¬F6Ü&ˆ&@¢“¢§vˆ√¢¢¢	-Ω-]-Ç›Ì-ΩR˝"Ì-R}˝-≠ÇÇÌ˝=Ωç≠Ì-››ΩR˝≠Ω-ΩR-Ì-≤‡¢“¢•váì¢¢¢	-ΩM]Ω]bMÌΩm]“-çM]-¬Ì}]]M¬ÇÌ-Ì˝›çR≠-ΩÌ=‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#2‡¢“¢§∆∆˜vVB66˜S¢¢¢
+]-]›ΩR6˜VÁBVW&ñW2˝ÌBF÷ñ‚$≈2¬˝]]]ÌM≤"˝ç≠Ç‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢$í=Mç≠Ç¬≠Ωç]›-≠çí6V7&WB‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72ÙDU4îtÂı5ï5DT“Ê÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	Ì-M]ΩÕ›‚ÌÌ}›}-¬]ç-›ΩRÇ›]Ì˝=Ωç≠Ì-››ΩR-Ì-≤‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢
+}-}ç≠ÇÌ=ΩÌ-›≤M››ΩÕÉ≤ΩΩ≠Ç-]M=""}M]Ω≤‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢F&vWFVB6˜VÁBñÁFVw&Fñˆ‚¬∆ñÁB˜GóV6ÜV6≤‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#Bì¢˜W&FñˆÊ¬F6Ü&ˆ&@¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢$TEíÖEE2&WfñWrF6Ü&ˆ&B&VG2fófRWÜ7BÜVF6˜VÁG2gFW"g&W6Ç&WVó&TF÷ñ‚ÇñVÊFW"WFÜVÁFñ6FVBW6W"•uBıCr$≈3¢ÊWrÊBñ‚◊&ˆw&W72˜&FW'2¬V&∆ó6ÜVBÊBÜñFFV‚VÊ&6ÜófVB$T¬&ˆGV7G2¬ÊB&6ÜófVB$T¬&ˆGV7G2‚ÊÚîí¬6V7&WB6∆ñVÁB¬Ü&F6ˆFVB÷WG&ñ72˜"&ˆGV7Fñˆ‚FF‚V◊Gí&WfñWr&WGW&Á2ÜˆÊW7B¶W&Û≤VW'íW'&˜'2Fá&˜rvVÊW&ñ26W'fW"W'&˜"‚G&Á67FñˆÊ¬WFÜVÁFñ6FVB&ˆ∆R6÷ˆ∂RvóFÇfó6ñ&∆RDU5EÙÙ‰≈í&ˆGV7B6ˆÊfó&÷VBóBó2WÜ6«VFVC≤&ˆ∆∆&6≤∆VgB¶W&Ú6F∆ˆrˆ˜&FW"&˜w2‚Fó&V7B&WfñWr6˜VÁG2&R∆¬¶W&Ú‚÷ó76ñÊrˆF÷ñ‚ˆ˜&FW'6ÊBˆF÷ñ‚˜&ˆGV7G6&˜WFW2&V÷ñ‚Êˆ‚÷6∆ñ6∂&∆RgWGW&RFW7FñÊFñˆÁ266˜&FñÊrFÚC#2ÊfñvFñˆ‚¬vóFÜ˜WBCB∆ñÊ∑2˜"∆ó7Bñ◊∆V÷VÁFFñˆ‚‚∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆BÊB6V7&WB66‚53≤VÊWFÜVÁFñ6FVBˆF÷ñÊ&VFó&V7G2FÚ∆ˆvñ‚¬∆ˆvñ‚˜V&∆ñ2Üˆ÷R6÷ˆ∂R52¬&ófFRˆÊÚ◊7F˜&RˆÊˆñÊFWÇ&WFñÊVB‚˜vÊW"fW&ñfñVBgFW"&V¬F÷ñ‚∆ˆvñ„¢6˜VÁFW'2&VF&∆R¬˜&FW'2ˆ6F∆ˆr6W&Fñˆ‚VÊFW'7FÊF&∆R¬¶W&Ú7FFRÊBÊÚîí53≤FW6∑F˜ÊB÷ˆ&ñ∆R3ì52¬ÊÚÜ˜&ó¶ˆÁF¬˜fW&f∆˜r¬fó7V¬6ˆÁ6ó7FVÊ7ívóFÇC#252‚7&VFVÁFñ«2vW&RÊ˜B6Ü&VB‚C#BDÙ‰R‚C#R&V÷ñÁ2DÙDÛ≤vFW2ÊB”2VÊ6ÜÊvVB‡†¢222C#R(	BF÷ñ‚7FFW2Ç&W7ˆÁ6ófP†¢“¢§îC¢¢¢C#P¢“¢•&ñ˜&óGì¢¢¢¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢F÷ñ‚7FFW2Ç&W7ˆÁ6ófP¢“¢§vˆ√¢¢¢	MÌ-ç-¬∆ˆFñÊrˆW'&˜"ˆV◊GíÇ˝Ì-]ç-¬Ì}çRççç›≤‡¢“¢•váì¢¢¢	Ì˝]mçÌ››Ωíç›-]M]ùMÌΩm]“Ω-¬˝Ì›˝-]“˝ÇÌR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#B‡¢“¢§∆∆˜vVB66˜S¢¢¢TíÌ-Ì˝›çÚF÷ñ‚6ÜV∆¬ˆF6Ü&ˆ&B¬FW6∑F˜˜F&∆WB˜ÜˆÊR‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	›Ì-ΩRM=›≠mçÇ≠-ΩÌ=çΩÇ˜&FW'2‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72ÙDU4îtÂı5ï5DT“Ê÷B‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	]r≠›ççÌ-›çÚîì≤Ì-ÕΩçÕ‚Ç≠Ω-ç-=Ìí‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	›]"˝=-Ì=‚›]ÕÌ=‚›≠›¬˜fW&f∆˜rÇÌççÌ¢≠Ì›ÌΩÇ‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢'&˜w6W"6÷ˆ∂RCC˜F&∆WBÛ3ì¬∆ñÁB˜GóV6ÜV6≤‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#Rì¢F÷ñ‚7FFW2Ç&W7ˆÁ6ófP¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢$TEí&WfñWrFG2&W7G&ñÊVB&˜WFR∆ˆFñÊr¬6fRW'&˜"˜&WG'íÊBÜˆÊW7BgV∆«íV◊Gíw&˜WÊ˜FW2‚C#BWÜ7B6˜VÁBVW&ñW2¬$T¬ıDU5EÙÙ‰≈í6V÷ÁFñ72ÊBF÷ñ‚$≈2&V÷ñ‚VÊ6ÜÊvVB‚6ˆÁG&ˆ∆∆VB∆ˆ6¬Ü&ÊW72fW&ñfñVB∆ˆFñÊr¬&WG'í¬¶W&˜2ÊBvVÊW&ñ2fñ«W&RñÁ7FVBˆbf«6R¶W&Û≤∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B52‚wVW7BˆF÷ñÊ&VFó&V7G2FÚ∆ˆvñ‚¬V&∆ñ2Üˆ÷WvR6÷ˆ∂R52‚˜vÊW"fW&ñfñVBgFW"&V¬F÷ñ‚∆ˆvñ„¢3ìÛscÇÛ#BÛCCÊBì#Û#Sc6ÊóGí¬∂Wñ&ˆ&Bˆfˆ7W2¬÷ˆ&ñ∆RG&vW"¬¶W&Ú7FFRÊBC#2ıC#Bfó7V¬6ˆÁ6ó7FVÊ7í53≤Ü˜&ó¶ˆÁF¬˜fW&f∆˜r‰Ú‚&ˆGV7Fñˆ‚VÊ6ÜÊvVB‚C#RDÙ‰S≤”2ÊBFWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚ÊWáBC#b¬Ê˜B7F'FVB‡††¢22Ñ4Rb(	BF÷ñ‚6F∆ˆr÷ÊvV÷VÁ@†¢222C#b(	B&ˆGV7G2∆ó7@†¢“¢§îC¢¢¢C#`¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢&ˆGV7G2∆ó7@¢“¢§vˆ√¢¢¢
+Ì}M-¬ˆF÷ñ‚˜&ˆGV7G2-çMçÕΩ¬--=Ì¬Ç≠ΩÌ}]-ΩÕÇ˝ÌΩ˝ÕÇ‡¢“¢•váì¢¢¢	Ì˝]mçÇ›}ç›Ì-ÚÌ}Ì4µR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#R‡¢“¢§∆∆˜vVB66˜S¢¢¢6W'fW"∆ó7B¬≠ÌΩÌ›≠Ç4µRˆÊ÷Rˆ6FVv˜'í˜&ñ6R˜7FGW2‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢
+MÌÕ≤]M≠-çÌ-›çÚÇ˝=Ωç}›Ú-ç-ç›‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCÇí‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	›ç≠≠çRîí¬ÊÚ◊7F˜&S≤}-]›çR-ÌΩÕ≠‚7FófRF÷ñ‚‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢
+˝çÌ¢}Ωç}]"V&∆ó6ÜVB˜VÁV&∆ó6ÜVBˆ&6ÜófVB‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢∆ñÁB¬GóV6ÜV6≤¬wV&FVB∆ó7B6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#bì¢&ˆGV7G2∆ó7@¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢$TEí&WfñWrˆF÷ñ‚˜&ˆGV7G6&VG2ˆÊ«í$T¬&˜w2gFW"&WVó&TF÷ñ‚ÇñFá&˜VvÇFÜRWFÜVÁFñ6FVB•uBıCr$≈26∆ñVÁB¬vóFÇˆÊR6FVv˜'í&V∆Fñˆ‚6V∆V7B¬7F&∆R˜&FW"ÊBÊÚ6V7&WB6∆ñVÁB‚FÜR∆ó7B&W6VÁG24µR¬Ê÷R¬6FVv˜'í¬WÜ7B%T"&ñ6R˜"ÊWWG&¬ÁV∆¬7FFR¬ÊBV&∆ó6ÜVBˆÜñFFV‚ˆ&6ÜófVB7FGW3≤FW6∑F˜F&∆RÊB6ˆ◊7B÷ˆ&ñ∆R&W6VÁFFñˆ‚6Ü&RC#>(	5C#R6ÜV∆¬ÊB7FFW2‚V◊Gí&WfñWr&ˆGV7G2ˆ6FVv˜&ñW2&V÷ñ‚‚F&vWFVBDU5EÙÙ‰≈íV&∆ó6ÜVBˆÜñFFV‚ˆ&6ÜófVB¬ÁV∆¬◊&ñ6RÊB6FVv˜'í6ÜV6∑2&‚ñ‚&ˆ∆∆&6≤G&Á67Fñˆ„≤W&÷ÊVÁB7ñÁFÜWFñ2&˜w2‚∆ˆ6¬&VÊFW&ñÊr˜VW'íˆW'&˜"Ü&ÊW72¬∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B¬wVW7B&VFó&V7BÊBV&∆ñ26÷ˆ∂R52‚˜vÊW"gFW"&V¬∆ˆvñ‚fW&ñfñVBFW6∑F˜ˆ÷ˆ&ñ∆R∆ó7B¬∆¬fñV∆B˜7FGW2∆&V«2¬ÁV∆¬ÊBV◊Gí7FFW2¬7FófRÊfñvFñˆ‚¬3ìÛscÇÛ#BÛCC¬ÊÚÜ˜&ó¶ˆÁF¬˜fW&f∆˜rÊBC#>(	5C#Rfó7V¬6ˆÁ6ó7FVÊ7í‚C#bDÙ‰S≤”2ÊBFWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚ÊWáBC#r¬Ê˜B7F'FVB‡†¢222C#r(	B&ˆGV7G26V&6ÇÇfñ«FW'0†¢“¢§îC¢¢¢C#p¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢&ˆGV7G26V&6ÇÇfñ«FW'0¢“¢§vˆ√¢¢¢	MÌ-ç-¬˝Ìç¢˝MçΩÕ-≤˝Ì-çÌ-≠2˝ç≠-Ì-Ì"‡¢“¢•váì¢¢¢	≠-ΩÌ=Ì¬›]-Ì}ÕÌm›‚=˝-Ω˝-¬]r›]ÌmM]›çÚ4µR‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#b‡¢“¢§∆∆˜vVB66˜S¢¢¢tUB˝Õ]-≤MΩÚF÷ñ‚˝ç≠¬vñÊFñˆ‚‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢V&∆ñ26F∆ˆrfñ«FW'2Ç›Ì-ΩR-ç=-≤‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCÇí‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢vÜóFV∆ó7B˝Õ]-Ì"¬›R==}ç-¬-R-Ì-≤"'&˜w6W"‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢
+MçΩÕ-˝‚4µR˝--=2˝≠-]=ÌçÇÇM-˝˝Ì˝MÌ¢Ì-Ì"‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢F&vWFVBVW'íFW7G2¬'&˜w6W"6÷ˆ∂R‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#rì¢&ˆGV7G26V&6ÇÇfñ«FW'0¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢$TEí&WfñWrˆF÷ñ‚˜&ˆGV7G6W6W26W'fW"◊6ñFR¬vÜóFV∆ó7FVBtUB6V&6Ç'í4µRˆÊ÷R¬V&∆ñ6Fñˆ‚ˆ6FVv˜'ífñ«FW'2¬7F&∆R6˜'FñÊrÊBWÜ7B÷6˜VÁBvñÊFñˆ‚f˜"$T¬&ˆGV7G2VÊFW"WFÜVÁFñ6FVBF÷ñ‚$≈2‚ñÁf∆ñBÊB˜WB÷ˆb◊&ÊvR&÷WFW'2Ê˜&÷∆ó¶R6fV«ì≤DU5EÙÙ‰≈íó2WÜ6«VFVB¬ÊBFÜRV◊Gí6F∆ˆró2Fó7FñÊwVó6ÜVBg&ˆ“ÊÚ6V&6Ç÷F6ÜW2‚F&vWFVBVW'íıU$¬ˆ6˜VÁB6ÜV6∑2¬∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆B¬wVW7B&VFó&V7BÊBV&∆ñ26÷ˆ∂R53≤FV◊˜&'íFW7B&˜w2&ˆ∆∆VB&6≤‚˜vÊW"gFW"&V¬F÷ñ‚∆ˆvñ‚fW&ñfñVB6V&6Ç¬7FGW2ˆ6FVv˜'í˜6˜'B˜&W6WB6ˆÁG&ˆ«2¬vñÊFñˆ‚ÊBÊÚ◊&W7V«B7FFR¬3ìÛscÇÛ#BÛCC¬ÊÚÜ˜&ó¶ˆÁF¬˜fW&f∆˜rÊBC#bÙF÷ñ‚6ÜV∆¬6ˆÁ6ó7FVÊ7í‚&ˆGV7Fñˆ‚VÊ6ÜÊvVC≤”2ÊBFWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚ÊWáBC#Ç¬Ê˜B7F'FVB‡†¢222C#Ç(	B7&VFR&ˆGV7@†¢“¢§îC¢¢¢C#Ä¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢7&VFR&ˆGV7@¢“¢§vˆ√¢¢¢
+Ì}M-¬4µR}]]r}ùçù››=‚MÌÕ2‡¢“¢•váì¢¢¢F÷ñ‚ÊV¬(	BÌ›Ì-›Ìí˝ÌÌ›˝ÌΩ›]›çÚ≠-ΩÌ=‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#r‡¢“¢§∆∆˜vVB66˜S¢¢¢Ê÷R˜6«Vrı4µRˆ6FVv˜'í˜6W&ñW2˜&ñ6R˜VÊóBˆ÷ñ‚˜7FWÇG&gB6fR‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢	}==}≠ç}Ìm]›çí¬˝=Ωç≠mçÚ]r˝Ì-]]››ΩRM››ΩR‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCÇí‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢
+]-]›Ú-ΩçMmçÚ¬D"6ˆÁ7G&ñÁG2¬ñÊóFñ¬VÁV&∆ó6ÜVB‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	›Ì-ΩíG&gB˝Ì˝-Ω˝]-Ú"F÷ñ‚¬Êˆ‚]=‚›R-çMç"‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢f˜&“ˆ7Fñˆ‚f∆ñFFñˆ‚¬$≈2FVÊñ¬¬∆ñÁB˜GóV6ÜV6≤‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#Çì¢7&VFR&ˆGV7@¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢$TEí&WfñWrˆF÷ñ‚˜&ˆGV7G2ˆÊWvó2wV&FVB'í&WVó&TF÷ñ‚ÇñÊB‚ñÊFWVÊFVÁB6÷R÷˜&ñvñ‚&WVó&TF÷ñ‰◊WFFñˆ‚Çñ7Fñˆ‚W6ñÊrFÜRWFÜVÁFñ6FVB•uBVÊFW"Cr$≈2‚óBf∆ñFFW2Ê÷R¬7F&∆R4µR¬6«Vr¬WÜó7FñÊr6FVv˜'í¬˜FñˆÊ¬6W&ñW2¬WÜ7B%T"◊FÚ÷∂˜V6≤&ñ6R¬6ˆÁ7G&ñÊVB&ñ6R˜6∆RVÊóG2ÊB˜6óFófRñÁFVvW"÷ñÊñ◊V“˜7FW‚FÜR7Fñˆ‚ñÁ6W'G2ˆÊ«í$T¬¬VÁV&∆ó6ÜVB¬VÊ&6ÜófVBG&gG3≤VÊ∂Ê˜v‚6ˆ÷÷W&6R7Fó2ÂTƒ¬‚VÊóVR4µR˜6«Vr6ˆÊf∆ñ7G2&WGW&‚6fRfñV∆BW'&˜'2¬ÊBFÜR∆ó7Bó2&Wf∆ñFFVBgFW"6fR‚F&vWFVBf∆ñFFñˆ‚ÊBG&Á67FñˆÊ¬DU5EÙÙ‰≈í7FófR÷F÷ñ‚ñÁ6W'B˜&VB¬Êˆ‚ñÁfó6ñ&ñ∆óGíÊBÊˆ‚÷F÷ñ‚ˆÊˆ‚FVÊñ¬6ÜV6∑252vóFÇ&ˆ∆∆&6≥≤W&÷ÊVÁB7ñÁFÜWFñ2&˜w2‚∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆BÊBwV&FVB&WfñWr&˜WFR˜V&∆ñ26÷ˆ∂R52‚˜vÊW"gFW"&V¬∆ˆvñ‚fW&ñfñVBf˜&“¬V◊Gí÷6FVv˜'í7FFR¬∆&V«2˜f∆ñFFñˆ‚¬3ìÛscÇÛ#BÛCC¬ÊÚ˜fW&f∆˜rÊBF÷ñ‚fó7V¬6ˆÁ6ó7FVÊ7í‚&WfñWrÜ2ÊÚ6FVv˜&ñW2ñWC≤FÜRf˜&“Fó6&∆W26fRVÁFñ¬ˆÊRWÜó7G2¬vóFÜ˜WB&∆ˆ6∂ñÊrC#Ç‚&ˆGV7Fñˆ‚VÊ6ÜÊvVC≤”2ÊBFWfV∆˜÷VÁBvFR52¬&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚ÊWáBC#í¬Ê˜B7F'FVB‡†¢222C#í(	BVFóB&ˆGV7B&˜W'FñW0†¢“¢§îC¢¢¢C#ê¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢VFóB&ˆGV7B&˜W'FñW0¢“¢§vˆ√¢¢¢
+]M≠-çÌ--¬Ì˝ç›çR¬}Õ]≤¬7V72¬GG&ñ'WFW2Ç4TÚ‡¢“¢•váì¢¢¢
+-Ì-MÌΩm]“ÌΩ=mç--ÕÚ]r7GVFñÚ‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#Ç‡¢“¢§∆∆˜vVB66˜S¢¢¢
+MÌÕÇ7Fñˆ‚MΩÚ˝ÌΩ]íÌM›Ìí&ˆGV7G2&˜r‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢ñ÷vR˜W&FñˆÁ2¬66ÜV÷6ÜÊvR‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCÇí‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	˝Ì-]˝-¬≠Ì›-ÌΩç=]ÕΩR}›}]›çÚÇ˝-F÷ñ‚˝]]B6fR‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢	˝ÌΩR&V∆ˆBÌ]›˝Ì-Ú˝ÌΩÚ¬›]-]›ΩRM››ΩRÌ-≠ΩÌ›]›≤‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢F&vWFVB◊WFFñˆ‚˜f∆ñFFñˆ‚¬∆ñÁB˜GóV6ÜV6≤‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC#íì¢VFóB&ˆGV7B&˜W'FñW0¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢}ùçù››ΩíˆF÷ñ‚˜&ˆGV7G2ı∂ñE÷]M≠-ç=]"-ÌΩÕ≠‚Ì˝ç›çR¬ÁV∆∆&∆R}Õ]≤˝˝ΩÌùM¬¬≠Ì›-ÌΩç=]ÕΩR]≠-]ç-ç≠Ç˝-ç=-≤Ç4TÚÌM›Ìí-Ì≠Ç}]]rWFÜVÁFñ6FVBF÷ñ‚•uBÇCr$≈2‚	›]}-ççÕΩí6÷R÷˜&ñvñ‚◊WFFñˆ‚wV&B¬-Ì=Ú˝Ì-]≠˝ÌΩ]íÇ˝-›Ωí∆∆˜v∆ó7Bç≠ΩÌ}Ì"÷7276ñvÊ÷VÁC¢4µR˜6«Vr¬m]›¬˝=Ωç≠mçÚÇ]ç"›RÕ]›˝Ì-Ú‚
+-›}≠mçÌ››ΩR&WfñWrDU5EÙÙ‰≈í-]-≤$Ùƒƒ$4≤˝ÌM--]MçΩÇÌ]›]›çR˝˝Ì--Ì›ÌR}-]›çR-Ìù-"¬-ΩçMmç‚¬Ì-≠rÊˆ‚ˆÊˆ‚÷F÷ñ‚Ç›]ç}Õ]››Ì-¬˝=Ωç≠mçÇ˝]ç-≤˝Ì-Ì˝››ΩR7ñÁFÜWFñ2&ˆGV7G2ˆ6FVv˜&ñW2˜&˜w2(	B‚∆ñÁB˜GóV6ÜV6≤ˆ'Vñ∆BÇwV&FVB&WfñWr˜V&∆ñ26÷ˆ∂R52‚˜vÊW"˝ÌΩR]ΩÕ›Ì=‚F÷ñ‚∆ˆvñ‚˝ÌM--]Mç≤∆ñ˜WB¬==˝˝çÌ-≠2¬}Õ]≤¬]≠-]ç-ç≠Ç˝-ç=-≤¬4TÚ¬Ìçç≠Ç¬3ìÛscÇÛ#BÛCC¬Ì-=---çR˜fW&f∆˜rÇÌ=ΩÌ-››Ì-¬F÷ñ‚6ÜV∆¬‚	-]Õ]››Ωí&WfñWr÷ˆÊ«ífó7V¬÷6ÜV6≤&˜WFR=MΩ“˝ÌΩR˝Ì-]≠É≤]ΩÕ›ΩíVFóF˜"Ì]›“‚&ˆGV7Fñˆ‚VÊ6ÜÊvVC≤FWfV∆˜÷VÁBvFR53≤&ˆGV7Fñˆ‚6ˆÁFVÁBvFR$ƒÙ4¥TB‚ÊWáBC3¬Ê˜B7F'FVB‡†¢222C3(	BV&∆ñ6Fñˆ‚Ç76˜'F÷VÁB7FFW0†¢“¢§îC¢¢¢C3 ¢“¢•&ñ˜&óGì¢¢¢ ¢“¢•7FGW3¢¢¢DÙ‰P¢“¢•FóF∆S¢¢¢V&∆ñ6Fñˆ‚Ç76˜'F÷VÁB7FFW0¢“¢§vˆ√¢¢¢	M-¬VÁV&∆ó6Ç˜&W7F˜&Rˆ&6ÜófR¬fVGW&VB¬fñ∆&ñ∆óGíÇ6˜'B˜&FW"‡¢“¢•váì¢¢¢	˝=Ωç≠mçÚMÌΩm›Ω-¬=˝-Ω˝]ÕÌíÇÌ-çÕÌí‡¢“¢§FWVÊFVÊ6ñW3¢¢¢C#í‡¢“¢§∆∆˜vVB66˜S¢¢¢	Ì˝]mçÇ›B-]≠=ùçÕÇ&ˆGV7G2¬˝ÌM--]mM]›çR˝Ç]ç-R‡¢“¢§f˜&&ñFFV‚66˜S¢¢¢áó6ñ6¬FV∆WFR¬ñÁfVÁF˜'íU%‚	›R›}ç›-¬Ì]M›Ì‚D4≤‡¢“¢•6˜W&6RˆbG'WFÉ¢¢¢Fˆ72Ù$4ÑïDT5EU$RÊ÷C≤Fˆ72Ù4ÙÂDTÂEÙd5E2Ê÷BÖCÇí‡¢“¢§ñ◊∆V÷VÁFFñˆ‚Ê˜FW3¢¢¢	]ç-›Ωí4µR›R˝=Ωç≠Ì--√≤6«VrÌ˝=Ωç≠Ì-››Ì=‚4µR›]ç}Õ]›]“M‚Ì=ΩÌ-››Ì=‚&VFó&V7BÕ]]›ç}Õ≤&Wf∆ñFFRV&∆ñ2‡¢“¢§66WFÊ6R7&óFW&ñ¢¢¢
+--=≤Ç˝Ì˝MÌ¢Ì-mÌ-Ú"MÕç›≠RÇ$≈3≤=MΩ]›çí›]"‡¢“¢•&WVó&VB6ÜV6∑3¢¢¢F&vWFVB7FFRı$≈2FW7G2¬∆ñÁB˜GóV6ÜV6≤‡¢“¢•&V6ˆ÷÷VÊFVB÷ˆFV√¢¢¢uB”b6ˆ¬÷VFóV–¢“¢•&V6ˆÊñÊr∆WfV√¢¢¢÷VFóV–¢“¢§FFóFñˆÊ¬vVÁC¢¢¢‰¢“¢•7VvvW7FVB6ˆ÷÷óB÷W76vS¢¢¢F6≤ÖC3ì¢V&∆ñ6Fñˆ‚Ç76˜'F÷VÁB7FFW0¢“¢•&W6ˆ«WFñˆ‚É##b”í”3ì¢¢¢&ˆGV7BVFóF˜"˝ÌΩ=}ç≤Ì-M]ΩÕ›=‚]≠mç‚˝=Ωç≠mçÇÇÌ-çÕ]›-¢˝-›ΩRV&∆ó6Ç˜VÁV&∆ó6Ç¬&6ÜófR˝ÌM--]mM]›ç]¬Ç&W7F˜&R]r--Ì˝=Ωç≠mçÇ¬ÁV∆∆&∆Rfñ∆&ñ∆óGí¬ó5ˆfVGW&VFÇÊˆÊÊVvFófRñÁFVvW"6˜'Eˆ˜&FW"‚6W'fW"7FñˆÁ2-Ω}Ω-Ì"6÷R÷˜&ñvñ‚&WVó&TF÷ñ‰◊WFFñˆ‚Çñ|€´hëÈÏ∂ªßq´^wB◊FB€B”B◊B˜B„F<ÉB˚B«F+F?FB˜F?F;FÉBÀB˚BﬂBÀFB√FÉBÀB„B”B„BÛB˚FFB‡ÉB«B◊B‹ÉFB”B√BÔB◊B˜B„F<øB√FFB„BÀB¿øFBÛB◊B˜F,ÉFFB√FFFB¿ÉFB˚BÀB√FB˚B»∏ÅA’â±•Õ°ïêÅÕ±’úÉBﬂB√F'B„F'FGBÙÉB˚FÉFBÎFF/FB˚B‰ÉFBÛB◊B˜F,∏ÉBãFB√B˜BﬂB√BÎFB„B˚B˜B˜F/B‘ÅA…ïŸ•ï‹ÅQMQ}=91dÉBˇFB˚BÀB◊FBÎB‡ÉBˇB˚B”FBÀB◊FB”B„BÔB‡ÅçÖ—ïùΩ…‰Å°•ëîΩ…ï¡’â±•Õ†∞ÅÖπΩ∏ÅŸ•Õ•â•±•—‰ÉBˇB¯ÅP¿ƒ–∞ÉB˜B◊B„BﬂBÛB◊B˜B˜B˚FFF0ÉBÀFB◊FÉBˇB˚BÔB◊B‰ÉFFFGFÅç°•±êÅ…Ω›Ã∞ÉB˚FFFFFFBÀB„B‘ÅçÖÕçÖëîÉB‡ÉBﬂB√BˇFB◊FÅ1QÏÅQMQ}=91dÉBˇFB˚B”FBÎFF,ÉB˚FFB√F;FFF<ÅÖπΩ∏Å°•ëëï∏ÉBˇB¯ÉB”B„BﬂB√BÁB˜F∞ÅI0Å¡ΩÕ•—•ŸîÅ¡Ö—†ÉBˇB˚B”FBÀB◊FB€B”FGBÙÅP¿ƒ–Å¡Ω±•ç‰ÉB‡ÉBˇFB◊B”F/B”FF'B„BÛB‡ÅI1LÅç°ïç≠Ã∏Å9Ω∏µÖëµ•∏ΩÖπΩ∏Åµ’—Ö—•ΩπÃÅëïπ•ïêÏÉBÀFB‘Åô•·—’…ïÃÉB˚FBÎB√FB„BÔB„FF0∞Å¡ï…µÖπïπ–ÅÕÂπ—°ï—•åÅçÖ—ïùΩ…•ïÃΩ¡…Ωë’ç—ÃΩ…Ω›ÃÄ¿∏Å1•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÉB‡Åù’Ö…ëïêΩ¡’â±•åÅÕµΩ≠îÅAML∏ÉBKBÔB√B”B◊BÔB◊FÉBˇB˚FBÔB‘ÉFB◊B√BÔF3B˜B˚BœB¯Å±Ωù•∏ÉBˇB˚B”FBÀB◊FB”B„BÏÉB˚B«B¿ÉFB˚FFB˚F?B˜B„F<∞ÅçΩ’π–∞ÉBˇFB◊B”FBˇFB◊B€B”B◊B˜B„F<∞ÅÕ±’úÅπΩ—î∞ÉB˚FFFFFFBÀB„B‘Åï±ï—î∞ÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿∞ÉB˚FFFFFFBÀB„B‘ÅΩŸï…ô±Ω‹∞ÉFB„FFFF8ÅçΩπÕΩ±îÉB‡Åëµ•∏ÅçΩπÕ•Õ—ïπç‰∏ÉBKFB◊BÛB◊B˜B˜F/B‰Åπºµ›…•—îÅŸ•Õ’Ö∞Å°Ö…πïÕÃÉFB”B√BÔFGBÙÏÉFB◊B√BÔF3B˜B√F<ÅP¿Ã»ÉFB◊B√BÔB„BﬂB√FB„F<ÉFB˚FFB√B˜B◊B˜B¿∏ÅA…Ωë’ç—•Ω∏ΩµÖ•∏Å’πç°ÖπùïêÏÅ4ÃÉB‡ÅïŸï±Ω¡µïπ–ÅÖ—îÅAMLÏÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÅ	1=-∏ÅP¿Ã…ÅÕ’¡ï…ÕïëïÃÅΩπ±‰Å—°îÅù±ΩâÖ∞Å¡…Ωë’ç–ÅŸ•Õ•â•±•—‰Åëï¡ïπëïπç‰ÅΩ∏ÅçÖ—ïùΩ…‰ÏÅP¿Ã»Å…ïµÖ•πÃÅ°•Õ—Ω…•çÖ±±‰Å=9∏Å9ï·–ÅP¿Ã…∞ÅπΩ–ÅÕ—Ö…—ïê∏(((åååÅP¿Ã…ÉäPÅ5’±—§µçÖ—ïùΩ…‰ÅçÖ—Ö±ΩúÅµΩëï∞((¥Ä®©%Ë®®ÅP¿Ã…(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®Å5’±—§µçÖ—ïùΩ…‰ÅçÖ—Ö±ΩúÅµΩëï∞(¥Ä®©ΩÖ∞Ë®®ÉBB◊FB◊BÀB◊FFB‡ÅA…ïŸ•ï‹ÉB˜B¿ÅµÖπ‰µ—ºµµÖπ‰ÉBÎB√FB◊BœB˚FB„B‡ÉB«B◊B‹ÉBÎB˚BˇB„FB˚BÀB√B˜B„F<ÉFB˚BÀB√FB˚B»ÏÉBﬂB√BÎFB◊BˇB„FF0ÉFB„FFB◊BÛB˜B˚B‘É
+ØBKFB‘ÉFB˚BÀB√FF/
+Ï∞ÉB«B◊BﬂB˚BˇB√FB˜B˚B‘ÉFB”B√BÔB◊B˜B„B‘ÉBˇB˚BÔF3BﬂB˚BÀB√FB◊BÔF3FBÎB„FÉBÎB√FB◊BœB˚FB„B‰ÉB‡ÉB˜B˚BÀFF8ÉBˇFB«BÔB„FB˜FF8ÉBÀB„B”B„BÛB˚FFF0∏(¥Ä®©]°‰Ë®®ÉB{B”B„BÙÅM-TÉB˚FFB√FGFFF<ÉB˚B”B˜B˚B‰ÉFFFB˚BÎB˚B‰ÉBˇFB˚B”FBÎFB¿ÉBˇFB‡Ä¿∞ÄƒÉB„BÔB‡ÉB˜B◊FBÎB˚BÔF3BÎB„FÉBˇB˚BÔF3BﬂB˚BÀB√FB◊BÔF3FBÎB„FÉBÎB√FB◊BœB˚FB„F?FÏÉBœBÔB˚B«B√BÔF3B˜F/B‰ÉBÎB√FB√BÔB˚BÃÉB˜B‘ÉBﬂB√BÀB„FB„FÉB˚FÉFB˚FFB˚F?B˜B„F<ÉB˚B”B˜B˚B‰ÉBÎB√FB◊BœB˚FB„B‡∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã»∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…ïŸ•ï‹Åµ•ù…Ö—•Ω∏ΩâÖç≠ô•±∞∞Åù…Öπ—ÃΩI1L∞ÉBÛB„B˜B„BÛB√BÔF3B˜B√F<ÉB√B”B√BˇFB√FB„F<ÉBﬂB√FFB˚B˜FFF/FÅëµ•∏Åô±Ω›ÃÉB‡Å¡’â±•åÅ≈’ï…‰ÅâΩ’πëÖ…‰ÏÅ—Ö…ùï—ïêÅ—ïÕ—ÃÉB‡Åç±ïÖπ’¿∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅA…Ωë’ç—•Ω∏∞ÅÕÂπ—°ï—•åÅI0ÅM-T∞ÉB”FB«BÔB‡ÉFB˚BÀB√FB˚B»øFB◊BÙøB„BﬂB˚B«FB√B€B◊B˜B„B‰ΩM<ΩçΩµµï…ç•Ö∞ÅëÖ—Ñ∞ÉB„BﬂBÛB◊B˜B◊B˜B„B‘ÅΩ…ëï»Ωµïë•ÑΩ’—†∞ÉFB◊B”B„BﬂB√BÁBÙÅëµ•∏∞ÉB˜B√FB√BÔB¯ÅP¿ÃÃÉB„BÔB‡ÉFB˚FB◊B”B˜B◊B‰ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÄ£FB◊BÔB◊BÀB√F<ÅP¿Ã…ÉBÛB˚B”B◊BÔF0§ÏÅP¿ƒ»ΩP¿ƒ–ΩP¿ƒ‹ÉB‡ÅP¿»–ΩP¿»€äMP¿Ã»ÉBÎB√BËÅ±ïùÖç‰Å•µ¡±ïµïπ—Ö—•Ω∏ÅâÖÕï±•πî∏(¥Ä®©Mç°ïµÑΩµ•ù…Ö—•Ω∏Ë®®ÅÅ¡…Ωë’ç—}çÖ—ïùΩ…•ïÃ°¡…Ωë’ç—}•êÅ,∞ÅçÖ—ïùΩ…Â}•êÅ,•ÄÉFÅçΩµ¡ΩÕ•—îÅU9%EUÉB‡ÉB„B˜B”B◊BÎFB√BÛB‡Å¡…Ωë’ç–ΩçÖ—ïùΩ…‰Å±ΩΩ≠’¿∏ÉBSB¯ÉFB”B√BÔB◊B˜B„F<ÅÅ¡…Ωë’ç—ÃπçÖ—ïùΩ…Â}•ëÄÉBˇB◊FB◊B˜B◊FFB‡ÉBÎB√B€B”FF8ÉFFF'B◊FFBÀFF;F'FF8ÉB˜B◊BˇFFFFF8ÉFBÀF?BﬂF0∞ÉB”B˚BÎB√BﬂB√FF0ÉB˚FFFFFFBÀB„B‘ÉBˇB˚FB◊FF0øB”FB«BÔB◊B‰ÉB‡ÉBˇB◊FB◊BÎBÔF;FB„FF0Åëµ•∏Ω≈’ï…‰ΩI1LÏÉB˜B‘ÉB˚FFB√BÀBÔF?FF0Åë’Ö∞ÅÕΩ’…çîÅΩòÅ—…’—†∏ÉBSB˚BˇFFFB„FF0Ä¿Å’Õï»ÅçÖ—ïùΩ…•ïÃ∏ÅÖ—ïùΩ…‰Å1QÉFB”B√BÔF?B◊FÉFB˚BÔF3BÎB¯ÉB◊FDÅµïµâï…Õ°•¿Å…Ω›ÃÄ£B”B˚BˇFFFB„BÅçÖ—ïùΩ…ÁäI…ï±Ö—•Ω∏ÅçÖÕçÖëî§∞ÉB«B◊B‹Å¡…Ωë’ç–ÅçÖÕçÖëî∏(¥Ä®©MÂÕ—ï¥Å±∞Ë®®É
+ØBKFB‘ÉFB˚BÀB√FF/
+ÏÉBÀFB◊BœB”B¿ÉFFF'B◊FFBÀFB◊FÉBÎB√BËÉFB„FFB◊BÛB˜B˚B‘ÉBˇFB◊B”FFB√BÀBÔB◊B˜B„B‘∞ÉB˜B‘ÉFFFB˚BÎB¿ÅÅçÖ—ïùΩ…•ïÕÄ∞ÉB˜B‘Åïë•—Öâ±îÅÕ±’úÉB‡ÉB«B◊B‹Å¡ï»µ¡…Ωë’ç–Åµïµâï…Õ°•¿∏ÅÄΩçÖ—Ö±ΩùÄÉFB˚B”B◊FB€B„FÉBÀFB‘ÉB”B˚BˇFFFB„BÛF/B‘ÅI0Å¡’â±•Õ°ïêÅπΩ∏µÖ…ç°•ŸïêÅ¡…Ωë’ç—Ã∏ÉBHÅÄΩÖëµ•∏ΩçÖ—ïùΩ…•ïÕÄÉB˚B˜B¯ÉBˇB◊FBÀF/B∞ÉFÅâÖëùîÉ
+ØBáB„FFB◊BÛB˜B√F?
+ÏÉB‡ÅçΩ’π–ÉBÀFB◊FÅΩ¡ï…Ö—•ΩπÖ∞Å¡…Ωë’ç—ÃÏÅë•–ΩA’â±•Õ†ΩUπ¡’â±•Õ†Ωï±ï—îÉB˚FFFFFFBÀFF;F∏ÅÄΩ¡…Ωë’ç–ΩmÕ±’ùuÄÉFB˚B€B‘ÉB˜B‘ÉBﬂB√BÀB„FB„FÉB˚FÉBˇB˚BÔF3BﬂB˚BÀB√FB◊BÔF3FBÎB˚B‰ÉBÎB√FB◊BœB˚FB„B‡∏(¥Ä®©ëµ•∏Åç°ÖπùïÃË®®ÅP¿»‡ΩP¿»‰Å¡…Ωë’ç–Åç…ïÖ—îΩïë•–ÉBÀB√BÔB„B”B„FFF;FÄ¿¨ÅçÖ—ïùΩ…‰Å%ÃÅÕï…Ÿï»µÕ•ëîÉB‡ÉBÛB◊B˜F?F;FÉFB˚BÔF3BÎB¯Åµïµâï…Õ°•¡ÃÉFB˚B‰ÉB€B‘Å¡…Ωë’ç–Å…Ω‹ÏÅë’¡±•çÖ—îÅµïµâï…Õ°•¿ÉBﬂB√BˇFB◊F'B◊B˜B¿∏ÉBCB”B√BˇFB„FB˚BÀB√FF0ÅP¿»–ÅëÖÕ°âΩÖ…ê∞ÅP¿»ÿÅ±•Õ–ΩçÖ—ïùΩ…‰Å¡…ïÕïπ—Ö—•Ω∏∞ÅP¿»‹ÅçÖ—ïùΩ…‰Åô•±—ï»∞ÅP¿»‡Åç…ïÖ—î∞ÅP¿»‰Åïë•—Ω»∞ÅP¿Ã¿ÅÕ—Ö—îÅçΩπ—…Ω±Ã∞ÅP¿ÃƒÅçÖ—ïùΩ…‰ÅµÖπÖùïµïπ–∞ÅP¿Ã»Å¡’â±•çÖ—•Ω∏ÅU$ÉB«B◊B‹ÉBÔB„F#B˜B◊BœB¯ÉFB◊B”B„BﬂB√BÁB˜B¿∏ÅÖ—ïùΩ…‰Åëï±ï—îÅçΩπô•…µÖ—•Ω∏ÉFB˚B”B◊FB€B„FÉB˜B√BﬂBÀB√B˜B„B‘ÉB‡ÉFB˚FB˜F/B‰ÅçΩ’π–ÉFBÀF?BﬂB√B˜B˜F/FÅ¡…Ωë’ç—ÃËÉ
+ØBGFB”B◊FÉFB”B√BÔB◊B˜B¿ÉFB˚BÔF3BÎB¯ÉBÎB√FB◊BœB˚FB„F<ÉB‡ÉB◊FDÉFBÀF?BﬂB‡∏ÉBáB√BÛB‡ÉFB˚BÀB√FF,ÉB˚FFB√B˜FFFF<ÉB»É
+ØBKFB‘ÉFB˚BÀB√FF/
+ÏÉB‡ÉB”FFBœB„FÉBÎB√FB◊BœB˚FB„F?F
+Ï∏ÅA…Ωë’ç–Åô±ÖùÃΩçΩµµï…ç•Ö∞Åô•ï±ëÃΩ•µÖùïÃΩM<ÉFB˚FFB√B˜F?F;FFF<∏(¥Ä®©A’â±•åΩI1LÅ—Ö…ùï–Ë®®ÅÖπΩ∏ÅÅ¡…Ωë’ç—ÕÄÅM1PÉFB˚BÔF3BÎB¯ÅI0Å¡’â±•Õ°ïêÅπΩ∏µÖ…ç°•ŸïêÉB«B◊B‹ÉB˚B«F?BﬂB√FB◊BÔF3B˜B˚B‰ÉBÎB√FB◊BœB˚FB„B‡ÏÅÖπΩ∏ÅÅçÖ—ïùΩ…•ïÕÄÅM1PÉFB˚BÔF3BÎB¯Å¡’â±•Õ°ïêÅ’Õï»ÅçÖ—ïùΩ…•ïÃÏÅÖπΩ∏ÅÅ¡…Ωë’ç—}çÖ—ïùΩ…•ïÕÄÅM1PÉFB˚BÔF3BÎB¯Å…ï±Ö—•Ω∏Å¡’â±•åµŸ•Õ•â±îÅ¡…Ωë’ç–Ä¨Å¡’â±•Õ°ïêÅçÖ—ïùΩ…‰∏ÅÄΩçÖ—Ö±ΩúΩmçÖ—ïùΩ…ÂuÄÉBÀF/B«B„FB√B◊FÉFB˚BÔF3BÎB¯ÉFBÀF?BﬂB√B˜B˜F/B‘ÉFB˚BÀB√FF,ÉB˚BˇFB«BÔB„BÎB˚BÀB√B˜B˜B˚B‰ÉBÎB√FB◊BœB˚FB„B‡∏Å!•ëîΩëï±ï—îÉBˇB˚BÔF3BﬂB˚BÀB√FB◊BÔF3FBÎB˚B‰ÉBÎB√FB◊BœB˚FB„B‡ÉFBÎFF/BÀB√B◊FÉFB˚BÔF3BÎB¯ÉB◊FDÉBÛB√FF#FFFøFBˇB„FB˚BËÏÅÄΩçÖ—Ö±ΩùÄ∞ÅA…Ωë’ç–Åï—Ö•∞ÉB‡ÉB”FFBœB„B‘Åµïµâï…Õ°•¡ÃÉB˜B‘ÉBÛB◊B˜F?F;FFF<∏Åç—•ŸîÅÖëµ•∏ÉBˇB˚BÔFFB√B◊FÅµïµâï…Õ°•¿ÅM1PΩ%9MIPΩ1QÉB‡ÅçÖ—ïùΩ…‰ÅIUÉFB◊FB◊B‹ÅÖ’—°ïπ—•çÖ—ïêÅ)]PΩI1LÏÅÖπΩ∏ΩπΩ∏µÖëµ•∏Åµ’—Ö—•Ω∏Å9%ÏÅëµ•∏ÅMïç…ï–Åç±•ïπ–ÉB˜B‘ÉB„FBˇB˚BÔF3BﬂB˚BÀB√FF0∏ÅA’â±•Õ°ïêÅçÖ—ïùΩ…‰ÅÕ±’úÉB˚FFB√FGFFF<ÉBﬂB√F'B„F'FGB˜B˜F/B∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅµÖπ‰µ—ºµµÖπ‰ÅÕç°ïµÑÉB‡Å±ïùÖç‰ÅâÖç≠ô•±∞ÅAMLÏÉB˚B”B„BÙÅ¡…Ωë’ç–ÅUU%ÉB»ÉB˜B◊FBÎB˚BÔF3BÎB„FÉBÎB√FB◊BœB˚FB„F?FÉB«B◊B‹ÉBÎB˚BˇB„B‰ÏÅë’¡±•çÖ—îÅµïµâï…Õ°•¿Å9%ÏÄ¿Å’Õï»ÅçÖ—ïùΩ…•ïÃÉB”B˚BˇFFFB„BÛF,ÉB‡ÉBˇFB˚B”FBÎFÉB˚FFB√FGFFF<ÉB»É
+ØBKFB‘ÉFB˚BÀB√FF/
+ÏÏÉFB„FFB◊BÛB˜F/B‰ÉBˇFB˜BÎFÉB˜B‘Åïë•–Ω°•ëîΩëï±ï—îÏÉB˚B«F/FB˜B√F<ÉBÎB√FB◊BœB˚FB„F<ÉFB”B√BÔF?B◊FFF<ÉFB˚BÔF3BÎB¯ÉBÀBÛB◊FFB‘ÉFB¯ÉFBÀB˚B„BÛB‡ÉFBÀF?BﬂF?BÛB‡∞Å¡…Ωë’ç–ÉB‡ÉB˚FFB√BÔF3B˜F/B‘Åµïµâï…Õ°•¡ÃÉFB˚FFB√B˜F?F;FFF<ÏÅ°•ëîΩëï±ï—îÉB˜B‘ÉBÛB◊B˜F?B◊FÅ¡…Ωë’ç–Åô±ÖùÃÉB„BÔB‡ÉBœBÔB˚B«B√BÔF3B˜FF8ÉBÀB„B”B„BÛB˚FFF0ÏÅP¿»–ΩP¿»€äMP¿Ã»Å…ïù…ïÕÕ•ΩπÃÅAMLÏÅÖπΩ∏ΩπΩ∏µÖëµ•∏Åµïµâï…Õ°•¿Åµ’—Ö—•Ω∏Å9%ÏÅ¡ï…µÖπïπ–ÅÕÂπ—°ï—•åÅ…Ω›ÃÄ¿ÏÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅA…ïŸ•ï‹ÅQMQ}=91dÅ—…ÖπÕÖç—•Ω∏ÉFÉB˚B«F?BﬂB√FB◊BÔF3B˜F/BÅ…Ω±±âÖç¨ËÅ¡…Ωë’ç–ÉFÄ¿∞Äƒ∞ÄÃÅçÖ—ïùΩ…•ïÃÏÅë’¡±•çÖ—îÅµïµâï…Õ°•¿Å9%ÏÅ…ïµΩŸîÅΩπîÅ±•π¨ÉB‡Åëï±ï—îÅçÖ—ïùΩ…‰ÉFB˚FFB√B˜F?F;FÅ¡…Ωë’ç–ÉB‡ÉB”FFBœB„B‘Å±•π≠ÃÏÉB˚B”B„BÙÅ¡…Ωë’ç–ÅUU%ÉB„B‹ÉFB√BﬂB˜F/FÉBÎB√FB◊BœB˚FB„B‰ÉB‡ÉFB◊B”B√BÎFB„FB˚BÀB√B˜B„B‘ÉFB˚B‰ÉB€B‘Å…Ω‹ÏÉ
+ØBKFB‘ÉFB˚BÀB√FF/
+ÏÉBÀFB◊BœB”B¿ÉBÀBÎBÔF;FB√B◊FÅ¡…Ωë’ç–ÏÅ°•ëîÉFB˚FFB√B˜F?B◊FÉFBÔB√BœB‡ÏÅëï±ï—îÅçΩ’π–ÉBÀB◊FB˜F/B‰∏ÉBFB˚BÀB◊FB„FF0Å¡’â±•åÅI1LÉB”BÔF<ÉBœBÔB˚B«B√BÔF3B˜B˚BœB¯ÉB‡ÅçÖ—ïùΩ…‰Å…Ω’—îÄ°QMQ}=91dÉB˚FFB√FGFFF<ÉFBÎFF/FÅÖπΩ∏§∞ÉB˚FFFFFFBÀB„B‘ÅÕÂπ—°ï—•åÅI0Å…Ω›ÃÏÅâÖç≠ô•±∞Å•π—ïù…•—‰∞ÅÖπΩ∏ΩπΩ∏µÖëµ•∏Åµ’—Ö—•Ω∏Åëïπ•Ö∞∞Åëµ•∏ÅP¿»–ΩP¿»€äMP¿Ã»Å…ïù…ïÕÕ•ΩπÃ∞Å¡ï…µÖπïπ–ÅÕÂπ—°ï—•åÅç±ïÖπ’¿∏Å1•π–∞Å—Â¡ïç°ïç¨∞Åâ’•±ê∞Å…ïÕ¡ΩπÕ•ŸîÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿∞Å°Ω…•ÈΩπ—Ö∞ÅΩŸï…ô±Ω‹Å9<∞ÅçΩπÕΩ±îÅç±ïÖ∏∏ÉBãB˚BÔF3BÎB¯ÅA…ïŸ•ï‹ÏÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ã…§ËÅµ’±—§µçÖ—ïùΩ…‰ÅçÖ—Ö±ΩúÅµΩëï∞(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿ƒ§Ë®®ÅA…ïŸ•ï‹Åµ•ù…Ö—•Ω∏ÅÖ¡¡±•ïêÅ›•—†Å±ïùÖç‰ÅâÖç≠ô•±∞Å•π—ïù…•—‰Åù’Ö…êÄ°Èï…ºÅ±ïùÖç‰Å¡…Ωë’ç—Ã§∞ÅçΩµ¡ΩÕ•—îÅµïµâï…Õ°•¿Å≠ï‰Ω-ÃΩ•πëï‡ΩI1LΩù…Öπ—ÃÅŸï…•ô•ïêÅÖπêÅÅ¡…Ωë’ç—ÃπçÖ—ïùΩ…Â}•ëÄÅ…ïµΩŸïê∏ÅQ…ÖπÕÖç—•ΩπÖ∞ÅQMQ}=91dÄ¿ºƒºÃÅµïµâï…Õ°•¿∞Åë’¡±•çÖ—îÅëïπ•Ö∞∞Å…ï±Ö—•Ω∏Å…ïµΩŸÖ∞ΩçÖ—ïùΩ…‰Åëï±ï—•Ω∏Å¡…ïÕï…Ÿ•πúÅ—°îÅÕÖµîÅ¡…Ωë’ç–ÅÖπêÅΩ—°ï»Å±•π≠Ã∞ÅçÖ—ïùΩ…‰Å°•ëî∞ÅÖπΩ∏Å•ÕΩ±Ö—•Ω∏ÅÖπêÅÖç—•ŸîΩπΩ∏µÖëµ•∏ÅâΩ’πëÖ…•ïÃÅAMLÅ›•—†Å…Ω±±âÖç¨ÏÅ¡ï…µÖπïπ–ÅÕÂπ—°ï—•åÅ¡…Ωë’ç—ÃΩçÖ—ïùΩ…•ïÃΩ…ï±Ö—•ΩπÃÄ¿∏Åëµ•∏Åô±Ω›ÃÅP¿»–ΩP¿»€äMP¿Ã»ÅÖëÖ¡—ïêÅ›•—°Ω’–Å¡…Ωë’ç–Åë’¡±•çÖ—•Ω∏ÏÅù±ΩâÖ∞ÅI0Å¡’â±•Õ°ïêÅπΩ∏µÖ…ç°•ŸïêÅŸ•Õ•â•±•—‰ÅπºÅ±Ωπùï»Åëï¡ïπëÃÅΩ∏ÅÑÅ’Õï»ÅçÖ—ïùΩ…‰∏ÅA…Ωë’ç–Å…ïÖ—îΩë•–Å’ÕîÅçΩµ¡Öç–Åµ’±—•Õï±ïç–Å›•—†Åï·•Õ—•πúÅÅçÖ—ïùΩ…Â}•ëÕÄÅŸÖ±•ëÖ—•Ω∏∏Å1•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÅAML∏Å=›πï»ÅÖô—ï»Å…ïÖ∞ÅÖëµ•∏Å±Ωù•∏ÅçΩπô•…µïêÅMÂÕ—ï¥Å±∞∞Å…ïÖ—îΩë•–Åë…Ω¡ëΩ›∏ÅÖπêÄ¿Ωµ’±—•¡±îΩ…ïµΩŸîÅÕ—Ö—ïÃ∞Å•π—ï…πÖ∞ÅÕç…Ω±∞∞Å≠ïÂâΩÖ…êΩÕçÖ¡îΩΩ’—Õ•ëîÅç±•ç¨∞Åëï±ï—îÅÖπêÅ¡’â±•çÖ—•Ω∏Å›Ö…π•πùÃ∞ÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿∞ÅπºÅΩŸï…ô±Ω‹∞Åç±ïÖ∏ÅçΩπÕΩ±îÅÖπêÅëµ•∏ÅçΩπÕ•Õ—ïπç‰∏ÅQïµ¡Ω…Ö…‰ÅA…ïŸ•ï‹µΩπ±‰Åπºµ›…•—îÅŸ•Õ’Ö∞Å°Ö…πïÕÃÅ…ïµΩŸïê∏ÅA…Ωë’ç—•Ω∏ΩµÖ•∏Å’πç°ÖπùïêÏÅïŸï±Ω¡µïπ–ÅÖ—îÅAML∞ÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÅ	1=-∏Å9ï·–ÅP¿ÃÃ∞ÅπΩ–ÅÕ—Ö…—ïê∏(((ååÅA!MÄ‹ÉäPÅëµ•∏Å5ïë•ÑÅ5ÖπÖùïµïπ–((åååÅP¿ÃÃÉäPÅëµ•∏ÅM—Ω…ÖùîÅ¡Ω±•ç•ïÃ((¥Ä®©%Ë®®ÅP¿ÃÃ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®Åëµ•∏ÅM—Ω…ÖùîÅ¡Ω±•ç•ïÃ(¥Ä®©ΩÖ∞Ë®®ÉBÉB√BﬂFB◊F#B„FF0Åµïë•ÑÉB˚BˇB◊FB√FB„B‡ÉFB˚BÔF3BÎB¯ÉB√BÎFB„BÀB˜B˚BÛFÅÖëµ•∏∏(¥Ä®©]°‰Ë®®Å	…Ω›Õï»Å’¡±ΩÖêÉB”B˚BÔB€B◊BÙÉFB√B«B˚FB√FF0ÉB«B◊B‹ÅÕïç…ï–∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã…∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å%9MIPΩM1PΩ1QÅ¡Ω±•ç•ïÃÉB»ÉB«B√BÎB◊FB‘ÉB‡ÉB”B˚BˇFFFB„BÛB˚BÉBˇFB◊FB„BÎFB‘∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBFB«BÔB„FB˜F/B‰Å’¡±ΩÖê∞ÉBˇFB˚B„BﬂBÀB˚BÔF3B˜F/B‘ÉBˇFFB‡∞ÅÕïç…ï–ÉB»Åâ…Ω›Õï»∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FB„FF0ÅÖ±±Ω›±•Õ–Å5%5ΩÕ•ÈîÉB‡ÉB˚FFFFFFBÀB„B‘ÉBˇB◊FB◊BﬂB√BˇB„FB‡∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅÖπΩ∏ΩπΩ∏µÖëµ•∏ÉB˜B‘ÉBﬂB√BœFFB€B√B◊FøFB”B√BÔF?B◊FÏÅÖëµ•∏ÉBÛB˚B€B◊F∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅM—Ω…ÖùîÅI1LÅ¡ΩÕ•—•ŸîΩπïùÖ—•ŸîÅ—ïÕ—Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÃÃ§ËÅëµ•∏ÅM—Ω…ÖùîÅ¡Ω±•ç•ïÃ(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿ƒ§Ë®®ÅA…ïŸ•ï‹µΩπ±‰Åµ•ù…Ö—•Ω∏ÅÄ»¿»ÿƒ¿¿ƒ¿ÿ‘‘»›}Öëµ•π}Õ—Ω…Öùï}¡Ω±•ç•ïÃπÕ≈±ÄÅÖ¡¡±•ïêÅ›•—†ÅµÖ—ç°•πúÅ°•Õ—Ω…‰∏ÅQ°…ïîÅπÖ……Ω‹ÅÅÕ—Ω…ÖùîπΩâ©ïç—ÕÄÅ¡Ω±•ç•ïÃÅ¡ï…µ•–ÅÖç—•ŸîÅÖ’—°ïπ—•çÖ—ïêÅÖëµ•∏Å%9MIPΩM1PΩ1QÅΩπ±‰Å•∏ÅÅ¡…Ωë’ç–µµïë•ÑΩ¡…Ωë’ç—ÃºÒUU%¯ºÒùïπï…Ö—ïêµ≠ï‰¯∏Òï·–˘ÄÏÅπºÅUAQΩ’¡Õï…–Å¡Ω±•ç‰∏Å·•Õ—•πúÅ¡’â±•åÅâ’ç≠ï–∞Äƒ»Å5•Å±•µ•–ÅÖπêÅôΩ’»Å•µÖùîÅ5%5Å—Â¡ïÃÅ’πç°Öπùïê∏Å=›πï»ÅŸï…•ô•ïêÅ—°îÅ…ïÖ∞ÅÖëµ•∏Å)]PÅ—°…Ω’ù†ÅÑÅ—ïµ¡Ω…Ö…‰ÅA…ïŸ•ï‹µΩπ±‰ÅÕÖµîµΩ…•ù•∏Åïπë¡Ω•π–ËÅ’¡±ΩÖê∞ÅÕçΩ¡ïêÅ±•Õ–∞Åëï±ï—î∞Å¡’â±•åÅUI0Å…ïÖêÅÖπêÅç±ïÖπ’¿ÅAMLÏÅÖπΩ∏Å’¡±ΩÖêΩëï±ï—î∞Å›…ΩπúÅâ’ç≠ï–Ω¡…ïô•‡∞Å’πÕ’¡¡Ω…—ïêÅ5%5ÅÖπêÅΩŸï…›…•—îÅ9%∞ÅΩ…•ù•πÖ∞ÅâÂ—ïÃÅ’πç°Öπùïê∏Å9Ω∏µÖëµ•∏Å›…•—ïÃÅ…ïµÖ•∏Åëïπ•ïêÅâ‰Å—°îÅÖç—•Ÿîµµïµâï…Õ°•¿ÅI1LÅ¡…ïë•çÖ—îÏÅπºÅâ…ΩÖêÅµ’—Ö—•Ω∏Å¡Ω±•ç‰Å›ÖÃÅÖëëïê∏ÅQ°îÅë•ÖùπΩÕ—•åÅïπë¡Ω•π–Å›ÖÃÅ…ïµΩŸïêÅÖô—ï»ÅŸï…•ô•çÖ—•Ω∏∏ÅAï…µÖπïπ–Å—ïÕ–ÅΩâ©ïç—Ã∞ÅÕÂπ—°ï—•åÅÅ…Ω›ÃÅÖπêÅ—ïµ¡Ω…Ö…‰Å’—†ÅÖççΩ’π—ÃÅÖ…îÄ¿ÏÅΩπîÅ…ïÖ∞ÅÖç—•ŸîÅÖëµ•∏Å…ïµÖ•πÃ∏ÅMïç’…•—‰ÅëŸ•ÕΩ»Å°ÖÃÅπºÅâ±Ωç≠•πúÅô•πë•πùÃÏÅ—°îÅï·•Õ—•πúÅ±ïÖ≠ïêµ¡ÖÕÕ›Ω…êÅ›Ö…π•πúÅ…ïµÖ•πÃÅÑÅ¡…îµ¡…Ωë’ç—•Ω∏Å•—ï¥∏ÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏Å9ï·–ÅP¿Ã–∞ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿Ã–ÉäPÅ5ïë•ÑÅ’¡±ΩÖêÉB‡Å¡…ïŸ•ï‹((¥Ä®©%Ë®®ÅP¿Ã–(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®Å5ïë•ÑÅ’¡±ΩÖêÉB‡Å¡…ïŸ•ï‹(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0ÉBﬂB√BœFFBﬂBÎFÉB‡ÉBˇFB◊B”BˇFB˚FBÛB˚FF ÉB»ÅA…Ωë’ç–Åë•—Ω»∏(¥Ä®©]°‰Ë®®ÉBÉB◊B”B√BÎFB˚F ÉB˜B‘ÉB”B˚BÔB€B◊BÙÉBÀBÀB˚B”B„FF0ÅM—Ω…ÖùîÅ¡Ö—°Ã∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÃÃ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å±•ïπ–ÅÖëµ•∏Å’—†Å’¡±ΩÖê∞ÅÕÖôîÅùïπï…Ö—ïêÅ¡Ö—†∞Å¡…ïŸ•ï‹ΩŸÖ±•ëÖ—•Ω∏∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBkB√FB√BÔB˚BÃÅ•µÖùîÅùÖ±±ï…‰∞ÉB˜B˚BÀF/B‘Åµïë•ÑÅâ’ç≠ï—Ã∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FF?FF0ÉFB√BﬂBÛB◊F ∞ÉFB˚FBÛB√F∞ÉBˇFB√BÀB¿ÏÉB˚F#B„B«BÎFÅ’¡±ΩÖêÉBˇB˚BÎB√BﬂB√FF0∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBìB˚FB¯ÉBﬂB√BœFFBﬂB„BÔB˚FF0ÉB‡ÉBˇFB„BÀF?BﬂB√BÔB˚FF0ÉBËÉB˜FB€B˜B˚BÛFÅM-TÏÉBˇFFF0ÉFBÎFF/FÉB˚FÅU$∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å’¡±ΩÖêÅÕµΩ≠î∞Å—Â¡ïç°ïç¨∞Å¡Ω±•ç‰Åëïπ•Ö∞∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ã–§ËÅ5ïë•ÑÅ’¡±ΩÖêÉB‡Å¡…ïŸ•ï‹((¥Ä®©A…Ωù…ïÕÃÄ†»¿»ÿ¥ƒ¿¥¿ƒ§Ë®®ÅA…ïŸ•ï‹µΩπ±‰Åµ•ù…Ö—•Ω∏ÅÄ»¿»ÿƒ¿¿ƒ¿‹Ãÿ‘≈}µïë•Ö}ë…Öô—}π’±±Öâ±îπÕ≈±ÄÅÖ¡¡±•ïêÅ›•—†ÅµÖ—ç°•πúÅ°•Õ—Ω…‰ÅÖô—ï»ÅçΩπô•…µ•πúÅÈï…ºÅï·•Õ—•πúÅ•µÖùîÅ…Ω›ÃÏÅΩπ±‰ÅÅ¡…Ωë’ç—}•µÖùïÃπ…Ω±ïÄÅÖπêÅÅÖ±—ÄÅâïçÖµîÅπ’±±Öâ±îÅôΩ»Åë…Öô–Åµïë•Ñ∏Å9ºÅÕïµÖπ—•åÅëïôÖ’±—ÃÅΩ»ÅP¿Ã‘ÅçΩπ—…Ω±Ã∏ÅA…Ωë’ç–Åë•—Ω»ÅπΩ‹Å’ÕïÃÅâ…Ω›Õï»Å¡’â±•Õ°Öâ±îÅ≠ï‰Å›•—†ÅÖ’—°ïπ—•çÖ—ïêÅçΩΩ≠•îÅÕïÕÕ•Ω∏ÅôΩ»ÅM—Ω…ÖùîÅ’¡±ΩÖê∞Åùïπï…Ö—ïêÅ¡ï»µ¡…Ωë’ç–ÅUU%Å¡Ö—†ÅÖπêÅπºÅ’¡Õï…–ÏÅÑÅÕÖµîµΩ…•ù•∏Åù’Ö…ëïêÅMï…Ÿï»Åç—•Ω∏ÅŸï…•ô•ïÃÅï·•Õ—•πúÅ¡…Ωë’ç–∞Åï·Öç–Å¡Ö—†∞ÅΩâ©ïç–Åµï—ÖëÖ—ÑÅÖπêÅë•µïπÕ•ΩπÃÅâïôΩ…îÅ•πÕï…—•πúÅÑÅë…Öô–Å…ï±Ö—•Ω∏Å›•—†Å9U10Å…Ω±îΩÖ±–∏ÅAÖ…—•Ö∞Åµï—ÖëÖ—ÑÅôÖ•±’…îÅÖ——ïµ¡—ÃÅΩâ©ïç–Åç±ïÖπ’¿ÏÅÖµâ•ù’Ω’ÃÅ…ïÕ¡ΩπÕîÅ•ÃÅç°ïç≠ïêÅâïôΩ…îÅëï±ï—•Ω∏∏Å·•Õ—•πúÅ•µÖùïÃÅÖπêÅ¡…ïŸ•ï‹∞Åµ’±—§µô•±îÅ¡•ç≠ï»Å›•—†Å•πë•Ÿ•ë’Ö∞Å¡…ïŸ•ï›ÃΩÕ—Ö—’Ã∞Å±ΩçÖ∞Å¡ï»µô•±îÅôΩ…µÖ–ΩÕ•ÈîÅŸÖ±•ëÖ—•Ω∏ÅÖπêÅÕÖôîÅï……Ω…ÃÅ•µ¡±ïµïπ—ïê∏ÅÖç†ÅÕ’ççïÕÕô’∞Åô•±îÅùï—ÃÅ•—ÃÅΩ›∏ÅΩâ©ïç–Å≠ï‰ÅÖπêÅÕ—Öâ±îÅ•µÖùîÅ…Ω‹Å%ÏÅôÖ•±’…ïÃÅÖ…îÅ•ÕΩ±Ö—ïê∞ÅÖπêÅ±Ö—ï»ÅÖëë•—•ΩπÃÅÖ¡¡ïπêÅ›•—°Ω’–Å¡…Ωë’ç–Åë’¡±•çÖ—•Ω∏∏Å	ïôΩ…îÅ’¡±ΩÖê∞ÅïÖç†Å≈’ï’ïêÅô•±îÅ°ÖÃÅÑÅ≠ïÂâΩÖ…êµÖççïÕÕ•â±îÅ±ΩçÖ∞µΩπ±‰É
+ØBèB«FB√FF3
+ÏÅÖç—•Ω∏ÏÅ’¡±ΩÖëïêÅ•µÖùïÃÅ°ÖŸîÅπºÅï±ï—îÅçΩπ—…Ω∞Ä°P¿Ãÿ§∏ÅYÖ±•ëÖ—•Ω∏Ω¡Ö—†ÅçÖÕïÃÅÖπêÅ—…ÖπÕÖç—•ΩπÖ∞ÅÖ’—°ïπ—•çÖ—ïêÅÖëµ•∏ÄƒºÃΩ…ï¡ïÖ–Å•µÖùîÅ…Ω›ÃÅΩ∏ÅΩπîÅ¡…Ωë’ç–Å›•—†Å…Ω±±âÖç¨ÅAMLÏÅ—°Ö–ÅïÖ…±•ï»Å—ïÕ–Å±ïô–ÅπºÅô•·—’…ïÃ∏ÅA…•Ω»ÅP¿ÃÃÅ…ïÖ∞µÖëµ•∏ÅM—Ω…ÖùîÅA$ÅÕµΩ≠îÅ¡…ΩŸïÃÅ•—ÃÅI1LÅâΩ’πëÖ…‰ÏÅΩ›πï»ÅŸ•Õ’Ö∞ÅÖπêÅ…ïÖ∞µÖëµ•∏Åâ…Ω›Õï»ÅâÖ—ç†Å’¡±ΩÖêΩ±•π¨∞Å…ï±ΩÖêÅÖπêÅ…ï¡ïÖ–ÅÖëë•—•Ω∏ÅAML∏Å1•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÅAML∞ÅMïç’…•—‰ÅëŸ•ÕΩ»Å°ÖÃÅπºÅπï‹Åâ±Ωç≠•πúÅô•πë•πùÃ∏ÅQïµ¡Ω…Ö…‰Åπºµ›…•—îÅµïë•Ñµ…ïŸ•ï‹ÅÕç…ïï∏Å…ïµΩŸïêÅ•∏Åç±ïÖπ’¿Åç°ÖπùïÃ∏ÅΩ’»Å±•π≠ïêÅ•µÖùîÅ…Ω›ÃÅÖπêÅQMQ}=91dÅ¡…Ωë’ç–Åëï±ï—ïêÅÖô—ï»ÅM—Ω…ÖùîÅ•µÖùîÅ…ïµΩŸÖ∞∏ÅÖÕ°âΩÖ…êÅôΩ±ëï»Å¡±Öçï°Ω±ëï…ÃÅ…ïµΩŸïêÅŸ•ÑÅM—Ω…ÖùîÅU$∏Å•…ïç–ÅA…ïŸ•ï‹ÅŸï…•ô•çÖ—•Ω∏ËÅÕÂπ—°ï—•åÅ¡…Ωë’ç—ÃÄ¿∞ÅÅ¡…Ωë’ç—}•µÖùïÕÄÄ¿∞ÅÅ¡…Ωë’ç–µµïë•ÖÄÅM—Ω…ÖùîÅΩâ©ïç—ÃÄ¿∏ÅP¿Ã–Å=9ÏÅA…Ωë’ç—•Ω∏Å’π—Ω’ç°ïêÏÅP¿Ã‘ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿Ã‘ÉäPÅ%µÖùîÅµï—ÖëÖ—ÑÉB‡Å¡…•µÖ…‰((¥Ä®©%Ë®®ÅP¿Ã‘(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®Å%µÖùîÅµï—ÖëÖ—ÑÉB‡Å¡…•µÖ…‰(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B”B√BÎFB„FB˚BÀB√FF0ÅÖ±–Ω…Ω±îΩΩ…ëï»Ω¡…•µÖ…‰ÉB”BÔF<ÉB„BﬂB˚B«FB√B€B◊B˜B„B‰ÉFB˚BÀB√FB¿∏(¥Ä®©]°‰Ë®®ÉBìB√BÎFFFF,ÉB‡ÉB„B˜FB◊FF3B◊F ÉB„BÛB◊F;FÉFB√BﬂB˜FF8ÉFB◊BÛB√B˜FB„BÎF∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã–∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å¡…Ωë’ç—}•µÖùïÃÅµ’—Ö—•Ω∏∞Å…ïΩ…ëï»∞ÅΩπîÅ¡…•µÖ…‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBCBÀFB˚BÛB√FB„FB◊FBÎB˚B‘ÉFB˚FB„B˜B◊B˜B„B‘ÅÖ±–øFB√FB√BÎFB◊FB„FFB„BË∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBwB◊BÁFFB√BÔF3B˜F/B‰ÉB˚B«FB√BﬂB◊FÅ¡…•µÖ…‰ÏÉFFB„FF/BÀB√FF0ÉB”B„BﬂB√BÁBÙ∑FB„FFB◊BÛF∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBB˚FBÔB‘Å…ï±ΩÖêÉBˇB˚FF?B”B˚BËÉB‡Å¡…•µÖ…‰ÉFB˚FFB√B˜F?F;FFF<∞ÉBˇFB«BÔB„BÎB√FB„F<ÉFFB◊B«FB◊FÅ¡…•µÖ…‰∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅÅçΩπÕ—…Ö•π–ÅÖπêÅïë•—Ω»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ã‘§ËÅ%µÖùîÅµï—ÖëÖ—ÑÉB‡Å¡…•µÖ…‰((¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿ƒ§Ë®®ÅA…ïŸ•ï‹Åµ•ù…Ö—•ΩπÃÅÄ»¿»ÿƒ¿¿ƒƒ»–¿ƒ·}µïë•Ö}µï—ÖëÖ—Ö}¡…•µÖ…‰πÕ≈±ÄÉB‡ÅÄ»¿»ÿƒ¿¿ƒƒ»–Ã¿—}¡…Ωë’ç—}µïë•Ö}¡’â±•çÖ—•Ωπ}ù’Ö…êπÕ≈±ÄÉBˇFB„BÛB◊B˜B◊B˜F,ÉFÅµÖ—ç°•πúÅ°•Õ—Ω…‰ËÅMUI%QdÅ%9Y=-HÄ¨ÅI1L∞ÅÖç—•ŸîÅµïµâï…Õ°•¿∞Åï·Öç–Å•µÖùîÅÕï–ΩΩ›πï…Õ°•¿ÅŸÖ±•ëÖ—•Ω∏∞ÅÖ—Ωµ•åÅΩ…ëï»ΩÖ±–Ω…Ω±îΩ¡…•µÖ…‰ÅÕÖŸîÅ’πëï»Å¡…Ωë’ç–Å…Ω‹Å±Ωç¨ÅÖπêÅï·•Õ—•πúÅ’π•≈’îµ¡…•µÖ…‰Å•πëï‡ÏÅ¡’â±•Õ†Å—…ÖπÕ•—•Ω∏Å…ï≈’•…ïÃÅ¡…•µÖ…‰ÅÖπêÅçΩµ¡±ï—îÅÖ±–Ω…Ω±î∞ÉB«B◊B‹ÅâÖç≠ô•±∞ÅI0∏ÅA…Ωë’ç–Åë•—Ω»Å’ÕïÃÅçΩµ¡Öç–Åµïë•ÑÅçÖ…ëÃ∞Åë…ÖúÅ°Öπë±î∞Å≠ïÂâΩÖ…êΩµΩâ•±îÅ…ïΩ…ëï»∞ÅµÖ•∏Å¡…ïŸ•ï‹∞Åï·¡±•ç•–Å¡…•µÖ…‰∞ÅçΩπ—…Ω±±ïêÅ…Ω±ïÃÅÖπêÅÖ±–ÏÅP¿Ã–Åµ’±—•¡±îÅ’¡±ΩÖêΩ≈’ï’îΩÖ¡¡ïπêÅ¡…ïÕï…Ÿïê∏Å9ºÅ’¡±ΩÖëïêµ•µÖùîÅï±ï—î∏ÅQ…ÖπÕÖç—•ΩπÖ∞ÅQMQ}=91dÅ…ïΩ…ëï»Ω¡ï…Õ•Õ—ïπçî∞Å¡…•µÖ…‰Å—…ÖπÕ•—•Ω∏Ω’π•≈’ïπïÕÃ∞ÅÖ±–Ω…Ω±î∞ÅôΩ…ï•ù∏µ•µÖùîΩπΩ∏µÖëµ•∏ΩŸÖ±•ëÖ—•Ω∏Ω¡’â±•çÖ—•Ω∏Åç°ïç≠ÃÅAMLÅ›•—†Å…Ω±±âÖç¨ÏÅ¡…Ωë’ç—ÃΩ•µÖùïÃΩM—Ω…ÖùîÅÖô—ï»Å—ïÕ—ÃÄ¿∏Å=›πï»Å…ïÖ∞µÖëµ•∏ÅŸ•Õ’Ö∞ÅŸï…•ô•çÖ—•Ω∏ÅAMLÅôΩ»ÄƒºÃº‡Å•µÖùîÅçÖ…ëÃ∞Åë…ÖúÅÖπêÅ≠ïÂâΩÖ…êΩµΩâ•±îÅ…ïΩ…ëï»∞Å¡…•µÖ…‰Ωµï—ÖëÖ—ÑΩÕÖŸîÅÕ—Ö—ïÃ∞ÅP¿Ã–Å≈’ï’î∞ÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿∞ÅπºÅΩŸï…ô±Ω‹ÅÖπêÅç±ïÖ∏ÅçΩπÕΩ±î∏ÅQïµ¡Ω…Ö…‰Åπºµ›…•—îÅ…ïŸ•ï‹ÅÕç…ïï∏ÅÖπêÅ¡…ïŸ•ï‹µΩπ±‰Åâ…Öπç†Å…ïµΩŸïê∏Å1•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÅAMLÏÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏ÅP¿Ã‘Å=9ÏÅπï·–ÅP¿Ãÿ∞ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿ÃÿÉäPÅMÖôîÅ•µÖùîÅ…ïµΩŸÖ∞((¥Ä®©%Ë®®ÅP¿Ãÿ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®ÅMÖôîÅ•µÖùîÅ…ïµΩŸÖ∞(¥Ä®©ΩÖ∞Ë®®ÉBèB”B√BÔF?FF0ÉBÛB◊B”B„B¿ÉB«B◊B‹ÉB«B„FF/FÉBˇFB«BÔB„FB˜F/FÉFFF/BÔB˚BË∏(¥Ä®©]°‰Ë®®ÅM—Ω…ÖùîÉB‡ÉFB√B«BÔB„FB¿ÉB„BﬂBÛB◊B˜F?F;FFF<ÉFB√BﬂB”B◊BÔF3B˜B¯∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã‘∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Åëï—Öç£äIM—Ω…ÖùîÅëï±ï—î∞ÉBˇFB◊B”FBˇFB◊B€B”B◊B˜B„B‘ÉB‡Å…ï—…‰ÅΩ…¡°Ö∏Åç±ïÖπ’¿∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBèB”B√BÔB◊B˜B„B‘ÉB◊B”B„B˜FFBÀB◊B˜B˜B˚BœB¯Å¡…•µÖ…‰ÉB˚BˇFB«BÔB„BÎB˚BÀB√B˜B˜B˚BœB¯ÅM-T∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FF?FF0ÉBˇFB„B˜B√B”BÔB◊B€B˜B˚FFF0Å¡Ö—†Ω¡…Ωë’ç–∞ÉBˇB˚B”FBÀB◊FB€B”B√FF0ÉFB”B√BÔB◊B˜B„B‘∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBB˚FBÔB‘ÉFB”B√BÔB◊B˜B„F<ÉBˇFB«BÔB„FB˜F/B‰ÉBÎB√B”F ÉB˜B‘ÉB«B„FF/B‰ÏÉB˚FBÎB√B‹ÉB˚FFB√BÀBÔF?B◊FÉF?FB˜B˚B‘ÉFB˚FFB˚F?B˜B„B‘∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅôÖ•±’…îµµΩëîÅÕµΩ≠î∞ÅM—Ω…ÖùîÅ¡Ω±•ç‰Å—ïÕ—Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ãÿ§ËÅMÖôîÅ•µÖùîÅ…ïµΩŸÖ∞((¥Ä®©A…Ωù…ïÕÃÄ†»¿»ÿ¥ƒ¿¥¿ƒ§Ë®®ÅA…ïŸ•ï‹Åµ•ù…Ö—•Ω∏ÅÄ»¿»ÿƒ¿¿ƒƒ–¿¿¿…}¡…Ω—ïç—}¡’â±•Õ°ïë}¡…•µÖ…Â}ëï±ï—îπÕ≈±ÄÅÖ¡¡±•ïêÅ›•—†ÅµÖ—ç°•πúÅ°•Õ—Ω…‰ÏÅÑÅë•…ïç–ÅÖ’—°ïπ—•çÖ—ïêÅÅ1QÅΩòÅÑÅ¡’â±•Õ°ïêÅ¡…•µÖ…‰Å•ÃÅëïπ•ïêÅ›•—°Ω’–Åç°Öπù•πúÅI1LΩM—Ω…ÖùîÅ¡Ω±•ç•ïÃ∏ÅA…Ωë’ç–Åë•—Ω»Å°ÖÃÅ¡ï»µ•µÖùîÅçΩπô•…µÖ—•Ω∏∞Åù’Ö…ëïêÅï·Öç–µ…Ω‹Åëï—Öç†ÅâïôΩ…îÅÕ•πù±îµΩâ©ïç–ÅM—Ω…ÖùîÅ…ïµΩŸÖ∞∞Åï·¡±•ç•–Å¡Ö…—•Ö∞µôÖ•±’…îÅ›Ö…π•πú∞ÅÕçΩ¡ïêÅΩ…¡°Ö∏ÅÕçÖ∏Ω…ï—…‰∞ÅÖπêÅÑÅù’Ö…ëïêÅπºµ›…•—îÅA…ïŸ•ï‹Å…ïŸ•ï‹ÅÕç…ïï∏∏ÅQ…ÖπÕÖç—•ΩπÖ∞ÅQMQ}=91dÅë•…ïç–ÅÅµÖ—…•‡ÅôΩ»ÅπΩ∏µ¡…•µÖ…‰∞Å¡’â±•Õ°ïêÅ¡…•µÖ…‰Åëïπ•Ö∞∞Åë…Öô–Å¡…•µÖ…‰ÅÖπêÅ±ÖÕ–Åë…Öô–Å•µÖùîÅAMLÅ›•—†Å…Ω±±âÖç¨∏Å=›πï»ÅŸ•Õ’Ö∞Ω…ïÕ¡ΩπÕ•ŸîÅŸï…•ô•çÖ—•Ω∏ÅAMLÅôΩ»ÅçΩπô•…µÖ—•Ω∏∞Å¡’â±•Õ°ïêµ¡…•µÖ…‰Åâ±Ωç¨∞Åë…Öô–Åëï±ï—•Ω∏ÅÕ—Ö—ïÃ∞ÅôÖ•±’…îÅ›Ö…π•πúÅÖπêÅ…ï—…‰ÅÖ–ÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿∞ÅπºÅΩŸï…ô±Ω‹ΩçΩπÕΩ±îÅï……Ω»∏ÅÅ—ïµ¡Ω…Ö…‰Åù’Ö…ëïêÅA…ïŸ•ï‹µΩπ±‰Åâ…Ω›Õï»ÅÕµΩ≠îÅ¡…ï¡Ö…ïÃÅ—°…ïîÅ—ïç°π•çÖ∞Å•µÖùïÃÅΩ∏ÅΩπîÅQMQ}=91dÅ¡…Ωë’ç–Å—°…Ω’ù†Å—°îÅΩ›πï»ùÃÅπΩ…µÖ∞ÅÖëµ•∏ÅÕïÕÕ•Ω∏ËÅπΩ…µÖ∞Åëï±ï—•Ω∏Å∞Å¡…•µÖ…‰Å¡…ïÕï…ŸÖ—•Ω∏Å∞ÅçΩπ—…Ω±±ïêÅM—Ω…ÖùîÅôÖ•±’…îÅÖô—ï»ÅÅëï—Öç†ÅÖπêÅ…ïÖ∞ÅΩ…¡°Ö∏Å…ï—…‰∏ÅQ°îÅÕ•µ’±Ö—•Ω∏Å•ÃÅ…ïÕ—…•ç—ïêÅ—ºÅ—°Ö–Åô•·—’…îÅÖπêÅπïŸï»Åç°ÖπùïÃÅÕç°ïµÑΩI1LΩM—Ω…ÖùîÅ¡Ω±•ç•ïÃ∏Å1•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÅAML∏Å=›πï»Å…ïÖ∞µÖëµ•∏Åâ…Ω›Õï»ÅÅëï±ï—•Ω∏ÅÖπêÅÅôÖ•±’…îΩ…ï—…‰ÅAML∏Å•…ïç–ÅA…ïŸ•ï‹ÅŸï…•ô•çÖ—•Ω∏ÅçΩπô•…µÃÅΩÅ•µÖùîÅ…Ω›ÃÅÖπêÅΩâ©ïç—ÃÅÖâÕïπ–∞ÅÅ¡’â±•åÅUI0ÅπºÅ±Ωπùï»ÅÕï…ŸïÃÅÖ∏Å•µÖùî∞ÅÅ¡…•µÖ…‰Å…Ω‹ΩΩâ©ïç–Å•π—Öç–ÅÖπêÅΩ…¡°Ö∏ÅçΩ’π–Ä¿∏ÅIï—…‰ÅπΩ‹Åç°ïç≠ÃÅÖç—’Ö∞ÅΩâ©ïç–ÅÖâÕïπçîÅâïôΩ…îÅ…ï¡Ω…—•πúÅÕ’ççïÕÃ∏ÅQïµ¡Ω…Ö…‰ÅÕµΩ≠îΩπºµ›…•—îÅ…Ω’—ïÃÅÖπêÅôÖ’±–ÅÕ•µ’±Ö—•Ω∏Å…ïµΩŸïê∏Å=›πï»Åô•πÖ∞ÅÅëï±ï—•Ω∏∞ÅçΩπô•…µÖ—•Ω∏ÅÖπêÅ…ï±ΩÖêÅ¡ï…Õ•Õ—ïπçîÅAML∏Å•…ïç–ÅA…ïŸ•ï‹ÅΩM—Ω…ÖùîÅŸï…•ô•çÖ—•Ω∏ËÅÅ…ï±Ö—•Ω∏ΩΩâ©ïç–ÅÖâÕïπ–ÏÅÅÖπêÅÅ¡’â±•åÅUI1ÃÅπºÅ±Ωπùï»ÅÕï…ŸîÅ•µÖùïÃ∏ÅQ…’Õ—ïêÅï·Öç–µ%ÅQMQ}=91dÅ¡…Ωë’ç–Åç±ïÖπ’¿ÅçΩµ¡±ï—ïêÅΩπ±‰ÅÖô—ï»ÅçΩπô•…µ•πúÅπºÅ•µÖùîÅ…Ω›Ã∞Åµïµâï…Õ°•¡ÃÅΩ»ÅM—Ω…ÖùîÅΩâ©ïç—Ã∏Å•πÖ∞ÅÕÂπ—°ï—•åÅ¡…Ωë’ç—ÃÄ¿∞Å—ïÕ–Å•µÖùîÅ…Ω›ÃÄ¿∞Å¡…Ωë’ç–µµïë•ÑÅM—Ω…ÖùîÅΩâ©ïç—ÃÄ¿ÅÖπêÅΩ…¡°ÖπÃÄ¿∏ÅQïµ¡Ω…Ö…‰Å…Ω’—ïÃÅÖπêÅôÖ’±–ÅÕ•µ’±Ö—•Ω∏Å…ïµΩŸïêÏÅ±•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÅAML∏ÅP¿ÃÿÅ=9ÏÅA…Ωë’ç—•Ω∏Å’πç°ÖπùïêÏÅπï·–ÅP¿Ã‹ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿Ã‹ÉäPÅ5ïë•ÑÅ¡…ïÕïπ—Ö—•Ω∏ÅŸï…•ô•çÖ—•Ω∏((¥Ä®©%Ë®®ÅP¿Ã‹(¥Ä®©A…•Ω…•—‰Ë®®Å@ƒ(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®Å5ïë•ÑÅ¡…ïÕïπ—Ö—•Ω∏ÅŸï…•ô•çÖ—•Ω∏(¥Ä®©ΩÖ∞Ë®®ÉBFB˚BÀB◊FB„FF0ÉFB√BÎFFFF∞ÉBÎB√B”FF,ÉB‡ÉBˇFB˚B„BﬂBÀB˚B”B„FB◊BÔF3B˜B˚FFF0ÉBÛB◊B”B„B¿∏(¥Ä®©]°‰Ë®®ÅÖ…¨ÅΩ±êÅM°Ω›…ΩΩ¥ÉBﬂB√BÀB„FB„FÉB˚FÉBˇFB√BÀB”B˚BˇB˚B”B˚B«B˜B˚BœB¯ÉBÛB√FB◊FB„B√BÔB¿∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ãÿ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å9ï·–Ω%µÖùîÅÕ•ÈïÃΩ…ïµΩ—ïAÖ——ï…πÃΩç…Ω¡ÃΩ±ÖÈ‰Ω1@Å…ïŸ•ï‹∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBcBﬂBÛB◊B˜B◊B˜B„B‘ÉBˇB√BÔB„FFF,ÉB„BÔB‡ÉFBÀB◊FB¿ÉBˇFB˚B”FBÎFB¿∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBáB˚BˇB˚FFB√BÀB„FF0ÉB˜B◊BÁFFB√BÔF3B˜F/B‰ÉBˇFB˚B”FBÎFB˚BÀF/B‰ÉBÎB√B”F ÉFÅµÖπ•ôïÕ–∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Äƒ––¿ºÃ‰¿ÉFB˚FB¯ÉBÎB˚FFB◊BÎFB˜F,∞ÉBˇFB√BÀB¿ÉB‡ÅÖ±–ÉBˇFB˚BÀB◊FB◊B˜F,∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å•µÖùîÅπï—›Ω…¨ΩçΩπÕΩ±îÅÕµΩ≠î∞Å—Ö…ùï–Å¡ï…ôΩ…µÖπçî∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ã‹§ËÅ5ïë•ÑÅ¡…ïÕïπ—Ö—•Ω∏ÅŸï…•ô•çÖ—•Ω∏((¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®Å9ï·–Ω%µÖùîÅ’ÕïÃÅÑÅπÖ……Ω‹ÅA…ïŸ•ï‹ÅÅ¡…Ωë’ç–µµïë•ÑΩ¡…Ωë’ç—Ãº®©ÄÅM—Ω…ÖùîÅ…ïµΩ—îÅ¡Ö——ï…∏ÏÅëµ•∏Åµïë•ÑÅ¡…ïŸ•ï›ÃÅ’ÕîÅ…ïçΩ…ëïêÅ•µÖùîÅë•µïπÕ•ΩπÃÅÖπêÅ…ïÕ¡ΩπÕ•ŸîÅÕ•ÈïÃ∞Å›°•±îÅ±ΩçÖ∞ÅÕ°Ω›…ΩΩ¥Å!ï…ºÅÖ±ΩπîÅ¡…ï±ΩÖëÃÅÖπêÅÕïçΩπëÖ…‰Åµïë•ÑÅÕ—ÖÂÃÅ±ÖÈ‰∏ÅÅ—ïµ¡Ω…Ö…‰Åπºµ›…•—îÅA…ïŸ•ï‹Å…ïŸ•ï‹ÅΩòÅP¿ƒ¿ÅµÖπ•ôïÕ–Å¡…Ωë’ç–Å¡…•µÖ…‰Ωëï—Ö•∞ÅÖπêÅπï’—…Ö∞Å•π—ï…•Ω»ΩÖ¡¡±•çÖ—•Ω∏ÅÕΩ’…çïÃÅŸï…•ô•ïêÅ…•ù°—Ã∞Å…Ω±î∞ÅÖ±–∞Åç…Ω¿∞Åπï—›Ω…¨ÅÖπêÅçΩ±Ω»Å¡…ïÕïπ—Ö—•Ω∏∏Å=›πï»ÅŸ•Õ’Ö∞ÅŸï…•ô•çÖ—•Ω∏ÅAMLÅôΩ»Å…ï¡…ïÕïπ—Ö—•ŸîÅ±Ö…ùîΩçÖ…êΩëï—Ö•∞Ω•π—ï…•Ω»Åô…ÖµïÃ∞Å—ï·—’…îΩçΩ±Ω»Åô•ëï±•—‰∞Å—°îÄÿ‘€\ÿ‘ÿÅ¡…•µÖ…‰Å¡…ïÕïπ—Ö—•Ω∏∞ÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿ÅÖπêÄƒ‰»¿º»‘ÿ¿ÅÕÖπ•—‰∞ÅπºÅÕ—…ï—ç†ΩΩŸï…ô±Ω‹ÅΩ»ÅÖ¡¡±•çÖ—•Ω∏ÅçΩπÕΩ±îÅï……Ω…Ã∏ÅQ°îÅ—ïµ¡Ω…Ö…‰Å…Ω’—îÅÖπêÅ—°…ïîÅï·Öç–ÅÕΩ’…çîÅ¡Ö——ï…πÃÅ›ï…îÅ…ïµΩŸïêÅÖô—ï»ÅŸï…•ô•çÖ—•Ω∏∏ÅP¿Ã”äMP¿ÃÿÅµ’—Ö—•Ω∏Å±Ωù•å∞ÅÕç°ïµÑÅÖπêÅI1LÅ’πç°ÖπùïêÏÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏ÅQ°•ÃÅ…ï¡…ïÕïπ—Ö—•ŸîÅAMLÅ•ÃÄ®©πΩ–®®Åô’±∞ÅA…Ωë’ç—•Ω∏Å≈’Ö±•—‰ÅÖ¡¡…ΩŸÖ∞ÅΩòÅ—°îÅ’π•≈’îÅµïë•ÑÅÕï–ÏÅÕï±ïç—ïêÅÖÕÕï—ÃÅÕ—•±∞Å…ï≈’•…îÅ¡…îµ¡…Ωë’ç—•Ω∏ÅΩ›πï»ÅÕ•ù∏µΩôò∏ÅP¿Ã‹Å=9ÏÅπï·–ÅP¿Ã‡∞ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿Ã‡ÉäPÅYï…•ô•ïêÅçÖ—Ö±ΩúÅ¡Ω¡’±Ö—•Ω∏((¥Ä®©%Ë®®ÅP¿Ã‡(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®ÅYï…•ô•ïêÅçÖ—Ö±ΩúÅ¡Ω¡’±Ö—•Ω∏(¥Ä®©ΩÖ∞Ë®®ÉBKBÀB◊FFB‡ÉB˜B◊B«B˚BÔF3F#B˚B‰ÉBˇFB˚BÀB◊FB˚FB˜F/B‰ÉB˜B√B«B˚F ÉFFBÀB◊FB€B”FGB˜B˜F/FÅM-TÉFB◊FB◊B‹Åëµ•∏ÅAÖπï∞∏(¥Ä®©]°‰Ë®®Å4–ÉFFB◊B«FB◊FÉBˇFB˚BÀB◊FB„FF0ÉFB◊B√BÔF3B˜F/B‘ÉB˚BˇB◊FB√FB„B‡ÉB˜B¿ÉB˜B√FFB˚F?F'B„FÉB”B√B˜B˜F/F∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã‹∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBwB◊B«B˚BÔF3F#B˚B‰ÉB˜B√B«B˚F ÉFB◊B√BÔF3B˜F/FÅM-TÉB„B‹ÅëΩçÃΩ=9Q9Q}QLπµêÉFÉFB˚BÔF3BÎB¯ÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜F/BÛB‡ÉBˇB˚BÔF?BÛB‡ÉFB◊FB◊B‹Åëµ•∏ÉB»ÅA…ïŸ•ï‹ÏÉBˇFB˚BÀB◊FBÎB¿ÉBˇB˚BÔB˜B˚BœB¯Å±Ö’πç†ÉB√FFB˚FFB„BÛB◊B˜FB¿ÉäPÉBˇB◊FB◊B–Å¡…Ωë’ç—•Ω∏Å…ïÖë•πïÕÃ∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBFF?BÛB˚B‰ÅÕïïêÉB«B◊B‹ÉBˇFB„FB„B˜F,∞ÉBÀF/BÛF/F#BÔB◊B˜B˜F/B‘ÉFB◊B˜F,∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBcFBˇB˚BÔF3BﬂB˚BÀB√FF0ÉFB˚FBÛF,ÅÖëµ•∏ÏÉB˜B◊BˇB˚BÔB˜F/B‰ÉFB◊B√BÔF3B˜F/B‰ÅM-TÉBÛB˚B€B◊FÉB«F/FF0ÅŸ•Õ•â±îÅπΩ∏µΩ…ëï…Öâ±î∏ÉB{FB”B◊BÔF3B˜F/B‘ÅQMQ}=91dÅô•·—’…ïÃÉB”BÔF<ÉFB√FFFGFB˚B»ÉB˜B‘ÉFBÛB◊F#B„BÀB√FF0ÉFÉFB◊B◊FFFB˚B∏ÉBB˚BÔB˜B˚FFÅ±Ö’πç†ÉB√FFB˚FFB„BÛB◊B˜FB¿ÉBˇFB˚BÀB◊FF?FF0ÉBˇB◊FB◊B–Å¡…Ωë’ç—•Ω∏Å…ïÖë•πïÕÃ∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBFB˚BÀB◊FB◊B˜B˜F/B‰ÉB˜B√B«B˚F ÉFB˚BÀB√FB˚B»ÉB”B˚FFFBˇB◊BÙ∞ÉBˇFB«BÔB„BÎB√FB„F<ÉB‡Åµïë•ÑÉFB√B«B˚FB√F;F∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÉBÀF/B«B˚FB˚FB˜B√F<ÉFBÀB◊FBÎB¿ÉFB◊B◊FFFB√äQÖëµ•ªäQ¡’â±•åÅ…ïÖê∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅ1’πÑÅ5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ã‡§ËÅYï…•ô•ïêÅçÖ—Ö±ΩúÅ¡Ω¡’±Ö—•Ω∏(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®Å=›πï»ÅçΩ……ïç—•Ω∏ÉB˚B«B˜B˚BÀB„BÔB¿ÅÕΩ’…çîÅΩòÅ—…’—†ËÄ»»ÿÅçΩπô•…µïêÅ¡Öπï∞ÅM-TÉB„BÛB◊F;FÅÅ¡…•çï}’π•–ÄÙÉBÛ
+…Ä∞ÅÅÕÖ±ï}’π•–ÄÙÅÕ°ïï—Ä∞Åµ•∏ΩÕ—ï¿ÄƒÉB‡ÉBˇBÔB˚F'B√B”F0ÉBÔB„FFB¿Ä–∏¿Ã»‡ÉBÛ
+»ÏÄƒ–É
+ØBOB„B«BÎB√F<ÉB”B˚FBÎB√
+ÏÉB„BÛB◊F;FÉFB‘ÉB€B‘Å’π•—ÃΩµ•∏ΩÕ—ï¿∞ÉB˜B¯ÅÅÖ…ïÖ}¡ï…}ÕÖ±ï}’π•—}¥»ÄÙÅ9U11ÄÏÅÖççïÕÕΩ…•ïÃÉFB˚FFB√B˜F?F;FÉB˚B«B‘ÉB◊B”B„B˜B„FF,ÅÉF#F∏øFBˇB√BÎB˚BÀBÎB¡ÄÉB‡Åµ•∏ΩÕ—ï¿Äƒ∏ÉBüB◊FB◊B‹Å’Õ—Ω¥Åëµ•∏ÉB»Å•ÕΩ±Ö—ïêÅA…ïŸ•ï‹ÉBÀB˜B◊FB◊B˜F,ÉB‡ÉB˚FFB√BÀBÔB◊B˜F,ÉFFB‡ÅI0ÅM-TËÅÅ5µ5H¥¿¿‡ŸÄÄ£BCBﬂFF §∞ÅÅ5µQIX¥¿¿¿ÕÄÄ£BãFB√BÀB◊FFB„BÙÄƒ§∞ÅÅ5µ¥¿¿¿’ÄÄ£BkBÔB◊B‰ÉB”BÔF<ÉBœB„B«BÎB˚BœB¯ÉBÎB√BÛB˜F<ÉB«B√BﬂB˚BÀF/B‰ÄÃÉBÎBÃ§∏ÉBcFÅIïù•Õ—…ÁäIëµ•∏ΩÅ…Ω’πêµ—…•¿ÅAML∞ÉFB˚FB˜F/B‘ÉBÎB√FB◊BœB˚FB„B‡Ωµïµâï…Õ°•¡ÃÉB‡ÅµÖπ•ôïÕ–Åµïë•ÑÅAMLÏÉFÉBÎB√B€B”B˚BœB¯ÉB˚B”B˜B¿Å¡…Ωë’ç–Å…Ω‹∞ÉB˚B”B˜B¿Åµïµâï…Õ°•¿ÉB‡ÉB˚B”B˜B¯Å¡…•µÖ…‰Åµïë•ÑÉFÅΩ›πï»µçΩπô•…µïêÅÅπï’—…Ö±}—ï·—’…ïÄΩÖ±–∏ÉBKFB‘ÉFFB‡Å¡’â±•Õ°ïêÉB‡ÉBÀB„B”B˜F,ÅÖπΩ∏ÉFB˚BœBÔB√FB˜B¯ÉFFF'B◊FFBÀFF;F'B◊B‰ÅP¿ƒ–ΩP¿Ã…ÉBÛB˚B”B◊BÔB‡ÏÉBˇFB◊B”F/B”FF'B„B‰Å—Ö…ùï—ïêÅë…Öô–Ω’π¡’â±•Õ°ïêÅÕµΩ≠îÉBˇB˚B”FBÀB◊FB”B„BÏÅÖπΩ∏Åëïπ•Ö∞ÉB‡ÉBﬂB√BˇB„FF0ÉB«F/BÔB¿ÉBÀB˚BﬂBÀFB√F'B◊B˜B¿ÉB»Å¡’â±•Õ°ïê∏ÅŸÖ•±Öâ•±•—‰ÉB˚FFB√FGFFF<Å9U10∞ÅôïÖ—’…ïêıôÖ±Õî∞Å’π…ïÕΩ±ŸïêÅŸÖ±’ïÃÅ9U10ÏÉFB◊FFB˚BÀF/B‘ÅQMQ}=91dÅ¡…Ωë’ç—ÃΩçÖ—ïùΩ…•ïÃΩ•µÖùïÃÙ¿∞ÅΩ…¡°Ö∏ÅΩâ©ïç—ÃÙ¿∏ÅÖÕ°âΩÖ…êÉBˇB˚BÎB√BﬂF/BÀB√B◊FÄÃÅ¡’â±•Õ°ïê∞Ä¿Å°•ëëï∏ΩÖ…ç°•ŸïêÏÅA…Ωë’ç—ÃÅ±•Õ–ÉFB˚B”B◊FB€B„FÉFB˚BÀB˜B¯ÉFFB‡ÉB«B◊B‹ÉB”FB«BÔB◊B‰ÏÅÖ—ïùΩ…•ïÃÉFB˚B”B◊FB€B„FÉFB˚BÔF3BÎB¯ÉFFB‡ÅΩ›πï»µ…ï≈’ïÕ—ïêÅ’Õï»ÅçÖ—ïùΩ…•ïÃÉBˇBÔF;FÅŸ•…—’Ö∞É
+ØBKFB‘ÉFB˚BÀB√FF/
+Ï∞ÅçÖ—ïùΩ…‰Ω¡…Ωë’ç–Ωµïë•ÑΩÖëµ•∏Å•π—ïù…Ö—•Ω∏ÅAML∏Å=›πï»ÅëÖ—ÑÅŸï…•ô•çÖ—•Ω∏ÅAML∏ÉB∑FB‡ÉFFB‡ÉBﬂB√BˇB„FB‡ÉB˚FFB√F;FFF<ÉB»ÅA…ïŸ•ï‹ÉB‡ÉB˜B‘ÉB˚BﬂB˜B√FB√F;FÉBˇB˚BÔB˜F/B‰Ä»‘ƒµM-TÅ±Ö’πç†Å•µ¡Ω…–ÉB„BÔB‡ÅA…Ωë’ç—•Ω∏Åµïë•ÑÅÖ¡¡…ΩŸÖ∞∏Å’±∞ÅçÖ—Ö±ΩúÅçΩµ¡±ï—ïπïÕÃÉBˇFB˚BÀB◊FF?B◊FFF<ÉBˇB◊FB◊B–ÅA…Ωë’ç—•Ω∏ÅIïÖë•πïÕÃ∏Å4–ÅAMLÏÅïŸï±Ω¡µïπ–ÅÖ—îÅAMLÏÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÅ	1=-ÏÅP¿Ã‡Å=9ÏÅπï·–ÅP¿Ã‰∞ÅπΩ–ÅÕ—Ö…—ïêÏÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏(((ååÅA!MÄ‡ÉäPÅA’â±•åÅÖ—Ö±Ωú((åååÅP¿Ã‰ÉäPÅA’â±•åÅçÖ—Ö±ΩúÅ…ïÖêÅ±ÖÂï»((¥Ä®©%Ë®®ÅP¿Ã‰(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®ÅA’â±•åÅçÖ—Ö±ΩúÅ…ïÖêÅ±ÖÂï»(¥Ä®©ΩÖ∞Ë®®ÉBáB˚BﬂB”B√FF0ÅÕï…Ÿï»Å≈’ï…•ïÃÉB”BÔF<ÉB˚BˇFB«BÔB„BÎB˚BÀB√B˜B˜F/FÅM-TøBÎB√FB◊BœB˚FB„B‰∏(¥Ä®©]°‰Ë®®ÉB{B”B˜B¿ÉBÛB˚B”B◊BÔF0ÉB”B˚BÔB€B˜B¿ÉBÎB˚FBÛB„FF0ÉBÀFB‘ÉBˇFB«BÔB„FB˜F/B‘ÉFFFB√B˜B„FF,∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã‡∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å±•Õ–Ωùï–ΩôÖçï—Ã∞ÉFB„BˇF,∞ÉB«B◊BﬂB˚BˇB√FB˜F/B‘Å≈’ï…‰Å¡Ö…ÖµÃ∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBFF?BÛB˚B‰Åâ…Ω›Õï»ÉB”B˚FFFB¸ÉBËÅΩ…ëï…}…ï≈’ïÕ—Ã∞ÅU$∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÅA’â±•åÅç±•ïπ–ÉB˜B‘ÉBˇB◊FB◊B˜B˚FB„FÅÖëµ•∏ÅçΩΩ≠•ïÃ∞ÅçÖç°îÉF?BÀB˜F/B‰∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅE’ï…•ïÃÉBÀB˚BﬂBÀFB√F'B√F;FÉFB˚BÔF3BÎB¯ÉB˚BˇFB«BÔB„BÎB˚BÀB√B˜B˜B˚B‘ÉB‡ÉBÀB√BÔB„B”B˜F/B‰ÅÕΩ…–Ω¡Öùî∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅ≈’ï…‰ΩI1LÅ•π—ïù…Ö—•Ω∏∞Å—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿Ã‰§ËÅA’â±•åÅçÖ—Ö±ΩúÅ…ïÖêÅ±ÖÂï»(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®ÉBWB”B„B˜F/B‰ÅÕï…Ÿï»µΩπ±‰ÅÅÕ…åΩ±•àΩçÖ—Ö±ΩùÄÉBˇFB◊B”B˚FFB√BÀBÔF?B◊FÅÅ±•Õ—A’â±•Õ°ïëA…Ωë’ç—ÕÄ∞ÅÅùï—A’â±•Õ°ïëA…Ωë’ç—ÄÉB‡ÅÅùï—Ö—Ö±ΩùÖçï—ÕÄÉFB◊FB◊B‹ÉFFF'B◊FFBÀFF;F'B„B‰Åù’ïÕ–Å¡’â±•Õ°Öâ±îÅç±•ïπ–∞ÉB«B◊B‹Åëµ•∏ÅçΩΩ≠•ïÃΩMïç…ï–Å≠ï‰∏ÅI0Ω¡’â±•Õ°ïêΩ’πÖ…ç°•ŸïêÉB‡Å¡’â±•Õ°ïêÅµïµâï…Õ°•¿ÉFB„BÔF3FFFF;FFF<ÉF?BÀB˜B¯ÉBˇB˚BÀB◊FFÅI1LÏÅMÂÕ—ï¥Å±∞ÉB˜B‘ÉBﬂB√BÀB„FB„FÉB˚FÉBÎB√FB◊BœB˚FB„B‰∏ÅQ<ÉFB˚FFB√B˜F?B◊FÅ9U10∞Å¡Öπï∞ÅÅÕÖ±ï}’π•–ÄÙÅÕ°ïï—Ä∞ÅÕΩ’…çîÅ¡…•çîÅ…ÖπùîÉB‡ÉFB˚BÔF3BÎB¯Å¡…•µÖ…‰ÉB˜B¿ÉFBˇB„FBÎB‘ÏÅëï—Ö•∞ÉBÀB˚BﬂBÀFB√F'B√B◊FÅΩ…ëï…ïêÅµïë•Ñ∏ÅMΩ…–Ω¡ÖùîÅ›°•—ï±•Õ–∞ÅâΩ’πëïêÅ¡ÖùîÅÕ•ÈîÄ»–∞Åëï—ï…µ•π•Õ—•åÅÅÕΩ…—}Ω…ëï»±•ëÄÉB‡ÅçΩ’π–ÉBﬂB√F'B„F'B√F;FÉBˇB√BœB„B˜B√FB„F8∏ÉBFB«BÔB„FB˜F/B‰ÅçÖç°îËÅÅ’πÕ—Öâ±ï}çÖç°ïÄ∞ÅQQ0Äÿ¿ÉFB◊BÎFB˜B–ÉB‡ÉFB◊BœB‡ÅÅçÖ—Ö±ΩúÈ±•Õ—Ä∞ÅÅçÖ—Ö±ΩúÈôÖçï—ÕÄ∞ÅÅçÖ—Ö±ΩúÈ¡…Ωë’ç–ËÒÕ±’ú˘Ä∞ÅÅçÖ—Ö±ΩúÈçÖ—ïùΩ…‰ËÒÕ±’ú˘ÄÏÉB√B”FB◊FB˜FF8Åëµ•∏Å…ïŸÖ±•ëÖ—•Ω∏ÉBˇB˚B”BÎBÔF;FB„FF0ÉB»ÉB«FB”FF'B◊B‰ÉBﬂB√B”B√FB‘∞ÅQQ0ÉBﬂB√B”B√FGFÉFB◊BﬂB◊FBÀB˜F/B‰ÉB„B˜FB◊FBÀB√BÏÅ…ïŸÖ±•ëÖ—•Ω∏∏ÅA…ïŸ•ï‹Å±•ŸîÅ…ïÖêÉFFFGFÅP¿Ã‡ÅI0ÅM-T∞Åπ’±±Öâ±îΩµïë•ÑΩ’π•—ÃΩôÖçï—ÃÉB‡Å•πŸÖ±•êÅÕ±’úΩ¡ÖùîÅAMLÏÅ—…ÖπÕÖç—•ΩπÖ∞ÅI1LÅπïùÖ—•ŸîÅô•·—’…ïÃÉB”BÔF<Åë…Öô–ΩÖ…ç°•ŸïêΩQMQ}=91dΩ°•ëëï∏ÅçÖ—ïùΩ…‰ÉB‡ÅΩ…ëï»Å¡…•ŸÖç‰ÅAMLÉFÅ…Ω±±âÖç¨ÏÅ¡ï…µÖπïπ–Åô•·—’…ïÃÄ¿∏ÉBKFB◊BÛB◊B˜B˜F/B‰Å…ïÖêµΩπ±‰Å…Ω’—îÉFB”B√BÔFGBÙÏÅA…Ωë’ç—•Ω∏ÉB˜B‘ÉBÛB◊B˜F?BÔB√FF0∏ÅP¿Ã‰Å=9ÏÅπï·–ÅP¿–¿∞ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿–¿ÉäPÅÖ—Ö±ΩúÉB‡ÅçÖ—ïùΩ…‰Å…Ω’—ïÃ((¥Ä®©%Ë®®ÅP¿–¿(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®ÅÖ—Ö±ΩúÉB‡ÅçÖ—ïùΩ…‰Å…Ω’—ïÃ(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B√BÔB„BﬂB˚BÀB√FF0ÄΩçÖ—Ö±ΩúÉB‡ÄΩçÖ—Ö±ΩúΩmçÖ—ïùΩ…ÂtÉB˜B¿ÉFB◊FBÀB◊FB‘∏(¥Ä®©]°‰Ë®®ÉBkB√FB√BÔB˚BÃÉB‡ÉBÎB√FB◊BœB˚FB„F<ÉäPÉB«B√BﬂB˚BÀF/B‘ÉBÛB√FF#FFFF,ÉBÛB√BœB√BﬂB„B˜B¿∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿Ã‰∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…Ωë’ç—…•ê∞ÅçÖ—ïùΩ…‰ÅÕ’µµÖ…‰∞Åâ…ïÖëç…’µà∞Ä–¿–∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅA…Ωë’ç–Åï—Ö•∞∞ÅçÖ…–∞ÉB˜B˚BÀF/B‘ÉBÎB√FB◊BœB˚FB„B‡∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBèFBÀB◊FB€B”FGB˜B˜F/B‰ÅÖ…êΩÕ¡Öç•πúÏÉB”B√B˜B˜F/B‘ÉB„B‹ÅP¿Ã‰∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉB{B«B¿Å…Ω’—îÉBˇB˚BÎB√BﬂF/BÀB√F;FÉFB˚BÔF3BÎB¯ÅŸ•Õ•â±îÅM-T∞ÉB˜B◊FFF'B◊FFBÀFF;F'B„B‰ÅÕ±’úÄ–¿–∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å±•π–Ω—Â¡ïç°ïç¨∞Å…Ω’—îÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–¿§ËÅÖ—Ö±ΩúÉB‡ÅçÖ—ïùΩ…‰Å…Ω’—ïÃ(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®ÅMï…Ÿï»µ…ïπëï…ïêÅÄΩçÖ—Ö±ΩùÄÅÖπêÅÄΩçÖ—Ö±ΩúΩmçÖ—ïùΩ…ÂuÄÅ’ÕîÅΩπ±‰Å—°îÅP¿Ã‰Å¡’â±•åÅ…ïÖêÅ±ÖÂï»∏ÅMÂÕ—ï¥Å±∞Å…ïπëï…ÃÅ—°îÅ—°…ïîÅï·•Õ—•πúÅ¡’â±•Õ°ïêÅI0Å¡…Ωë’ç—ÃÅ›•—†Å¡…•µÖ…‰Å9ï·–Ω%µÖùî∞ÅôÖç—’Ö∞ÅπÖµïÃ∞Åï·Öç–Å¡…•çïÃÅÖπêÅ¡…ïÕï…ŸïêÅ¡…•çîΩÕÖ±îÅ’π•—ÃÏÅπºÅA…Ωë’ç–Åï—Ö•∞ΩçÖ…–ΩÕïÖ…ç†Ωô•±—ï»Ω¡Öù•πÖ—•Ω∏ÅÖç—•Ω∏Å›ÖÃÅÖëëïê∏ÅÖ—ïùΩ…‰Å…Ω’—îÅ…ï—’…πÃÄ–¿–ÅôΩ»Å’π¡’â±•Õ°ïêÅÖπêÅµ•ÕÕ•πúÅÕ±’ùÃÅ›•—°Ω’–Åï·¡ΩÕ•πúÅ°•ëëï∏Åµïµâï…Õ°•¿ÏÅÖ±∞Å—°…ïîÅï·•Õ—•πúÅçÖ—ïùΩ…•ïÃÅ…ïµÖ•∏Å’π¡’â±•Õ°ïê∏ÅAΩÕ•—•ŸîÅçÖ—ïùΩ…‰Å¡…ïÕïπ—Ö—•Ω∏Å¡ÖÕÕïêÅ—°…Ω’ù†ÅÑÅ—ïµ¡Ω…Ö…‰Å…ïπëï»µΩπ±‰Å…Ω’—îÅ›•—†ÅçΩπ—…Ω±±ïêÅ¡…Ω¡ÃÅÖπêÅΩπîÅï·•Õ—•πúÅ¡’â±•åÅ¡…Ωë’ç–∞Å—°ï∏Å—°îÅ…Ω’—îÅ›ÖÃÅ…ïµΩŸïêÏÅπºÅÅô•·—’…ïÃÅΩ»Åµ’—Ö—•ΩπÃ∏Å1•π–∞Å—Â¡ïç°ïç¨∞Åâ’•±êÅÖπêÅ±•ŸîÅ…Ω’—îÅÕµΩ≠îÅAMLÏÅΩ›πï»ÅYï…çï∞ÅA…ïŸ•ï‹ÅŸ•Õ’Ö∞ÅŸï…•ô•çÖ—•Ω∏ÅAMLÅôΩ»ÅëïÕ≠—Ω¿ΩµΩâ•±î∞Åµïë•Ñ∞ÅçÖ…êΩù…•ê∞Åâ…ïÖëç…’µàÅÖπêÅπºÅ°Ω…•ÈΩπ—Ö∞ÅΩŸï…ô±Ω‹∏ÅA…Ωë’ç—•Ω∏Å’πç°ÖπùïêÏÅP¿–¿Å=9∞Åπï·–ÅP¿–ƒÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿–ƒÉäPÅMïÖ…ç†Ωô•±—ï…ÃΩÕΩ…–Ω¡Öù•πÖ—•Ω∏((¥Ä®©%Ë®®ÅP¿–ƒ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®ÅMïÖ…ç†Ωô•±—ï…ÃΩÕΩ…–Ω¡Öù•πÖ—•Ω∏(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B√BÔB„BﬂB˚BÀB√FF0ÉBÎB√FB√BÔB˚BœB˚BÀF/B‘ÉBÀF/B«B˚FBÎB‡ÉBˇB¯ÉFB◊B√BÔF3B˜F/BÉB”B√B˜B˜F/B∏(¥Ä®©]°‰Ë®®ÉBB˚FB◊FB„FB◊BÔF0ÉB”B˚BÔB€B◊BÙÉB˜B√FB˚B”B„FF0ÉB‡ÉFFB√BÀB˜B„BÀB√FF0ÉBÛB√FB◊FB„B√BÔF,∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–¿∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅPÅUI0ÅƒΩ¡…•çîΩÕ—Ö—’ÃΩŸï…•ô•ïêÅôÖçï—ÃΩÕΩ…–Ω¡Öùî∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBSB◊BÎB˚FB√FB„BÀB˜F/B‘ÉFB„BÔF3FFF,ÉB‡ÉBˇB˚B„FBËÉB˚FB”B◊BÔF3B˜F/BÉFB◊FBÀB„FB˚B∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFFFF/B‘ÉBﬂB˜B√FB◊B˜B„F<ÉB˜B‘ÉBˇB˚BÎB√BﬂF/BÀB√FF0∞Å›°•—ï±•Õ–ÅUI0∞Åâ…Ω›Õï»ÅâÖç¨∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBkB˚BÛB«B„B˜B√FB„B‡ÉBÀB˚FBˇFB˚B„BﬂBÀB˚B”B„BÛF,ÅUI0ÉB‡ÉB˜B‘ÉBˇB˚BÎB√BﬂF/BÀB√F;FÅ°•ëëï∏ÅM-T∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅ≈’ï…‰Å—ïÕ—Ã∞Äƒ––¿ºÃ‰¿ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–ƒ§ËÅMïÖ…ç†Ωô•±—ï…ÃΩÕΩ…–Ω¡Öù•πÖ—•Ω∏(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®ÅPÅUI0ÅÕ—Ö—îÅΩ∏ÅÄΩçÖ—Ö±ΩùÄÅ’ÕïÃÅΩπîÅï·—ïπëïêÅP¿Ã‰ÅπΩ…µÖ±•Èï»ÅÖπêÅÕï…Ÿï»µΩπ±‰Å¡’â±•åÅ≈’ï…•ïÃÅôΩ»ÅπÖµîΩM-TÅÕïÖ…ç†∞Åï·Öç–ÅÅ¡…•çï}µ•πΩ…ÄÅ…ÖπùïÃ∞ÅôÖç—’Ö∞ÅÕ—Ö—’ÃΩ¡’â±•Õ°ïêµçÖ—ïùΩ…‰ÅôÖçï—Ã∞Å›°•—ï±•Õ—ïêÅëïôÖ’±–Ω¡…•çîÅÕΩ…—•πúÅÖπêÅô•·ïêµÕ•ÈîÅ¡ÖùîÅπÖŸ•ùÖ—•Ω∏∏Å%πŸÖ±•êÅ•π¡’–Å•ÃÅπΩ…µÖ±•ÈïêÅÕÖôï±‰ÏÅΩ’–µΩòµ…ÖπùîÅ¡ÖùïÃÅ…ïµÖ•∏Åïµ¡—‰ÏÅ¡…•çîÅ9U10ÅÕΩ…—ÃÅ±ÖÕ–ÅÖπêÅÅ•ëÄÅâ…ïÖ≠ÃÅ—•ïÃ∏ÅΩ…µÃÅ…ïÕï–Å¡ÖùîÅΩ∏Åπï‹Åç…•—ï…•Ñ∞Å¡Öù•πÖ—•Ω∏Å±•π≠ÃÅ…ï—Ö•∏ÅÖç—•ŸîÅç…•—ï…•Ñ∞ÅÖπêÅïµ¡—‰ÅçÖ—ïùΩ…‰ΩÕ—Ö—’ÃÅôÖçï—ÃÅ…ïπëï»ÅπºÅΩ¡—•ΩπÃ∏Å1•ŸîÅ…ïÖêµΩπ±‰ÅA…ïŸ•ï‹Å—ïÕ—ÃÅçΩŸï…ïêÅ—°îÅ—°…ïîÅI0ÅM-T∞Åµ•∏ΩµÖ‡ΩçΩµâ•πïêÅ¡…•çïÃ∞ÅÕïÖ…ç†∞ÅÕΩ…–∞Å°•ëëï∏ÅçÖ—ïùΩ…‰∞Å•πŸÖ±•êÅŸÖ±’ïÃÅÖπêÅπºµ…ïÕ’±—ÃÏÅ¡Ö…Õï»Ω±•π¨Å—ïÕ—ÃÅçΩŸï…ïêÅ¡ÖùîÅâΩ’πëÃ∞Å¡…ïÕï…ŸïêÅUI0ÅÕ—Ö—îÅÖπêÅ¡ÖùîÅ…ïÕï–∏ÅIdÅA…ïŸ•ï‹Åâ…Ω›Õï»ÅÕïÖ…ç†Ω…ïÕï–ΩÕΩ…–Ωë•…ïç–ÅUI0Ω…ïô…ïÕ†Ω	Öç¨ΩΩ…›Ö…êΩ≠ïÂâΩÖ…êΩçΩπÕΩ±îÅAML∏Å=›πï»ÅŸ•Õ’Ö∞ÅŸï…•ô•çÖ—•Ω∏ÅAMLÅôΩ»ÄÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿∞ÅπºÅΩŸï…ô±Ω‹∞ÅôÖç—’Ö∞ÅôÖçï—ÃÅÖπêÅ’πç°ÖπùïêÅP¿–¿ÅçÖ…ëÃ∏Å9ºÅ¡…Ωë’ç–ΩçÖ—ïùΩ…‰ΩÕç°ïµÑΩI1LΩM—Ω…ÖùîΩA…Ωë’ç—•Ω∏Åµ’—Ö—•Ω∏ÏÅP¿–ƒÅ=9∞ÅP¿–»ÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿–»ÉäPÅÖ—Ö±ΩúÅÕ—Ö—ïÃÉB‡Å…ïÕ¡ΩπÕ•Ÿî((¥Ä®©%Ë®®ÅP¿–»(¥Ä®©A…•Ω…•—‰Ë®®Å@ƒ(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®ÅÖ—Ö±ΩúÅÕ—Ö—ïÃÉB‡Å…ïÕ¡ΩπÕ•Ÿî(¥Ä®©ΩÖ∞Ë®®ÉB_B√BÀB◊FF#B„FF0ÉBÎB√FFB˚FBÎB‡Ωïµ¡—‰Ω±ΩÖë•πúΩï……Ω»ÉB»ÉBÎB√FB√BÔB˚BœB‘∏(¥Ä®©]°‰Ë®®ÉB{FBÎB√B‹ÉB‡ÉBˇFFFB√F<ÉBÀF/B”B√FB¿ÉB”B˚BÔB€B˜F,ÉB˚B«F+F?FB˜F?FF3FF<∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–ƒ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…Ωë’ç–ÅÖ…êÉFÉFB◊B˜B˚B‰øB◊B”B„B˜B„FB◊B‰∞ÉB˚B”B„BÙÉFFB˚BÔB«B◊FÅµΩâ•±î∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®Å!ΩŸï»µΩπ±‰Å¡…•çî∞Å…ïëïÕ•ù∏ÅçÖ…ê∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBwB¿ÅµΩâ•±îÉFB◊B˜F,øB”B◊BÁFFBÀB„F<ÉBÀB„B”B˜F,ÉB«B◊B‹Å°ΩŸï»∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBwB◊FÅΩŸï…ô±Ω‹ÏÉFB˚FFB˚F?B˜B„F<ÉB‡ÅÕ≠ï±ï—Ω∏ÉFB˚B˚FBÀB◊FFFBÀFF;FÉB”B√B˜B˜F/B∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å±•π–Ω—Â¡ïç°ïç¨∞ÅŸ•ï›¡Ω…–ΩçΩπÕΩ±îÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–»§ËÅÖ—Ö±ΩúÅÕ—Ö—ïÃÉB‡Å…ïÕ¡ΩπÕ•Ÿî(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®ÅP¿–¿ÅA…Ωë’ç–ÅÖ…êÅçΩµ¡ΩÕ•—•Ω∏Å…ï—Ö•πïêÏÅ±ΩπúÅπÖµïÃΩ¡…•çîÅ’π•—ÃÅ›…Ö¿∞Å9U10Å¡…•çîÅ’ÕïÃÅÑÅπï’—…Ö∞ÅëÖÕ†Å›•—†ÅÖççïÕÕ•â±îÅ±Öâï∞∞Å9U10Åµïë•ÑÅ°ÖÃÅÑÅπï’—…Ö∞Åïµ¡—‰Åô…Öµî∞ÅÖπêÅµ•ÕÕ•πúÅÖŸÖ•±Öâ•±•—‰ÅëΩïÃÅπΩ–ÅâïçΩµîÅÑÅâÖëùîÅΩ»Åç±Ö•¥∏Å·•Õ—•πúÅ9ï·–Ω%µÖùîÅ¡…•µÖ…‰ÅµÖ¡¡•πúÅÖπêÅ±ÖÈ‰ÅçÖ…êÅ±ΩÖë•πúÅ¡…ïÕï…Ÿïê∏ÅÖ—Ö±ΩúµΩπ±‰Å±ΩÖë•πúÅµ•……Ω…ÃÅ•µÖùîΩçÖ…êÅë•µïπÕ•ΩπÃÅ›•—°Ω’–ÅÕç…ïï∏µ…ïÖëï»ÅπΩ•Õî∞Å—…’îÅÈï…ºÅ¡’â±•Õ°ïêÅ¡…Ωë’ç—ÃÅÖπêÅô•±—ï…ïêÅπºµ…ïÕ’±—ÃÅ’ÕîÅÕï¡Ö…Ö—îÅµïÕÕÖùïÃ∞ÅÖπêÅ…Ω’—îÅï……Ω…ÃÅ≠ïï¿ÅÑÅùïπï…•åÅ…ï—…‰Å›•—°Ω’–ÅâÖç≠ïπêÅëï—Ö•±Ã∏ÅIïÖêµΩπ±‰ÅIdÅA…ïŸ•ï‹ÅÕ°Ω›ïêÅ—°îÅ—°…ïîÅΩ›πï»µçΩπô•…µïêÅI0ÅM-TÅ›•—†Åï·Öç–Å¡…•çïÃΩ’π•—Ã∞Å±ΩÖëïêÅ¡…•µÖ…‰Å•µÖùïÃ∞Å°•ëëï∏µçÖ—ïùΩ…‰Ä–¿–∞ÅÕïÖ…ç†Ω¡…•çîΩÕΩ…–Ω…ïÕï–ΩUI0Åâï°ÖŸ•Ω»∞ÅÖπêÅπºÅÖ¡¿ÅçΩπÕΩ±îÅï……Ω…Ã∏ÅIïπëï»µΩπ±‰ÅA…ïŸ•ï‹Åç°ïç≠ïêÅïµ¡—‰Ωπºµ…ïÕ’±—ÃΩï……Ω»Ω±ΩÖë•πúΩ±ΩπúÅÖπêÅ9U10ÅÕ—Ö—ïÃÅ›•—°Ω’–ÅÅ›…•—ïÃÏÅΩ›πï»ÅŸ•Õ’Ö∞ÅŸï…•ô•çÖ—•Ω∏ÅAMLÅÖ–ÄÃÿ√äLÃ‹¿ºÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿ºƒ‰»¿º»‘ÿ¿Å›•—†ÅπºÅ¡ÖùîÅΩŸï…ô±Ω‹ÅÖπêÅÖ…¨ÅΩ±êÅM°Ω›…ΩΩ¥ÅçΩπÕ•Õ—ïπç‰∏ÅQïµ¡Ω…Ö…‰Å…ïŸ•ï‹Å…Ω’—îÅ…ïµΩŸïêÅâïôΩ…îÅô•πÖ∞ÅçΩµµ•–∏Å1•π–Ω—Â¡ïç°ïç¨Ωâ’•±êÅÖπêÅô•πÖ∞ÅçÖ—Ö±ΩúÅ…Ω’—îÅÕµΩ≠îÅAMLÏÅM’¡ÖâÖÕîÅëÖ—ÑΩÕç°ïµÑΩI1LΩM—Ω…ÖùîÅÖπêÅA…Ωë’ç—•Ω∏Å’πç°ÖπùïêÏÅ¡ï…µÖπïπ–ÅQMQ}=91dÄ¿∏ÅP¿–»Å=9ÏÅP¿–ÃÅπΩ–ÅÕ—Ö…—ïê∏((åååÅP¿–ÃÉäPÅ!ΩµîÉFÉBˇFB˚BÀB◊FB◊B˜B˜F/BÛB‡ÉB”B√B˜B˜F/BÛB‡((¥Ä®©%Ë®®ÅP¿–Ã(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®Å=9(¥Ä®©Q•—±îË®®Å!ΩµîÉFÉBˇFB˚BÀB◊FB◊B˜B˜F/BÛB‡ÉB”B√B˜B˜F/BÛB‡(¥Ä®©ΩÖ∞Ë®®ÉBáBÀF?BﬂB√FF0Å°Ωµï¡ÖùîÉFÅÖ¡¡…ΩŸïêÅôïÖ—’…ïêÅM-T∞ÉBÎB√B”FB√BÛB‡ÉB‡ÉFB◊BÎFFB˚B∏(¥Ä®©]°‰Ë®®ÉBSB◊BÛB˚B˜FFFB√FB„B˚B˜B˜F/B‘ÉFB◊B˜F,øFB˚FB¯ÉB˜B‘ÉBœB˚B”F?FFF<ÉB”BÔF<Å…ï±ïÖÕî∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–»∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅïÖ—’…ïêÅ…ïÖê∞ÉFB√BÎFB„FB◊FBÎB„B‰ÉBÎB˚B˜FB◊B˜FÅP¿¿„äMP¿ƒ¿∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBáBÛB◊B˜B¿ÉBÎB˚BÛBˇB˚BﬂB„FB„B‡ÉB„BÔB‡ÉFB˚BﬂB”B√B˜B„B‘ÉB˜B˚BÀF/FÉB˚B«B◊F'B√B˜B„B‰∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB‡ÉB˚FFFFFFBÀB„B‡ÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜B˚BœB¯ÉBÎB˚B˜FB◊B˜FB¿ÉBˇB˚BÎB√BﬂF/BÀB√FF0ÉB«B◊BﬂB˚BˇB√FB˜B˚B‘ÉFB˚FFB˚F?B˜B„B‘∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Å!ΩµîÉB˜B‘ÉBÀF/B”B√FGFÅ¡±Öçï°Ω±ëï»ÉBﬂB¿ÉFB˚BÀB√F øBˇFB˚B◊BÎFÏÅQÉBÀB◊B”FGFÉB»ÉBÎB√FB√BÔB˚BÃ∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅçΩπ—ïπ–Åë•ôò∞ÅëïÕ≠—Ω¿ΩµΩâ•±îÅâ…Ω›Õï»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–Ã§ËÅ!ΩµîÉFÉBˇFB˚BÀB◊FB◊B˜B˜F/BÛB‡ÉB”B√B˜B˜F/BÛB‡(¥Ä®©IïÕΩ±’—•Ω∏Ä†»¿»ÿ¥ƒ¿¥¿»§Ë®®Å!Ωµï¡ÖùîÅôïÖ—’…ïêÅ¡…Ωë’ç—ÃÅ’ÕîÅ—°îÅï·•Õ—•πúÅP¿Ã‰ÅÕï…Ÿï»µΩπ±‰Å¡’â±•åÅù’ïÕ–Å…ïÖêËÅI0∞Å¡’â±•Õ°ïê∞Å’πÖ…ç°•Ÿïê∞ÅÅ•Õ}ôïÖ—’…ïêı—…’ïÄ∞ÅÕ—Öâ±îÅÅÕΩ…—}Ω…ëï…ÄΩÅ•ëÄÅΩ…ëï…•πúÅÖπêÅÖ–ÅµΩÕ–Å—°…ïîÅ•—ïµÃ∏ÅA’â±•Õ°ïêÅôïÖ—’…ïêÅI0ÅçΩ’π–Å•ÃÄ¿ÏÅ—°îÅ°Ωµï¡ÖùîÅÕ°Ω›ÃÅÑÅ≈’•ï–ÅçÖ—Ö±ΩúÅ±•π¨∞Å›•—°Ω’–Åç°Öπù•πúÅ—°îÅ—°…ïîÅP¿Ã‡ÅM-TÅΩ»Å•πŸïπ—•πúÅ•—ïµÃ∏ÅA…Ω—Ω—Â¡îÅπÖµïÃ∞Å¡…•çïÃ∞Åô•±—ï…ÃÅÖπêÅµΩëÖ∞Å›ï…îÅ…ïµΩŸïê∏Å!ï…ºÅçΩµ¡ΩÕ•—•Ω∏ÅÖπêÅÖ…¨ÅΩ±êÅM°Ω›…ΩΩ¥Åë•…ïç—•Ω∏Å…ïµÖ•∏ÏÅM°Ω›çÖÕîÅµïë•ÑÅ•ÃÅï·¡±•ç•—±‰ÅëïÕç…•âïêÅÖÃÅŸ•Õ’Ö±•ÈÖ—•Ω∏∞ÅÖ¡¡±•çÖ—•Ω∏ÅçΩ¡‰ÅµÖ≠ïÃÅπºÅπï‹Å—ïç°π•çÖ∞Åç±Ö•¥∞ÅÖπêÅç±ΩÕ•πúΩçÖ—Ö±ΩúÅQÃÅ±ïÖêÅ—ºÅÄΩçÖ—Ö±ΩùÄ∏ÅIdÅA…ïŸ•ï‹Å°Ωµï¡ÖùîÅÖπêÅçÖ—Ö±ΩúÅ—…ÖπÕ•—•Ω∏ÅAMLÏÅΩ›πï»ÅŸ•Õ’Ö∞ÅŸï…•ô•çÖ—•Ω∏ÅAMLÅÖ–ÄÃÿ√äLÃ‹¿ºÃ‰¿º‹ÿ‡ºƒ¿»–ºƒ––¿ºƒ‰»¿º»‘ÿ¿∞ÅπºÅΩŸï…ô±Ω‹∞ÅëïµºÅ¡…Ωë’ç—ÃΩ¡…•çïÃÄ¿∞Å•πŸïπ—ïêÅâ’Õ•πïÕÃÅôÖç—ÃÄ¿ÅÖπêÅπºÅÖ¡¡±•çÖ—•Ω∏ÅçΩπÕΩ±îÅï……Ω…Ã∏Å1•π–Ω—Â¡ïç°ïç¨ÅÖπêÅIdÅYï…çï∞Åâ’•±êÅAMLÏÅ±ΩçÖ∞Åâ’•±êÅÖççïÕÃÅ—ºÅΩΩù±îÅΩπ—ÃÅ…ïµÖ•πïêÅÖ∏ÅïπŸ•…Ωπµïπ–Å±•µ•—Ö—•Ω∏∏ÅM’¡ÖâÖÕîÅëÖ—ÑΩÕç°ïµÑΩI1LΩM—Ω…Öùî∞ÅµÖ•∏ÅÖπêÅA…Ωë’ç—•Ω∏Å’πç°Öπùïê∏ÅP¿–ÃÅ=9ÏÅP¿––ÅπΩ–ÅÕ—Ö…—ïê∏(((ååÅA!MÄ‰ÉäPÅA…Ωë’ç–Åï—Ö•∞((åååÅP¿––ÉäPÅA…Ωë’ç–Å…Ω’—îÉB‡ÉFB◊FBÀB◊FB˜F/B‘ÉB”B√B˜B˜F/B‘((¥Ä®©%Ë®®ÅP¿––(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅA…Ωë’ç–Å…Ω’—îÉB‡ÉFB◊FBÀB◊FB˜F/B‘ÉB”B√B˜B˜F/B‘(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B√BÔB„BﬂB˚BÀB√FF0ÄΩ¡…Ωë’ç–ΩmÕ±’ùtÉB”BÔF<ÉB˚BˇFB«BÔB„BÎB˚BÀB√B˜B˜B˚BœB¯ÅM-T∏(¥Ä®©]°‰Ë®®ÉB∑FB¯ÉFB˚FBÎB¿ÉBˇFB„B˜F?FB„F<ÉFB◊F#B◊B˜B„F<ÉB¯ÉBﬂB√F?BÀBÎB‘∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–Ã∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅMï…Ÿï»Å≈’ï…‰∞Å—•—±îΩÕï…•ïÃΩ¡…•çîΩ’π•–ΩÕ—Ö—’Ãº–¿–∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBkB˚FBﬂB„B˜B¿∞ÅÕç°ïµÑÅç°ÖπùïÃ∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBCFFB„BÀB˜F/B‘ÉB‡ÉFBÎFF/FF/B‘ÅçÖ—ïùΩ…‰ÅM-TÉB˜B‘ÉBÀB„B”B˜F,∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBãB˚BÀB√F ÉFB„FB√B◊B∞ÉFB◊B˜F,ÉBÎB˚FFB◊BÎFB˜F,∞Å°•ëëï∏ÅÕ±’úÄ–¿–∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å…Ω’—îΩI1LÅÕµΩ≠î∞Å±•π–Ω—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿––§ËÅA…Ωë’ç–Å…Ω’—îÉB‡ÉFB◊FBÀB◊FB˜F/B‘ÉB”B√B˜B˜F/B‘((åååÅP¿–‘ÉäPÅÖ±±ï…‰∞ÅÕ¡ïçÃÉB‡Å…ï±Ö—ïê((¥Ä®©%Ë®®ÅP¿–‘(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅÖ±±ï…‰∞ÅÕ¡ïçÃÉB‡Å…ï±Ö—ïê(¥Ä®©ΩÖ∞Ë®®ÉBB˚BÎB√BﬂB√FF0ÉFB˚FB˜FF8ÉFB√BÎFFFF∞ÉBˇFB„BÛB◊B˜B◊B˜B„B‘ÉB‡ÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜F/B‘ÉFBÀB˚BÁFFBÀB¿∏(¥Ä®©]°‰Ë®®ÉBCFBÛB˚FFB◊FB¿ÉB”B˚BÔB€B˜B¿ÉBˇB˚B”B”B◊FB€B„BÀB√FF0ÉFB◊FB˜B„FB◊FBÎB„B‰ÉBÀF/B«B˚F ∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿––∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å%µÖùîÅùÖ±±ï…‰Å•Õ±Öπê∞ÅÕ¡ïçÃ∞Å…ï±Ö—ïêÅÕÖµîÅÕï…•ïÃΩçÖ—ïùΩ…‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBKF/BÛF/F#BÔB◊B˜B˜F/B‘ÉFB√FB√BÎFB◊FB„FFB„BÎB‡ÉB‡ÉFF?B€FGBÔF/B‰ÅÖπ•µÖ—•Ω∏Å…’π—•µî∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBìB√BÎFFFF,ÉFB◊B√BÔB„FFB„FB˜F,∞Å±ÖÈ‰ÉB˜B„B€B‘ÅôΩ±ê∞Å≠ïÂâΩÖ…êÅçΩπ—…Ω±Ã∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅÖ±±ï…‰ÉFB√B«B˚FB√B◊FÄƒ––¿ºÃ‰¿∞ÅÖ±–øB”B√B˜B˜F/B‘ÉBÀB◊FB˜F,∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Â¡ïç°ïç¨∞ÅùÖ±±ï…‰ΩÖÕÕï–Åâ…Ω›Õï»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–‘§ËÅÖ±±ï…‰∞ÅÕ¡ïçÃÉB‡Å…ï±Ö—ïê((åååÅP¿–ÿÉäPÅE’Öπ—•—‰ÅU$ÉB‡ÉBˇB˚BÎFBˇB√FB◊BÔF3FBÎB„B‰ÉB«BÔB˚BË((¥Ä®©%Ë®®ÅP¿–ÿ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅE’Öπ—•—‰ÅU$ÉB‡ÉBˇB˚BÎFBˇB√FB◊BÔF3FBÎB„B‰ÉB«BÔB˚BË(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0ÉBÀF/B«B˚F ÉBÎB˚BÔB„FB◊FFBÀB¿ÉBˇB¯ÉF#B√BœFÉB‡ÉF?FB˜B˚B‘ÉB«FB”FF'B◊B‘ÉB”B◊BÁFFBÀB„B‘∏(¥Ä®©]°‰Ë®®ÉBõB◊B˜B¿ÉB‡ÉB◊B”B„B˜B„FB¿ÉB”B˚BÔB€B˜F,ÉB«F/FF0ÉBˇB˚B˜F?FB˜F,ÉB”B¯ÅÖ…–∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–‘∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBKF/FB„FBÔB◊B˜B„B‘ÉBÀB„B”B„BÛB˚BœB¯ÉB„FB˚BœB¿∞Åë•ÕÖâ±ïêÉB◊FBÔB‡ÉB˜B◊B”B˚FFFBˇB˜B¯∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBìB„BÎFB„BÀB˜B˚B‘ÉB”B˚B«B√BÀBÔB◊B˜B„B‘ÉB”B¯ÅçÖ…–ÅÕ—Ö—îÉB‡ÅΩπ±•πîÅ¡ÖÂµïπ–∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBSBÔF<ÉB˜B◊BˇB˚BÔB˜B˚BœB¯ÉFB◊B√BÔF3B˜B˚BœB¯ÅM-TÉB˜B‘ÉBˇB˚BÎB√BﬂF/BÀB√FF0ÉBÀF/FB„FBÔB◊B˜B˜F/B‰ÉB„FB˚BÃ∞ÉB˚FFB√BÀB„FF0ÉB”B◊BÁFFBÀB„B‘Åë•ÕÖâ±ïêÏÅÖëêµ—ºµçÖ…–ÉBﬂB√BˇBÔB√B˜B„FB˚BÀB√BÙÉB»ÅP¿–‰ÉBˇB˚FBÔB‘ÅçÖ…–ÅµΩëï∞∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉB£B√BÃøBÛB„B˜B„BÛFBÉFB√B«B˚FB√F;F∞ÉB”B◊BÁFFBÀB„B‘ÉB”B¯ÅP¿–‰ÉFB◊FFB˜B¯ÉB˜B◊B”B˚FFFBˇB˜B¯∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅ≈’Öπ—•—‰Å—ïÕ—Ã∞ÅŸ•ï›¡Ω…–ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–ÿ§ËÅE’Öπ—•—‰ÅU$ÉB‡ÉBˇB˚BÎFBˇB√FB◊BÔF3FBÎB„B‰ÉB«BÔB˚BË(((ååÅA!MÄƒ¿ÉäPÅÖ…–((åååÅP¿–‹ÉäPÅÖ…–ÅÕ—Ö—îÅµΩëï∞((¥Ä®©%Ë®®ÅP¿–‹(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅÖ…–ÅÕ—Ö—îÅµΩëï∞(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B√BÔB„BﬂB˚BÀB√FF0ÉBÛB˚B”B◊BÔF0ÉFFFB˚BËÉBÎB˚FBﬂB„B˜F,ÉB‡ÉB˚BˇB◊FB√FB„B‡∏(¥Ä®©]°‰Ë®®ÉBwB◊B√BÀFB˚FB„FB◊FB˜F/B‰Åç±•ïπ–ÅçÖ…–ÉFFB◊B«FB◊FÉFFGFBÎB„FÉBˇFB√BÀB„BÏ∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–ÿ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å¡…Ωë’ç—}•ê∞Å≈’Öπ—•—‰∞Åë•Õ¡±Ö‰ÅÕπÖ¡Õ°Ω–∞ÅÖëêΩ’¡ëÖ—îΩ…ïµΩŸîÅA$∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®Å	Öç≠ïπêÅçÖ…–ÉB‡ÅÖ’—†ÅÕ°Ω¡¡ï…Ã∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÅYï…Õ•ΩπïêÅÕ°Ö¡î∞Å¡…•çîÉB˜B„BÎB˚BœB”B¿ÉB˜B‘ÉB„FFB˚FB˜B„BËÉBﬂB√BÎB√BﬂB¿∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉB{BˇB◊FB√FB„B‡ÉB„B”B◊BÛBˇB˚FB◊B˜FB˜F,ÉB»ÅU$∞ÉB˜B◊BÎB˚FFB◊BÎFB˜F/B‘ÉBÎB˚BÔB„FB◊FFBÀB¿ÉB˚FBÎBÔB˚B˜B◊B˜F,∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å’π•–Å—ïÕ—ÃÉB˜B¿Å≈’Öπ—•—‰ΩÕ—Ö—î∞Å—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–‹§ËÅÖ…–ÅÕ—Ö—îÅµΩëï∞((åååÅP¿–‡ÉäPÅ±ΩçÖ±M—Ω…ÖùîÉB‡Å°Âë…Ö—•Ω∏((¥Ä®©%Ë®®ÅP¿–‡(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å±ΩçÖ±M—Ω…ÖùîÉB‡Å°Âë…Ö—•Ω∏(¥Ä®©ΩÖ∞Ë®®ÉBáB˚FFB√B˜B„FF0ÉBÎB˚FBﬂB„B˜FÉBÛB◊B€B”FÉBˇB˚FB◊F'B◊B˜B„F?BÛB‡ÉB«B◊B‹ÅMMHÅµ•ÕµÖ—ç†∏(¥Ä®©]°‰Ë®®ÉBáB˚FFB˚F?B˜B„B‘Åâ…Ω›Õï»ÉB˜B◊B”B˚FFFBˇB˜B¯ÅMï…Ÿï»ÅΩµ¡Ωπïπ—Ã∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–‹∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅYï…Õ•Ω∏Åµ•ù…Ö—•Ω∏∞ÅÕÖôîÅ¡Ö…Õî∞Å°Âë…Ö—•Ω∏Å±ΩÖë•πú∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅΩΩ≠•îÅçÖ…–∞ÅÉFB√B«BÔB„FB¿∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB‡ÉBˇB˚BÀFB◊B€B”B◊B˜B„B‡Å…ïÕï–ÉFÉBˇB˚B˜F?FB˜F/BÉFB˚B˚B«F'B◊B˜B„B◊B∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅIï±ΩÖêÉFB˚FFB√B˜F?B◊FÉFFFB˚BÎB‡ÏÅâ…Ω≠ï∏ÅÕ—Ω…ÖùîÉB˜B‘ÉBÔB˚BÛB√B◊FÉFFFB√B˜B„FF∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅÕ—Ω…ÖùîΩ°Âë…Ö—•Ω∏Å—Ö…ùï—ïêÅ—ïÕ—Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–‡§ËÅ±ΩçÖ±M—Ω…ÖùîÉB‡Å°Âë…Ö—•Ω∏((åååÅP¿–‰ÉäPÅëêΩ…ïµΩŸîΩ’¡ëÖ—îÉB„B˜FB◊BœFB√FB„F<((¥Ä®©%Ë®®ÅP¿–‰(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅëêΩ…ïµΩŸîΩ’¡ëÖ—îÉB„B˜FB◊BœFB√FB„F<(¥Ä®©ΩÖ∞Ë®®ÉBB˚B”BÎBÔF;FB„FF0ÅA…Ωë’ç–Åï—Ö•∞ÉB‡ÉBÎB√FFB˚FBÎB‡ÉBËÉBÎB˚FBﬂB„B˜B‘∏(¥Ä®©]°‰Ë®®ÉBB˚BÎFBˇBÎB¿ÉB”B˚BÔB€B˜B¿ÉFB√B«B˚FB√FF0∞ÉBÎB˚BœB”B¿ÅÕ—Ö—îÉBœB˚FB˚B»∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–‡∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBkB˜B˚BˇBÎB‡ÉB”B˚B«B√BÀB„FF0øFB”B√BÔB„FF0øB„BﬂBÛB◊B˜B„FF0∞ÅçΩ’π–ÉB»Å°ïÖëï»∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®Å°ïç≠Ω’–ÅA$∞ÅÖπÖ±Â—•çÃ∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBèFB„FF/BÀB√FF0ÉF#B√BÃ∞ÉFFB√FFFÉB‡ÅçΩµµï…ç•Ö±}…ïÖë‰ÏÉFB◊B√BÔF3B˜F/B‰ÅπΩ∏µΩ…ëï…Öâ±îÅM-TÉB˜B‘ÉB”B˚B«B√BÀBÔF?FF0∏ÅU$Åù’Ö…êÉB˜B‘ÉBﬂB√BÛB◊B˜F?B◊FÉFB◊FBÀB◊FB˜FF8ÉBˇFB˚BÀB◊FBÎFÉB˜B¿ÅΩ…ëï»ÅÕ’âµ•–∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBcB‹ÉFB˚BÀB√FB¿ÉBÛB˚B€B˜B¯ÉB”B˚B«B√BÀB„FF0ÉB‡ÉFB”B√BÔB„FF0ÏÅçΩ’π–ÉFB„B˜FFB˚B˜B◊BÙ∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å•π—ï…Öç—•Ω∏ÅÕµΩ≠îÄƒ––¿ºÃ‰¿∞Å—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿–‰§ËÅëêΩ…ïµΩŸîΩ’¡ëÖ—îÉB„B˜FB◊BœFB√FB„F<((åååÅP¿‘¿ÉäPÅÖ…–Å¡ÖùîÉB‡Å¡…•çîÅ…ïô…ïÕ†((¥Ä®©%Ë®®ÅP¿‘¿(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅÖ…–Å¡ÖùîÉB‡Å¡…•çîÅ…ïô…ïÕ†(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B√BÔB„BﬂB˚BÀB√FF0ÄΩçÖ…–ÉFÉBˇFB˚BÀB◊FBÎB˚B‰ÉFB◊BÎFF'B◊BœB¯ÅM-TøFB◊B˜F,∏(¥Ä®©]°‰Ë®®ÉBB◊FB◊B–ÉB˚FBˇFB√BÀBÎB˚B‰ÉBˇB˚BÎFBˇB√FB◊BÔF0ÉBÀB„B”B„FÉB√BÎFFB√BÔF3B˜F/B‰ÉB„FB˚BÃ∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿–‰∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å%—ïµÃ∞Å≈’Öπ—•—‰∞Åïµ¡—‰Ω’πÖŸÖ•±Öâ±îΩç°ÖπùïêÅ¡…•çîÅÕ—Ö—ïÃ∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBáB˚BﬂB”B√B˜B„B‘ÅΩ…ëï»ÉB„BÔB‡ÅâÖç≠ïπêÅçÖ…–∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB‡ÉFB√FFB˚B€B”B◊B˜B„B‡ÉF?BÀB˜B¯ÉBˇB˚B”FBÀB◊FB€B”B√FF0ÉB˜B˚BÀFF8ÉFB◊B˜FÉBˇB◊FB◊B–Åç°ïç≠Ω’–ÏÉB◊FBÔB‡Å…ïÖ∞ÅM-TÉFFB√BÏÅπΩ∏µΩ…ëï…Öâ±î∞ÉB˜B‘ÉBÀF/FB„FBÔF?FF0ÉFB„BÎFB„BÀB˜F/B‰ÉB„FB˚BÃÉB‡ÉB˜B‘ÉB”B˚BˇFFBÎB√FF0ÉBËÉBﬂB√F?BÀBÎB‘∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBèB”B√BÔFGB˜B˜F/B‰ÅM-TÉB˚FBÛB◊FB◊BÙ∞ÉB„FB˚BÃÉBˇB◊FB◊FFB„FB√BÙÉBˇB¯ÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜F/BÉB”B√B˜B˜F/B∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅ…ïô…ïÕ†Å—ïÕ—Ã∞Åâ…Ω›Õï»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘¿§ËÅÖ…–Å¡ÖùîÉB‡Å¡…•çîÅ…ïô…ïÕ†(((ååÅA!MÄƒƒÉäPÅ°ïç≠Ω’–ÄºÅ=…ëï»ÅIï≈’ïÕ–((åååÅP¿‘ƒÉäPÅ°ïç≠Ω’–ÅôΩ…¥ÉB‡ÅçΩπÕïπ–((¥Ä®©%Ë®®ÅP¿‘ƒ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å°ïç≠Ω’–ÅôΩ…¥ÉB‡ÅçΩπÕïπ–(¥Ä®©ΩÖ∞Ë®®ÉBáB”B◊BÔB√FF0ÄΩç°ïç≠Ω’–ÉFÉBÛB„B˜B„BÛB√BÔF3B˜F/BÛB‡ÉBÎB˚B˜FB√BÎFB˜F/BÛB‡ÉBˇB˚BÔF?BÛB‡∏(¥Ä®©]°‰Ë®®ÉB_B√F?BÀBÎB¿ÉB”B˚BÔB€B˜B¿ÉB«F/FF0ÉBˇFB˚FFB˚B‰ÉB‡ÉBﬂB√BÎB˚B˜B˜B˚B‰∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘¿∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…ïŸ•ï‹ÉFB˚FBÛB¿ÉB”BÔF<ÅπÖµîΩ¡°ΩπîΩç•—‰ΩïµÖ•∞∞ÅΩ¡—•ΩπÖ∞ÅçΩµµïπ–∞ÅÕ’µµÖ…‰∞Åç±•ïπ–Å±ΩÖë•πúΩï……Ω…ÃÏÉBÛB◊FFB¯ÉB”BÔF<ÉB«FB”FF'B◊BœB¯ÉF;FB„B”B„FB◊FBÎB‡ÉFFBÀB◊FB€B”FGB˜B˜B˚BœB¯ÉFB˚BœBÔB√FB„F<∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉB{BˇBÔB√FB¿∞ÉBÔB„F#B˜B„B‘ÉBˇB◊FFB˚B˜B√BÔF3B˜F/B‘ÉBˇB˚BÔF<∞ÅâÖç≠ïπêÅµ’—Ö—•ΩπÃ∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅΩ›πï»µçΩπô•…µïêÅΩ…ëï»ÅôÖç—ÃÉB‡Å¡ïπë•πúÅ±ïùÖ∞Å…ïŸ•ï‹ÅP¿¿‰∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB‡ÅÕïÕÕ•Ω∏ΩçÖ…–ÉBˇFB˚B«BÔB◊BÛB‘ÉFB˚FFB√B˜B„FF0ÉBˇB˚B˜F?FB˜F/B‰ÉBˇFFF0ÉB˜B√BﬂB√B–∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅA…ïŸ•ï‹ÉFB˚FBÛB¿ÉB”B˚FFFBˇB˜B¿ÉB”BÔF<ÅQMQ}=91dÉFFB◊B˜B√FB„B◊B»∞ÉB˜B◊BÀB◊FB˜F/B‘ÉBˇB˚BÔF<ÉB˚FBÛB◊FB◊B˜F,ÏÅ±ïùÖ∞ÅçΩ¡‰ÉB˚FFB√FGFFF<ÅAïπë•πúÅΩ›πï»Ω±ïùÖ∞ÅÖ¡¡…ΩŸÖ∞∞ÉB«B◊B‹ÉFB„BÎFB„BÀB˜B˚BœB¯ÉFB◊BÎFFB¿ÅçΩπÕïπ–ÉB‡ÉB«B◊B‹Å¡…Ωë’ç—•Ω∏ÅÕ’âµ•–∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅôΩ…¥ÅŸÖ±•ëÖ—•Ω∏∞ÅÑƒ≈‰ÅÖπêÅâ…Ω›Õï»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘ƒ§ËÅ°ïç≠Ω’–ÅôΩ…¥ÉB‡ÅçΩπÕïπ–((åååÅP¿‘»ÉäPÅ=…ëï»ÅA$ÅŸÖ±•ëÖ—•Ω∏ÅâΩ’πëÖ…‰((¥Ä®©%Ë®®ÅP¿‘»(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å=…ëï»ÅA$ÅŸÖ±•ëÖ—•Ω∏ÅâΩ’πëÖ…‰(¥Ä®©ΩÖ∞Ë®®ÉBáB˚BﬂB”B√FF0ÅA=MPÄΩÖ¡§ΩΩ…ëï»µ…ï≈’ïÕ—ÃÉFÉFB◊FBÀB◊FB˜B˚B‰ÉBˇFB˚BÀB◊FBÎB˚B‰∏(¥Ä®©]°‰Ë®®Å	…Ω›Õï»Å¡…•çîÉB˜B◊BÔF3BﬂF<ÉBˇFB„B˜B„BÛB√FF0ÉB˜B¿ÉBÀB◊FF∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘ƒ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅMç°ïµÑÅ¡Ö…Õ•πú∞ÅÖ±±Ω›ïêÅΩ…•ù•∏Ω—Â¡îΩâΩë‰∞Å±•µ•—Ã∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅÅ•πÕï…–∞Å¡ÖÂµïπ–∞ÅÖëµ•∏ÅA$∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅΩ›πï»µçΩπô•…µïêÅΩ…ëï»ÅôÖç—ÃÉB‡Å¡ïπë•πúÅ±ïùÖ∞Å…ïŸ•ï‹ÅP¿¿‰∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FB„FF0Å≈’Öπ—•—‰∞ÅÕ—ï¿∞Å¡°ΩπîÉB‡ÅM-TÏÅ¡…Ωë’ç—•Ω∏ÅçΩπÕïπ–ÉBˇFB˚BÀB◊FF?FF0ÉBÔB„F#F0ÉBˇB¯ÉF;FB„B”B„FB◊FBÎB‡ÉFFBÀB◊FB€B”FGB˜B˜B˚BÛFÉFB◊BÎFFF∏ÅA…ïŸ•ï‹ÉB˚BœFB√B˜B„FB„FF0ÅQMQ}=91dÉFFB◊B˜B√FB„B◊B∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBwB◊BÀB◊FB˜F/B‰Å¡ÖÂ±ΩÖêÉB˜B‘ÉBÀF/BﬂF/BÀB√B◊FÉBﬂB√BˇB„FF0ÉB‡ÉBÀB˚BﬂBÀFB√F'B√B◊FÉB«B◊BﬂB˚BˇB√FB˜FF8ÉB˚F#B„B«BÎF∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅ•πŸÖ±•êÅ¡ÖÂ±ΩÖêΩÕïç’…•—‰Å—ïÕ—Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘»§ËÅ=…ëï»ÅA$ÅŸÖ±•ëÖ—•Ω∏ÅâΩ’πëÖ…‰((åååÅP¿‘ÃÉäPÅ…ïÕ†Å¡…•çîÉB‡Å•ëïµ¡Ω—ïπç‰((¥Ä®©%Ë®®ÅP¿‘Ã(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å…ïÕ†Å¡…•çîÉB‡Å•ëïµ¡Ω—ïπç‰(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0ÉB√BÎFFB√BÔF3B˜FF8ÉBˇFB˚BÀB◊FBÎFÉB‡ÉBﬂB√F'B„FFÉBˇB˚BÀFB˚FB˜B˚B‰ÉB˚FBˇFB√BÀBÎB‡∏(¥Ä®©]°‰Ë®®ÉBÉB◊FFB√B‰ÉB‡ÉB„BﬂBÛB◊B˜B◊B˜B„B‘ÉBˇFB√BÁFB¿ÉB˜B‘ÉB”B˚BÔB€B˜F,ÉFB”BÀB√B„BÀB√FF0ÉBﬂB√F?BÀBÎF∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘»∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅUπçÖç°ïêÅ¡…Ωë’ç–Å…ïÖê∞ÅçÖπΩπ•çÖ∞Å°ÖÕ†∞Å’π•≈’îÅ≠ï‰∞Ä–¿‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBcBﬂBÛB◊B˜B◊B˜B„B‘ÅçΩµµï…ç•Ö∞ÅÕπÖ¡Õ°Ω–ÉBˇB˚FBÔB‘ÉBﬂB√BˇB„FB‡∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅΩ›πï»µçΩπô•…µïêÅΩ…ëï»ÅôÖç—ÃÉB‡Å¡ïπë•πúÅ±ïùÖ∞Å…ïŸ•ï‹ÅP¿¿‰∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBáFF'B◊FFBÀFF;F'B„B‰ÉBÎBÔF;FÉFB˜B√FB√BÔB¿ÉFB˚BˇB˚FFB√BÀB„FF0ÉFÅ¡ÖÂ±ΩÖêÅ°ÖÕ†∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Å°ÖπùïêÅ¡…•çóäH–¿‰∞Å•ëïπ—•çÖ∞Å…ï—…ÁäKFB˚FÉB€B‘ÉB˜B˚BÛB◊F ∞ÉB„B˜B˚B‰Å¡ÖÂ±ΩÖìäIçΩπô±•ç–∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å…ÖçîΩ•ëïµ¡Ω—ïπç‰Ω¡…•çîÅ—Ö…ùï—ïêÅ—ïÕ—ÃÉB˜B¿ÅQMQ}=91dÅô•·—’…ïÃÉB‡ÉB˚FFB„FB√FB◊BÔF3B˜F/B‰ÉFB◊FFÅ…ïÖ∞ÅπΩ∏µΩ…ëï…Öâ±îÅM-TÏÉB√BÎFFB√BÔF3B˜B√F<ÉFB◊FBÀB◊FB˜B√F<Åï±•ù•â•±•—‰ÉBˇFB˚BÀB◊FBÎB¿∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘Ã§ËÅ…ïÕ†Å¡…•çîÉB‡Å•ëïµ¡Ω—ïπç‰((åååÅP¿‘–ÉäPÅA…•ŸÖ—îÅΩ…ëï»Å•πÕï…–ÉB‡ÅΩ’—çΩµïÃ((¥Ä®©%Ë®®ÅP¿‘–(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅA…•ŸÖ—îÅΩ…ëï»Å•πÕï…–ÉB‡ÅΩ’—çΩµïÃ(¥Ä®©ΩÖ∞Ë®®ÉB_B√BˇB„FB√FF0ÉB˚B”B˜FÅΩ…ëï…}…ï≈’ïÕ—ÃÅ…Ω‹ÉB‡ÉBÀB◊FB˜FFF0ÉB«B◊BﬂB˚BˇB√FB˜F/B‰ÉFB◊BﬂFBÔF3FB√F∏(¥Ä®©]°‰Ë®®ÉB_B√BÀB◊FF#B√B◊FÉBˇFFF0ÉBﬂB√F?BÀBÎB‡ÉB«B◊B‹ÉFB√FFB„FB˜F/FÉBﬂB√BÎB√BﬂB˚B»∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘Ã∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅMï…Ÿï»µΩπ±‰ÅÕïç…ï–Å•πÕï…–∞ÅÕ’ççïÕÃΩï……Ω»Ω…ï—…‰ÅU$∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅA’â±•åÅM1PÅΩ…ëï…Ã∞ÅΩ…ëï…}•—ïµÃ∞Å¡ÖÂµïπ–∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅΩ›πï»µçΩπô•…µïêÅΩ…ëï»ÅôÖç—ÃÉB‡Å¡ïπë•πúÅ±ïùÖ∞Å…ïŸ•ï‹ÅP¿¿‰∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÅMïç…ï–ÉB˜B‘ÉB»Åâ’πë±îÏÉB˚FBÀB◊FÉB«B◊B‹ÉBÎB˚B˜FB√BÎFB˚B»Ω•π—ï…πÖ∞ÅπΩ—î∏ÉBHÅA…ïŸ•ï‹ÉFB˚BﬂB”B√BÀB√FF0ÉFB˚BÔF3BÎB¯ÅQMQ}=91dÉBﬂB√F?BÀBÎB‡ÉFÉFB„B˜FB◊FB„FB◊FBÎB„BÛB‡ÉBÎB˚B˜FB√BÎFB√BÛB‡ÏÅ¡…Ωë’ç—•Ω∏ÅçΩµµï…çîÉBﬂB√BÎFF/FÉB”B¯ÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÅAML∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉB_B√F?BÀBÎB¿ÉBˇB˚F?BÀBÔF?B◊FFF<ÉFB˚BÔF3BÎB¯ÉB˚B”B„BÙÉFB√B‹∞ÉFFBˇB◊FøFB«B˚B‰ÉBˇB˚B˜F?FB˜F,∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å•π—ïù…Ö—•Ω∏ÅÕ’âµ•–ΩI1LΩâ’πë±îÅç°ïç≠Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘–§ËÅA…•ŸÖ—îÅΩ…ëï»Å•πÕï…–ÉB‡ÅΩ’—çΩµïÃ((åååÅP¿‘‘ÉäPÅ=…ëï»Åô±Ω‹Å•π—ïù…Ö—•Ω∏ÅùÖ—î((¥Ä®©%Ë®®ÅP¿‘‘(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å=…ëï»Åô±Ω‹Å•π—ïù…Ö—•Ω∏ÅùÖ—î(¥Ä®©ΩÖ∞Ë®®ÉBFB˚BÀB◊FB„FF0ÅA…Ωë’ç”äIÖ…”äI°ïç≠Ω’”äIΩπô•…µÖ—•Ω∏∏(¥Ä®©]°‰Ë®®ÉBB˚FBÔB‘ÉB˜B◊FBÎB˚BÔF3BÎB„FÅQM,ÉB˜FB€B˜F,ÉBˇFB˚BÀB◊FBÎB‡ÉFFF/BÎB˚B»∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘–∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBáFB◊B˜B√FB„B‡ÉB˜B˚FBÛB√BÔF3B˜F/B‰∞ÉB˜B◊B”B˚FFFBˇB˜F/B‰∞Åç°ÖπùïêÅ¡…•çî∞Å…ï—…‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBB˚BÔB˜F/B‰Åî…îÉBÀFB◊BœB¯ÉFB√BÁFB¿ÉB‡ÉB˜B˚BÀF/B‘ÉFFB˜BÎFB„B‡∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅΩ›πï»µçΩπô•…µïêÅΩ…ëï»ÅôÖç—ÃÉB‡Å¡ïπë•πúÅ±ïùÖ∞Å…ïŸ•ï‹ÅP¿¿‰∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FF?FF0Äƒ––¿ºÃ‰¿ÉB‡ÅçΩπÕΩ±îΩπï—›Ω…¨ÉF7FB˚BœB¯Åô±Ω‹∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Å4ÿÉBˇFB˚BÀB◊FF?B◊FÉBˇFB„BÀB√FB˜F/B‰ÉB‡ÉFFB√B«B„BÔF3B˜F/B‰ÅA…ïŸ•ï‹Åô±Ω‹ÉB˜B¿ÅQMQ}=91dÅô•·—’…ïÃÏÉFB◊B√BÔF3B˜F/B‘ÅM-TÉB«B◊B‹ÉBˇB˚BÔB˜B˚BœB¯ÅçΩµµï…ç•Ö∞ÉB˜B√B«B˚FB¿ÉB˚FBÀB◊FBœB√F;FFF<ÉFB◊FBÀB◊FB˚B∏ÅA…Ωë’ç—•Ω∏ÅçΩµµï…çîÉB˚FFB√FGFFF<ÉBﬂB√B«BÔB˚BÎB„FB˚BÀB√BÙ∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅâ…Ω›Õï»Å•π—ïù…Ö—•Ω∏Ä¨ÅÕïç’…•—‰Åç°ïç≠Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘‘§ËÅ=…ëï»Åô±Ω‹Å•π—ïù…Ö—•Ω∏ÅùÖ—î(((ååÅA!MÄƒ»ÉäPÅëµ•∏Å=…ëï…Ã((åååÅP¿‘ÿÉäPÅëµ•∏ÅΩ…ëï…ÃÅ±•Õ–((¥Ä®©%Ë®®ÅP¿‘ÿ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Åëµ•∏ÅΩ…ëï…ÃÅ±•Õ–(¥Ä®©ΩÖ∞Ë®®ÉBÉB◊B√BÔB„BﬂB˚BÀB√FF0ÄΩÖëµ•∏ΩΩ…ëï…ÃÉFB¯ÉFFB√FFFB˚BÉB‡ÉB”B√FB˚B‰∏(¥Ä®©]°‰Ë®®ÉBsB◊B˜B◊B”B€B◊F ÉB”B˚BÔB€B◊BÙÉBÀB„B”B◊FF0ÉB˜B˚BÀF/B‘ÉB˚B«FB√F'B◊B˜B„F<ÉFFB√BﬂF∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘‘∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅMï…Ÿï»µΩπ±‰Åù’Ö…ëïêÅ±•Õ–∞ÅÕ—Ö—’ÃÅô•±—ï»ΩëÖ—îÅÕΩ…–∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅA’â±•åÅΩ…ëï»ÅA$∞Å	$ÅëÖÕ°âΩÖ…ê∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBKF/BÀB˚B”B„FF0ÉB˜B˚BÛB◊F øB”B√FFøFFB√FFFøBÎB˚B˜FB√BÎFÉB«B◊B‹ÅçÖç°î∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Åëµ•∏ÉBÀB„B”B„FÉBﬂB√F?BÀBÎB‡ÏÅÖπΩ∏ΩπΩ∏µÖëµ•∏ÉB˜B‘ÉBÀB„B”B„F∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åù’Ö…ëïêÅ±•Õ–ΩI1LÅ—ïÕ—Ã∞Å±•π–Ω—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘ÿ§ËÅëµ•∏ÅΩ…ëï…ÃÅ±•Õ–((åååÅP¿‘‹ÉäPÅ=…ëï»Åëï—Ö•∞ÅÕπÖ¡Õ°Ω–((¥Ä®©%Ë®®ÅP¿‘‹(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å=…ëï»Åëï—Ö•∞ÅÕπÖ¡Õ°Ω–(¥Ä®©ΩÖ∞Ë®®ÉBB˚BÎB√BﬂB√FF0ÄΩÖëµ•∏ΩΩ…ëï…ÃΩm•ëtÉFÉB˜B◊B„BﬂBÛB◊B˜FGB˜B˜F/BÛB‡ÉFFFB˚BÎB√BÛB‡∏(¥Ä®©]°‰Ë®®ÉB{B«FB√B«B˚FBÎB¿ÉFFB◊B«FB◊FÉFB˚FB˜B˚BœB¯ÉFB˚FFB√BÀB¿ÉB‡ÉFFBÔB˚BÀB„B‰ÉBﬂB√F?BÀBÎB‡∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘ÿ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBB˚BﬂB„FB„B‡Ω≈—‰øFB◊B˜B¿Ω’π•–øB„FB˚BÃøB„BÛF<øFB◊BÔB◊FB˚BÙΩçΩµµïπ–∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBÉB◊B”B√BÎFB„FB˚BÀB√B˜B„B‘ÉFB˚BÀB√FB˚B»∞ÉFB◊B˜F,∞ÉBÎB˚B˜FB√BÎFB¿∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBSB√B˜B˜F/B‘ÉFB˚BÔF3BÎB¯ÉB„B‹Å•—ïµÕ}ÕπÖ¡Õ°Ω–∞ÉB˜B‘ÉB„B‹ÉFB◊BÎFF'B◊BœB¯ÉBˇFB√BÁFB¿∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBCB”BÛB„BÙÉBÀB„B”B„FÉB„FFB˚FB„F8ÉFB◊B˜F,ÉB”B√B€B‘ÉBˇB˚FBÔB‘ÉB„BﬂBÛB◊B˜B◊B˜B„F<ÉFB˚BÀB√FB¿∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åëï—Ö•∞ÅÕπÖ¡Õ°Ω–Å•π—ïù…Ö—•Ω∏∞ÅπºÅ¡’â±•åÅ±ïÖ¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘‹§ËÅ=…ëï»Åëï—Ö•∞ÅÕπÖ¡Õ°Ω–((åååÅP¿‘‡ÉäPÅM—Ö—’ÃÉB‡Å•π—ï…πÖ∞ÅπΩ—î((¥Ä®©%Ë®®ÅP¿‘‡(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅM—Ö—’ÃÉB‡Å•π—ï…πÖ∞ÅπΩ—î(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0ÉB˚BˇB◊FB√FB„B˚B˜B˜B˚B‘ÉB„BﬂBÛB◊B˜B◊B˜B„B‘ÉFFB√FFFB¿ÉB‡ÉBˇFB„BÀB√FB˜B˚B‰ÉBﬂB√BÛB◊FBÎB‡∏(¥Ä®©]°‰Ë®®ÉB_B√BÎB√B‹ÉBˇFB˚FB˚B”B„FÅπïﬂäI•π}¡…Ωù…ïÕœäIçΩµ¡±ï—ïêΩçÖπçï±±ïê∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘‹∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å’Ö…ëïêÅÖç—•Ω∏∞ÅÕï…Ÿï»ÅŸÖ±•ëÖ—•Ω∏∞Å’¡ëÖ—ïë}Ö–∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBoF;B«F/B‘ÉB„BﬂBÛB◊B˜B◊B˜B„F<ÉBÎB˚BÛBÛB◊FFB◊FBÎB„FÉBˇB˚BÔB◊B‰ÉB„BÔB‡ÉBˇFB«BÔB„FB˜F/B‰ÉBÀF/BÀB˚B–ÉBﬂB√BÛB◊FBÎB‡∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉB{B«FB√B«B√FF/BÀB√FF0ÉBÎB˚B˜FBÔB„BÎFÉFFB√FFFB¿øB˚FFFFFFBÀFF;F'B„B‰Å%ÉB«B◊BﬂB˚BˇB√FB˜B¯∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBáB˚FFB√B˜FGB˜B˜F/B‰ÉFFB√FFFøBﬂB√BÛB◊FBÎB¿ÉBÀB„B”B˜F,ÉB√B”BÛB„B˜F∞ÅÕπÖ¡Õ°Ω–ÉB˜B‘ÉB„BﬂBÛB◊B˜FGBÙ∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅçΩ±’µ∏Å¡…•Ÿ•±ïùî∞Åµ’—Ö—•Ω∏Ω—…ÖπÕ•—•Ω∏Å—ïÕ—Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘‡§ËÅM—Ö—’ÃÉB‡Å•π—ï…πÖ∞ÅπΩ—î((åååÅP¿‘‰ÉäPÅ=…ëï…ÃÅ¡…•ŸÖç‰ÅùÖ—î((¥Ä®©%Ë®®ÅP¿‘‰(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å=…ëï…ÃÅ¡…•ŸÖç‰ÅùÖ—î(¥Ä®©ΩÖ∞Ë®®ÉBFB˚BÀB◊FB„FF0ÉBˇFF?BÛB˚B‰ÅA$ÉB‡ÉBˇB˚BÔB˜F/B‰ÉFBˇFB√BÀBÔB◊B˜FB◊FBÎB„B‰ÉFFB◊B˜B√FB„B‰∏(¥Ä®©]°‰Ë®®ÅA%$ÉB‡ÅçΩµµï…ç•Ö∞ÅÕπÖ¡Õ°Ω–ÉäPÉBÎFB„FB„FB◊FBÎB√F<ÉBœFB√B˜B„FB¿∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘‡∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBB˚BﬂB„FB„BÀB˜F/B‘ÅÖëµ•∏ÉB‡ÉB˜B◊BœB√FB„BÀB˜F/B‘ÅÖπΩ∏ΩπΩ∏µÖëµ•∏ÉFB◊FFF,∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBwB˚BÀF/B‘ÉBˇB˚BÔF<ÉBﬂB√BÎB√BﬂB¿∞ÅI4∞ÉB„B˜FB◊BœFB√FB„B‡∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FB„FF0Å•π—ï…πÖ±}πΩ—îÉBÀB¯ÉBÀFB◊FÉBˇFB«BÔB„FB˜F/FÉB˚FBÀB◊FB√FøBÔB˚BœB√F∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Å4‹ËÉFB˚BÔF3BÎB¯ÅÖëµ•∏ÉBÀB„B”B„FÉB‡ÉB˚B«B˜B˚BÀBÔF?B◊FÉFB√BﬂFB◊F#FGB˜B˜F/B‘ÉBˇB˚BÔF<∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å—Ö…ùï—ïêÅI1LΩÕïç’…•—‰Ä¨Åâ…Ω›Õï»ÅΩ…ëï»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‘‰§ËÅ=…ëï…ÃÅ¡…•ŸÖç‰ÅùÖ—î(((ååÅA!MÄƒÃÉäPÅ%πôΩ…µÖ—•Ω∏ÅAÖùïÃ((åååÅP¿ÿ¿ÉäPÅ¡¡±•çÖ—•ΩπÃÉB‡ÅâΩ’–((¥Ä®©%Ë®®ÅP¿ÿ¿(¥Ä®©A…•Ω…•—‰Ë®®Å@ƒ(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å¡¡±•çÖ—•ΩπÃÉB‡ÅâΩ’–(¥Ä®©ΩÖ∞Ë®®ÉBáB˚BﬂB”B√FF0ÉFFFB√B˜B„FF,ÉBˇFB„BÛB◊B˜B◊B˜B„F<ÉB‡ÉBÎB˚BÛBˇB√B˜B„B‡ÉB˜B¿ÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜B˚BÉBÎB˚B˜FB◊B˜FB‘∏(¥Ä®©]°‰Ë®®ÉBwB√BÀB„BœB√FB„F<ÉB”B˚BÔB€B˜B¿ÉB˚B«F+F?FB˜F?FF0ÉBÛB√FB◊FB„B√BÏÉB‡ÉB«FB◊B˜B–∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‘‰∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÄΩÖ¡¡±•çÖ—•ΩπÃ∞ÄΩÖâΩ’–∞ÉFB◊B√BÔF3B˜F/B‘ÉFB˚FB¯øBˇB˚B”BˇB„FB‡∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBoB˚B€B˜F/B‘ÉBÎB◊BÁFF,øFB◊FFB„FB„BÎB√FF,∞ÉB˜B˚BÀF/B‰ÅŸ•Õ’Ö∞Å±Öπù’Öùî∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩ=9Q9Q}U%PπµêÏÅP¿¿„äMP¿ƒ¿ÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBkB˚B˜FB◊B˜FÉB„B‹ÅP¿¿„äMP¿ƒ¿ÏÉFB◊B√BÔB„BﬂB√FB„F8ÉB˚FBÔB„FB√FF0ÉB˚FÉBÀB„BﬂFB√BÔB„BﬂB√FB„B‡∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBáFFB√B˜B„FF,ÉB”B˚FFFBˇB˜F,øB√B”B√BˇFB„BÀB˜F,∞ÉB˚B«B◊F'B√B˜B„F<ÉBˇFB˚BÀB◊FB◊B˜F,∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅçΩπ—ïπ–ÅôÖç–Åç°ïç¨∞Å±•π–Ω—Â¡ïç°ïç¨∞Åâ…Ω›Õï»ÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ¿§ËÅ¡¡±•çÖ—•ΩπÃÉB‡ÅâΩ’–((åååÅP¿ÿƒÉäPÅï±•Ÿï…‰ÉB‡ÅΩπ—Öç—Ã((¥Ä®©%Ë®®ÅP¿ÿƒ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Åï±•Ÿï…‰ÉB‡ÅΩπ—Öç—Ã(¥Ä®©ΩÖ∞Ë®®ÉB{BˇFB«BÔB„BÎB˚BÀB√FF0ÉBˇFB˚BÀB◊FB◊B˜B˜F/B‘ÉFFBÔB˚BÀB„F<ÉB‡ÉFBˇB˚FB˚B«F,ÉFBÀF?BﬂB‡∏(¥Ä®©]°‰Ë®®ÉBB◊FB◊B–ÉBﬂB√F?BÀBÎB˚B‰ÉBˇB˚FB◊FB„FB◊BÔF0ÉB”B˚BÔB€B◊BÙÉBˇB˚B˜B„BÛB√FF0ÉBˇB˚BÔFFB◊B˜B„B‘ÉFB˚BÀB√FB¿∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ¿∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…ïŸ•ï‹ÄΩëï±•Ÿï…‰ÉB‡ÄΩçΩπ—Öç—ÃÉFÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜F/BÛB‡ÉFB◊BÔB◊FB˚B˜B√BÛB‡ÉB‡ÉBœB˚FB˚B”B√BÛB‡ÏÉB˜B◊BÁFFB√BÔF3B˜B˚B‘Å¡ïπë•πúÉFB˚FFB˚F?B˜B„B‘ÉB”BÔF<ÉB˜B◊FFBÀB◊FB€B”FGB˜B˜F/FÉBˇB˚B”FB˚B«B˜B˚FFB◊B‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBwB◊BˇFB˚BÀB◊FB◊B˜B˜B√F<ÉB«B◊FBˇBÔB√FB˜B√F<ÉB”B˚FFB√BÀBÎB¿ÉB‡ÉFFFB√FB◊BÀF#B„B‘ÉBÎB˚B˜FB√BÎFF,∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩ=9Q9Q}U%PπµêÏÅP¿¿„äMP¿ƒ¿ÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBèFBÔB˚BÀB„F<ÉB”B˚FFB√BÀBÎB‡øFB√BÛB˚BÀF/BÀB˚BﬂB¿ÉB‡ÉB√B”FB◊FB¿ÉB˜B‘ÉBˇFB„B”FBÛF/BÀB√FF0ÏÉB„FÅ¡…Ωë’ç—•Ω∏ÅçΩ¡‰ÉFB˚BÔF3BÎB¯ÉBˇB˚FBÔB‘ÅΩ›πï»Ω±ïùÖ∞ÅÕ•ù∏µΩôò∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅA…ïŸ•ï‹ÉBˇB˚BÎB√BﬂF/BÀB√B◊FÉB”BÀB¿ÉBˇB˚B”FBÀB◊FB€B”FGB˜B˜F/FÉFB◊BÔB◊FB˚B˜B¿ÉB‡ÉBœB˚FB˚B”B¿∞ÉB«B◊B‹ÉBÀF/B”FBÛB√B˜B˜B˚BœB¯ÉB√B”FB◊FB¿øFFB˚BÎB˚B»øFFB˚B„BÛB˚FFB‡ÏÅ¡…Ωë’ç—•Ω∏ÅçΩ¡‰ÉB˚FFB√FGFFF<Å¡ïπë•πú∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å±•π¨ΩçΩπ—Öç–Åç°ïç¨∞Å…ïÕ¡ΩπÕ•ŸîÅÕµΩ≠î∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿƒ§ËÅï±•Ÿï…‰ÉB‡ÅΩπ—Öç—Ã((åååÅP¿ÿ»ÉäPÅA…•ŸÖç‰ÉB‡ÅQï…µÃ((¥Ä®©%Ë®®ÅP¿ÿ»(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅA…•ŸÖç‰ÉB‡ÅQï…µÃ(¥Ä®©ΩÖ∞Ë®®ÉBB˚B”BœB˚FB˚BÀB„FF0ÉBÛB√FF#FFFF,ÅA…•ŸÖç‰ÉB‡ÅQï…µÃÉB»ÅA…ïŸ•ï‹ÏÅ¡…Ωë’ç—•Ω∏ÉFB◊BÎFFF,ÉFB˚BÔF3BÎB¯ÉBˇB˚FBÔB‘Å±ïùÖ∞ÅÕ•ù∏µΩôò∏(¥Ä®©]°‰Ë®®ÉBìB˚FBÛB¿ÉBﬂB√F?BÀBÎB‡ÉFÅA%$ÉFFB◊B«FB◊FÉBÎB˚FFB◊BÎFB˜F/FÉFFF/BÔB˚BË∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿƒ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…ïŸ•ï‹Å…Ω’—ïÃÄΩ¡…•ŸÖç‰ÉB‡ÄΩ—ï…µÃÉFÉB˜B◊BÁFFB√BÔF3B˜F/BÅ¡ïπë•πúÅÕ—Ö—îÏÉB«FB”FF'B√F<ÉBˇB˚B”FFB√B˜B˚BÀBÎB¿ÉFFBÀB◊FB€B”FGB˜B˜B˚B‰ÉFB◊B”B√BÎFB„B‡∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBáB√BÛB˚FFB˚F?FB◊BÔF3B˜B˚B‘ÉFB˚FB„B˜B◊B˜B„B‘ÉF;FB„B”B„FB◊FBÎB„FÉB˚B«B◊F'B√B˜B„B‰∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩ=9Q9Q}U%PπµêÏÅP¿¿„äMP¿ƒ¿ÏÅëΩçÃΩM%9}MeMQ4πµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBB˚BÎB¿ÉFB◊BÎFFF,ÉB˜B‘ÉFFBÀB◊FB€B”B◊B˜F,∞ÅA…ïŸ•ï‹ÉBˇB˚BÎB√BﬂF/BÀB√B◊FÉFB˚BÔF3BÎB¯ÅAïπë•πúÅΩ›πï»Ω±ïùÖ∞ÅÖ¡¡…ΩŸÖ∞ÏÉB˜B„BÎB√BÎB˚BœB¯ÉBÀF/BÛF/F#BÔB◊B˜B˜B˚BœB¯ÅçΩπÕïπ–Ω…ï—’…∏Å¡Ω±•ç‰∏ÅA…Ωë’ç—•Ω∏ÅçΩπ—ïπ–ÉB˚FFB√FGFFF<Å	1=-∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅA…ïŸ•ï‹ÉBÛB√FF#FFFF,ÉB”B˚FFFBˇB˜F,ÉFÉFB◊FFB˜F/BÅ¡ïπë•πúÅÕ—Ö—îÏÅ¡…Ωë’ç—•Ω∏Åç°ïç≠Ω’–ÅçΩπÕïπ–ÉB‡Å±ïùÖ∞Å¡ÖùïÃÉB˜B‘ÉBœB˚FB˚BÀF,ÉB«B◊B‹ÉBˇFB˚BÀB◊FB◊B˜B˜B˚B‰ÉBˇB˚BÔB„FB„BÎB‡ÉB‡ÅÕ•ù∏µΩôò∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å±ïùÖ∞ÅÕ•ù∏µΩôò∞Å±•π¨Ωµï—ÖëÖ—ÑÅç°ïç≠Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ»§ËÅA…•ŸÖç‰ÉB‡ÅQï…µÃ(((ååÅA!MÄƒ–ÉäPÅM<((åååÅP¿ÿÃÉäPÅ	ÖÕîÅµï—ÖëÖ—ÑÉB‡ÅçÖπΩπ•çÖ∞((¥Ä®©%Ë®®ÅP¿ÿÃ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å	ÖÕîÅµï—ÖëÖ—ÑÉB‡ÅçÖπΩπ•çÖ∞(¥Ä®©ΩÖ∞Ë®®ÉBwB√FFFB˚B„FF0Å—•—±ïÃΩëïÕç…•¡—•ΩπÃÉB‡ÅçÖπΩπ•çÖ∞ÉFFB√FB„FB˜F/FÉFFFB√B˜B„F∏(¥Ä®©]°‰Ë®®ÉBB˚B„FBÎB˚BÀB„BÎB‡ÉB”B˚BÔB€B˜F,ÉBˇB˚BÔFFB√FF0ÉFB˚FB˜F/B‘ÉB√B”FB◊FB¿ÉB‡ÉFB˜B„BˇBˇB◊FF,∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ»∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å5ï—ÖëÖ—ÑÅA$ÉB”BÔF<ÉBˇFB«BÔB„FB˜F/FÅ•πôºÅ…Ω’—ïÃÉB‡ÉBœBÔB√BÀB˜B˚B‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBFB˚B”BÀB„B€B◊B˜B„B‘ÉB˜B◊BˇFB˚BÀB◊FB◊B˜B˜F/FÉFB√FB√BÎFB◊FB„FFB„BË∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉB{B”B„BÙÅ¡…Ωë’ç—•Ω∏ÅM%Q}UI0∞ÅπΩ•πëï‡ÅçÖ…–Ωç°ïç≠Ω’–ΩÖëµ•∏∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅÖπΩπ•çÖ∞ÉBÎB˚FFB◊BÎFB◊BÙ∞ÉBˇFB„BÀB√FB˜F/B‘Å…Ω’—ïÃÉB„FBÎBÔF;FB◊B˜F,∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åµï—ÖëÖ—ÑÅ!Q50Åç°ïç¨∞Å—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿÃ§ËÅ	ÖÕîÅµï—ÖëÖ—ÑÉB‡ÅçÖπΩπ•çÖ∞((åååÅP¿ÿ–ÉäPÅÂπÖµ•åÅM<ÉB‡Å•πëï·•πú((¥Ä®©%Ë®®ÅP¿ÿ–(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅÂπÖµ•åÅM<ÉB‡Å•πëï·•πú(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0ÉFB˚BÀB√FB˜F/B‘øBÎB√FB◊BœB˚FB„BÁB˜F/B‘Åµï—Ñ∞Å=∞ÅÕ•—ïµÖ¿∞Å…ΩâΩ—Ã∏(¥Ä®©]°‰Ë®®ÉBSB„B˜B√BÛB„FB◊FBÎB„B‰ÉBÎB√FB√BÔB˚BÃÉFFB◊B«FB◊FÉFB˚BœBÔB√FB˚BÀB√B˜B˜B˚B‰ÉB„B˜B”B◊BÎFB√FB„B‡∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿÃ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Åùïπï…Ö—ï5ï—ÖëÖ—Ñ∞ÅçÖπΩπ•çÖ∞∞Å=¡ï∏Å…Ö¡†∞ÉB˚BˇFB«BÔB„BÎB˚BÀB√B˜B˜F/B‘ÅUI0∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBcB˜B”B◊BÎFB√FB„F<ÉFB◊FB˜B˚BÀB„BÎB˚B»ΩA…ïŸ•ï‹ÉB‡ÉFB„BÔF3FFB˚B»∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBãB˚BÀB√FB˜F/B‘ÉFB◊B˜F,øB˚BˇB„FB√B˜B„F<ÉFB˚BÔF3BÎB¯ÅŸï…•ô•ïêÏÅÖëµ•∏ÅπΩ•πëï‡∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅM•—ïµÖ¿ÉB«B◊B‹ÉFBÎFF/FF/FÅM-TÏÅA…ïŸ•ï‹ÅπΩ•πëï‡∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅÕ•—ïµÖ¿Ω…ΩâΩ—ÃΩ=Å—Ö…ùï—ïêÅç°ïç≠Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ–§ËÅÂπÖµ•åÅM<ÉB‡Å•πëï·•πú((åååÅP¿ÿ‘ÉäPÅM—…’ç—’…ïêÅëÖ—Ñ((¥Ä®©%Ë®®ÅP¿ÿ‘(¥Ä®©A…•Ω…•—‰Ë®®Å@ƒ(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅM—…’ç—’…ïêÅëÖ—Ñ(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0Å	…ïÖëç…’µàÉB‡ÅA…Ωë’ç–Ω=ôôï»Å)M=8µ1ÉBˇB¯ÉFB√BÎFB√B∏(¥Ä®©]°‰Ë®®ÉBB˚B„FBÎB˚BÀF/B‘ÉB”B√B˜B˜F/B‘ÉB”B˚BÔB€B˜F,ÉFB˚BÀBˇB√B”B√FF0ÉFÉBÀB„FFB„B˜B˚B‰∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ–∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅMç°ïµÑÉB˚FÅ¡’â±•Õ°ïêÅ¡…Ωë’ç–ÉB‡ÅŸï…•ô•ïêÅ¡…•çîΩÕ—Ö—’Ã∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅIÖ—•πùÃΩ…ïŸ•ï›ÃΩÖŸÖ•±Öâ•±•—‰ÉB«B◊B‹ÉB”B√B˜B˜F/F∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBFB˚BÀB◊FB„FF0ÉB◊B”B„B˜B„FFÉBˇFB˚B”B√B€B‡ÉB‡ÉFFBÛBÛF,ÉB„B‹ÉBGBP∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Å)M=8µ1ÉBÀB√BÔB„B”B◊BÙ∞ÉFB◊FB˜B˚BÀB„BÎB‡ÉB˜B‘ÉBÀF/BÀB˚B”F?FÅA…Ωë’ç–∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®ÅÕ—…’ç—’…ïêÅëÖ—ÑÅŸÖ±•ëÖ—Ω»Ä¨Å—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ‘§ËÅM—…’ç—’…ïêÅëÖ—Ñ(((ååÅA!MÄƒ‘ÉäPÅeÖπëï‡Å5ï—…•≠Ñ((åååÅP¿ÿÿÉäPÅ5ï—…•≠ÑÅÖëÖ¡—ï»ÉB‡Å¡ÖùïŸ•ï›Ã((¥Ä®©%Ë®®ÅP¿ÿÿ(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å5ï—…•≠ÑÅÖëÖ¡—ï»ÉB‡Å¡ÖùïŸ•ï›Ã(¥Ä®©ΩÖ∞Ë®®ÉBB˚B”BÎBÔF;FB„FF0Å¡…Ωë’ç—•Ω∏µΩπ±‰ÅÖëÖ¡—ï»ÉB‡ÉBÎB˚FFB◊BÎFB˜F/B‰Å…Ω’—îÅ—…Öç≠•πú∏(¥Ä®©]°‰Ë®®ÉBáB˚B«F/FB„F<ÅMAÉB˜B◊BÔF3BﬂF<ÉFFB„FB√FF0ÉBˇB˚BÀFB˚FB˜B¯∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ‘∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅMç…•¡–ÅùÖ—•πúΩçΩπÕïπ–∞Å¡ÖùïŸ•ï‹Å°Öπë±•πú∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBsB◊FFB„BÎB¿ÉB˜B¿ÅA…ïŸ•ï‹ÉB‡ÅçΩΩ≠•îÅA%$Å¡ÖÂ±ΩÖê∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBsB√BÔF/B‰Åç±•ïπ–Å•Õ±Öπê∞ÉBÎB˚B˜FB„BÃÉB„B‹Å¡…Ωë’ç—•Ω∏Åïπÿ∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉB{B”B„BÙÅ¡ÖùïŸ•ï‹ÉB˜B¿ÉB˜B√BÀB„BœB√FB„F8ÏÅA…ïŸ•ï‹ÉB˜B‘ÉB˚FBˇFB√BÀBÔF?B◊F∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åπï—›Ω…¨ÅïŸïπ–ÅÕµΩ≠î∞Å—Â¡ïç°ïç¨∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿÿ§ËÅ5ï—…•≠ÑÅÖëÖ¡—ï»ÉB‡Å¡ÖùïŸ•ï›Ã((åååÅP¿ÿ‹ÉäPÅÖ—Ö±ΩúΩ¡…Ωë’ç–ΩçÖ…–ÅùΩÖ±Ã((¥Ä®©%Ë®®ÅP¿ÿ‹(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅÖ—Ö±ΩúΩ¡…Ωë’ç–ΩçÖ…–ÅùΩÖ±Ã(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0ÅçÖ—Ö±Ωù}Ÿ•ï‹Ω¡…Ωë’ç—}Ÿ•ï‹ΩÖëë}—Ω}çÖ…–Ω…ïµΩŸï}ô…Ωµ}çÖ…–∏(¥Ä®©]°‰Ë®®ÉBKB˚FB˚B˜BÎB¿ÉBÀF/B«B˚FB¿ÉB”B˚BÔB€B˜B¿ÉB„BﬂBÛB◊FF?FF3FF<ÉB«B◊B‹ÅA%$∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿÿ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBáB˚B«F/FB„F<ÉBˇB˚FBÔB‘ÉFB√BÎFB„FB◊FBÎB˚BœB¯ÉB”B◊BÁFFBÀB„F<ÉB‡ÉBÎB˚FFB◊BÎFB˜B˚BœB¯Å…Ω’—î∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBSBÀB˚BÁB˜B˚B‰ÅïŸïπ–ÉBˇFB‡Å…ï…ïπëï»∞Åç’Õ—Ωµï»Å•ëïπ—•ô•ï…Ã∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBcFBˇB˚BÔF3BﬂB˚BÀB√FF0ÉFB◊B˜FFB√BÔB„BﬂB˚BÀB√B˜B˜F/B‰ÅÖëÖ¡—ï»ÉB‡ÉFFB√B«B„BÔF3B˜F/B‘ÉFB◊BÔB‡∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBõB◊BÔB‡ÉB˚FBˇFB√BÀBÔF?F;FFF<ÉBˇB¯ÉB˚B”B˜B˚BÛFÉFB√BﬂF∞ÉB«B◊B‹ÉBˇB˚B„FBÎB¿øBÎB˚B˜FB√BÎFB˚B»∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åπï—›Ω…¨ÅïŸïπ–Åç°ïç≠Ã∞ÅπºÅA%$Å¡ÖÂ±ΩÖê∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ‹§ËÅÖ—Ö±ΩúΩ¡…Ωë’ç–ΩçÖ…–ÅùΩÖ±Ã((åååÅP¿ÿ‡ÉäPÅ°ïç≠Ω’–ΩçΩπ—Öç–ÅùΩÖ±Ã((¥Ä®©%Ë®®ÅP¿ÿ‡(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å°ïç≠Ω’–ΩçΩπ—Öç–ÅùΩÖ±Ã(¥Ä®©ΩÖ∞Ë®®ÉBSB˚B«B√BÀB„FF0Åâïù•π}ç°ïç≠Ω’–ΩΩ…ëï…}Õ’âµ•–ΩçΩπ—Öç—}ç±•ç¨Ω¡°Ωπï}ç±•ç¨∏(¥Ä®©]°‰Ë®®ÉB_B√BÀB◊FF#B◊B˜B„B‘ÉBﬂB√F?BÀBÎB‡ÉB‡ÉBÎB˚B˜FB√BÎFB˜F/B‘ÉB”B◊BÁFFBÀB„F<ÉBÀB√B€B˜F,ÉB«B„BﬂB˜B◊FF∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ‹∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÉBáB˚B«F/FB„B‘ÅÕ’ççïÕÃÉBˇB˚FBÔB‘ÅÕï…Ÿï»Å…ïÕ¡ΩπÕî∞Å•ëïµ¡Ω—ïπç‰Åëïë’¡î∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅA’…ç°ÖÕîÅïŸïπ–ÉB”B¯ÉBˇB˚B”FBÀB◊FB€B”B◊B˜B„F<∞ÉFB◊BÔB◊FB˚BÙÉB»Å¡Ö…ÖµÃ∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµê∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBkB˚B˜FFB˚BÔF0ÉFB˚BœBÔB√FB„F<ÉB‡ÉFFBÔB˚BÀB„F<Å¡…Ωë’ç—•Ω∏µΩπ±‰∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅIï—…‰ÉB˜B‘ÉB”FB«BÔB„FFB◊FÅΩ…ëï…}Õ’âµ•–∞ÉBﬂB˜B√FB◊B˜B„F<ÉB«B◊B‹ÅA%$∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åπï—›Ω…¨Å¡…•ŸÖç‰Ω•ëïµ¡Ω—ïπç‰Åç°ïç≠Ã∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ‡§ËÅ°ïç≠Ω’–ΩçΩπ—Öç–ÅùΩÖ±Ã(((ååÅA!MÄƒÿÉäPÅ%π—ïù…Ö—ïêÅE((åååÅP¿ÿ‰ÉäPÅA’â±•åÅ•π—ïù…Ö—ïêÅE((¥Ä®©%Ë®®ÅP¿ÿ‰(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅA’â±•åÅ•π—ïù…Ö—ïêÅE(¥Ä®©ΩÖ∞Ë®®ÉBFB˚BÁFB‡ÉBÎB√FB√BÔB˚BœäKFB˚BÀB√FäKBÎB˚FBﬂB„B˜B√äKBﬂB√F?BÀBÎB¿ÉFÉB˚F#B„B«BÎB√BÛB‡∏(¥Ä®©]°‰Ë®®ÉBÉB√BﬂFB˚BﬂB˜B◊B˜B˜F/B‘ÅÕµΩ≠îÉB˜B‘ÉBˇFB˚BÀB◊FF?F;FÉBÀB◊FF0Å5Y@∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ‡∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅïÕ≠—Ω¿ΩµΩâ•±îÅî…î∞Åπï—›Ω…¨∞Åïµ¡—‰ΩçΩπô±•ç–Ω…ï—…‰∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBÉB◊B”B„BﬂB√BÁBÙÉB‡ÉB˜B˚BÀF/B‘ÉFFB˜BÎFB„B‡ÉBˇB¯ÉFB˚B”FÅE∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅ¡…Ω—Ω—Â¡îº∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBìB„BÎFB„FB˚BÀB√FF0ÉB‡ÉB„FBˇFB√BÀBÔF?FF0ÉBÔB„F#F0ÉB˜B√BÁB”B◊B˜B˜F/B‘ÉB”B◊FB◊BÎFF,ÉB˚FB”B◊BÔF3B˜F/BÛB‡ÅçΩµµ•–ÉB»ÉBˇFB◊B”B◊BÔB√FÅQM,∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBB˚BÔB˜F/B‰ÉBˇFB«BÔB„FB˜F/B‰ÉFFB◊B˜B√FB„B‰ÉB‡ÅçΩπÕΩ±îΩπï—›Ω…¨ÉFB„FFF/B‘∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åô’±∞Å¡’â±•åÅî…î∞Å—Â¡ïç°ïç¨∞Å—Ö…ùï—ïêÅô•·ïÃ∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿ÿ‰§ËÅA’â±•åÅ•π—ïù…Ö—ïêÅE((åååÅP¿‹¿ÉäPÅëµ•∏Å•π—ïù…Ö—ïêÅÕïç’…•—‰ÅE((¥Ä®©%Ë®®ÅP¿‹¿(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Åëµ•∏Å•π—ïù…Ö—ïêÅÕïç’…•—‰ÅE(¥Ä®©ΩÖ∞Ë®®ÉBFB˚BÁFB‡Å±Ωù•ªäIçÖ—Ö±ΩúΩµïë•áäIΩ…ëï…ÃÉB‡ÉBˇFF?BÛF/B‘ÉBﬂB√BˇFB◊FF,∏(¥Ä®©]°‰Ë®®Å’—†ΩI1LÉBÛB˚B€B◊FÉBÔB˚BÛB√FF3FF<ÉB˜B¿ÉFFF/BÎB√F∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿ÿ‰∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Åëµ•∏Å…∞ÅÖπΩ∏ΩπΩ∏µÖëµ•∏Å¡Ω±•ç•ïÃ∞ÅÕïÕÕ•Ω∏Åï·¡•…‰∞ÅÕπÖ¡Õ°Ω–∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBwB˚BÀF/B‘ÉFB˚BÔB‡ÉB‡ÉB˚B«FB˚B–ÉBˇFB˚BÀB◊FB˚BËÉFB◊FB◊B‹ÅÕïç…ï–∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅ¡…Ω—Ω—Â¡îº∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBãB◊FFB„FB˚BÀB√FF0ÅM—Ω…ÖùîÅ’¡±ΩÖêΩëï±ï—îÉB‡Å…ïŸΩ≠ïêÅÖëµ•∏∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Åëµ•∏Åô±Ω‹ÉFB√B«B˚FB√B◊F∞ÉBˇFB«BÔB„FB˜F/B‰ÉB”B˚FFFB¸ÉBËÅA%$ΩIUÉBﬂB√BÎFF/F∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åô’±∞ÅÖëµ•∏Åî…îÄ¨ÅI1LΩMIÅµÖ—…•‡∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‹¿§ËÅëµ•∏Å•π—ïù…Ö—ïêÅÕïç’…•—‰ÅE((åååÅP¿‹ƒÉäPÅY•Õ’Ö∞∞ÅÑƒ≈‰ÉB‡Å¡ï…ôΩ…µÖπçîÅE((¥Ä®©%Ë®®ÅP¿‹ƒ(¥Ä®©A…•Ω…•—‰Ë®®Å@ƒ(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅY•Õ’Ö∞∞ÅÑƒ≈‰ÉB‡Å¡ï…ôΩ…µÖπçîÅE(¥Ä®©ΩÖ∞Ë®®ÉBFB˚BÀB◊FB„FF0ÅÖ¡¡…ΩŸïêÅŸ•Õ’Ö∞ÉB‡ÉFB√B«B˚FB„B‘ÉFFFFB˚BÁFFBÀB¿∏(¥Ä®©]°‰Ë®®Å!ïÖŸ‰Åµïë•ÑÉB‡ÅµΩ—•Ω∏ÉB˜B‘ÉB”B˚BÔB€B˜F,ÉBÛB◊F#B√FF0ÉBˇB˚BÎFBˇBÎB‘∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‹¿∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Äƒ––¿ºÃ‰¿Ω—Öâ±ï–∞Å≠ïÂâΩÖ…ê∞Å…ïë’çïêÅµΩ—•Ω∏∞Å1@Ω1L∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉBcBﬂBÛB◊B˜B◊B˜B„B‘ÅM%9}MeMQ4ÉB«B◊B‹ÉFB√BﬂFB◊F#B◊B˜B„F<∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅ¡…Ω—Ω—Â¡îº∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÅΩµ¡Ö…îÅ¡…Ω—Ω—Â¡î∞ÉB„FBˇFB√BÀB„FF0ÉBÎB˚B˜BÎFB◊FB˜F/B‘ÉB«B√BœB‡∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBwB◊FÉBœB˚FB„BﬂB˚B˜FB√BÔF3B˜B˚BœB¯ÅΩŸï…ô±Ω‹∞ÉB˜B√FFF#B◊B˜B„B‰ÉB˜B√BÀB„BœB√FB„B‡ÉB‡ÉBÎFB„FB„FB˜F/FÅ…ïù…ïÕÕ•ΩπÃ∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åâ…Ω›Õï»ÅŸ•Õ’Ö∞ΩÑƒ≈‰Ω¡ï…ôΩ…µÖπçîÅµ•±ïÕ—Ωπî∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å5ïë•’¥(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å5ïë•’¥(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‹ƒ§ËÅY•Õ’Ö∞∞ÅÑƒ≈‰ÉB‡Å¡ï…ôΩ…µÖπçîÅE(((ååÅA!MÄƒ‹ÉäPÅA…Ωë’ç—•Ω∏ÅIïÖë•πïÕÃ((åååÅP¿‹»ÉäPÅM’¡ÖâÖÕîÅ¡…Ωë’ç—•Ω∏ÅïπŸ•…Ωπµïπ–((¥Ä®©%Ë®®ÅP¿‹»(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅM’¡ÖâÖÕîÅ¡…Ωë’ç—•Ω∏ÅïπŸ•…Ωπµïπ–(¥Ä®©ΩÖ∞Ë®®ÉBB˚B”BœB˚FB˚BÀB„FF0ÉB˚FB”B◊BÔF3B˜F/B‘Å¡…Ωë’ç—•Ω∏ÉBGBPΩ’—†ΩM—Ω…ÖùîÉB‡ÉBﬂB√F'B„F'FGB˜B˜F/B‘Åïπÿ∏(¥Ä®©]°‰Ë®®ÉBÉB◊BÔB„B‹ÉB˜B‘ÉB”B˚BÔB€B◊BÙÉB„FBˇB˚BÔF3BﬂB˚BÀB√FF0ÅA…ïŸ•ï‹ÉB”B√B˜B˜F/B‘ÉB„BÔB‡ÉFFFGFB˜F/B‘ÉBﬂB√BˇB„FB‡∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‹ƒÏÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÅAMLÉB‡ÉB˚FB”B◊BÔF3B˜B˚B‘ÉFB√BﬂFB◊F#B◊B˜B„B‘ÉB˜B¿Å¡…Ωë’ç—•Ω∏Å…ïÖë•πïÕÃ∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…Ωë’ç—•Ω∏ÅM’¡ÖâÖÕîÅ¡…Ω©ïç–∞ÉBˇFB˚BÀB◊FB◊B˜B˜F/B‘Åµ•ù…Ö—•ΩπÃΩI1LΩM—Ω…ÖùîΩ’—†ÅçΩπô•ú∞ÅYï…çï∞ÅA…Ωë’ç—•Ω∏Åïπÿ∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÅA…Ωë’ç—•Ω∏Å›ïàÅëï¡±Ω‰∞ÉFB◊B√BÔF3B˜F/B‘ÅA%$øFB◊BÎFB◊FF,ÉB»Å•–∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§ÏÉFB◊BﬂFBÔF3FB√FF,Å4«äM4‹∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBKBÔB√B”B◊BÔB◊FÉBÀFFFB˜FF8Å¡…ΩŸ•Õ•Ω∏Å•π•—•Ö∞ÅÖëµ•∏ÏÉFFB√BÀB˜B„FF0Åù…Öπ—ÃΩ¡Ω±•ç•ïÃÉFÅA…ïŸ•ï‹∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÅA…Ωë’ç—•Ω∏ÉB˚BÎFFB€B◊B˜B„B‘ÉB„BﬂB˚BÔB„FB˚BÀB√B˜B¯∞ÉFFB◊BÛB¿ÉB‡ÅÖ’—†ΩI1LÉBˇFB˚FB˚B”F?FÅÕµΩ≠î∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åµ•ù…Ö—•Ω∏ΩI1LΩÖ’—†ΩïπÿÅÕµΩ≠î∞ÅÕïç…ï–ÅÖ’ë•–∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‹»§ËÅM’¡ÖâÖÕîÅ¡…Ωë’ç—•Ω∏ÅïπŸ•…Ωπµïπ–((åååÅP¿‹ÃÉäPÅA…Ωë’ç—•Ω∏Å…ïÖë•πïÕÃÅïŸ•ëïπçî((¥Ä®©%Ë®®ÅP¿‹Ã(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®ÅA…Ωë’ç—•Ω∏Å…ïÖë•πïÕÃÅïŸ•ëïπçî(¥Ä®©ΩÖ∞Ë®®ÉBáBÀB◊FB„FF0ÅA…ïŸ•ï‹∞ÉBˇB˚BÔB˜F/B‰Å±Ö’πç†ÉBÎB˚B˜FB◊B˜FÉB‡ÉFFBÔB˚BÀB„F<ÉBﬂB√BˇFFBÎB¿∏(¥Ä®©]°‰Ë®®ÅA…Ωë’ç—•Ω∏ÅçÖπë•ëÖ—îÉFFB◊B«FB◊FÉB”B˚BÎB√BﬂB√B˜B˜F/FÅùÖ—ïÃ∞ÉB˜B‘ÉFB˚BÔF3BÎB¯ÉBÎB˚B˜FB„BœFFB√FB„B‡∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‹»∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®ÅA…ïŸ•ï‹ÅEÅïŸ•ëïπçî∞ÉBˇB˚BÔB˜F/B‰ÉFB˚BœBÔB√FB˚BÀB√B˜B˜F/B‰ÉB√FFB˚FFB„BÛB◊B˜F∞ÅM<ΩÖπÖ±Â—•çÃ∞ÉB«B„BﬂB˜B◊FÅÕ•ù∏µΩôò∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®ÉB_B√BˇFFBËÅ¡…Ωë’ç—•Ω∏∞ÉB˜B˚BÀF/B‘ÅôïÖ—’…ïÃ∞ÉFB◊B”B„BﬂB√BÁBÙ∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§ÏÉFB◊BﬂFBÔF3FB√FF,Å4«äM4‹∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÉBKBÔB√B”B◊BÔB◊FÉBﬂB√BˇB˚BÔB˜B„BÏÅ±Ö’πç†ÉBÎB√FB√BÔB˚BÃÉFB◊FB◊B‹Åëµ•∏ÏÉBˇB◊FB◊FB„FBÔB„FF0ÉB«BÔB˚BÎB◊FF,∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®ÉBKFB‘Å4«äM4‹∞ÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÅAML∞Å±ïùÖ∞ÅÕ•ù∏µΩôòÉB‡ÉBˇB˚BÔB˜F/B‰ÅΩ›πï»µçΩπô•…µïêÅ±Ö’πç†ÅçΩπ—ïπ–ÉBˇB˚B”FBÀB◊FB€B”B◊B˜F,ÏÉBˇFB‡Å	1=-ÉB˜B‘ÉB˚B«F+F?BÀBÔF?FF0Å¡…Ωë’ç—•Ω∏ÅçÖπë•ëÖ—î∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Å…ïÖë•πïÕÃÅµÖ—…•‡∞ÅA…ïŸ•ï‹ÅÕµΩ≠î∞ÅçΩπ—ïπ–ΩÕïç’…•—‰Å…ïŸ•ï‹∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅMΩ∞Å!•ù†(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‹Ã§ËÅA…Ωë’ç—•Ω∏Å…ïÖë•πïÕÃÅïŸ•ëïπçî((åååÅP¿‹–ÉäPÅ•πÖ∞Å…ï±ïÖÕîÅçÖπë•ëÖ—îÅ…ïŸ•ï‹((¥Ä®©%Ë®®ÅP¿‹–(¥Ä®©A…•Ω…•—‰Ë®®Å@¿(¥Ä®©M—Ö—’ÃË®®ÅQ=<(¥Ä®©Q•—±îË®®Å•πÖ∞Å…ï±ïÖÕîÅçÖπë•ëÖ—îÅ…ïŸ•ï‹(¥Ä®©ΩÖ∞Ë®®ÉBwB◊BﬂB√BÀB„FB„BÛB¯ÉB˚FB◊B˜B„FF0ÉBœB˚FB˚BÀB˜B˚FFF0Å5Y@ÉBËÅ¡…Ωë’ç—•Ω∏∏(¥Ä®©]°‰Ë®®ÉBB◊FB◊B–ÉB”B˚FB˚BœB„BÉBˇB◊FB◊FB˚B”B˚BÉB˜FB€B◊BÙÉBˇB˚FBÔB◊B”B˜B„B‰ÉBÎFB„FB„FB◊FBÎB„B‰ÉBÀBﬂBœBÔF?B–∏(¥Ä®©ï¡ïπëïπç•ïÃË®®ÅP¿‹Ã∏(¥Ä®©±±Ω›ïêÅÕçΩ¡îË®®Å…ç°•—ïç—’…îΩëïÕ•ù∏ΩÕïç’…•—‰ΩçΩπ—ïπ–ΩEÅïŸ•ëïπçîÉB‡Åâ±Ωç≠ï»Åëïç•Õ•Ω∏∏(¥Ä®©Ω…â•ëëï∏ÅÕçΩ¡îË®®Åï¡±Ω‰∞Åµï…ùîÅµÖ•∏∞ÉB˜B˚BÀB˚B‘ÉBˇFB„BÔB˚B€B◊B˜B„B‘∏ÉBwB‘ÉB˜B√FB„B˜B√FF0ÉFB˚FB◊B”B˜F;F8ÅQM,∏(¥Ä®©MΩ’…çîÅΩòÅ—…’—†Ë®®ÅëΩçÃΩI!%QQUIπµêÏÅëΩçÃΩM%9}MeMQ4πµêÏÅëΩçÃΩ=9Q9Q}QLπµêÄ°P¿¿„äMP¿ƒ¿§ÏÉFB◊BﬂFBÔF3FB√FF,Å4«äM4‹∏(¥Ä®©%µ¡±ïµïπ—Ö—•Ω∏ÅπΩ—ïÃË®®ÅÕ—…ÑÉFB˚BÔF3BÎB¯ÉBﬂB”B◊FF0ÏÉBﬂB√FB„BÎFB„FB˚BÀB√FF0ÅùºΩπºµùºÉB‡ÉB˚FFB√FB˚FB˜F/B‘ÉFB„FBÎB‡∏(¥Ä®©ççï¡—ÖπçîÅç…•—ï…•ÑË®®Å4‡ËÅ¡…Ωë’ç—•Ω∏ÅçÖπë•ëÖ—îÉFB˚BÔF3BÎB¯ÉBˇFB‡ÅAMLÅA…Ωë’ç—•Ω∏ÅΩπ—ïπ–ÅÖ—îÉB‡ÉB˚FFB√BÔF3B˜F/FÅ…ïÖë•πïÕÃÅç°ïç≠ÃÏÉB„B˜B√FB‘ÉFB˚FB˜F/B‰Åâ±Ωç≠ï»ÉB‡Å9<µ<∏ÅA…Ωë’ç—•Ω∏ÉB˜B‘ÉBﬂB√BˇFF'B◊BÙ∏(¥Ä®©Iï≈’•…ïêÅç°ïç≠ÃË®®Åô•πÖ∞ÅÕïç’…•—‰Ω¡ï…ôΩ…µÖπçîΩô’πç—•ΩπÖ∞Å…ïŸ•ï‹∏(¥Ä®©IïçΩµµïπëïêÅµΩëï∞Ë®®ÅAP¥ÿÅÕ—…Ñ(¥Ä®©IïÖÕΩπ•πúÅ±ïŸï∞Ë®®Å!•ù†(¥Ä®©ëë•—•ΩπÖ∞ÅÖùïπ–Ë®®Å9<(¥Ä®©M’ùùïÕ—ïêÅçΩµµ•–ÅµïÕÕÖùîË®®Å—ÖÕ¨°P¿‹–§ËÅ•πÖ∞Å…ï±ïÖÕîÅçÖπë•ëÖ—îÅ…ïŸ•ï‹((ååÅMï±òµ…ïŸ•ï‹ÉBˇB◊FB◊B–ÅçΩµµ•–((¥ÉBFB˚BÀB◊FB„FF0∞ÉFFB¯ÉBÎB√B€B”B√F<ÅQM,ÉB˚BœFB√B˜B„FB◊B˜B¿ÉB˚B”B˜B˚B‰ÉFB◊BÔF3F8∞ÉBﬂB√BÀB„FB„BÛB˚FFB‡ÉFFF/BÔB√F;FFF<ÉB˜B¿ÉFFF'B◊FFBÀFF;F'B„B‰Å%ÉB‡ÅùÖ—îÉB˜B‘ÉBˇFB˚BˇFF'B◊BÙ∏(¥ÉBB˚B”FBÀB◊FB”B„FF0ËÅëµ•∏Å’—†ÉB”B¯ÅÖëµ•∏Åµ’—Ö—•ΩπÃÏÅÕç°ïµÑΩI1LÉB”B¯Åëµ•∏ÉB‡ÉBˇFB«BÔB„FB˜B˚BœB¯ÉBÎB√FB√BÔB˚BœB¿ÏÉBÎB√FB√BÔB˚BÃÉB‡Åëµ•∏ÉB„FBˇB˚BÔF3BﬂFF;FÉB˚B”B˜FÉBÛB˚B”B◊BÔF0ÅM-TÏÅΩ…ëï»ÅÕ—Ö—’ÃÉB˜B‘ÉBÛB◊B˜F?B◊FÉB„FFB˚B”B˜F/B‰ÅÕπÖ¡Õ°Ω–∏(¥ÉBèB«B◊B”B„FF3FF<∞ÉFFB¯Å@ƒÉB˚FFB√FGFFF<ÉFB√FFF3F8Å5Y@∞Å!•ù†ÉB˜B√BﬂB˜B√FB◊BÙÉFB˚BÔF3BÎB¯ÅÕïç’…•—‰ΩëÖ—ÑΩÕ—Ö—îÉBﬂB√B”B√FB√B∞ÅÕ—…ÑÉäPÉBˇB˚FBÔB◊B”B˜B◊BÛFÅ…ïŸ•ï‹ÏÉB”B˚BˇB˚BÔB˜B„FB◊BÔF3B˜F/FÉB√BœB◊B˜FB˚B»ÉB˜B◊F∏(¥Å4‡ÉB˜B√FFFBˇB√B◊FÉBˇB˚FBÔB‘ÅE∞Å¡…Ωë’ç—•Ω∏Åëï¡±ΩÂµïπ–ÉB˜B‘ÉBÀFB˚B”B„FÉB»ÉF7FB˚FÉBˇBÔB√BÙÉB«B◊B‹ÉB˚FB”B◊BÔF3B˜B˚BœB¯ÉFB√BﬂFB◊F#B◊B˜B„F<∏(
