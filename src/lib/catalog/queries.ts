@@ -5,6 +5,7 @@ import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { normalizeCatalogListParams, normalizeSlug, PUBLIC_PAGE_SIZE } from "./query-params";
 import type { CatalogListInput, CatalogListParams } from "./query-params";
 import type { CatalogFacets, PublicCategory, PublicImage, PublicProduct, PublicProductDetail } from "./types";
+import { selectRelatedRows } from "./related-selection";
 
 const TTL_SECONDS = 60;
 export const catalogCacheTags = {
@@ -208,13 +209,12 @@ async function readRelatedProducts(product: PublicProductDetail): Promise<Public
     .eq("series", product.series).neq("id", product.id)
     .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
     .order("sort_order", { ascending: true }).order("id", { ascending: true }).limit(3)
-    : { data: [] as Record<string, unknown>[], error: null };
+    : { data: [] as Array<{ id: string } & Record<string, unknown>>, error: null };
   if (seriesRows.error || !seriesRows.data) failed();
-  const selected = new Map<string, Record<string, unknown>>();
-  for (const row of seriesRows.data) selected.set(row.id as string, row);
+  let categoryRows: Array<{ id: string } & Record<string, unknown>> = [];
 
   // Product categories come from the guest read; explicitly constrain the joined categories too.
-  if (selected.size < 3 && product.categories.length) {
+  if (seriesRows.data.length < 3 && product.categories.length) {
     const categoryIds = product.categories.map(({ id }) => id);
     const membershipIds = new Set<string>();
     for (let offset = 0; ; offset += 500) {
@@ -232,15 +232,12 @@ async function readRelatedProducts(product: PublicProductDetail): Promise<Public
         .in("id", [...membershipIds]).neq("id", product.id)
         .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
         .order("sort_order", { ascending: true }).order("id", { ascending: true })
-        .limit(3 + selected.size);
+        .limit(3 + seriesRows.data.length);
       if (error || !data) failed();
-      for (const row of data) {
-        if (selected.size === 3) break;
-        selected.set(row.id, row);
-      }
+      categoryRows = data;
     }
   }
-  const rows = [...selected.values()];
+  const rows = selectRelatedRows<{ id: string } & Record<string, unknown>>(product.id, seriesRows.data, categoryRows);
   const related = await presentation(client, rows as Array<{ id: string }>);
   return rows.map((row) => productDto(row, related.get(row.id as string)!));
 }
