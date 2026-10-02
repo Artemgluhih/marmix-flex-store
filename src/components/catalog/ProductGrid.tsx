@@ -17,9 +17,9 @@ function Price({ product }: { product: PublicProduct }) {
   );
 }
 
-export function ProductGrid({ products }: { products: PublicProduct[] }) {
+export function ProductGrid({ products, emptyMessage = "Пока нет опубликованных материалов." }: { products: PublicProduct[]; emptyMessage?: string }) {
   if (products.length === 0) {
-    return <p className={styles.empty}>Пока нет опубликованных материалов.</p>;
+    return <p className={styles.empty}>{emptyMessage}</p>;
   }
 
   return (

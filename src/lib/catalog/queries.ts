@@ -3,7 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 import { createPublicSupabaseClient } from "@/lib/supabase/public";
 import { normalizeCatalogListParams, normalizeSlug, PUBLIC_PAGE_SIZE } from "./query-params";
-import type { CatalogListParams } from "./query-params";
+import type { CatalogListInput, CatalogListParams } from "./query-params";
 import type { CatalogFacets, PublicCategory, PublicImage, PublicProduct, PublicProductDetail } from "./types";
 
 const TTL_SECONDS = 60;
@@ -97,20 +97,32 @@ async function readList(params: CatalogListParams) {
 
   let ids: string[] | null = null;
   if (category) {
-    ids = [];
+    const membershipIds = new Set<string>();
     for (let offset = 0; ; offset += 500) {
       const { data, error } = await client.from("product_categories").select("product_id")
         .eq("category_id", category.id).order("product_id", { ascending: true }).range(offset, offset + 499);
       if (error || !data) failed();
-      ids.push(...data.map(({ product_id }) => product_id));
+      for (const { product_id } of data) membershipIds.add(product_id);
       if (data.length < 500) break;
     }
+    ids = [...membershipIds];
     if (!ids.length) return { products: [] as PublicProduct[], total: 0, page: params.page, pageSize: PUBLIC_PAGE_SIZE, category };
   }
+
+  if (params.priceMinMinor !== null && params.priceMaxMinor !== null && params.priceMinMinor > params.priceMaxMinor) {
+    return { products: [] as PublicProduct[], total: 0, page: params.page, pageSize: PUBLIC_PAGE_SIZE, category };
+  }
+
+  // q has a strict alphanumeric/space/hyphen whitelist in query-params; no PostgREST grammar from the URL enters .or().
+  const search = params.q ? `name.ilike.%${params.q}%,sku.ilike.%${params.q}%` : null;
 
   let countQuery = client.from("products").select("id", { count: "exact", head: true })
     .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null);
   if (ids) countQuery = countQuery.in("id", ids);
+  if (search) countQuery = countQuery.or(search);
+  if (params.priceMinMinor !== null) countQuery = countQuery.gte("price_minor", params.priceMinMinor);
+  if (params.priceMaxMinor !== null) countQuery = countQuery.lte("price_minor", params.priceMaxMinor);
+  if (params.status) countQuery = countQuery.eq("availability_status", params.status);
   const countResult = await countQuery;
   if (countResult.error || countResult.count === null) failed();
   const total = countResult.count;
@@ -121,8 +133,13 @@ async function readList(params: CatalogListParams) {
   let query = client.from("products").select(PRODUCT_FIELDS)
     .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null);
   if (ids) query = query.in("id", ids);
-  const { data, error } = await query.order("sort_order", { ascending: true })
-    .order("id", { ascending: true })
+  if (search) query = query.or(search);
+  if (params.priceMinMinor !== null) query = query.gte("price_minor", params.priceMinMinor);
+  if (params.priceMaxMinor !== null) query = query.lte("price_minor", params.priceMaxMinor);
+  if (params.status) query = query.eq("availability_status", params.status);
+  const ordered = params.sort === "order" ? query.order("sort_order", { ascending: true })
+    : query.order("price_minor", { ascending: params.sort === "price_asc", nullsFirst: false });
+  const { data, error } = await ordered.order("id", { ascending: true })
     .range((params.page - 1) * PUBLIC_PAGE_SIZE, params.page * PUBLIC_PAGE_SIZE - 1);
   if (error || !data) failed();
   const related = await presentation(client, data);
@@ -130,9 +147,7 @@ async function readList(params: CatalogListParams) {
     page: params.page, pageSize: PUBLIC_PAGE_SIZE, category };
 }
 
-export async function listPublishedProducts(input: {
-  page?: unknown; sort?: unknown; categorySlug?: unknown;
-} = {}) {
+export async function listPublishedProducts(input: CatalogListInput = {}) {
   const params = normalizeCatalogListParams(input);
   // An explicitly invalid category is never interpreted as System All.
   if (input.categorySlug != null && !params.categorySlug) return {

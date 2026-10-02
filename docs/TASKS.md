@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T040 — DONE, T041–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T041 — DONE, T042–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -937,7 +937,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T041
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Search/filters/sort/pagination
 - **Goal:** Реализовать каталоговые выборки по реальным данным.
 - **Why:** Посетитель должен находить и сравнивать материалы.
@@ -952,6 +952,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T041): Search/filters/sort/pagination
+- **Resolution (2026-10-02):** GET URL state on `/catalog` uses one extended T039 normalizer and server-only public queries for name/SKU search, exact `price_minor` ranges, factual status/published-category facets, whitelisted default/price sorting and fixed-size page navigation. Invalid input is normalized safely; out-of-range pages remain empty; price NULL sorts last and `id` breaks ties. Forms reset page on new criteria, pagination links retain active criteria, and empty category/status facets render no options. Live read-only Preview tests covered the three REAL SKU, min/max/combined prices, search, sort, hidden category, invalid values and no-results; parser/link tests covered page bounds, preserved URL state and page reset. READY Preview browser search/reset/sort/direct URL/refresh/Back/Forward/keyboard/console PASS. Owner visual verification PASS for 390/768/1024/1440, no overflow, factual facets and unchanged T040 cards. No product/category/schema/RLS/Storage/Production mutation; T041 DONE, T042 not started.
 
 ### T042 — Catalog states и responsive
 
