@@ -10,5 +10,7 @@ export function createOrderSecretSupabaseClient() {
 
   return createClient(url, secretKey, {
     auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+    global: { fetch: (input: RequestInfo | URL, init?: RequestInit) =>
+      fetch(input, { ...init, cache: "no-store" }) },
   });
 }

@@ -1,4 +1,8 @@
 import { MAX_ORDER_BODY_BYTES, validateOrderRequest } from "@/lib/orders/validate-request";
+import { lookupExistingOrder, resolveIdempotency } from "@/lib/orders/idempotency";
+import { getOrderProductsFreshByIds } from "@/lib/catalog/queries";
+import { prepareOrder } from "@/lib/orders/prepare";
+import { MAX_ORDER_ITEMS } from "@/lib/orders/validate-request";
 
 const RESPONSE_HEADERS = { "Cache-Control": "no-store", "Vary": "Origin" };
 
@@ -66,6 +70,22 @@ export async function POST(request: Request): Promise<Response> {
     : reply(400, "INVALID_REQUEST", "Некорректный JSON.");
   const parsed = validateOrderRequest(body.value);
   if (!parsed.ok) return reply(400, "INVALID_FIELDS", "Проверьте данные запроса.", parsed.fields);
-  // Validation only: the displayed price and contact data are never persisted or echoed.
-  return Response.json({ validated: true, submitted: false }, { status: 200, headers: RESPONSE_HEADERS });
+  try {
+    // An existing key is compared before fresh price checks: a genuine retry survives later catalog changes.
+    const existing = await lookupExistingOrder(parsed.value.idempotencyKey);
+    const resolution = resolveIdempotency(parsed.value, existing);
+    if (resolution.status === "same") return Response.json({ validated: true, submitted: true,
+      request_id: resolution.id, replayed: true }, { status: 200, headers: RESPONSE_HEADERS });
+    if (resolution.status === "conflict") return reply(409, "IDEMPOTENCY_CONFLICT", "Ключ уже использован для другой заявки.");
+
+    const products = await getOrderProductsFreshByIds(parsed.value.items.map((item) => item.productId), MAX_ORDER_ITEMS);
+    const prepared = prepareOrder(parsed.value, products, resolution.hash);
+    if (!prepared.ok) return reply(409, "CART_CHANGED", "Данные корзины изменились. Проверьте актуальные позиции.");
+    // T053 never inserts. The prepared snapshot/hash stay on the server for T054.
+    return Response.json({ validated: true, submitted: false, total_minor: prepared.value.totalMinor,
+      currency: prepared.value.currency }, { status: 200, headers: RESPONSE_HEADERS });
+  } catch {
+    // Do not serialize Supabase errors, private URLs, keys, or contacts.
+    return reply(503, "VERIFICATION_UNAVAILABLE", "Не удалось проверить заявку. Повторите попытку.");
+  }
 }

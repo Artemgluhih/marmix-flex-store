@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T052 — DONE, T053–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T053 — DONE, T054–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1198,7 +1198,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T053
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Fresh price и idempotency
 - **Goal:** Добавить актуальную проверку и защиту повторной отправки.
 - **Why:** Ретрай и изменение прайса не должны удваивать заявку.
@@ -1213,6 +1213,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T053): Fresh price и idempotency
+- **Resolution (2026-10-03):** T052 item v1 extends minimally with required untrusted displayed `price_unit` and `sale_unit`; version stays 1. For a parsed request, a server-only SHA-256 digest covers normalized contacts and product ID-sorted items (quantity, displayed price and units), excluding idempotency key and JSON formatting. Secret-client lookup selects only `id,request_hash` for the key; a matching stored digest replays the same safe identifier before fresh catalog checks, a different digest returns 409 without PII. A new key uses T050's one bounded uncached public guest/RLS product batch, REAL/published/unarchived only, without presentation queries; missing products safely return 409. Current server `evaluateCommerce`, fresh min/step and exact BigInt minor-unit arithmetic decide eligibility and totals; untrusted browser price/unit/sale unit mismatches and non-orderable/invalid quantity return `CART_CHANGED` 409. Current three REAL SKU with NULL availability reject; pure positive/negative fixtures and hash/idempotency mocks PASS. No row insert, idempotency reservation, notifications, checkout submit, or secret in browser; no persistent TEST_ONLY products/orders. T054 owns atomic insert and unique-conflict race recovery; Telegram/email deferred T054A. Production consent gate remains BLOCKED. Lint/typecheck PASS; local build blocked only by Google Fonts network; Vercel READY build and synthetic Preview HTTP smoke PASS. Production unchanged; T053 DONE, T054 not started.
 
 ### T054 — Private order insert и outcomes
 

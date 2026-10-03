@@ -7,7 +7,7 @@ export const MAX_ORDER_BODY_BYTES = 16 * 1024;
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const ROOT_KEYS = ["version", "idempotency_key", "name", "phone", "city", "email", "comment", "items"];
-const ITEM_KEYS = ["product_id", "quantity", "price_minor"];
+const ITEM_KEYS = ["product_id", "quantity", "price_minor", "price_unit", "sale_unit"];
 
 function record(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value) &&
@@ -22,7 +22,8 @@ export type ValidatedOrderRequest = {
   version: 1;
   idempotencyKey: string;
   contact: { name: string; phone: string; city: string; email: string; comment: string };
-  items: { productId: string; quantity: number; displayedPriceMinor: number }[];
+  items: { productId: string; quantity: number; displayedPriceMinor: number;
+    displayedPriceUnit: string; displayedSaleUnit: string }[];
 };
 
 export type ValidationResult =
@@ -71,10 +72,17 @@ export function validateOrderRequest(input: unknown): ValidationResult {
           item.quantity < 1 || item.quantity > MAX_DISPLAY_QUANTITY) fields.push(`items[${index}].quantity`);
       if (typeof item.price_minor !== "number" || !Number.isSafeInteger(item.price_minor) ||
           item.price_minor < 0) fields.push(`items[${index}].price_minor`);
+      // These are untrusted facts shown to the buyer, not authority for a sale.
+      if (typeof item.price_unit !== "string" || !item.price_unit.trim() || item.price_unit.length > 80)
+        fields.push(`items[${index}].price_unit`);
+      if (typeof item.sale_unit !== "string" || !item.sale_unit.trim() || item.sale_unit.length > 80)
+        fields.push(`items[${index}].sale_unit`);
       if (fields.length === 0) items.push({
         productId: (item.product_id as string).toLowerCase(),
         quantity: item.quantity as number,
         displayedPriceMinor: item.price_minor as number,
+        displayedPriceUnit: (item.price_unit as string).trim(),
+        displayedSaleUnit: (item.sale_unit as string).trim(),
       });
     }
   }
