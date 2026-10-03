@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T048 — DONE, T049–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T049 — DONE, T050–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1111,7 +1111,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T049
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Add/remove/update интеграция
 - **Goal:** Подключить Product Detail и карточки к корзине.
 - **Why:** Покупка должна работать, когда state готов.
@@ -1126,6 +1126,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T049): Add/remove/update интеграция
+- **Resolution (2026-10-03):** T048 CartProvider is mounted only inside the public Server Component layout. Small client islands connect T046 Product Detail quantity to T047 target-quantity upsert/update/remove, add a ready-only minimum-quantity Product Card action, and show Header count as unique cart positions (`lines.length`), with no false zero before hydration or link to nonexistent `/cart`. The three REAL Preview SKU remain non-orderable because availability is NULL; their Add controls stay natively disabled and their catalog cards have no cart action. A render-only technical fixture evaluated through T046 `evaluateCommerce()` validated Add, repeat idempotency, Update to three sheets, Remove, card Add, Header count and reload persistence without Supabase rows. Technical cart lines were cleaned in the test browser and owner confirmed cleanup in their browser. Owner visual verification PASS at 1440/390, mobile menu and Dark Gold Showroom; no horizontal overflow. Lint/typecheck and READY Vercel build PASS; local build blocked only by Google Fonts access. Temporary technical route removed from final tree. Snapshot remains presentation-only; price refresh and `/cart` are T050. No backend cart, analytics, REAL data or Production mutation; permanent TEST_ONLY 0. T049 DONE; T050 not started.
 
 ### T050 — Cart page и price refresh
 

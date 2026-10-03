@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Navigation } from "./Navigation";
+import { CartStatus } from "./CartStatus";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -10,6 +11,7 @@ export function Header() {
         <span className={styles.brandCaption}>архитектурные поверхности</span>
       </Link>
       <Navigation />
+      <CartStatus />
       <div className={styles.end}>
         <span className={styles.location}>Сургут</span>
         <Link className={styles.contact} href="/contacts">

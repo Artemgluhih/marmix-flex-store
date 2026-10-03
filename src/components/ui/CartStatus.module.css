@@ -1,0 +1,6 @@
+.status { flex: 0 0 auto; min-width: 94px; color: var(--color-text-secondary); font: 600 12px/1.4 var(--font-ui); white-space: nowrap; }
+.count { color: var(--color-gold); font-variant-numeric: tabular-nums; }
+@media (max-width: 800px) {
+  .status { order: 1; min-width: 84px; margin-left: auto; font-size: 11px; }
+}
+@media (max-width: 370px) { .status { min-width: 75px; } }

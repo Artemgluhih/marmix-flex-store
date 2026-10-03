@@ -10,5 +10,11 @@
 .area, .total { margin: 20px 0 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.55; overflow-wrap: anywhere; }
 .total { color: var(--color-text-primary); font-size: 16px; }
 .action { width: 100%; min-height: 52px; margin-top: 27px; border: 0; border-radius: 0; background: #34312c; color: #8b857c; font: 600 13px/1.4 var(--font-ui); cursor: not-allowed; }
+.action:not(:disabled) { background: var(--color-gold); color: var(--color-on-gold); cursor: pointer; transition: background var(--motion-interaction) var(--motion-ease); }
+.action:not(:disabled):hover { background: #e9cda7; }
+.action:focus-visible, .remove:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.remove { display: block; margin: 15px 0 0; padding: 3px 0; border: 0; border-bottom: 1px solid var(--color-border-warm); background: transparent; color: var(--color-text-secondary); font: 500 12px/1.5 var(--font-ui); cursor: pointer; }
+.remove:hover { color: var(--color-gold); }
 .reason { margin: 11px 0 0; color: var(--color-text-quiet); font-size: 12px; line-height: 1.5; }
 @media (max-width: 370px) { .quantityLine { align-items: flex-start; } }
+@media (prefers-reduced-motion: reduce) { .action:not(:disabled) { transition: none; } }

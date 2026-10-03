@@ -83,6 +83,7 @@
   .header {
     height: 72px;
     padding-inline: var(--outer-compact);
+    gap: 12px;
   }
 
   .brand {

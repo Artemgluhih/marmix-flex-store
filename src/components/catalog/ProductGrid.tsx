@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { PublicProduct } from "@/lib/catalog/types";
+import { evaluateCommerce } from "@/lib/catalog/commerce";
+import { CardCartAction } from "./CardCartAction";
 import styles from "./ProductGrid.module.css";
 
 const rubles = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
@@ -25,7 +27,10 @@ export function ProductGrid({ products, emptyMessage, emptyKind = "catalog", lin
 
   return (
     <div className={styles.grid}>
-      {products.map((product) => (
+      {products.map((product) => {
+        // Public callers pass T039 REAL/published/unarchived rows; review route uses a labeled render-only fixture.
+        const commerce = evaluateCommerce(product, true);
+        return (
         <article className={styles.card} key={product.id}>
           <div className={styles.imageFrame}>
             {product.primaryImage ? (
@@ -37,6 +42,11 @@ export function ProductGrid({ products, emptyMessage, emptyKind = "catalog", lin
                 sizes="(max-width: 620px) calc(100vw - 40px), (max-width: 1120px) calc((100vw - 64px) / 2), min(30vw, 535px)"
               />
             ) : <span className={styles.noImage}>Изображение не добавлено</span>}
+            {commerce?.commercialStatus === "ready" && <CardCartAction productId={product.id}
+              name={product.name} model={commerce}
+              snapshot={{ name: product.name, primaryImageUrl: product.primaryImage?.url ?? null,
+                priceMinor: product.priceMinor, currency: product.currency,
+                priceUnit: product.priceUnit, saleUnit: product.saleUnit }} />}
           </div>
           <div className={styles.info}>
             {product.series && <p className={styles.series}>{product.series}</p>}
@@ -48,7 +58,7 @@ export function ProductGrid({ products, emptyMessage, emptyKind = "catalog", lin
             </div>
           </div>
         </article>
-      ))}
+      ); })}
     </div>
   );
 }
