@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { getPublishedProduct, getRelatedProducts } from "@/lib/catalog/queries";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { ProductGallery } from "./ProductGallery";
+import { evaluateCommerce } from "@/lib/catalog/commerce";
+import { QuantityBlock } from "./QuantityBlock";
 import styles from "./product.module.css";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +18,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const product = await getPublishedProduct(slug);
   if (!product) notFound();
   const related = await getRelatedProducts(product);
+  // getPublishedProduct only returns REAL, published, unarchived rows through the guest read.
+  const quantityModel = evaluateCommerce(product, true);
 
   const availability = product.availabilityStatus === "in_stock" ? "В наличии"
     : product.availabilityStatus === "on_order" ? "Под заказ" : null;
@@ -59,6 +63,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             )}
             {saleUnit && <p className={styles.fact}>Единица продажи: {saleUnit}</p>}
             {availability && <p className={styles.fact}>Наличие: {availability}</p>}
+            {quantityModel && <QuantityBlock model={quantityModel} />}
           </div>
         </div>
       </div>
