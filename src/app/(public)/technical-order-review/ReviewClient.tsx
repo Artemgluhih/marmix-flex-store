@@ -47,7 +47,7 @@ export function ReviewClient({ privateConfigReady }: { privateConfigReady: boole
     </div>
     {result && <div role={result.state === "created" || result.state === "replayed" || result.state === "race_pass" || result.state === "negative_pass" ? "status" : "alert"}>
       {result.state === "race_pass" ? <p>Обе параллельные попытки вернули один идентификатор: <code>{result.id}</code>.</p>
-      : result.state === "negative_pass" ? <p>API отклонил REAL non-orderable, изменённые данные, ошибочный запрос и чужой Origin без записи.</p>
+      : result.state === "negative_pass" ? <p>API сохранил безопасный replay и конфликт, отклонил REAL non-orderable, изменённые данные, ошибочный запрос и чужой Origin без новой записи.</p>
       : (result.state === "created" || result.state === "replayed") ? <>
         <h2>Заявка отправлена</h2><p>Техническая заявка на расчёт/связь. Товар не резервируется; заказ и оплата не подтверждены.</p>
         <p>Идентификатор заявки: <code>{result.id}</code></p>
