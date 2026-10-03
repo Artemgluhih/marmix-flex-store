@@ -16,6 +16,6 @@ export default function TechnicalOrderReview() {
       <h1>TECHNICAL ORDER SUBMISSION REVIEW — TEST_ONLY</h1>
     </header>
     {!privateConfigReady && <p role="alert">Private order configuration is unavailable on this review deployment. No submission can be made.</p>}
-    <ReviewClient />
+    <ReviewClient privateConfigReady={privateConfigReady} />
   </section>;
 }
