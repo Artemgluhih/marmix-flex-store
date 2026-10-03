@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T051 — DONE, T052–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T052 — DONE, T053–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1177,7 +1177,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T052
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Order API validation boundary
 - **Goal:** Создать POST /api/order-requests с серверной проверкой.
 - **Why:** Browser price нельзя принимать на веру.
@@ -1192,6 +1192,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T052): Order API validation boundary
+- **Resolution (2026-10-03):** `POST /api/order-requests` validates strict payload v1 (`version`, UUID `idempotency_key`, name/phone, optional city/email/comment, 1–50 `{product_id, quantity, price_minor}` lines). Contact limits reuse T051's client/server-safe `FORM_LIMITS`; name/phone required, city/email requiredness pending, comment optional. UUID product identities are unique; quantity is a safe positive integer up to T046's technical display maximum 9999, while per-SKU min/step/availability remain for T053 fresh server read. Browser `price_minor` is untrusted displayed value, never an authoritative price or total. Same-deployment Origin, JSON Content-Type, 16 KiB streaming body bound, strict key whitelist, safe error codes/field names and `no-store` responses form the HTTP boundary; no PII echo/logging. Validation-only success is `{validated:true,submitted:false}`. Production consent validation remains BLOCKED until approved legal text/version exists. No checkout submit wiring, consent invention, Supabase read/write, order row, idempotency persistence, fresh-price comparison, notification or payment. T053 fresh product/price/idempotency and T054 insert deferred. Targeted parser and Route Handler security assertions, lint and typecheck PASS; local build blocked only by Google Fonts network after clearing generated Turbopack cache. Production unchanged. T052 DONE; T053 not started.
 
 ### T053 — Fresh price и idempotency
 
