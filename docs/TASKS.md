@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T050 — DONE, T051–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T051 — DONE, T052–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1156,7 +1156,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T051
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Checkout form и consent
 - **Goal:** Сделать /checkout с минимальными контактными полями.
 - **Why:** Заявка должна быть простой и законной.
@@ -1171,6 +1171,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T051): Checkout form и consent
+- **Resolution (2026-10-03):** `/checkout` reuses the T050 fresh guest/RLS batch refresh and reconciliation; hydration, empty, refresh failure and unresolved/changed price/unit/non-orderable/invalid quantity states block the form and link back to `/cart`. The ready summary uses current product data and exact display totals, never a cart snapshot as authority. Confirmed fields are name and phone (core required), city and email (requiredness pending owner decision), and optional comment; supplied email and technically bounded values receive client UX validation. Contact values stay only in component memory, never cart/localStorage/sessionStorage/cookies/URL/analytics/logs. Preview shows a neutral legal Pending status without invented Privacy/consent text; permanent submit is disabled, with no success, order API, Supabase mutation or payment. T052 authoritative server validation and T054 actual insert are deferred. The `/cart` CTA reaches `/checkout` only for fully ready and confirmed lines. Render-only synthetic technical states passed validation, focus, summary, loading/error and cart-readiness checks; owner visual PASS at 1440/390 and 768/1024 sanity, no overflow, Dark Gold Showroom. Temporary route removed from final tree; permanent TEST_ONLY 0. Lint/typecheck and Vercel READY build PASS; local build blocked solely by Google Fonts network access. Production unchanged. T051 DONE; T052 not started.
 
 ### T052 — Order API validation boundary
 

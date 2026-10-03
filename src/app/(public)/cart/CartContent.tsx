@@ -109,6 +109,7 @@ export function CartContent({ lines, products, phase, onRetry, onUpdate, onRemov
         : <p className={styles.unresolved} role="status">Итог станет доступен после проверки позиций.</p>}
       <p className={styles.note}>Перед отправкой заявки товары и цены будут проверены повторно.</p>
       <button type="button" className={styles.textAction} onClick={onRetry}>Обновить сведения</button>
+      {result.totalMinor !== null && !technical && <Link className={styles.catalogLink} href="/checkout">Перейти к заявке</Link>}
     </aside>
   </div>;
 }
