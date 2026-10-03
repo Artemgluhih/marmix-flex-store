@@ -17,6 +17,7 @@ type Props = {
   onUpdate: (id: string, quantity: number, rule: CartQuantityRule) => void;
   onRemove: (id: string) => void;
   onConfirm: (product: PublicProduct, model: QuantityViewModel, quantity: number) => void;
+  technical?: boolean;
 };
 
 function money(minor: number): string {
@@ -30,7 +31,7 @@ function itemName(entry: ReconciledLine): string {
   return entry.product?.name ?? entry.line.snapshot?.name ?? "Позиция корзины";
 }
 
-function Item({ entry, onUpdate, onRemove, onConfirm }: Pick<Props, "onUpdate" | "onRemove" | "onConfirm"> & { entry: ReconciledLine }) {
+function Item({ entry, onUpdate, onRemove, onConfirm, technical }: Pick<Props, "onUpdate" | "onRemove" | "onConfirm" | "technical"> & { entry: ReconciledLine }) {
   const { product, model, line, status, lineTotalMinor } = entry;
   const name = itemName(entry);
   const quantityValid = !!model && line.quantity >= model.min && line.quantity <= model.max &&
@@ -38,12 +39,12 @@ function Item({ entry, onUpdate, onRemove, onConfirm }: Pick<Props, "onUpdate" |
   const area = model && quantityValid ? exactArea(model, line.quantity) : null;
   return <li className={styles.item}>
     <div className={styles.media}>
-      {product?.primaryImage ? <Link href={`/product/${product.slug}`} aria-label={`Открыть товар ${name}`}>
+      {product?.primaryImage && !technical ? <Link href={`/product/${product.slug}`} aria-label={`Открыть товар ${name}`}>
         <Image src={product.primaryImage.url} alt={product.primaryImage.alt ?? ""} fill sizes="(max-width: 620px) 92px, 120px" />
       </Link> : <span className={styles.noImage}>MARMIX FLEX</span>}
     </div>
     <div className={styles.details}>
-      {product ? <Link href={`/product/${product.slug}`} className={styles.name}>{name}</Link>
+      {product && !technical ? <Link href={`/product/${product.slug}`} className={styles.name}>{name}</Link>
         : <span className={styles.name}>{name}</span>}
       {product?.priceMinor != null && product.priceUnit && <p className={styles.price}>
         {money(product.priceMinor)} <span>/ {product.priceUnit}</span>
@@ -81,7 +82,7 @@ function Item({ entry, onUpdate, onRemove, onConfirm }: Pick<Props, "onUpdate" |
   </li>;
 }
 
-export function CartContent({ lines, products, phase, onRetry, onUpdate, onRemove, onConfirm }: Props) {
+export function CartContent({ lines, products, phase, onRetry, onUpdate, onRemove, onConfirm, technical }: Props) {
   if (phase === "hydrating") return <div className={styles.state} role="status">Загружаем корзину…</div>;
   if (phase === "empty") return <div className={styles.state} role="status">
     <h2>Корзина пуста</h2><Link className={styles.catalogLink} href="/catalog">Перейти в каталог</Link>
@@ -100,7 +101,7 @@ export function CartContent({ lines, products, phase, onRetry, onUpdate, onRemov
   return <div className={styles.layout}>
     <div className={styles.listColumn}><h2 className={styles.sectionTitle}>Позиции · {lines.length}</h2>
       <ul className={styles.items}>{result.lines.map((entry) => <Item key={entry.line.productId}
-        entry={entry} onUpdate={onUpdate} onRemove={onRemove} onConfirm={onConfirm} />)}</ul>
+        entry={entry} onUpdate={onUpdate} onRemove={onRemove} onConfirm={onConfirm} technical={technical} />)}</ul>
     </div>
     <aside className={styles.summary} aria-label="Сводка корзины">
       <h2>Сводка</h2><p>Позиций: {lines.length}</p>

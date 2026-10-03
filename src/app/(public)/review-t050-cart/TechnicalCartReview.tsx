@@ -66,7 +66,7 @@ export function TechnicalCartReview({ realAzurId }: { realAzurId: string | null 
     }} style={{ margin: "16px", padding: 12, background: "#24221e", color: "#f6f0e7" }}>
       {scenarios.map((name) => <option key={name}>{name}</option>)}
     </select>
-    <CartContent lines={state.lines} products={selected.products} phase={state.lines.length ? phase : "empty"}
+    <CartContent technical lines={state.lines} products={selected.products} phase={state.lines.length ? phase : "empty"}
       onRetry={() => { setScenario("Готовые позиции"); setState({ version: CART_VERSION, lines: fixture("Готовые позиции").lines }); setPhase("ready"); }}
       onRemove={(id) => setState((current) => removeLine(current, id).state)}
       onUpdate={(id, quantity, rule) => setState((current) => updateQuantity(current, id, quantity, rule).state)}
