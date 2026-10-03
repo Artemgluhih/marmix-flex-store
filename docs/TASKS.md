@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T047 — DONE, T048–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T048 — DONE, T049–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1090,7 +1090,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T048
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** localStorage и hydration
 - **Goal:** Сохранить корзину между посещениями без SSR mismatch.
 - **Why:** Состояние browser недоступно Server Components.
@@ -1105,6 +1105,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T048): localStorage и hydration
+- **Resolution (2026-10-03):** Browser-only adapter uses stable `marmix-flex:cart` key and an explicit v1 decoder. Unknown versions or corrupt/oversized roots reset to canonical empty v1 with `storage_recovered`; malformed lines are discarded, snapshot fields whitelisted, and duplicate product IDs keep first position with latest valid target quantity (never summed). Storage exceptions yield usable in-memory state and machine-readable `storage_unavailable`. Minimal CartProvider exposes `hydrating` before an effect reads storage, then `ready`; writes start only after the initial read, preventing EMPTY_CART overwrite and SSR mismatch. It delegates upsert/update/remove to T047. Targeted parser/model tests and READY Preview technical reload/recovery smoke PASS, with no application hydration warnings; the temporary technical route was removed from the final tree. Lint/typecheck and Vercel READY build PASS; local build was blocked only by Google Fonts network access. Product Detail integration remains T049; price/product refresh and current totals remain T050. No permanent public UI, Supabase/backend or Production change; permanent TEST_ONLY 0. T048 DONE; T049 not started.
 
 ### T049 — Add/remove/update интеграция
 
