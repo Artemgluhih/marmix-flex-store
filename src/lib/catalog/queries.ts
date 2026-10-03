@@ -6,6 +6,7 @@ import { normalizeCatalogListParams, normalizeSlug, PUBLIC_PAGE_SIZE } from "./q
 import type { CatalogListInput, CatalogListParams } from "./query-params";
 import type { CatalogFacets, PublicCategory, PublicImage, PublicProduct, PublicProductDetail } from "./types";
 import { selectRelatedRows } from "./related-selection";
+import { normalizeCartIds } from "@/lib/cart/ids";
 
 const TTL_SECONDS = 60;
 export const catalogCacheTags = {
@@ -83,6 +84,18 @@ function productDto(row: Record<string, unknown>, related: { categories: PublicC
     categories: related.categories,
     primaryImage: related.images.find((image) => image.isPrimary) ?? null,
   };
+}
+
+// One uncached guest/RLS read per distinct product-ID set. Client snapshots never enter this query.
+export async function getCartProductsFreshByIds(input: unknown): Promise<PublicProduct[]> {
+  const ids = normalizeCartIds(input);
+  if (!ids.length) return [];
+  const client = createPublicSupabaseClient({ fresh: true });
+  const { data, error } = await client.from("products").select(PRODUCT_FIELDS)
+    .in("id", ids).eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null);
+  if (error || !data) failed();
+  const related = await presentation(client, data);
+  return data.map((row) => productDto(row, related.get(row.id)!));
 }
 
 async function publishedCategory(client: Client, slug: string): Promise<PublicCategory | null> {
