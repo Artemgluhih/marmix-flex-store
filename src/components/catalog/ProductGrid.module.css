@@ -20,6 +20,10 @@
   transition: transform 650ms cubic-bezier(.2, .7, .2, 1);
 }
 .card:hover .imageFrame img { transform: scale(1.045); }
+.cartAction { position: absolute; z-index: 2; top: 15px; right: 15px; display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--color-border-warm); border-radius: 0; background: var(--color-header); color: var(--color-gold); font: 500 22px/1 var(--font-ui); cursor: pointer; }
+.cartAction:hover:not(:disabled) { background: var(--color-card); }
+.cartAction:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.cartAction:disabled { color: var(--color-text-secondary); cursor: default; }
 .noImage { padding: 24px; color: var(--color-text-quiet); font-size: 13px; text-align: center; }
 .info { min-width: 0; padding: 21px 21px 19px; }
 .series { margin: 0 0 7px; color: var(--color-text-quiet); font-size: 11px; }

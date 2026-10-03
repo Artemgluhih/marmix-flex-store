@@ -63,7 +63,10 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             )}
             {saleUnit && <p className={styles.fact}>Единица продажи: {saleUnit}</p>}
             {availability && <p className={styles.fact}>Наличие: {availability}</p>}
-            {quantityModel && <QuantityBlock model={quantityModel} />}
+            {quantityModel && <QuantityBlock model={quantityModel} productId={product.id}
+              snapshot={{ name: product.name, primaryImageUrl: product.primaryImage?.url ?? null,
+                priceMinor: product.priceMinor, currency: product.currency,
+                priceUnit: product.priceUnit, saleUnit: product.saleUnit }} />}
           </div>
         </div>
       </div>
