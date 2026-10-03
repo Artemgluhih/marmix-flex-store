@@ -20,7 +20,7 @@ export function CheckoutForm({ technical = false, technicalState = "normal" }: {
     const next = validateForm(values);
     setErrors(next);
     const first = Object.keys(next)[0] as Field | undefined;
-    if (first) (formRef.current?.elements.namedItem(first) as HTMLElement | null)?.focus();
+    if (first) requestAnimationFrame(() => (formRef.current?.elements.namedItem(first) as HTMLElement | null)?.focus());
   }
 
   const fields: { field: Field; label: string; type?: string; autocomplete?: string; hint?: string }[] = [
