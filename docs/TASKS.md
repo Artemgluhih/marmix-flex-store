@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T046 — DONE, T047–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T047 — DONE, T048–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1069,7 +1069,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T047
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Cart state model
 - **Goal:** Реализовать модель строк корзины и операции.
 - **Why:** Неавторитетный client cart требует чётких правил.
@@ -1084,6 +1084,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T047): Cart state model
+- **Resolution (2026-10-03):** Pure TypeScript cart model uses version 1, canonical empty state and product_id as its sole line identity. Target-quantity upsert appends new products, updates existing lines in place and is idempotent for repeats; update validates existing lines, remove is idempotent. The shared T046 `validQuantity` semantics enforce safe integer min/step/max without rounding or mutation on invalid input. Optional minimal display snapshots are copied and explicitly non-authoritative for eligibility, price and order totals. No cart total, browser persistence, React provider, Product Detail integration or backend cart was introduced; persistence is T048, UI integration T049. Targeted pure-model assertions, lint and typecheck PASS; T046 helper and disabled action unchanged. No Supabase or Production mutation; T047 DONE, T048 not started.
 
 ### T048 — localStorage и hydration
 
