@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T045 — DONE, T046–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T046 — DONE, T047–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1045,7 +1045,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T046
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Quantity UI и покупательский блок
 - **Goal:** Добавить выбор количества по шагу и ясное будущее действие.
 - **Why:** Цена и единица должны быть понятны до Cart.
@@ -1060,6 +1060,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T046): Quantity UI и покупательский блок
+- **Resolution (2026-10-03):** Existing T045 Product Detail remains server-rendered; only the quantity block is a small client island. Verified review implementation starts at the confirmed minimum and changes by the confirmed step, labels panel quantity as лист and accessory quantity as шт./упаковка, and computes sheet area from exact 4.0328 m² without monetary floating point or unapproved rounding. A guarded public commerce evaluator requires REAL/published/unarchived eligibility, fixed exact price conversion, valid sale unit and minimum/step, and explicit availability before exposing a monetary total. Current three REAL products have NULL availability, so no total appears and the buyer action remains disabled with no cart/localStorage side effect. Missing Flexible Board area and range/nullable price also block a total. A render-only technical positive fixture checked exact minor-unit totals and increment behavior without DB writes; its temporary route was excluded from the final tree. Lint/typecheck, Vercel READY build, real routes and technical fixture PASS; owner visual verification PASS at 360–370/390/768/1024/1440/1920/2560, with no overflow and T044/T045 regression PASS. No Supabase schema/data/availability/Storage or Production mutation; permanent TEST_ONLY 0. T046 DONE; T047 not started.
 
 
 ## PHASE 10 — Cart
