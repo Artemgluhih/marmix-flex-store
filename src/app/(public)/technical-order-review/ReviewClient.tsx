@@ -40,11 +40,13 @@ export function ReviewClient({ privateConfigReady }: { privateConfigReady: boole
       <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("submit")}>Отправить TEST_ONLY</button>
       <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("retry")}>Повторить с тем же ключом</button>
       <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("conflict")}>Изменить intent с тем же ключом</button>
+      <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("race")}>Два параллельных TEST_ONLY запроса</button>
       <button className={styles.check} type="button" disabled={pending} onClick={() => send("changed")}>Корзина изменилась</button>
       <button className={styles.check} type="button" disabled={pending} onClick={() => send("error")}>Сетевая ошибка / retry</button>
     </div>
-    {result && <div role={result.state === "created" || result.state === "replayed" ? "status" : "alert"}>
-      {(result.state === "created" || result.state === "replayed") ? <>
+    {result && <div role={result.state === "created" || result.state === "replayed" || result.state === "race_pass" ? "status" : "alert"}>
+      {result.state === "race_pass" ? <p>Обе параллельные попытки вернули один идентификатор: <code>{result.id}</code>.</p>
+      : (result.state === "created" || result.state === "replayed") ? <>
         <h2>Заявка отправлена</h2><p>Техническая заявка на расчёт/связь. Товар не резервируется; заказ и оплата не подтверждены.</p>
         <p>Идентификатор заявки: <code>{result.id}</code></p>
         {result.state === "replayed" && <p>Повторный запрос вернул тот же идентификатор.</p>}
