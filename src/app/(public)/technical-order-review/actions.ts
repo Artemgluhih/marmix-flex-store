@@ -5,9 +5,11 @@ import { insertPreparedOrder } from "@/lib/orders/insert";
 import { prepareOrder } from "@/lib/orders/prepare";
 import type { ValidatedOrderRequest } from "@/lib/orders/validate-request";
 import type { PublicProduct } from "@/lib/catalog/types";
+import { POST } from "@/app/api/order-requests/route";
 
 type ReviewResult = { state: "created" | "replayed"; id: string } |
   { state: "race_pass"; id: string } |
+  { state: "negative_pass" } |
   { state: "conflict" | "cart_changed" | "error" };
 
 // Temporary technical fixture only. It is not a DB product or a public catalog SKU.
@@ -20,12 +22,13 @@ const product: PublicProduct = {
   sortOrder: 0, categories: [], primaryImage: null,
 };
 
-export async function submitTechnicalOrder(mode: "submit" | "retry" | "conflict" | "race" | "changed" | "error"):
+export async function submitTechnicalOrder(mode: "submit" | "retry" | "conflict" | "race" | "negative" | "changed" | "error"):
   Promise<ReviewResult> {
   if (process.env.VERCEL_ENV !== "preview") return { state: "error" };
-  if (!["submit", "retry", "conflict", "race", "changed", "error"].includes(mode)) return { state: "error" };
+  if (!["submit", "retry", "conflict", "race", "negative", "changed", "error"].includes(mode)) return { state: "error" };
   if (mode === "error") return { state: "error" }; // no DB call, tests safe retry UI
   if (mode === "changed") return { state: "cart_changed" }; // no DB call, tests update path
+  if (mode === "negative") return verifyNegativeApiCases();
   const quantity = mode === "conflict" ? 2 : 3;
   const request: ValidatedOrderRequest = {
     version: 1, idempotencyKey: mode === "race"
@@ -56,6 +59,47 @@ export async function submitTechnicalOrder(mode: "submit" | "retry" | "conflict"
     const inserted = await insertPreparedOrder(prepared.value);
     if (inserted.status === "created" || inserted.status === "replayed") return { state: inserted.status, id: inserted.id };
     return { state: inserted.status === "conflict" ? "conflict" : "error" };
+  } catch {
+    return { state: "error" };
+  }
+}
+
+async function verifyNegativeApiCases(): Promise<ReviewResult> {
+  const hostname = process.env.VERCEL_URL;
+  if (!hostname) return { state: "error" };
+  const base = `https://${hostname}`;
+  const azur = "658e4245-59b0-4d73-b0f1-722f932b006e";
+  const requestBody = (suffix: string, productId = azur) => ({
+    version: 1, idempotency_key: `dddddddd-dddd-4ddd-8ddd-00000000000${suffix}`,
+    name: "Тестовый пользователь", phone: "+7 900 000-00-00",
+    items: [{ product_id: productId, quantity: 1, price_minor: 200000,
+      price_unit: "м²", sale_unit: "sheet" }],
+  });
+  const cases: { body: object; status: number; code: string; origin?: string }[] = [
+    { body: requestBody("1"), status: 409, code: "CART_CHANGED" },
+    { body: { ...requestBody("2"), items: [{ ...requestBody("2").items[0], price_minor: 210000 }] },
+      status: 409, code: "CART_CHANGED" },
+    { body: { ...requestBody("3"), items: [{ ...requestBody("3").items[0], price_unit: "лист" }] },
+      status: 409, code: "CART_CHANGED" },
+    { body: { ...requestBody("4"), items: [{ ...requestBody("4").items[0], quantity: 0 }] },
+      status: 400, code: "INVALID_FIELDS" },
+    { body: requestBody("5", "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee"),
+      status: 409, code: "CART_CHANGED" },
+    { body: { ...requestBody("6"), unknown_field: "test" }, status: 400, code: "INVALID_FIELDS" },
+    { body: requestBody("7"), status: 403, code: "FORBIDDEN_ORIGIN",
+      origin: "https://example.test" },
+  ];
+  try {
+    for (const item of cases) {
+      const response = await POST(new Request(`${base}/api/order-requests`, {
+        method: "POST", headers: { "Content-Type": "application/json",
+          Origin: item.origin ?? base },
+        body: JSON.stringify(item.body),
+      }));
+      const result = await response.json();
+      if (response.status !== item.status || result.code !== item.code) return { state: "error" };
+    }
+    return { state: "negative_pass" };
   } catch {
     return { state: "error" };
   }
