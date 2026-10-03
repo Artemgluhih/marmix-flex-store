@@ -99,6 +99,26 @@ async function verifyNegativeApiCases(): Promise<ReviewResult> {
       const result = await response.json();
       if (response.status !== item.status || result.code !== item.code) return { state: "error" };
     }
+    const existing = await lookupExistingOrder("bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb");
+    if (!existing) return { state: "error" };
+    const replayBody = {
+      ...requestBody("8", product.id),
+      idempotency_key: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+      items: [{ ...requestBody("8", product.id).items[0], quantity: 3 }],
+    };
+    const callRoute = (body: object) => POST(new Request(`${base}/api/order-requests`, {
+      method: "POST", headers: { "Content-Type": "application/json", Origin: base },
+      body: JSON.stringify(body),
+    }));
+    const replay = await callRoute(replayBody);
+    const replayResult = await replay.json();
+    if (replay.status !== 200 || replayResult.request_id !== existing.id ||
+        replayResult.submitted !== true || replayResult.replayed !== true)
+      return { state: "error" };
+    const conflict = await callRoute({ ...replayBody,
+      items: [{ ...replayBody.items[0], quantity: 2 }] });
+    if (conflict.status !== 409 || (await conflict.json()).code !== "IDEMPOTENCY_CONFLICT")
+      return { state: "error" };
     return { state: "negative_pass" };
   } catch {
     return { state: "error" };
