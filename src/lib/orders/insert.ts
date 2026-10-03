@@ -36,17 +36,13 @@ export async function insertPreparedOrder(prepared: PreparedOrder): Promise<Inse
     const { data, error } = await client.from("order_requests")
       .insert(orderInsertValues(prepared, new Date().toISOString())).select("id").single();
     if (!error && data?.id) return { status: "created", id: data.id };
-    if (error?.code !== "23505") {
-      if (process.env.VERCEL_ENV === "preview") console.error("T054_INSERT_CODE", error?.code ?? "NO_CODE");
-      return { status: "unavailable" };
-    }
+    if (error?.code !== "23505") return { status: "unavailable" };
     // UNIQUE(idempotency_key) is the final guard after two concurrent pre-checks.
     const existing = await lookupExistingOrder(prepared.idempotencyKey);
     if (!existing) return { status: "unavailable" };
     return sameStoredHash(existing.request_hash, prepared.requestHash)
       ? { status: "replayed", id: existing.id } : { status: "conflict" };
   } catch {
-    if (process.env.VERCEL_ENV === "preview") console.error("T054_INSERT_CODE", "EXCEPTION");
     return { status: "unavailable" };
   }
 }
