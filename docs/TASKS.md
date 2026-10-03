@@ -1219,7 +1219,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T054
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Private order insert и outcomes
 - **Goal:** Записать одну order_requests row и вернуть безопасный результат.
 - **Why:** Завершает путь заявки без частичных заказов.
@@ -1234,6 +1234,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** High
 - **Additional agent:** NO
 - **Suggested commit message:** task(T054): Private order insert и outcomes
+- **Resolution (2026-10-03):** Server-only `createOrderSecretSupabaseClient()` inserts one `order_requests` row with only the T053 prepared, current server-verified item snapshot and exact RUB minor-unit total; empty normalized city/email/comment become NULL. `consent_at` records the explicit synthetic Preview action timestamp, not approval of pending legal consent wording. T053 existing-key/hash pre-check is retained; UNIQUE(`idempotency_key`) resolves concurrent inserts by rereading only `id,request_hash`: same hash replays the same opaque UUID (200), different hash returns safe 409, new insert returns 201, unknown DB failure returns safe 5xx. Production submit remains gated (403); ordinary new-key POST continues its uncached public guest/RLS REAL/published/unarchived fresh read and rejects current NULL-availability REAL products with no insert. Positive Preview submission used an isolated server-only TEST_ONLY technical fixture because public RLS intentionally excludes TEST_ONLY; owner explicitly accepted this verification boundary without weakening RLS. READY Preview showed one atomic row, exact 24 196,80 ₽, replay, conflict, parallel unique-key recovery (one row), safe success/error/retry/cart-changed states; owner visual PASS. Anon direct SELECT/INSERT denied, authenticated non-admin cannot read/insert, no PII in public response/logs and no secret in client graph. All TEST_ONLY orders/products cleaned (0/0), technical route removed and cleanup Preview 404 verified. Lint/typecheck and Vercel READY build PASS; local build limited by Google Fonts network. No Telegram/email, payment, admin orders or Production change. T054 DONE; next T054A notifications, T055 deferred.
 
 ### T055 — Order flow integration gate
 

@@ -3,6 +3,8 @@ import { lookupExistingOrder, resolveIdempotency } from "@/lib/orders/idempotenc
 import { getOrderProductsFreshByIds } from "@/lib/catalog/queries";
 import { prepareOrder } from "@/lib/orders/prepare";
 import { MAX_ORDER_ITEMS } from "@/lib/orders/validate-request";
+import { previewOrderAllowed } from "@/lib/orders/preview-gate";
+import { insertPreparedOrder } from "@/lib/orders/insert";
 
 const RESPONSE_HEADERS = { "Cache-Control": "no-store", "Vary": "Origin" };
 
@@ -70,6 +72,7 @@ export async function POST(request: Request): Promise<Response> {
     : reply(400, "INVALID_REQUEST", "Некорректный JSON.");
   const parsed = validateOrderRequest(body.value);
   if (!parsed.ok) return reply(400, "INVALID_FIELDS", "Проверьте данные запроса.", parsed.fields);
+  if (!previewOrderAllowed(parsed.value)) return reply(403, "SUBMISSION_NOT_AVAILABLE", "Отправка заявки недоступна.");
   try {
     // An existing key is compared before fresh price checks: a genuine retry survives later catalog changes.
     const existing = await lookupExistingOrder(parsed.value.idempotencyKey);
@@ -81,9 +84,12 @@ export async function POST(request: Request): Promise<Response> {
     const products = await getOrderProductsFreshByIds(parsed.value.items.map((item) => item.productId), MAX_ORDER_ITEMS);
     const prepared = prepareOrder(parsed.value, products, resolution.hash);
     if (!prepared.ok) return reply(409, "CART_CHANGED", "Данные корзины изменились. Проверьте актуальные позиции.");
-    // T053 never inserts. The prepared snapshot/hash stay on the server for T054.
-    return Response.json({ validated: true, submitted: false, total_minor: prepared.value.totalMinor,
-      currency: prepared.value.currency }, { status: 200, headers: RESPONSE_HEADERS });
+    const outcome = await insertPreparedOrder(prepared.value);
+    if (outcome.status === "conflict") return reply(409, "IDEMPOTENCY_CONFLICT", "Ключ уже использован для другой заявки.");
+    if (outcome.status === "unavailable") return reply(503, "SUBMISSION_UNAVAILABLE", "Не удалось отправить заявку. Повторите попытку.");
+    return Response.json({ submitted: true, request_id: outcome.id,
+      ...(outcome.status === "replayed" ? { replayed: true } : {}) },
+      { status: outcome.status === "created" ? 201 : 200, headers: RESPONSE_HEADERS });
   } catch {
     // Do not serialize Supabase errors, private URLs, keys, or contacts.
     return reply(503, "VERIFICATION_UNAVAILABLE", "Не удалось проверить заявку. Повторите попытку.");
