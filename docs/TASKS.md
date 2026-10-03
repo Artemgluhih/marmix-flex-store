@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T044 — DONE, T045–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T045 — DONE, T046–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1024,7 +1024,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T045
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Gallery, specs и related
 - **Goal:** Показать точную фактуру, применение и подтверждённые свойства.
 - **Why:** Атмосфера должна поддерживать технический выбор.
@@ -1039,6 +1039,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T045): Gallery, specs и related
+- **Resolution (2026-10-03):** T039 ordered `getPublishedProduct()` images feed a server Product Detail, with a small client island only for 2+ images. Current three REAL products each have one primary image and no redundant selectors; a temporary render-only mixed-media review verified primary selection, ordered thumbnails, arrows, focus, alt and reduced motion, then was removed. Azur and Travertin show only 142 × 284 cm and exact 4,0328 m²; glue has no specs section. Related uses the guest public client with REAL/published/unarchived filters, same non-null series before shared published public categories, stable sort, current-product exclusion, de-duplication and limit three. Hidden categories produce no public relation; live related counts are 0/0/0 and sections are omitted. Lint/typecheck, isolated related selection, Vercel READY build and three Product Detail smoke PASS; local build was blocked solely by Google Fonts network access. Owner visual verification PASS at 360–370/390/768/1024/1440/1920/2560, with no overflow and Dark Gold Showroom consistency. T044 regression PASS. No Supabase data/schema/RLS/Storage or Production mutation; permanent TEST_ONLY 0. T045 DONE; T046 not started.
 
 ### T046 — Quantity UI и покупательский блок
 

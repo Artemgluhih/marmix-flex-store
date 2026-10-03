@@ -1,21 +1,32 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getPublishedProduct } from "@/lib/catalog/queries";
+import { getPublishedProduct, getRelatedProducts } from "@/lib/catalog/queries";
+import { ProductGrid } from "@/components/catalog/ProductGrid";
+import { ProductGallery } from "./ProductGallery";
 import styles from "./product.module.css";
 
 export const dynamic = "force-dynamic";
 
 const rubles = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
+const measure = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 4 });
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const product = await getPublishedProduct(slug);
   if (!product) notFound();
+  const related = await getRelatedProducts(product);
 
   const availability = product.availabilityStatus === "in_stock" ? "В наличии"
     : product.availabilityStatus === "on_order" ? "Под заказ" : null;
   const saleUnit = product.saleUnit === "sheet" ? "лист" : product.saleUnit;
+  const dimensions = product.saleUnit === "sheet" && product.widthMm !== null && product.heightMm !== null
+    ? `${measure.format(product.widthMm / 10)} × ${measure.format(product.heightMm / 10)} см` : null;
+  const facts = [
+    ...(dimensions ? [{ label: "Размер листа", value: dimensions }] : []),
+    ...(product.saleUnit === "sheet" && product.areaPerSaleUnitM2 !== null ? [{ label: "Площадь листа", value: `${measure.format(product.areaPerSaleUnitM2)} м²` }] : []),
+    ...(product.thicknessMm !== null ? [{ label: "Толщина", value: `${measure.format(product.thicknessMm)} мм` }] : []),
+  ];
 
   return (
     <article className={styles.product} aria-labelledby="product-title">
@@ -26,12 +37,14 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
       </nav>
 
       <div className={styles.stage}>
-        <div className={styles.media}>
-          {product.primaryImage ? (
-            <Image src={product.primaryImage.url} alt={product.primaryImage.alt ?? product.name}
-              fill loading="eager" sizes="(max-width: 800px) calc(100vw - 40px), min(48vw, 680px)" />
-          ) : <span className={styles.noImage}>Изображение не добавлено</span>}
-        </div>
+        {product.images.length > 1 ? <ProductGallery images={product.images} /> : (
+          <div className={styles.media}>
+            {product.images[0] ? (
+              <Image src={product.images[0].url} alt={product.images[0].alt ?? ""}
+                fill loading="eager" sizes="(max-width: 800px) calc(100vw - 40px), min(48vw, 680px)" />
+            ) : <span className={styles.noImage}>Изображение не добавлено</span>}
+          </div>
+        )}
 
         <div className={styles.identity}>
           {product.series && <p className={styles.series}>{product.series}</p>}
@@ -49,6 +62,20 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
           </div>
         </div>
       </div>
+      {facts.length > 0 && (
+        <section className={styles.facts} aria-labelledby="facts-title">
+          <h2 id="facts-title">Характеристики</h2>
+          <dl>
+            {facts.map(({ label, value }) => <div key={label}><dt>{label}</dt><dd>{value}</dd></div>)}
+          </dl>
+        </section>
+      )}
+      {related.length > 0 && (
+        <section className={styles.related} aria-labelledby="related-title">
+          <h2 id="related-title">Похожие материалы</h2>
+          <ProductGrid products={related} linkToDetail titleLevel={3} />
+        </section>
+      )}
     </article>
   );
 }
