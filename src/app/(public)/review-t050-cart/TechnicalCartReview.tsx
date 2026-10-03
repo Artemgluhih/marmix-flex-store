@@ -6,6 +6,7 @@ import { currentSnapshot } from "@/lib/cart/reconcile";
 import { updateQuantity, removeLine, upsertLine, CART_VERSION, type CartLine, type CartState } from "@/lib/cart/model";
 import { CART_STORAGE_KEY } from "@/lib/cart/storage";
 import type { PublicProduct } from "@/lib/catalog/types";
+import styles from "./review.module.css";
 
 const panel: PublicProduct = {
   id: "11111111-1111-4111-8111-111111111111", sku: "TECH-PANEL", slug: "technical-only",
@@ -47,23 +48,23 @@ export function TechnicalCartReview({ realAzurId }: { realAzurId: string | null 
   const [state, setState] = useState<CartState>({ version: CART_VERSION, lines: fixture(scenarios[0]).lines });
   const [phase, setPhase] = useState<CartPhase>("ready");
   const selected = fixture(scenario);
-  return <section style={{ padding: "32px max(20px, 4vw) 100px", background: "var(--color-stage)", minHeight: "80vh" }}>
-    <p style={{ color: "var(--color-gold)", letterSpacing: ".1em", fontSize: 12 }}>TECHNICAL CART PAGE REVIEW — NOT REAL CART DATA</p>
-    <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 400 }}>Состояния корзины</h1>
+  return <section className={styles.review}>
+    <p className={styles.eyebrow}>TECHNICAL CART PAGE REVIEW — NOT REAL CART DATA</p>
+    <h1>Состояния корзины</h1>
     <p>Сценарии ниже используют только синтетические props. Отдельная кнопка REAL Азур временно записывает только browser storage; Supabase не изменяется.</p>
-    {realAzurId && <button type="button" onClick={() => {
+    <div className={styles.controls}>{realAzurId && <button type="button" onClick={() => {
       window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify({ version: CART_VERSION,
         lines: [{ productId: realAzurId, quantity: 1 }] }));
       window.location.assign(new URL("/cart", window.location.href).toString());
     }}>Проверить REAL Азур в локальной корзине (только browser storage)</button>}
     <button type="button" onClick={() => { window.localStorage.removeItem(CART_STORAGE_KEY); window.location.reload(); }}>
       Очистить технические строки browser storage
-    </button>
-    <label htmlFor="technical-scenario">Состояние</label>{" "}
+    </button></div>
+    <label className={styles.label} htmlFor="technical-scenario">Состояние</label>
     <select id="technical-scenario" value={scenario} onChange={(event) => {
       const next = event.target.value as Scenario; setScenario(next);
       setState({ version: CART_VERSION, lines: fixture(next).lines }); setPhase(fixture(next).phase);
-    }} style={{ margin: "16px", padding: 12, background: "#24221e", color: "#f6f0e7" }}>
+    }} className={styles.select}>
       {scenarios.map((name) => <option key={name}>{name}</option>)}
     </select>
     <CartContent technical lines={state.lines} products={selected.products} phase={state.lines.length ? phase : "empty"}
