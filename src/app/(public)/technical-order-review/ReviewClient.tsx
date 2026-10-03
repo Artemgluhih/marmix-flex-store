@@ -8,14 +8,14 @@ import styles from "../checkout/checkout.module.css";
 type Mode = Parameters<typeof submitTechnicalOrder>[0];
 type Result = Awaited<ReturnType<typeof submitTechnicalOrder>>;
 
-export function ReviewClient() {
+export function ReviewClient({ privateConfigReady }: { privateConfigReady: boolean }) {
   const lock = useRef(false);
   const [pending, setPending] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
   const [technicalCart, setTechnicalCart] = useState(true);
 
   async function send(mode: Mode) {
-    if (lock.current) return;
+    if (lock.current || (!privateConfigReady && mode !== "changed" && mode !== "error")) return;
     lock.current = true;
     setPending(true);
     setResult(null);
@@ -37,9 +37,9 @@ export function ReviewClient() {
     <p>3 листа × 4.0328 м² × 2 000 ₽/м² = 24 196,80 ₽. Пустые город, email и комментарий записываются как NULL.</p>
     <p role="status">{pending ? "Отправляем тестовую заявку…" : technicalCart ? "Техническая позиция подготовлена." : "Техническая позиция очищена после подтверждённого ответа."}</p>
     <div className={styles.formActions}>
-      <button className={styles.check} type="button" disabled={pending} onClick={() => send("submit")}>Отправить TEST_ONLY</button>
-      <button className={styles.check} type="button" disabled={pending} onClick={() => send("retry")}>Повторить с тем же ключом</button>
-      <button className={styles.check} type="button" disabled={pending} onClick={() => send("conflict")}>Изменить intent с тем же ключом</button>
+      <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("submit")}>Отправить TEST_ONLY</button>
+      <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("retry")}>Повторить с тем же ключом</button>
+      <button className={styles.check} type="button" disabled={pending || !privateConfigReady} onClick={() => send("conflict")}>Изменить intent с тем же ключом</button>
       <button className={styles.check} type="button" disabled={pending} onClick={() => send("changed")}>Корзина изменилась</button>
       <button className={styles.check} type="button" disabled={pending} onClick={() => send("error")}>Сетевая ошибка / retry</button>
     </div>
