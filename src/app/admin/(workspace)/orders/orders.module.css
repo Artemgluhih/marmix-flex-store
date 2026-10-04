@@ -64,6 +64,9 @@
 }
 .table tbody tr:last-child td { border-bottom: 0; }
 .requestId { color: var(--color-gold-hover) !important; font: 600 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.requestId a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.requestId a:hover { color: var(--color-gold); }
+.requestId a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
 .date { font-variant-numeric: tabular-nums; }
 .name { color: var(--color-text-primary) !important; font-size: 13px !important; font-weight: 600; }
 .phone { color: var(--color-text-primary) !important; font-variant-numeric: tabular-nums; }
