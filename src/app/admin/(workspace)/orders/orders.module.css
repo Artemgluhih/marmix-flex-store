@@ -1,0 +1,119 @@
+.page { width: 100%; max-width: 1480px; min-width: 0; }
+.heading { margin-bottom: 38px; }
+.eyebrow {
+  margin: 0 0 19px; color: var(--color-gold); font-size: 10px;
+  font-weight: 700; letter-spacing: .16em; line-height: 1.5; text-transform: uppercase;
+}
+.heading h1 {
+  margin: 0; font-size: clamp(31px, 3vw, 44px); font-weight: 600;
+  letter-spacing: -.035em; line-height: 1.2;
+}
+.heading > p:not(.eyebrow) {
+  margin: 14px 0 0; color: var(--color-text-secondary); font-size: 14px; line-height: 1.65;
+}
+.filters {
+  display: flex; flex-wrap: wrap; align-items: end; gap: 12px;
+  margin-bottom: 20px;
+}
+.filterControl { display: grid; min-width: min(100%, 185px); gap: 8px; }
+.filters label { color: var(--color-text-secondary); font-size: 11px; font-weight: 600; line-height: 1.4; }
+.filters select {
+  width: 100%; min-width: 0; min-height: 44px; padding: 9px 11px;
+  border: 1px solid var(--color-border); border-radius: 0;
+  background: var(--color-graphite); color: var(--color-text-primary);
+  font: inherit; font-size: 12px;
+}
+.filterActions { display: flex; align-items: center; gap: 12px; min-height: 44px; }
+.filterActions button, .filterActions a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: var(--color-text-primary); font-size: 12px; font-weight: 600;
+}
+.filterActions button {
+  padding: 9px 15px; border: 1px solid var(--color-border-warm);
+  border-radius: 0; background: var(--color-graphite); cursor: pointer;
+}
+.filterActions a { color: var(--color-text-secondary); text-decoration: none; }
+.filterActions button:hover, .filterActions a:hover { color: var(--color-gold-hover); }
+.filters select:focus-visible, .filterActions button:focus-visible, .filterActions a:focus-visible,
+.pagination a:focus-visible, .retry:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.resultCount { margin: 0 0 14px; color: var(--color-text-secondary); font-size: 12px; line-height: 1.5; }
+.empty { padding: 30px 32px; border: 1px solid var(--color-border-quiet); background: var(--color-graphite); }
+.empty h2 { margin: 0; font-size: 19px; font-weight: 600; line-height: 1.35; }
+.empty p { margin: 10px 0 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.6; }
+.retry {
+  min-height: 44px; margin-top: 18px; padding: 9px 15px; border: 1px solid var(--color-border-warm);
+  border-radius: 0; background: var(--color-graphite); color: var(--color-text-primary);
+  font: inherit; font-size: 12px; font-weight: 600; cursor: pointer;
+}
+.tableFrame { min-width: 0; border: 1px solid var(--color-border-quiet); background: var(--color-graphite); }
+.table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
+.table th:nth-child(1) { width: 17%; }
+.table th:nth-child(2) { width: 21%; }
+.table th:nth-child(3) { width: 17%; }
+.table th:nth-child(4) { width: 24%; }
+.table th:nth-child(5) { width: 21%; }
+.table th {
+  padding: 18px 20px; border-bottom: 1px solid var(--color-border-warm);
+  color: var(--color-text-quiet); font-size: 10px; font-weight: 700;
+  letter-spacing: .11em; line-height: 1.45; text-transform: uppercase;
+}
+.table td {
+  min-width: 0; padding: 20px; border-bottom: 1px solid var(--color-border-quiet);
+  color: var(--color-text-secondary); font-size: 12px; line-height: 1.5;
+  overflow-wrap: anywhere; vertical-align: middle;
+}
+.table tbody tr:last-child td { border-bottom: 0; }
+.requestId { color: var(--color-gold-hover) !important; font: 600 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace; }
+.date { font-variant-numeric: tabular-nums; }
+.name { color: var(--color-text-primary) !important; font-size: 13px !important; font-weight: 600; }
+.phone { color: var(--color-text-primary) !important; font-variant-numeric: tabular-nums; }
+.badge {
+  display: inline-block; max-width: 100%; padding: 5px 8px;
+  border: 1px solid var(--color-border-warm); color: var(--color-text-secondary);
+  font-size: 11px; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere;
+}
+.new { border-color: var(--color-gold); color: var(--color-gold-hover); }
+.in_progress { border-color: var(--color-border-warm); color: var(--color-text-primary); }
+.completed { border-color: var(--color-success); color: var(--color-success); }
+.cancelled { border-color: var(--color-border-quiet); color: var(--color-text-quiet); }
+.mobileLabel { display: none; }
+.pagination {
+  display: flex; justify-content: space-between; align-items: center; gap: 18px;
+  margin-top: 20px; color: var(--color-text-secondary); font-size: 12px; line-height: 1.5;
+}
+.pagination a { color: var(--color-text-primary); text-decoration: none; }
+.pagination a:hover { color: var(--color-gold-hover); }
+.pagination [aria-disabled="true"] { color: var(--color-disabled-text); }
+@media (max-width: 850px) {
+  .heading { margin-bottom: 30px; }
+  .tableFrame { border: 0; background: transparent; }
+  .table, .table tbody { display: block; width: 100%; }
+  .table thead {
+    position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+  .table tbody { display: grid; gap: 12px; }
+  .table tr {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 22px; padding: 19px 20px;
+    border: 1px solid var(--color-border-quiet); background: var(--color-graphite);
+  }
+  .table td { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 5px; padding: 0; border: 0; }
+  .table .requestId { grid-column: 1; }
+  .table .date { grid-column: 2; }
+  .table td:nth-child(3) { grid-column: 1 / -1; }
+  .table .name { grid-column: 1; }
+  .table .phone { grid-column: 2; }
+  .mobileLabel {
+    display: block; color: var(--color-text-quiet); font-family: var(--font-ui);
+    font-size: 10px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase;
+  }
+}
+@media (max-width: 620px) {
+  .filters { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .filterControl { min-width: 0; }
+  .empty { padding: 24px 20px; }
+  .table tr { gap: 12px 10px; padding: 18px 16px; }
+  .table .requestId, .table .date, .table td:nth-child(3), .table .name, .table .phone { grid-column: 1 / -1; }
+  .pagination { gap: 8px; font-size: 11px; }
+}
