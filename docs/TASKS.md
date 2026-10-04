@@ -1236,25 +1236,25 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Suggested commit message:** task(T054): Private order insert и outcomes
 - **Resolution (2026-10-03):** Server-only `createOrderSecretSupabaseClient()` inserts one `order_requests` row with only the T053 prepared, current server-verified item snapshot and exact RUB minor-unit total; empty normalized city/email/comment become NULL. `consent_at` records the explicit synthetic Preview action timestamp, not approval of pending legal consent wording. T053 existing-key/hash pre-check is retained; UNIQUE(`idempotency_key`) resolves concurrent inserts by rereading only `id,request_hash`: same hash replays the same opaque UUID (200), different hash returns safe 409, new insert returns 201, unknown DB failure returns safe 5xx. Production submit remains gated (403); ordinary new-key POST continues its uncached public guest/RLS REAL/published/unarchived fresh read and rejects current NULL-availability REAL products with no insert. Positive Preview submission used an isolated server-only TEST_ONLY technical fixture because public RLS intentionally excludes TEST_ONLY; owner explicitly accepted this verification boundary without weakening RLS. READY Preview showed one atomic row, exact 24 196,80 ₽, replay, conflict, parallel unique-key recovery (one row), safe success/error/retry/cart-changed states; owner visual PASS. Anon direct SELECT/INSERT denied, authenticated non-admin cannot read/insert, no PII in public response/logs and no secret in client graph. All TEST_ONLY orders/products cleaned (0/0), technical route removed and cleanup Preview 404 verified. Lint/typecheck and Vercel READY build PASS; local build limited by Google Fonts network. No Telegram/email, payment, admin orders or Production change. T054 DONE; next T054A notifications, T055 deferred.
 
-### T054A — Telegram и Email уведомления
+### T054A — Telegram уведомления о новых заявках
 
 - **ID:** T054A
 - **Priority:** P0
 - **Status:** TODO
-- **Title:** Telegram и Email уведомления
-- **Goal:** После успешного создания новой заявки отправлять внутреннее operational уведомление в Telegram и Email.
+- **Title:** Telegram уведомления о новых заявках
+- **Goal:** После успешного создания новой заявки отправлять внутреннее operational уведомление в Telegram.
 - **Why:** Менеджер должен оперативно получать информацию о новой заявке вне Admin Panel.
 - **Dependencies:** T054.
-- **Allowed scope:** Server-only Telegram Bot API и email provider integration; уведомление только для newly-created order; Preview TEST_ONLY verification; safe provider failure handling.
-- **Forbidden scope:** Payment, Admin Orders, изменение order snapshot, public notification credentials, Production activation, T055.
+- **Allowed scope:** Server-only Telegram Bot API; notification только для newly-created order; Preview TEST_ONLY verification; safe provider failure handling.
+- **Forbidden scope:** Payment, Admin Orders, изменение order snapshot, public notification credentials, Production activation, Email/Resend implementation, T055.
 - **Source of truth:** `docs/ARCHITECTURE.md`; T052–T054 order security/idempotency contract; owner-confirmed order facts; pending legal review T009.
-- **Implementation notes:** Telegram/email только после successful new order insert. Idempotent replay не отправляет повторные уведомления. Ошибка notification provider не отменяет уже созданную заявку. Secrets только server-side env. Preview verification только на synthetic TEST_ONLY данных. Production notifications остаются выключены до Production Content Gate PASS.
-- **Acceptance criteria:** Новый TEST_ONLY order даёт одно Telegram и одно Email notification; replay не создаёт duplicate notifications; failure одного provider не ломает order success; PII не логируется; secrets не попадают в browser; TEST_ONLY cleanup = 0.
-- **Required checks:** provider mocks/harness, Preview live notification test, replay duplicate check, failure isolation, bundle/security check.
+- **Implementation notes:** Telegram только после successful new order insert. Idempotent replay и parallel unique-conflict loser не отправляют повторное сообщение. Ошибка Telegram не отменяет уже созданную заявку. Token только server-side env; bounded timeout. Preview verification только на synthetic TEST_ONLY данных. Production notifications выключены до Production Content Gate PASS. Email/Resend: DEFERRED; может быть добавлен позже отдельной owner-requested task и не является blocker для T054A. Новую email-задачу сейчас не добавлять.
+- **Acceptance criteria:** Новый TEST_ONLY order → одно Telegram notification; replay → duplicate Telegram notifications = 0; Telegram failure не ломает order success; server-verified order snapshot используется; PII не логируется; Telegram secret не попадает в browser; TEST_ONLY cleanup = 0; Production notifications disabled.
+- **Required checks:** Telegram provider mocks/harness, Preview live TEST_ONLY notification test, replay duplicate check, failure isolation, bundle/security check.
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
-- **Suggested commit message:** `task(T054A): Telegram и email уведомления`
+- **Suggested commit message:** `task(T054A): Telegram уведомления о новых заявках`
 
 ### T055 — Order flow integration gate
 
