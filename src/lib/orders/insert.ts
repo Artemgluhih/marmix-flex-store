@@ -5,7 +5,8 @@ import { hashForBytea, sameStoredHash } from "./canonical";
 import { lookupExistingOrder } from "./idempotency";
 import type { PreparedOrder } from "./prepare";
 
-export type InsertOutcome = { status: "created" | "replayed"; id: string } |
+export type InsertOutcome = { status: "created"; id: string; createdAt: string } |
+  { status: "replayed"; id: string } |
   { status: "conflict" } | { status: "unavailable" };
 
 function nullable(value: string): string | null { return value || null; }
@@ -34,8 +35,8 @@ export async function insertPreparedOrder(prepared: PreparedOrder): Promise<Inse
   try {
     const client = createOrderSecretSupabaseClient();
     const { data, error } = await client.from("order_requests")
-      .insert(orderInsertValues(prepared, new Date().toISOString())).select("id").single();
-    if (!error && data?.id) return { status: "created", id: data.id };
+      .insert(orderInsertValues(prepared, new Date().toISOString())).select("id,created_at").single();
+    if (!error && data?.id && data.created_at) return { status: "created", id: data.id, createdAt: data.created_at };
     if (error?.code !== "23505") return { status: "unavailable" };
     // UNIQUE(idempotency_key) is the final guard after two concurrent pre-checks.
     const existing = await lookupExistingOrder(prepared.idempotencyKey);
