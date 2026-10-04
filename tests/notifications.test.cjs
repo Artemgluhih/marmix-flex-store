@@ -109,6 +109,7 @@ async function main() {
   aliases.set("@/lib/orders/prepare", { prepareOrder: () => freshAllowed
     ? { ok: true, value: prepared } : { ok: false } });
   aliases.set("@/lib/orders/preview-gate", { previewOrderAllowed: () => true });
+  aliases.set("@/lib/orders/technical-flow-fixture", { technicalFlowAllowed: () => false });
   aliases.set("@/lib/orders/insert", { insertPreparedOrder: async () => insertStatus === "created"
     ? { status: "created", id, createdAt: created.createdAt } :
       insertStatus === "replayed" ? { status: "replayed", id } : { status: insertStatus } });

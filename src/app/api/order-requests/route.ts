@@ -6,6 +6,7 @@ import { MAX_ORDER_ITEMS } from "@/lib/orders/validate-request";
 import { previewOrderAllowed } from "@/lib/orders/preview-gate";
 import { insertPreparedOrder } from "@/lib/orders/insert";
 import { notifyCreatedOrder } from "@/lib/orders/notifications";
+import { TECHNICAL_FLOW_PRODUCT, technicalFlowAllowed } from "@/lib/orders/technical-flow-fixture";
 
 const RESPONSE_HEADERS = { "Cache-Control": "no-store", "Vary": "Origin" };
 
@@ -73,7 +74,8 @@ export async function POST(request: Request): Promise<Response> {
     : reply(400, "INVALID_REQUEST", "Некорректный JSON.");
   const parsed = validateOrderRequest(body.value);
   if (!parsed.ok) return reply(400, "INVALID_FIELDS", "Проверьте данные запроса.", parsed.fields);
-  if (!previewOrderAllowed(parsed.value)) return reply(403, "SUBMISSION_NOT_AVAILABLE", "Отправка заявки недоступна.");
+  const technicalReview = technicalFlowAllowed(parsed.value);
+  if (!technicalReview && !previewOrderAllowed(parsed.value)) return reply(403, "SUBMISSION_NOT_AVAILABLE", "Отправка заявки недоступна.");
   try {
     // An existing key is compared before fresh price checks: a genuine retry survives later catalog changes.
     const existing = await lookupExistingOrder(parsed.value.idempotencyKey);
@@ -82,7 +84,9 @@ export async function POST(request: Request): Promise<Response> {
       request_id: resolution.id, replayed: true }, { status: 200, headers: RESPONSE_HEADERS });
     if (resolution.status === "conflict") return reply(409, "IDEMPOTENCY_CONFLICT", "Ключ уже использован для другой заявки.");
 
-    const products = await getOrderProductsFreshByIds(parsed.value.items.map((item) => item.productId), MAX_ORDER_ITEMS);
+    // Isolated synthetic Preview fixture; ordinary requests still use fresh guest/RLS reads.
+    const products = technicalReview ? [TECHNICAL_FLOW_PRODUCT]
+      : await getOrderProductsFreshByIds(parsed.value.items.map((item) => item.productId), MAX_ORDER_ITEMS);
     const prepared = prepareOrder(parsed.value, products, resolution.hash);
     if (!prepared.ok) return reply(409, "CART_CHANGED", "Данные корзины изменились. Проверьте актуальные позиции.");
     const outcome = await insertPreparedOrder(prepared.value);
