@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T054A — DONE, T055–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T055 — DONE, T056–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -29,11 +29,13 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 | M3 — Supabase & Admin Auth secured — **PASS** | T022 | T011–T022: схемы, anon/RLS/Storage, закрытый signup, active membership, session/guard, негативные security проверки. |
 | M4 — Admin catalog management operational — **PASS** | T038 | T023–T032, T032A, T033–T038: dashboard, multi-category membership/legacy migration, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
 | M5 — Public catalog operational | T046 | T039–T046: списки/поиск/категории/Product Detail на общих данных, только published, реальные цена/медиа. Подключение add-to-cart является T049 и входит в M6. |
-| M6 — Cart & Order flow operational | T055 | T047–T055: persistence, refresh цен, server validation, idempotency, одна приватная заявка и подтверждение; проверить вместе с M5. |
+| M6 — Cart & Order flow operational — **PASS** | T055 | T047–T055: persistence, refresh цен, server validation, idempotency, одна приватная заявка и подтверждение; проверить вместе с M5. |
 | M7 — Admin order management operational | T059 | T056–T059: статус/заметка в Admin; original snapshot не изменяем через UI и прямой authenticated API; интеграция с M6. |
 | M8 — Production candidate | T074 | T060–T074: информационные страницы, SEO, Метрика, интеграционный QA и readiness; все M1–M7 пройдены, production не запущен. |
 
 **M1 status: PASS.** T001–T003 DONE; lint/typecheck/build PASS, branch HTTPS Preview READY, Prata/Manrope/tokens PASS, owner visual smoke 1440 × 900 и 390 × 844 PASS; ошибочный deployment нового проекта удалён, существующий production не изменён.
+
+**M6 status: PASS.** T047–T055 passed isolated Preview integration; Production Content Gate remains BLOCKED.
 
 **Development Gate: PASS. Production Content Gate: BLOCKED.** T008, T009 и T010 остаются DONE; media blockers = 0. Development Gate разрешает T011+ как техническую Preview работу. Production Content Gate сохраняет пять сгруппированных blockers: **COMMERCIAL (2)** — площадь продаваемого формата для 14 SKU «Гибкая доска»; точные цены/правила вариантов для 20 range-price SKU. **LEGAL (3)** — seller/operator identity и Privacy/consent legal sign-off; returns/claims text и claims contact/legal review; подробные delivery/pickup условия. Это шесть отдельных типов недостающих реальных данных, сгруппированных в пять областей. Не считать их закрытыми от появления тестовых значений. Owner visual review выбранных уникальных медиа обязателен перед production отдельно от этого gate.
 
@@ -1261,7 +1263,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T055
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Order flow integration gate
 - **Goal:** Проверить Product→Cart→Checkout→Confirmation.
 - **Why:** После нескольких TASK нужны проверки стыков.
@@ -1275,6 +1277,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Recommended model:** GPT-6 Sol High
 - **Reasoning level:** High
 - **Additional agent:** NO
+- **Resolution:** Owner order flow verification PASS on READY Preview. Product → Cart → Checkout → Confirmation used an isolated synthetic product and server-verified snapshot: 3 листа, exact 24 196,80 ₽, one private order row per new key. Simulated response loss/retry and idempotent replay returned the same request ID; replay Telegram duplicates 0, owner confirmed Telegram ID/product/quantity/total. Changed price/unit, missing/unavailable and invalid quantity rejected; REAL NULL-availability SKU stayed non-orderable. Public order access remained denied; cart cleared only after successful response. Both T055 TEST_ONLY order rows removed; products/media/categories 0 and browser cart positions 0. Temporary route and isolated API fixture removed; final route 404. Permanent submit and Production notifications remain gated; Production Content Gate BLOCKED. M6 PASS; T056 not started.
 - **Suggested commit message:** task(T055): Order flow integration gate
 
 

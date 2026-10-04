@@ -1,18 +1,13 @@
 "use client";
 
-import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
+import { useRef, useState, type ChangeEvent } from "react";
 import { EMPTY_FORM, FORM_LIMITS, validateField, validateForm, type Field, type FormErrors, type FormValues } from "./form";
 import styles from "./checkout.module.css";
 
 type TechnicalState = "normal" | "validating" | "error";
 
-export function CheckoutForm({ technical = false, technicalState = "normal", technicalInitialValues,
-  onTechnicalSubmit, technicalSubmitting = false, technicalError }: {
-  technical?: boolean; technicalState?: TechnicalState; technicalInitialValues?: FormValues;
-  onTechnicalSubmit?: (values: FormValues) => Promise<void>;
-  technicalSubmitting?: boolean; technicalError?: string;
-}) {
-  const [values, setValues] = useState<FormValues>(technicalInitialValues ?? EMPTY_FORM);
+export function CheckoutForm({ technical = false, technicalState = "normal" }: { technical?: boolean; technicalState?: TechnicalState }) {
+  const [values, setValues] = useState<FormValues>(EMPTY_FORM);
   const [errors, setErrors] = useState<FormErrors>({});
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -21,18 +16,11 @@ export function CheckoutForm({ technical = false, technicalState = "normal", tec
     if (errors[field]) setErrors((current) => ({ ...current, [field]: validateField(field, value) }));
   }
 
-  function checkAll(): boolean {
+  function checkAll() {
     const next = validateForm(values);
     setErrors(next);
     const first = Object.keys(next)[0] as Field | undefined;
     if (first) requestAnimationFrame(() => (formRef.current?.elements.namedItem(first) as HTMLElement | null)?.focus());
-    return !first;
-  }
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!technical || !onTechnicalSubmit || technicalSubmitting || !checkAll()) return;
-    void onTechnicalSubmit(values);
   }
 
   const fields: { field: Field; label: string; type?: string; autocomplete?: string; hint?: string }[] = [
@@ -43,7 +31,7 @@ export function CheckoutForm({ technical = false, technicalState = "normal", tec
     { field: "comment", label: "Комментарий", hint: "Необязательно." },
   ];
 
-  return <form ref={formRef} className={styles.form} noValidate onSubmit={submit} aria-labelledby="contact-title">
+  return <form ref={formRef} className={styles.form} noValidate onSubmit={(event) => event.preventDefault()} aria-labelledby="contact-title">
     <h2 id="contact-title">Контактные данные</h2>
     <p className={styles.formLead}>Заявка — это запрос на расчёт/связь с менеджером. Она не резервирует товар и сама по себе не является подтверждённым заказом или оплатой.</p>
     <div className={styles.fields}>
@@ -72,12 +60,8 @@ export function CheckoutForm({ technical = false, technicalState = "normal", tec
     {technicalState === "error" && <p className={styles.fieldError} role="alert">Не удалось отправить заявку. Техническое отображение будущей ошибки; отправка не выполнялась.</p>}
     <div className={styles.formActions}>
       {technical && <button type="button" className={styles.check} onClick={checkAll}>Проверить поля (технически)</button>}
-      <button type="submit" className={styles.submit} disabled={!technical || !onTechnicalSubmit || technicalSubmitting}
-        aria-describedby="checkout-submit-reason">{technicalSubmitting ? "Отправка…" : technical ? "Отправить TEST_ONLY заявку" : "Отправить заявку"}</button>
+      <button type="submit" className={styles.submit} disabled aria-describedby="checkout-submit-reason">Отправить заявку</button>
     </div>
-    {technicalError && <p className={styles.fieldError} role="alert">{technicalError}</p>}
-    <p id="checkout-submit-reason" className={styles.hint}>{technical
-      ? "Только фиксированные синтетические данные в изолированной Preview проверке. Production legal approval ожидается."
-      : "Отправка недоступна: юридический текст не утверждён."}</p>
+    <p id="checkout-submit-reason" className={styles.hint}>Отправка недоступна в Preview: серверная обработка не подключена, юридический текст не утверждён.</p>
   </form>;
 }

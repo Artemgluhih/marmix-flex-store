@@ -27,14 +27,28 @@ function load(relative) {
   return mod.exports;
 }
 
-const { TECHNICAL_FLOW_PRODUCT: product, TECHNICAL_FLOW_KEYS: keys,
-  TECHNICAL_FLOW_CONTACT: contact, technicalFlowAllowed } = load("src/lib/orders/technical-flow-fixture.ts");
 const { evaluateCommerce, exactTotalMinor } = load("src/lib/catalog/commerce.ts");
 const { currentSnapshot, reconcileLines } = load("src/lib/cart/reconcile.ts");
 const { EMPTY_CART, upsertLine, updateQuantity, removeLine } = load("src/lib/cart/model.ts");
 const { validateOrderRequest } = load("src/lib/orders/validate-request.ts");
 const { prepareOrder } = load("src/lib/orders/prepare.ts");
+const { previewOrderAllowed } = load("src/lib/orders/preview-gate.ts");
 const { validateForm } = load("src/app/(public)/checkout/form.ts");
+
+// Render-free synthetic fixture. This creates no product, order, or media row.
+const product = {
+  id: "d6e6d744-e8e8-4930-9ae9-5263fa558411",
+  sku: "TEST_ONLY-T055", slug: "test-only-t055", name: "Технический образец T055",
+  series: null, priceMinor: 200000, currency: "RUB", priceUnit: "м²",
+  saleUnit: "sheet", minQuantity: 1, quantityStep: 2, areaPerSaleUnitM2: 4.0328,
+  sourcePriceRange: null, availabilityStatus: "in_stock", isFeatured: false,
+  sortOrder: 0, categories: [], primaryImage: null,
+};
+const contact = {
+  name: "Тестовый пользователь", phone: "+7 900 000-00-00",
+  city: "Тестовый город", email: "test@example.test", comment: "Тестовая заявка",
+};
+const key = "82a9dfd6-4e63-46be-8afe-0527896b0451";
 
 const model = evaluateCommerce(product, true);
 assert.equal(model.commercialStatus, "ready");
@@ -68,27 +82,22 @@ function payload(key, changes = {}) {
     items: [{ product_id: product.id, quantity: 3, price_minor: product.priceMinor,
       price_unit: product.priceUnit, sale_unit: product.saleUnit, ...changes }] };
 }
-const parsed = validateOrderRequest(payload(keys.positive));
+const parsed = validateOrderRequest(payload(key));
 assert.equal(parsed.ok, true);
 process.env.VERCEL_ENV = "preview";
-process.env.VERCEL_GIT_COMMIT_REF = "t055-preview-review";
-assert.equal(technicalFlowAllowed(parsed.value), true);
+assert.equal(previewOrderAllowed(parsed.value), true);
 assert.equal(prepareOrder(parsed.value, [product], "a".repeat(64)).value.totalMinor, 2419680);
-for (const [key, changes] of [
-  [keys.changedPrice, { price_minor: 199999 }],
-  [keys.changedUnit, { price_unit: "шт." }],
-  [keys.invalidQuantity, { quantity: 2 }],
+for (const changes of [
+  { price_minor: 199999 },
+  { price_unit: "шт." },
+  { quantity: 2 },
 ]) {
   const request = validateOrderRequest(payload(key, changes));
   assert.equal(request.ok, true);
-  assert.equal(technicalFlowAllowed(request.value), true);
   assert.equal(prepareOrder(request.value, [product], "a".repeat(64)).ok, false);
 }
 assert.equal(prepareOrder(parsed.value, [], "a".repeat(64)).ok, false);
 assert.equal(prepareOrder(parsed.value, [{ ...product, availabilityStatus: null }], "a".repeat(64)).ok, false);
 process.env.VERCEL_ENV = "production";
-assert.equal(technicalFlowAllowed(parsed.value), false);
-process.env.VERCEL_ENV = "preview";
-process.env.VERCEL_GIT_COMMIT_REF = "redesign-v2";
-assert.equal(technicalFlowAllowed(parsed.value), false);
-console.log("T055 isolated cart/form/order boundary: PASS");
+assert.equal(previewOrderAllowed(parsed.value), false);
+console.log("T055 cart/form/order boundary: PASS");

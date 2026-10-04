@@ -6,7 +6,6 @@ import type { CartLine } from "@/lib/cart/model";
 import type { CartRefreshPhase } from "@/lib/cart/useFreshCartProducts";
 import type { PublicProduct } from "@/lib/catalog/types";
 import { CheckoutForm } from "./CheckoutForm";
-import type { FormValues } from "./form";
 import styles from "./checkout.module.css";
 
 type Props = {
@@ -15,10 +14,6 @@ type Props = {
   phase: CartRefreshPhase;
   technical?: boolean;
   technicalFormState?: "normal" | "validating" | "error";
-  technicalInitialValues?: FormValues;
-  onTechnicalSubmit?: (values: FormValues) => Promise<void>;
-  technicalSubmitting?: boolean;
-  technicalError?: string;
 };
 
 function money(minor: number) {
@@ -28,8 +23,7 @@ function money(minor: number) {
   return `${whole}${cents ? `,${cents.toString().padStart(2, "0")}` : ""} ₽`;
 }
 
-export function CheckoutContent({ lines, products, phase, technical, technicalFormState,
-  technicalInitialValues, onTechnicalSubmit, technicalSubmitting, technicalError }: Props) {
+export function CheckoutContent({ lines, products, phase, technical, technicalFormState }: Props) {
   if (phase === "hydrating" || phase === "refreshing") return <div className={styles.state} role="status">
     <h2>Проверяем корзину</h2><p>{phase === "hydrating" ? "Загружаем позиции…" : "Уточняем текущие данные товаров…"}</p>
   </div>;
@@ -51,9 +45,7 @@ export function CheckoutContent({ lines, products, phase, technical, technicalFo
   }
 
   return <div className={styles.layout}>
-    <CheckoutForm technical={technical} technicalState={technicalFormState}
-      technicalInitialValues={technicalInitialValues} onTechnicalSubmit={onTechnicalSubmit}
-      technicalSubmitting={technicalSubmitting} technicalError={technicalError} />
+    <CheckoutForm technical={technical} technicalState={technicalFormState} />
     <aside className={styles.summary} aria-labelledby="checkout-summary-title">
       <h2 id="checkout-summary-title">Состав заявки</h2>
       <p className={styles.summaryLead}>Текущие данные товаров после проверки корзины.</p>

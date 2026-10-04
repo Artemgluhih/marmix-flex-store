@@ -9,7 +9,5 @@ export function previewOrderAllowed(request: ValidatedOrderRequest): boolean {
     request.contact.phone === "+7 900 000-00-00" &&
     (request.contact.city === "" || request.contact.city === "Тестовый город") &&
     (request.contact.email === "" || request.contact.email === "test@example.test") &&
-    (request.contact.comment === "" || request.contact.comment === "Тестовая заявка" ||
-      (process.env.VERCEL_GIT_COMMIT_REF === "t055-preview-review" &&
-        request.contact.comment === "Тестовая интеграционная заявка"));
+    (request.contact.comment === "" || request.contact.comment === "Тестовая заявка");
 }
