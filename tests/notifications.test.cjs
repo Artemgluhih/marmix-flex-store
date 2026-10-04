@@ -104,6 +104,9 @@ async function main() {
   await notification.notifyCreatedOrder(created);
   assert.deepEqual([telegram, email], [4, 4]);
   process.env.VERCEL_ENV = "preview";
+  process.env.ORDER_NOTIFICATIONS_ENABLED = "false";
+  assert.deepEqual(notification.missingPreviewNotificationEnvNames(), ["ORDER_NOTIFICATIONS_ENABLED"]);
+  process.env.ORDER_NOTIFICATIONS_ENABLED = "true";
   delete process.env.RESEND_API_KEY;
   assert.deepEqual(notification.missingPreviewNotificationEnvNames(), ["RESEND_API_KEY"]);
   await notification.notifyCreatedOrder(created);

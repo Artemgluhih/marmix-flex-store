@@ -10,7 +10,8 @@ const CONFIG_NAMES = [
 ] as const;
 
 export function missingPreviewNotificationEnvNames(): string[] {
-  return CONFIG_NAMES.filter((name) => !process.env[name]?.trim());
+  return CONFIG_NAMES.filter((name) => name === "ORDER_NOTIFICATIONS_ENABLED"
+    ? process.env[name] !== "true" : !process.env[name]?.trim());
 }
 
 export async function notifyCreatedOrder(created: CreatedOrderNotification): Promise<void> {
