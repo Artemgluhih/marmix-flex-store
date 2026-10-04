@@ -5,6 +5,7 @@ import { prepareOrder } from "@/lib/orders/prepare";
 import { MAX_ORDER_ITEMS } from "@/lib/orders/validate-request";
 import { previewOrderAllowed } from "@/lib/orders/preview-gate";
 import { insertPreparedOrder } from "@/lib/orders/insert";
+import { notifyCreatedOrder } from "@/lib/orders/notifications";
 
 const RESPONSE_HEADERS = { "Cache-Control": "no-store", "Vary": "Origin" };
 
@@ -87,6 +88,12 @@ export async function POST(request: Request): Promise<Response> {
     const outcome = await insertPreparedOrder(prepared.value);
     if (outcome.status === "conflict") return reply(409, "IDEMPOTENCY_CONFLICT", "Ключ уже использован для другой заявки.");
     if (outcome.status === "unavailable") return reply(503, "SUBMISSION_UNAVAILABLE", "Не удалось отправить заявку. Повторите попытку.");
+    if (outcome.status === "created") {
+      // The committed order is authoritative; external delivery cannot change its outcome.
+      try {
+        await notifyCreatedOrder({ requestId: outcome.id, createdAt: outcome.createdAt, order: prepared.value });
+      } catch { /* Never expose provider failure or turn a committed order into a retry. */ }
+    }
     return Response.json({ submitted: true, request_id: outcome.id,
       ...(outcome.status === "replayed" ? { replayed: true } : {}) },
       { status: outcome.status === "created" ? 201 : 200, headers: RESPONSE_HEADERS });
