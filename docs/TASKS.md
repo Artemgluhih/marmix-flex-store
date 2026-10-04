@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T055 — DONE, T056–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T056 — DONE, T057–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1287,7 +1287,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T056
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Admin orders list
 - **Goal:** Реализовать /admin/orders со статусом и датой.
 - **Why:** Менеджер должен видеть новые обращения сразу.
@@ -1302,6 +1302,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T056): Admin orders list
+
+- **Resolution (2026-10-04):** READY Preview `/admin/orders` uses a server-side `requireAdmin()` guard and request-scoped authenticated cookie/RLS client, selecting only ID/date/status/name/phone. Dynamic no-store read, whitelisted status/date URL parameters, stable bounded pagination, safe empty/no-results/error states and AdminShell link added; no Secret client or status mutation. Four synthetic TEST_ONLY orders (one per status) supported review. Owner visual PASS for list, filters, newest/oldest, invalid params, empty/no-results, active navigation, 1440/390 and 768/1024 sanity, no overflow or console errors. Anon direct SELECT denied; non-admin authenticated RLS SELECT returned zero, and unauthenticated route redirected to login with private/no-store. Exactly four temporary rows were deleted; final Preview `order_requests` count 0. Post-cleanup unauthenticated route smoke and DB empty count PASS; authenticated empty UI was owner-verified before cleanup, while a fresh authenticated browser session was unavailable for post-cleanup capture. Lint/typecheck and Vercel READY build PASS; local build limited only by Google Fonts network. Production unchanged; T056 DONE, T057 not started.
 
 ### T057 — Order detail snapshot
 

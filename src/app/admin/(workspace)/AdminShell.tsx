@@ -11,7 +11,7 @@ const sections = [
   { label: "Обзор", href: "/admin" },
   { label: "Товары", href: "/admin/products" },
   { label: "Категории", href: "/admin/categories" },
-  { label: "Заявки" },
+  { label: "Заявки", href: "/admin/orders" },
 ] as const;
 
 function Brand({ onNavigate }: { onNavigate?: () => void }) {
@@ -29,9 +29,8 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
     <nav aria-label="Разделы панели управления" className={styles.navigation}>
       <span className={styles.navCaption}>Рабочие разделы</span>
       {sections.map((section, index) => {
-        const active = "href" in section &&
-          (section.href === "/admin" ? pathname === "/admin" : pathname.startsWith(section.href));
-        return "href" in section ? (
+        const active = section.href === "/admin" ? pathname === "/admin" : pathname.startsWith(section.href);
+        return (
           <Link
             href={section.href}
             key={section.label}
@@ -42,12 +41,6 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
             <span className={styles.navIndex}>0{index + 1}</span>
             <span>{section.label}</span>
           </Link>
-        ) : (
-          <span className={styles.navPending} key={section.label}>
-            <span className={styles.navIndex}>0{index + 1}</span>
-            <span>{section.label}</span>
-            <span className={styles.pendingLabel}>Скоро</span>
-          </span>
         );
       })}
     </nav>
