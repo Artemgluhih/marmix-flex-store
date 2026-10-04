@@ -121,7 +121,9 @@ export default async function AdminOrdersPage({
           <tbody>
             {orders.map((order) => <tr key={order.id}>
               <td className={styles.requestId}><span className={styles.mobileLabel} aria-hidden="true">Номер заявки</span>
-                <span title={order.id} aria-label={`Заявка ${order.id}`}>№ {order.id.slice(0, 8)}</span></td>
+                <Link href={`/admin/orders/${order.id}`} title={order.id} aria-label={`Открыть заявку ${order.id}`}>
+                  № {order.id.slice(0, 8)}
+                </Link></td>
               <td className={styles.date}><span className={styles.mobileLabel} aria-hidden="true">Дата · Сургут</span>
                 <time dateTime={order.created_at}>{dateFormatter.format(new Date(order.created_at))}</time></td>
               <td><span className={styles.mobileLabel} aria-hidden="true">Статус</span>
