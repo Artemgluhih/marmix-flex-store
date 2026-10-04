@@ -33,7 +33,6 @@ function load(relative) {
 
 const notification = load("src/lib/orders/notifications/index.ts");
 const { formatOrderNotification } = load("src/lib/orders/notifications/format.ts");
-const { emailNotificationIdempotencyKey } = load("src/lib/orders/notifications/email.ts");
 const id = "c1a4321e-8de8-4e1b-82a7-49e756d0021a";
 const prepared = {
   idempotencyKey: "c2a4321e-8de8-4e1b-82a7-49e756d0021a",
@@ -47,71 +46,54 @@ const prepared = {
 };
 const created = { requestId: id, createdAt: "2026-10-03T15:00:00.000Z", order: prepared };
 
-const keys = ["ORDER_NOTIFICATIONS_ENABLED", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID",
-  "RESEND_API_KEY", "ORDER_NOTIFICATION_EMAIL_TO", "ORDER_NOTIFICATION_EMAIL_FROM"];
+const keys = ["ORDER_NOTIFICATIONS_ENABLED", "TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"];
 Object.assign(process.env, {
   VERCEL_ENV: "preview", ORDER_NOTIFICATIONS_ENABLED: "true",
   TELEGRAM_BOT_TOKEN: "synthetic-token", TELEGRAM_CHAT_ID: "-1234",
-  RESEND_API_KEY: "synthetic-key", ORDER_NOTIFICATION_EMAIL_TO: "team@example.test",
-  ORDER_NOTIFICATION_EMAIL_FROM: "sender@example.test",
 });
 const originalFetch = global.fetch;
-let telegram = 0, email = 0, failedTelegram = false, failedEmail = false;
+let telegram = 0, failedTelegram = false;
 global.fetch = async (url, init) => {
   assert.equal(init.method, "POST");
   assert.equal(init.cache, "no-store");
   assert.ok(init.signal);
-  if (String(url).includes("telegram.org")) {
-    telegram++;
-    const payload = JSON.parse(init.body);
-    assert.equal(payload.chat_id, "-1234");
-    assert.match(payload.text, /24\s?196,80 ₽/);
-    assert.equal(payload.text.includes(prepared.requestHash), false);
-    assert.equal(payload.parse_mode, undefined);
-    return Response.json({ ok: !failedTelegram });
-  }
-  assert.equal(url, "https://api.resend.com/emails");
-  email++;
-  assert.equal(init.headers["Idempotency-Key"], "order-created-email/" + id);
-  assert.equal(JSON.parse(init.body).text, formatOrderNotification(created).text);
-  assert.equal(JSON.parse(init.body).html, undefined);
-  return new Response(null, { status: failedEmail ? 503 : 200 });
+  assert.match(String(url), /^https:\/\/api\.telegram\.org\/bot/);
+  telegram++;
+  const payload = JSON.parse(init.body);
+  assert.equal(payload.chat_id, "-1234");
+  assert.match(payload.text, /24\s?196,80 ₽/);
+  assert.equal(payload.text.includes(prepared.requestHash), false);
+  assert.equal(payload.parse_mode, undefined);
+  return Response.json({ ok: !failedTelegram });
 };
 
 async function main() {
   const message = formatOrderNotification(created);
-  assert.equal(message.subject, "Новая заявка Marmix Flex · " + id);
-  assert.match(message.text, /TEST_ONLY-SKU/);
-  assert.match(message.text, /3 лист/);
-  assert.match(message.text, /24\s?196,80 ₽/);
-  assert.equal(message.text.includes(prepared.idempotencyKey), false);
-  assert.equal(message.text.includes(prepared.requestHash), false);
-  assert.equal(emailNotificationIdempotencyKey(id.toUpperCase()),
-    emailNotificationIdempotencyKey(id));
+  assert.match(message, /Новая заявка Marmix Flex/);
+  assert.match(message, /ID заявки: c1a4321e-8de8-4e1b-82a7-49e756d0021a/);
+  assert.match(message, /TEST_ONLY-SKU/);
+  assert.match(message, /3 лист/);
+  assert.match(message, /24\s?196,80 ₽/);
+  assert.equal(message.includes(prepared.idempotencyKey), false);
+  assert.equal(message.includes(prepared.requestHash), false);
   assert.deepEqual(notification.missingPreviewNotificationEnvNames(), []);
   await notification.notifyCreatedOrder(created);
-  assert.deepEqual([telegram, email], [1, 1]);
+  assert.equal(telegram, 1);
   failedTelegram = true;
   await notification.notifyCreatedOrder(created);
-  assert.deepEqual([telegram, email], [2, 2]);
-  failedTelegram = false; failedEmail = true;
-  await notification.notifyCreatedOrder(created);
-  assert.deepEqual([telegram, email], [3, 3]);
-  failedTelegram = true;
-  await notification.notifyCreatedOrder(created);
-  assert.deepEqual([telegram, email], [4, 4]);
+  assert.equal(telegram, 2);
   process.env.VERCEL_ENV = "production";
   await notification.notifyCreatedOrder(created);
-  assert.deepEqual([telegram, email], [4, 4]);
+  assert.equal(telegram, 2);
   process.env.VERCEL_ENV = "preview";
   process.env.ORDER_NOTIFICATIONS_ENABLED = "false";
   assert.deepEqual(notification.missingPreviewNotificationEnvNames(), ["ORDER_NOTIFICATIONS_ENABLED"]);
   process.env.ORDER_NOTIFICATIONS_ENABLED = "true";
-  delete process.env.RESEND_API_KEY;
-  assert.deepEqual(notification.missingPreviewNotificationEnvNames(), ["RESEND_API_KEY"]);
+  delete process.env.TELEGRAM_CHAT_ID;
+  assert.deepEqual(notification.missingPreviewNotificationEnvNames(), ["TELEGRAM_CHAT_ID"]);
   await notification.notifyCreatedOrder(created);
-  assert.deepEqual([telegram, email], [4, 4]);
-  process.env.RESEND_API_KEY = "synthetic-key";
+  assert.equal(telegram, 2);
+  process.env.TELEGRAM_CHAT_ID = "-1234";
 
   let insertStatus = "created", existing = null, freshAllowed = true;
   aliases.set("@/lib/orders/validate-request", {
@@ -137,15 +119,15 @@ async function main() {
       "content-type": "application/json" }, body: JSON.stringify(body),
   }));
   process.env.VERCEL_URL = "preview.vercel.app";
-  failedTelegram = failedEmail = false;
-  telegram = email = 0;
+  failedTelegram = false;
+  telegram = 0;
   assert.equal((await post()).status, 201);
-  assert.deepEqual([telegram, email], [1, 1]);
+  assert.equal(telegram, 1);
   existing = { status: "same", id };
   const replay = await post();
   assert.equal(replay.status, 200);
   assert.equal((await replay.json()).request_id, id);
-  assert.deepEqual([telegram, email], [1, 1]);
+  assert.equal(telegram, 1);
   existing = { status: "conflict" };
   assert.equal((await post()).status, 409);
   existing = null;
@@ -159,18 +141,14 @@ async function main() {
   insertStatus = "unavailable";
   assert.equal((await post()).status, 503);
   assert.equal((await post({ invalid: true })).status, 400);
-  assert.deepEqual([telegram, email], [1, 1]);
+  assert.equal(telegram, 1);
   insertStatus = "created";
   failedTelegram = true;
   assert.equal((await post()).status, 201);
-  failedTelegram = false; failedEmail = true;
-  assert.equal((await post()).status, 201);
-  failedTelegram = true;
-  assert.equal((await post()).status, 201);
-  assert.deepEqual([telegram, email], [4, 4]);
+  assert.equal(telegram, 2);
   for (const name of keys) assert.ok(process.env[name]);
   const clientSource = fs.readFileSync(path.join(root, "src/app/(public)/checkout/CheckoutForm.tsx"), "utf8");
-  assert.equal(/notifications|TELEGRAM_BOT_TOKEN|RESEND_API_KEY/.test(clientSource), false);
-  process.stdout.write("T054A notifications: targeted harness PASS\n");
+  assert.equal(/notifications|TELEGRAM_BOT_TOKEN/.test(clientSource), false);
+  process.stdout.write("T054A Telegram: targeted harness PASS\n");
 }
 main().finally(() => { global.fetch = originalFetch; });

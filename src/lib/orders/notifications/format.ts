@@ -48,8 +48,5 @@ export function formatOrderNotification({ requestId, createdAt, order }: Created
     `Итого: ${rub(order.totalMinor)}`,
     ...(contact.comment ? [`Комментарий: ${oneLine(contact.comment)}`] : []),
   ];
-  return {
-    subject: `Новая заявка Marmix Flex · ${requestId}`,
-    text: lines.join("\n"),
-  };
+  return lines.join("\n");
 }
