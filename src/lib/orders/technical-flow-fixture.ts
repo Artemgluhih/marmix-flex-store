@@ -13,7 +13,7 @@ export const TECHNICAL_FLOW_PRODUCT: PublicProduct = {
 };
 
 export const TECHNICAL_FLOW_KEYS = {
-  positive: "82a9dfd6-4e63-46be-8afe-0527896b0451",
+  positive: "7d1f4811-7cef-40c5-8e20-ae6d5c8e8a88",
   changedPrice: "75fc88ee-2fd5-4e79-a5db-25bf42511ec6",
   changedUnit: "08664c34-2e3f-4d0f-8d13-eb1729d39222",
   invalidQuantity: "21304c0b-67c9-4c27-85e6-88eff70fb65c",
