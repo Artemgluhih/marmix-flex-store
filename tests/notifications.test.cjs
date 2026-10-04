@@ -146,6 +146,24 @@ async function main() {
   failedTelegram = true;
   assert.equal((await post()).status, 201);
   assert.equal(telegram, 2);
+  // Temporary Preview fixture follows the same created-only rule.
+  process.env.VERCEL_GIT_COMMIT_REF = "t054a-preview-review";
+  const { submitTechnicalTelegramReview } =
+    load("src/app/(public)/technical-order-notification-review/actions.ts");
+  existing = null;
+  failedTelegram = false;
+  const technicalCreated = await submitTechnicalTelegramReview();
+  assert.equal(technicalCreated.state, "created");
+  assert.equal(telegram, 3);
+  existing = { status: "same", id };
+  assert.equal((await submitTechnicalTelegramReview()).state, "replayed");
+  assert.equal(telegram, 3);
+  existing = { status: "conflict" };
+  assert.equal((await submitTechnicalTelegramReview()).state, "unavailable");
+  assert.equal(telegram, 3);
+  process.env.VERCEL_ENV = "production";
+  assert.equal((await submitTechnicalTelegramReview()).state, "unavailable");
+  assert.equal(telegram, 3);
   for (const name of keys) assert.ok(process.env[name]);
   const clientSource = fs.readFileSync(path.join(root, "src/app/(public)/checkout/CheckoutForm.tsx"), "utf8");
   assert.equal(/notifications|TELEGRAM_BOT_TOKEN/.test(clientSource), false);
