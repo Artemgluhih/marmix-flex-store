@@ -8,41 +8,66 @@ export const metadata: Metadata = { title: "О Marmix Flex" };
 export default function AboutPage() {
   return (
     <div className={styles.page}>
-      <header className={styles.hero}>
-        <div>
-          <p className={styles.eyebrow}>Бренд / Материал</p>
-          <h1>О Marmix Flex</h1>
+      <header className={styles.aboutHero}>
+        <div className={styles.aboutHeroCopy}>
+          <p className={styles.eyebrow}>О бренде / Marmix Flex</p>
+          <h1>Marmix Flex — декоративные материалы для интерьера</h1>
+          <p>Marmix Flex — бренд декоративных отделочных материалов. В каталоге собраны поверхности с различными фактурами и рисунками, которые можно рассмотреть, сравнить и выбрать для своего пространства.</p>
+          <Link className={styles.inlineLink} href="/catalog">Смотреть каталог <span aria-hidden="true">↗</span></Link>
         </div>
-        <p className={styles.heroLead}>Marmix Flex — бренд декоративных материалов. Здесь выбор начинается с рисунка, фактуры и того, как поверхность воспринимается в пространстве.</p>
+        <figure className={styles.aboutHeroVisual}>
+          <div className={styles.aboutHeroImage}><Image src="/images/showroom/interior-room.webp" alt="Светлая фактурная поверхность в интерьерной визуализации" fill priority sizes="(max-width: 800px) 100vw, 48vw" /></div>
+          <figcaption className={styles.caption}><span>Материал в интерьере</span><span>Интерьерная визуализация</span></figcaption>
+        </figure>
       </header>
 
-      <section className={`${styles.section} ${styles.brandStatement}`} aria-labelledby="material-title">
-        <p className={styles.eyebrow}>Подход к выбору</p>
-        <h2 id="material-title">Материал как часть пространства</h2>
-        <p className={styles.sectionIntro}>В каталоге можно рассмотреть опубликованные материалы и их подтверждённые характеристики. Интерьерные визуализации помогают представить масштаб рисунка, сохраняя различие между образом и конкретным товаром.</p>
+      <section className={`${styles.section} ${styles.aboutIntro}`} aria-labelledby="about-intro-title">
+        <p className={styles.eyebrow}>01 / Знакомство</p>
+        <div><h2 id="about-intro-title">Что такое<br />Marmix Flex</h2><p>Это каталог реальных опубликованных товаров: можно увидеть изображения материалов, сопоставить подтверждённые характеристики и выбрать интересующую поверхность. Заявка передаёт запрос на расчёт и связь с менеджером; после рассмотрения он уточняет детали.</p></div>
       </section>
 
-      <figure className={styles.stage}>
-        <div className={styles.stageImage}>
-          <Image src="/images/showroom/hero-room.webp" alt="Визуализация пространства с выразительной светлой поверхностью" fill sizes="(max-width: 620px) 100vw, 90vw" />
+      <section className={`${styles.section} ${styles.aboutMaterials}`} aria-labelledby="about-materials-title">
+        <div className={styles.sectionHeadingRow}>
+          <div><p className={styles.eyebrow}>02 / Каталог</p><h2 id="about-materials-title">Что представлено</h2></div>
+          <p>Гибкий мрамор, травертин и сопутствующие материалы — подтверждённые группы каталога. Ниже показаны изображения двух реальных опубликованных товаров.</p>
         </div>
-        <figcaption className={styles.caption}><span>Материал в интерьере</span><span>Интерьерная визуализация · не реализованный объект</span></figcaption>
-      </figure>
+        <div className={styles.materialGrid}>
+          <figure><div className={`${styles.materialImage} ${styles.materialImageDark}`}><Image src="/images/editorial/azur.webp" alt="Товарное изображение гибкого мрамора «Азур»" fill sizes="(max-width: 620px) 100vw, 45vw" /></div><figcaption className={styles.caption}><span>Гибкий мрамор · Азур</span><span>Реальный товар</span></figcaption></figure>
+          <figure><div className={`${styles.materialImage} ${styles.materialImageLight}`}><Image src="/images/editorial/travertin.webp" alt="Товарное изображение «Травертин 1»" fill sizes="(max-width: 620px) 100vw, 45vw" /></div><figcaption className={styles.caption}><span>Травертин · Травертин 1</span><span>Реальный товар</span></figcaption></figure>
+        </div>
+        <p className={styles.materialNote}>Сопутствующие материалы также представлены в каталоге. Состав и актуальные данные каждого товара смотрите на его странице.</p>
+      </section>
+
+      <section className={`${styles.section} ${styles.aboutProcess}`} aria-labelledby="about-process-title">
+        <div className={styles.sectionHeadingRow}>
+          <div><p className={styles.eyebrow}>03 / Порядок взаимодействия</p><h2 id="about-process-title">Как происходит работа</h2></div>
+          <p>Заявка помогает обсудить материал и расчёт. Она не резервирует товар и не означает подтверждённую покупку или оплату.</p>
+        </div>
+        <ol className={styles.processList}>
+          <li><span>01</span><div><h3>Вы выбираете материал</h3><p>Смотрите каталог, изображения и подтверждённые характеристики.</p></div></li>
+          <li><span>02</span><div><h3>Отправляете заявку</h3><p>Заявка — это запрос на расчёт и связь с менеджером.</p></div></li>
+          <li><span>03</span><div><h3>Согласовываются условия</h3><p>После рассмотрения заявки менеджер связывается с клиентом и уточняет детали. Условия оплаты согласовываются после рассмотрения заявки.</p></div></li>
+        </ol>
+      </section>
+
+      <section className={`${styles.section} ${styles.aboutSpace}`} aria-labelledby="about-space-title">
+        <div className={styles.aboutSpaceLead}>
+          <figure><div className={styles.aboutSpaceImage}><Image src="/images/showroom/hero-room.webp" alt="Интерьерная визуализация пространства со светлой фактурной поверхностью" fill sizes="(max-width: 800px) 100vw, 60vw" /></div><figcaption className={styles.caption}><span>Материал в интерьере</span><span>Интерьерная визуализация</span></figcaption></figure>
+          <div><p className={styles.eyebrow}>04 / В пространстве</p><h2 id="about-space-title">Marmix Flex<br />в пространстве</h2><p>Интерьерный образ показывает масштаб поверхности, а близкие кадры — характер рисунка. Визуализации и демонстрационные фактуры не являются фотографиями реализованных объектов или конкретных SKU.</p></div>
+        </div>
+        <div className={styles.aboutTextureGrid}>
+          <figure><div className={styles.aboutTextureImage}><Image src="/images/showroom/ivory-vein.webp" alt="Демонстрационная светлая фактура с прожилками крупным планом" fill sizes="(max-width: 620px) 100vw, 46vw" /></div><figcaption className={styles.caption}><span>Фактура крупным планом</span><span>Демонстрационная фактура · не SKU</span></figcaption></figure>
+          <figure><div className={styles.aboutTextureImage}><Image src="/images/showroom/graphite-vein.webp" alt="Демонстрационная тёмная фактура крупным планом" fill sizes="(max-width: 620px) 100vw, 46vw" /></div><figcaption className={styles.caption}><span>Фактура крупным планом</span><span>Демонстрационная фактура · не SKU</span></figcaption></figure>
+        </div>
+      </section>
 
       <section className={`${styles.section} ${styles.cities}`} aria-labelledby="cities-title">
-        <div>
-          <p className={styles.eyebrow}>Подтверждённые города присутствия</p>
-          <h2 id="cities-title">Сургут · Москва</h2>
-        </div>
-        <p className={styles.citiesText}>Marmix Flex представлен в Сургуте и Москве. Здесь указаны города присутствия — без адресов и условий посещения.</p>
+        <div><p className={styles.eyebrow}>05 / География</p><h2 id="cities-title">Сургут · Москва</h2></div>
+        <p className={styles.citiesText}>Marmix Flex представлен в Сургуте и Москве.</p>
       </section>
 
       <section className={styles.closing} aria-labelledby="about-cta">
-        <div>
-          <p className={styles.eyebrow}>Материалы Marmix Flex</p>
-          <h2 id="about-cta">Начните<br />с фактуры</h2>
-          <p>Перейдите к опубликованным товарам и сравните их изображения и подтверждённые данные.</p>
-        </div>
+        <div><p className={styles.eyebrow}>Продолжить выбор</p><h2 id="about-cta">Выберите материал<br />для своего пространства</h2><p>Изображения и подтверждённые сведения о товарах собраны в каталоге.</p></div>
         <Link className={styles.catalogLink} href="/catalog">Перейти в каталог <span aria-hidden="true">↗</span></Link>
       </section>
     </div>

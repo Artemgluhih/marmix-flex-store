@@ -125,6 +125,79 @@
 }
 .citiesText { max-width: 430px; margin: 0; color: var(--color-text-secondary); font-size: 14px; line-height: 1.8; }
 
+.aboutHero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
+  align-items: center;
+  gap: clamp(40px, 6vw, 110px);
+  padding: clamp(90px, 9vw, 142px) var(--wide-gutter) 72px;
+  border-bottom: 1px solid #474239;
+}
+.aboutHeroCopy { min-width: 0; max-width: 700px; }
+.aboutHero h1 { max-width: 710px; margin: 0; font: 400 clamp(42px, 4.4vw, 72px)/1.16 var(--font-display); letter-spacing: -.03em; text-wrap: balance; overflow-wrap: anywhere; }
+.aboutHeroCopy > p:not(.eyebrow) { max-width: 590px; margin: 32px 0 0; color: var(--color-text-secondary); font-size: clamp(14px, 1.15vw, 17px); line-height: 1.8; }
+.inlineLink { display: inline-flex; align-items: center; gap: 22px; margin-top: 34px; padding: 0 0 10px; border-bottom: 1px solid var(--color-gold); color: var(--color-text-primary); font-size: 12px; text-decoration: none; }
+.inlineLink:focus-visible, .catalogLink:focus-visible, .carouselControls button:focus-visible, .carousel:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 4px; }
+.aboutHeroVisual { min-width: 0; margin: 0; }
+.aboutHeroImage, .aboutSpaceImage, .aboutTextureImage, .materialImage { position: relative; overflow: hidden; background: #282522; }
+.aboutHeroImage { aspect-ratio: .93; }
+.aboutHeroImage img, .aboutSpaceImage img, .aboutTextureImage img { object-fit: cover; }
+.aboutHeroImage img { object-position: 56% center; }
+.aboutIntro { display: grid; grid-template-columns: minmax(0, .4fr) minmax(0, 1fr); gap: 50px; border-bottom: 1px solid #34302b; }
+.aboutIntro > div { max-width: 840px; }
+.aboutIntro p:not(.eyebrow), .sectionHeadingRow > p, .aboutSpaceLead > div > p:not(.eyebrow), .editorialInterlude p:not(.eyebrow), .editorialPair p:not(.eyebrow) { max-width: 600px; margin: 27px 0 0; color: var(--color-text-secondary); font-size: 15px; line-height: 1.85; }
+.sectionHeadingRow { display: flex; justify-content: space-between; align-items: end; gap: 60px; margin-bottom: 45px; }
+.sectionHeadingRow > * { min-width: 0; }
+.sectionHeadingRow > p { max-width: 400px; margin-bottom: 4px; }
+.aboutMaterials { background: var(--color-stage); }
+.materialGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+.materialGrid figure, .aboutTextureGrid figure, .aboutSpaceLead figure { min-width: 0; margin: 0; }
+.materialImage { aspect-ratio: 1.35; }
+.materialImage img { object-fit: contain; }
+.materialImageDark { background: #1c1b1a; }
+.materialImageLight { background: #dedbd4; }
+.materialNote { max-width: 580px; margin: 32px 0 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.7; }
+.aboutProcess { border-top: 1px solid #34302b; }
+.processList { list-style: none; margin: 0; padding: 0; border-top: 1px solid #514a40; }
+.processList li { display: grid; grid-template-columns: minmax(70px, .22fr) minmax(0, 1fr); gap: 28px; padding: 27px 0 31px; border-bottom: 1px solid #514a40; }
+.processList li > span { color: var(--color-gold); font-size: 12px; letter-spacing: .12em; }
+.processList h3 { margin: 0; font: 400 clamp(22px, 2vw, 31px)/1.35 var(--font-display); }
+.processList p { max-width: 650px; margin: 9px 0 0; color: var(--color-text-secondary); font-size: 14px; line-height: 1.8; }
+.aboutSpace { background: var(--color-stage); }
+.aboutSpaceLead { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); align-items: center; gap: clamp(40px, 6vw, 100px); }
+.aboutSpaceImage { aspect-ratio: 1.25; }
+.aboutSpaceLead > div { min-width: 0; }
+.aboutSpaceLead > div > p:not(.eyebrow) { max-width: 420px; }
+.aboutTextureGrid { display: grid; grid-template-columns: 1.18fr .82fr; gap: 25px; align-items: start; margin-top: 65px; }
+.aboutTextureGrid figure:last-child { margin-top: 60px; }
+.aboutTextureImage { aspect-ratio: 1.4; }
+.aboutTextureGrid figure:last-child .aboutTextureImage { aspect-ratio: 1.1; }
+
+.editorialInterlude { display: grid; grid-template-columns: minmax(0, .4fr) minmax(0, 1fr); gap: 50px; padding: 95px var(--wide-gutter); border-top: 1px solid #34302b; }
+.editorialInterlude h2, .editorialPair h2, .carouselHeading h2 { margin: 0; font: 400 clamp(36px, 3.8vw, 58px)/1.2 var(--font-display); letter-spacing: -.028em; text-wrap: balance; overflow-wrap: anywhere; }
+.editorialInterlude > div { max-width: 750px; }
+.editorialPair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 10vw, 160px); padding: 110px var(--wide-gutter); border-top: 1px solid #514a40; }
+.editorialPair > div { min-width: 0; padding-top: 24px; border-top: 1px solid #514a40; }
+.carouselSection { padding: 110px var(--wide-gutter) 100px; overflow: hidden; border-top: 1px solid #514a40; background: #1b1916; }
+.carouselHeading { display: flex; justify-content: space-between; align-items: end; gap: 60px; margin-bottom: 45px; }
+.carouselHeading > p { max-width: 400px; margin: 0; color: var(--color-text-secondary); font-size: 14px; line-height: 1.85; }
+.carousel { outline: none; }
+.carouselViewport { display: flex; align-items: start; gap: 20px; width: 100%; overflow: hidden; }
+.carouselFrame { flex: 0 0 79%; min-width: 0; margin: 0; }
+.carouselImage, .carouselPeek { position: relative; overflow: hidden; background: #282522; }
+.carouselImage { aspect-ratio: 1.65; animation: frame-in .28s ease; }
+.carouselImage img, .carouselPeek img { object-fit: cover; }
+.carouselFrame figcaption { margin-top: 15px; color: var(--color-text-secondary); font-size: 11px; letter-spacing: .06em; }
+.carouselPeek { flex: 0 0 25%; aspect-ratio: .82; opacity: .62; }
+.carouselControls { display: flex; justify-content: space-between; align-items: center; max-width: 79%; margin-top: 24px; }
+.carouselCounter { font-size: 12px; font-variant-numeric: tabular-nums; letter-spacing: .13em; }
+.carouselCounter span { padding: 0 10px; color: var(--color-text-quiet); }
+.carouselControls > div { display: flex; gap: 10px; }
+.carouselControls button { width: 48px; height: 48px; border: 1px solid #756a58; border-radius: 0; background: transparent; color: var(--color-text-primary); font-size: 22px; cursor: pointer; }
+.carouselControls button:hover:not(:disabled) { border-color: var(--color-gold); color: var(--color-gold); }
+.carouselControls button:disabled { opacity: .35; cursor: default; }
+@keyframes frame-in { from { opacity: .55; } to { opacity: 1; } }
+
 .closing {
   display: flex;
   justify-content: space-between;
@@ -162,6 +235,12 @@
   .split { gap: 40px; }
   .galleryGrid figure:last-child { margin-top: 40px; }
   .closing { padding: 76px var(--outer-compact) 86px; }
+  .aboutHero { grid-template-columns: 1fr 1fr; gap: 36px; padding: 90px var(--outer-compact) 70px; }
+  .aboutHero h1 { font-size: clamp(38px, 5.3vw, 50px); }
+  .aboutIntro, .editorialInterlude { grid-template-columns: minmax(0, .3fr) minmax(0, 1fr); gap: 28px; }
+  .aboutSpaceLead { gap: 35px; }
+  .carouselSection, .editorialPair { padding: 85px var(--outer-compact); }
+  .carouselHeading { gap: 35px; }
 }
 
 @media (max-width: 620px) {
@@ -185,6 +264,29 @@
   .cities { gap: 24px; }
   .closing { display: block; padding: 70px var(--outer-mobile) 78px; }
   .catalogLink { margin-top: 30px; }
+  .aboutHero { grid-template-columns: 1fr; gap: 40px; padding: 70px var(--outer-mobile) 55px; }
+  .aboutHero h1 { font-size: clamp(37px, 9.2vw, 48px); }
+  .aboutHeroImage { aspect-ratio: 1.18; }
+  .aboutIntro, .editorialInterlude { display: block; }
+  .sectionHeadingRow, .carouselHeading { display: block; }
+  .sectionHeadingRow > p, .carouselHeading > p { margin-top: 25px; }
+  .materialGrid, .aboutSpaceLead, .aboutTextureGrid, .editorialPair { grid-template-columns: 1fr; }
+  .materialGrid { gap: 38px; }
+  .materialImage { aspect-ratio: 1.25; }
+  .processList li { grid-template-columns: 38px minmax(0, 1fr); gap: 15px; }
+  .aboutSpaceLead { gap: 38px; }
+  .aboutSpaceImage { aspect-ratio: 1.15; }
+  .aboutTextureGrid { gap: 35px; margin-top: 45px; }
+  .aboutTextureGrid figure:last-child { margin-top: 0; }
+  .aboutTextureImage, .aboutTextureGrid figure:last-child .aboutTextureImage { aspect-ratio: 1.25; }
+  .editorialInterlude { padding: 75px var(--outer-mobile); }
+  .editorialInterlude > div { margin-top: 15px; }
+  .editorialPair { gap: 55px; padding: 75px var(--outer-mobile); }
+  .carouselSection { padding: 75px var(--outer-mobile); }
+  .carouselFrame { flex-basis: 88%; }
+  .carouselImage { aspect-ratio: .95; }
+  .carouselPeek { flex-basis: 28%; aspect-ratio: .75; }
+  .carouselControls { max-width: 88%; }
 }
 
 @media (max-width: 370px) {
@@ -195,4 +297,5 @@
 @media (prefers-reduced-motion: reduce) {
   .catalogLink { transition: none; }
   .catalogLink:hover { transform: none; }
+  .carouselImage { animation: none; }
 }

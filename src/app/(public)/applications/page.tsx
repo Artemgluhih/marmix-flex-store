@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../editorial.module.css";
+import { ApplicationCarousel } from "./ApplicationCarousel";
 
 export const metadata: Metadata = { title: "Примеры применения — Marmix Flex" };
 
@@ -37,6 +38,11 @@ export default function ApplicationsPage() {
         </div>
       </section>
 
+      <section className={styles.editorialInterlude} aria-labelledby="light-title">
+        <p className={styles.eyebrow}>03 / Восприятие</p>
+        <div><h2 id="light-title">Свет меняет<br />впечатление</h2><p>На большой плоскости рисунок читается целиком. Вблизи становятся заметны линии и переходы. Освещение и соседние предметы меняют то, как мы видим поверхность.</p></div>
+      </section>
+
       <section className={`${styles.section} ${styles.gallerySection}`} aria-labelledby="space-title">
         <div className={styles.galleryHeading}>
           <p className={styles.eyebrow}>Образы материала</p>
@@ -57,6 +63,13 @@ export default function ApplicationsPage() {
             <figcaption className={styles.caption}><span>04 / Рисунок поверхности</span><span>Демонстрационная фактура · не SKU</span></figcaption>
           </figure>
         </div>
+      </section>
+
+      <ApplicationCarousel />
+
+      <section className={styles.editorialPair} aria-label="Как смотреть на фактуру">
+        <div><p className={styles.eyebrow}>06 / Масштаб</p><h2>Рисунок на плоскости</h2><p>Общий кадр помогает увидеть масштаб рисунка рядом с архитектурой пространства.</p></div>
+        <div><p className={styles.eyebrow}>07 / Деталь</p><h2>Фактура рядом</h2><p>Крупный план позволяет рассмотреть поверхность и сопоставить её с цветом и формой окружающих предметов.</p></div>
       </section>
 
       <section className={styles.closing} aria-labelledby="applications-cta">
