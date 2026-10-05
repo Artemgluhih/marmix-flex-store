@@ -5,12 +5,12 @@ import { useState, type KeyboardEvent, type TouchEvent } from "react";
 import styles from "../editorial.module.css";
 
 const frames = [
-  { src: "/images/editorial/application-02.webp", alt: "Тёмная каменная поверхность в светлом интерьере", position: "50% 48%" },
-  { src: "/images/editorial/application-12.webp", alt: "Светлая каменная плоскость в сдержанном интерьере", position: "50% 50%" },
-  { src: "/images/editorial/application-55.webp", alt: "Тёмная каменная плоскость с мягкой подсветкой и зеленью", position: "50% 53%" },
-  { src: "/images/editorial/application-17.webp", alt: "Синяя фактурная плоскость в интерьере с деревянными деталями", position: "50% 50%" },
-  { src: "/images/editorial/application-57.webp", alt: "Крупная светлая каменная плоскость в сдержанном пространстве", position: "50% 50%" },
-  { src: "/images/editorial/application-40.webp", alt: "Каменная поверхность с тёплым рисунком и подсветкой", position: "50% 47%" },
+  { src: "/images/editorial/scene-graphite-bench.webp", alt: "Визуализация тёмной фактурной стены со скульптурной скамьёй", position: "50% 50%" },
+  { src: "/images/editorial/scene-ivory-gallery.webp", alt: "Визуализация светлой фактурной плоскости в тёмной галерее", position: "50% 50%" },
+  { src: "/images/editorial/scene-slate-wall.webp", alt: "Визуализация графитовой стены с боковым светом", position: "50% 50%" },
+  { src: "/images/editorial/scene-charcoal-lounge.webp", alt: "Визуализация интерьера с тёмной каменной плоскостью", position: "50% 50%" },
+  { src: "/images/editorial/scene-warm-gallery.webp", alt: "Визуализация тёплой фактурной стены в архитектурном пространстве", position: "50% 50%" },
+  { src: "/images/editorial/scene-dark-gallery.webp", alt: "Визуализация монументальной тёмной поверхности в галерее", position: "50% 50%" },
 ] as const;
 
 export function ApplicationCarousel() {
@@ -41,13 +41,13 @@ export function ApplicationCarousel() {
     <section className={styles.carouselSection} aria-labelledby="application-carousel-title">
       <div className={styles.carouselHeading}>
         <div><p className={styles.eyebrow}>05 / Визуальные примеры</p><h2 id="application-carousel-title">Поверхность<br />в разных пространствах</h2></div>
-        <p>Подборка из подтверждённого media set. Происхождение кадров смешанное: они показаны как визуальные примеры, без утверждения об авторстве Marmix Flex.</p>
+        <p>Серия архитектурных визуализаций показывает масштаб и настроение фактуры. Это демонстрационные образы, а не фотографии реализованных объектов или изображения конкретных товаров.</p>
       </div>
       <div className={styles.carousel} role="region" aria-roledescription="карусель" aria-label="Визуальные примеры применения" tabIndex={0} onKeyDown={onKeyDown} onTouchStart={(event) => setTouchStart(event.touches[0].clientX)} onTouchEnd={onTouchEnd}>
         <div className={styles.carouselViewport}>
           <figure className={styles.carouselFrame} key={current.src}>
             <div className={styles.carouselImage}><Image src={current.src} alt={current.alt} fill sizes="(max-width: 620px) 88vw, 70vw" style={{ objectPosition: current.position }} /></div>
-            <figcaption>Материал в интерьере · визуальный пример</figcaption>
+            <figcaption>Архитектурная визуализация · не реальный объект и не SKU</figcaption>
           </figure>
           {next && <div className={styles.carouselPeek} aria-hidden="true"><Image src={next.src} alt="" fill sizes="(max-width: 620px) 20vw, 15vw" style={{ objectPosition: next.position }} /></div>}
         </div>

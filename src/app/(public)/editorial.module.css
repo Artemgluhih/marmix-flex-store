@@ -160,7 +160,7 @@
 .materialGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
 .materialGrid figure, .aboutTextureGrid figure, .aboutSpaceLead figure { min-width: 0; margin: 0; }
 .materialImage { aspect-ratio: 1.35; }
-.materialImage img { object-fit: contain; }
+.materialImage img { object-fit: cover; }
 .materialImageDark { background: #1c1b1a; }
 .materialImageLight { background: #dedbd4; }
 .materialNote { max-width: 580px; margin: 32px 0 0; color: var(--color-text-secondary); font-size: 13px; line-height: 1.7; }
