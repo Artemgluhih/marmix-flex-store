@@ -7,9 +7,9 @@ import styles from "../editorial.module.css";
 const frames = [
   { src: "/images/editorial/application-02.webp", alt: "Тёмная каменная поверхность в светлом интерьере", position: "50% 48%" },
   { src: "/images/editorial/application-12.webp", alt: "Светлая каменная плоскость в сдержанном интерьере", position: "50% 50%" },
-  { src: "/images/editorial/application-13.webp", alt: "Крупная каменная стена в интерьере с диваном", position: "50% 53%" },
+  { src: "/images/editorial/application-55.webp", alt: "Тёмная каменная плоскость с мягкой подсветкой и зеленью", position: "50% 53%" },
   { src: "/images/editorial/application-17.webp", alt: "Синяя фактурная плоскость в интерьере с деревянными деталями", position: "50% 50%" },
-  { src: "/images/editorial/application-26.webp", alt: "Выразительная каменная поверхность в светлом интерьере", position: "50% 50%" },
+  { src: "/images/editorial/application-57.webp", alt: "Крупная светлая каменная плоскость в сдержанном пространстве", position: "50% 50%" },
   { src: "/images/editorial/application-40.webp", alt: "Каменная поверхность с тёплым рисунком и подсветкой", position: "50% 47%" },
 ] as const;
 

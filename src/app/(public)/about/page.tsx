@@ -31,7 +31,7 @@ export default function AboutPage() {
           <div className={styles.introAside}><span>В каталоге</span><strong>Гибкий мрамор · Травертин · Сопутствующие материалы</strong></div>
         </div>
         <figure className={styles.aboutIntroVisual}>
-          <div className={styles.introImage}><Image src="/images/editorial/application-13.webp" alt="Крупная каменная поверхность в интерьерной сцене" fill sizes="(max-width: 620px) 100vw, 44vw" /></div>
+          <div className={styles.introImage}><Image src="/images/editorial/application-02.webp" alt="Крупная тёмная каменная поверхность в светлом интерьере" fill sizes="(max-width: 620px) 100vw, 44vw" /></div>
           <figcaption className={styles.caption}><span>Материал в интерьере</span><span>Визуальный пример · авторство объекта не заявлено</span></figcaption>
         </figure>
       </section>
