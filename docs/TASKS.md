@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T058 — DONE, T059–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T059 — DONE, T060–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -30,12 +30,14 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 | M4 — Admin catalog management operational — **PASS** | T038 | T023–T032, T032A, T033–T038: dashboard, multi-category membership/legacy migration, Products/Categories CRUD в рамках разрешений, media upload/primary/delete и проверочный набор подтверждённых SKU через Admin; проверить интеграцию с M3. |
 | M5 — Public catalog operational | T046 | T039–T046: списки/поиск/категории/Product Detail на общих данных, только published, реальные цена/медиа. Подключение add-to-cart является T049 и входит в M6. |
 | M6 — Cart & Order flow operational — **PASS** | T055 | T047–T055: persistence, refresh цен, server validation, idempotency, одна приватная заявка и подтверждение; проверить вместе с M5. |
-| M7 — Admin order management operational | T059 | T056–T059: статус/заметка в Admin; original snapshot не изменяем через UI и прямой authenticated API; интеграция с M6. |
+| M7 — Admin order management operational — **PASS** | T059 | T056–T059: статус/заметка в Admin; original snapshot не изменяем через UI и прямой authenticated API; интеграция с M6. |
 | M8 — Production candidate | T074 | T060–T074: информационные страницы, SEO, Метрика, интеграционный QA и readiness; все M1–M7 пройдены, production не запущен. |
 
 **M1 status: PASS.** T001–T003 DONE; lint/typecheck/build PASS, branch HTTPS Preview READY, Prata/Manrope/tokens PASS, owner visual smoke 1440 × 900 и 390 × 844 PASS; ошибочный deployment нового проекта удалён, существующий production не изменён.
 
 **M6 status: PASS.** T047–T055 passed isolated Preview integration; Production Content Gate remains BLOCKED.
+
+**M7 status: PASS.** T056–T059 passed Admin Orders list/detail/status/note and direct RLS/privacy verification in isolated Preview; original contact and commercial snapshot are immutable. Owner privacy verification PASS. The sole T059 TEST_ONLY order was removed; Production Content Gate remains BLOCKED.
 
 **Development Gate: PASS. Production Content Gate: BLOCKED.** T008, T009 и T010 остаются DONE; media blockers = 0. Development Gate разрешает T011+ как техническую Preview работу. Production Content Gate сохраняет пять сгруппированных blockers: **COMMERCIAL (2)** — площадь продаваемого формата для 14 SKU «Гибкая доска»; точные цены/правила вариантов для 20 range-price SKU. **LEGAL (3)** — seller/operator identity и Privacy/consent legal sign-off; returns/claims text и claims contact/legal review; подробные delivery/pickup условия. Это шесть отдельных типов недостающих реальных данных, сгруппированных в пять областей. Не считать их закрытыми от появления тестовых значений. Owner visual review выбранных уникальных медиа обязателен перед production отдельно от этого gate.
 
@@ -43,7 +45,7 @@ Customer accounts, wishlist, comparison, online payment, advanced CMS, мног�
 
 **TEST_ONLY fixtures:** только отдельный Preview/test набор для targeted schema/cart/order checks, с явной маркировкой `TEST_ONLY`; синтетические price/dimensions/availability/conversion не присваивать реальным SKU. Fixtures не входят в production catalog или production seed. Production seeding реального каталога — только из owner-confirmed fields. Preview legal state — нейтральное `Pending owner/legal approval` либо отсутствие production legal content; никакие фиктивные seller requisites, return policy или consent не допускаются. В Preview flow использовать только синтетические контакты, не реальные заявки.
 
-M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 — PASS после завершения T038: Admin shell/dashboard, Product/Category CRUD, multi-category, media flows и три проверочных REAL SKU интегрированы в Preview. T034 owner browser batch upload PASS и synthetic cleanup = 0; T035 visual PASS; T036 browser delete/orphan retry/cleanup PASS; T037 representative image presentation PASS. T038 сохранённые REAL SKU — только representative subset, не полный launch population. Следующая задача T039, не начата.
+M1–M7 оценивают Preview реализацию с этими ограничениями. Перед production readiness/deployment обязателен **PASS Production Content Gate**, согласованные legal тексты и owner visual sign-off; текущий gate запрещает запуск. M8 — оценка кандидата после QA, не деплой. T032 исторически DONE; T032A завершает multi-category переход в Phase 6. M4 — PASS после завершения T038: Admin shell/dashboard, Product/Category CRUD, multi-category, media flows и три проверочных REAL SKU интегрированы в Preview. T034 owner browser batch upload PASS и synthetic cleanup = 0; T035 visual PASS; T036 browser delete/orphan retry/cleanup PASS; T037 representative image presentation PASS. T038 сохранённые REAL SKU — только representative subset, не полный launch population. T039–T059 завершены; следующая задача T060, не начата.
 
 ## PHASE 0 — Project Foundation
 
@@ -1353,7 +1355,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T059
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Orders privacy gate
 - **Goal:** Проверить прямой API и полный управленческий сценарий.
 - **Why:** PII и commercial snapshot — критическая граница.
@@ -1369,6 +1371,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T059): Orders privacy gate
 
+- **Resolution (2026-10-05):** READY Preview owner privacy verification PASS: active Admin list/detail, status/note changes, note only in Admin detail, logout denial, no private render after logout, re-login, 1440/390 and no overflow. `requireAdmin()` guards list/detail separately; mutations call `requireAdminMutation()` and use authenticated cookie/JWT/RLS client, with no Secret client in Admin. Direct anon Data API SELECT/INSERT/UPDATE/DELETE returned 401/42501 before and after cleanup; non-admin SELECT 0 rows and UPDATE 0 affected; inactive membership likewise 0/0 in a rollback test. Active Admin SELECT and status/note UPDATE succeeded in rollback checks; table-level UPDATE and DELETE are denied, and all 13 contact/commercial/identity/timestamp columns lack UPDATE privilege. The DB trigger rejected privileged snapshot/contact/total changes; a status/note rollback update preserved the full stored row except status/note and DB-managed `updated_at`. Public POST created/replay response is limited to `submitted`, safe `request_id`, optional `replayed`; the extra early-replay `validated` field was removed. Live 409 conflict exposed no old request ID or PII. Public/checkout/catalog HTML and client asset scan, Telegram formatter, sampled Preview runtime logs and owner browser network/console showed 0 private note, PII or server secret leaks. Admin unauthenticated responses were `private, no-store` with login redirect; owner verified logout closed detail and re-login restored access. One synthetic T059 order was deleted by exact ID and marker; final `order_requests`/TEST_ONLY count 0. An isolated authorized server render reached the removed detail 404 and empty list branches; a direct authenticated post-cleanup HTTP capture was unavailable in the agent browser. Targeted privacy/actions/integration harness, lint/typecheck and READY Vercel build PASS. Supabase schema/RLS and Production unchanged. M7 PASS; Production Content Gate BLOCKED; T060 not started.
 
 ## PHASE 13 — Information Pages
 

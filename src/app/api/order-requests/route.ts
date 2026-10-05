@@ -78,7 +78,7 @@ export async function POST(request: Request): Promise<Response> {
     // An existing key is compared before fresh price checks: a genuine retry survives later catalog changes.
     const existing = await lookupExistingOrder(parsed.value.idempotencyKey);
     const resolution = resolveIdempotency(parsed.value, existing);
-    if (resolution.status === "same") return Response.json({ validated: true, submitted: true,
+    if (resolution.status === "same") return Response.json({ submitted: true,
       request_id: resolution.id, replayed: true }, { status: 200, headers: RESPONSE_HEADERS });
     if (resolution.status === "conflict") return reply(409, "IDEMPOTENCY_CONFLICT", "Ключ уже использован для другой заявки.");
 
