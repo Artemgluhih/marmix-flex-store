@@ -5,12 +5,12 @@ import { useState, type KeyboardEvent, type TouchEvent } from "react";
 import styles from "../editorial.module.css";
 
 const frames = [
-  { src: "/images/editorial/application-02.webp", alt: "Тёмная фактурная поверхность в светлом интерьере", position: "50% 50%" },
-  { src: "/images/editorial/application-03.webp", alt: "Зелёная фактурная поверхность в пространстве", position: "50% 50%" },
-  { src: "/images/editorial/application-04.webp", alt: "Светлая поверхность с мягким рисунком в интерьере", position: "50% 50%" },
-  { src: "/images/editorial/application-05.webp", alt: "Светлая фактура на большой плоскости", position: "50% 50%" },
-  { src: "/images/editorial/application-07.webp", alt: "Контрастная фактура на стене в интерьере", position: "50% 50%" },
-  { src: "/images/editorial/application-09.webp", alt: "Бирюзовая фактурная плоскость в пространстве", position: "50% 50%" },
+  { src: "/images/editorial/application-02.webp", alt: "Тёмная каменная поверхность в светлом интерьере", position: "50% 48%" },
+  { src: "/images/editorial/application-12.webp", alt: "Светлая каменная плоскость в сдержанном интерьере", position: "50% 50%" },
+  { src: "/images/editorial/application-13.webp", alt: "Крупная каменная стена в интерьере с диваном", position: "50% 53%" },
+  { src: "/images/editorial/application-17.webp", alt: "Синяя фактурная плоскость в интерьере с деревянными деталями", position: "50% 50%" },
+  { src: "/images/editorial/application-26.webp", alt: "Выразительная каменная поверхность в светлом интерьере", position: "50% 50%" },
+  { src: "/images/editorial/application-40.webp", alt: "Каменная поверхность с тёплым рисунком и подсветкой", position: "50% 47%" },
 ] as const;
 
 export function ApplicationCarousel() {

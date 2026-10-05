@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../editorial.module.css";
+import { EditorialContact } from "../EditorialContact";
 import { ApplicationCarousel } from "./ApplicationCarousel";
 
 export const metadata: Metadata = { title: "Примеры применения — Marmix Flex" };
@@ -39,8 +40,12 @@ export default function ApplicationsPage() {
       </section>
 
       <section className={styles.editorialInterlude} aria-labelledby="light-title">
-        <p className={styles.eyebrow}>03 / Восприятие</p>
-        <div><h2 id="light-title">Свет меняет<br />впечатление</h2><p>На большой плоскости рисунок читается целиком. Вблизи становятся заметны линии и переходы. Освещение и соседние предметы меняют то, как мы видим поверхность.</p></div>
+        <div className={styles.lightCopy}>
+          <p className={styles.eyebrow}>03 / Восприятие</p>
+          <h2 id="light-title">Свет меняет<br />впечатление</h2>
+          <p>На большой плоскости рисунок воспринимается целиком; с другого расстояния становятся заметны линии и переходы. Свет и соседние предметы меняют визуальный ритм поверхности — поэтому полезно смотреть и на интерьерный кадр, и на фактуру вблизи.</p>
+        </div>
+        <figure className={styles.lightVisual}><div className={styles.lightImage}><Image src="/images/editorial/application-05.webp" alt="Светлая каменная поверхность рядом с окном" fill sizes="(max-width: 620px) 100vw, 53vw" /></div><figcaption className={styles.caption}><span>Поверхность и свет</span><span>Визуальный пример · без заявления об авторстве</span></figcaption></figure>
       </section>
 
       <section className={`${styles.section} ${styles.gallerySection}`} aria-labelledby="space-title">
@@ -68,9 +73,10 @@ export default function ApplicationsPage() {
       <ApplicationCarousel />
 
       <section className={styles.editorialPair} aria-label="Как смотреть на фактуру">
-        <div><p className={styles.eyebrow}>06 / Масштаб</p><h2>Рисунок на плоскости</h2><p>Общий кадр помогает увидеть масштаб рисунка рядом с архитектурой пространства.</p></div>
-        <div><p className={styles.eyebrow}>07 / Деталь</p><h2>Фактура рядом</h2><p>Крупный план позволяет рассмотреть поверхность и сопоставить её с цветом и формой окружающих предметов.</p></div>
+        <figure className={styles.editorialFigure}><div className={styles.editorialFigureImage}><Image src="/images/editorial/application-26.webp" alt="Каменная поверхность в общем интерьерном кадре" fill sizes="(max-width: 620px) 100vw, 49vw" /></div><figcaption><p className={styles.eyebrow}>06 / Масштаб</p><h2>Рисунок на плоскости</h2><p>На общем плане видны пропорции поверхности и рисунок рядом с архитектурой, мебелью и светом. Так проще оценить, какое место фактура занимает в пространстве.</p><span>Интерьерный визуальный пример · авторство объекта не заявлено</span></figcaption></figure>
+        <figure className={styles.editorialFigure}><div className={styles.editorialFigureImage}><Image src="/images/editorial/application-07.webp" alt="Крупный план светлой фактурной поверхности" fill sizes="(max-width: 620px) 100vw, 39vw" /></div><figcaption><p className={styles.eyebrow}>07 / Деталь</p><h2>Фактура рядом</h2><p>При близком взгляде линии и переходы читаются отдельно от общей композиции. Сопоставьте деталь с интерьерным кадром, чтобы увидеть разницу в масштабе рисунка.</p><span>Визуальный пример фактуры · без заявления об авторстве</span></figcaption></figure>
       </section>
+      <EditorialContact id="applications-contacts-title" />
 
       <section className={styles.closing} aria-labelledby="applications-cta">
         <div>

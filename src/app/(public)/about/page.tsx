@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../editorial.module.css";
+import { EditorialContact } from "../EditorialContact";
 
 export const metadata: Metadata = { title: "О Marmix Flex" };
 
@@ -22,8 +23,17 @@ export default function AboutPage() {
       </header>
 
       <section className={`${styles.section} ${styles.aboutIntro}`} aria-labelledby="about-intro-title">
-        <p className={styles.eyebrow}>01 / Знакомство</p>
-        <div><h2 id="about-intro-title">Что такое<br />Marmix Flex</h2><p>Это каталог реальных опубликованных товаров: можно увидеть изображения материалов, сопоставить подтверждённые характеристики и выбрать интересующую поверхность. Заявка передаёт запрос на расчёт и связь с менеджером; после рассмотрения он уточняет детали.</p></div>
+        <div className={styles.aboutIntroCopy}>
+          <p className={styles.eyebrow}>01 / Знакомство</p>
+          <h2 id="about-intro-title">Что такое<br />Marmix Flex</h2>
+          <p>Marmix Flex — бренд декоративных отделочных материалов. В каталоге представлены реальные опубликованные товары: изображения и подтверждённые характеристики помогают сравнить поверхности и выбрать материал для своего пространства.</p>
+          <p>Вы можете отправить заявку на расчёт. После её рассмотрения менеджер связывается с вами и уточняет детали. Заявка сама по себе не подтверждает покупку и не резервирует товар.</p>
+          <div className={styles.introAside}><span>В каталоге</span><strong>Гибкий мрамор · Травертин · Сопутствующие материалы</strong></div>
+        </div>
+        <figure className={styles.aboutIntroVisual}>
+          <div className={styles.introImage}><Image src="/images/editorial/application-13.webp" alt="Крупная каменная поверхность в интерьерной сцене" fill sizes="(max-width: 620px) 100vw, 44vw" /></div>
+          <figcaption className={styles.caption}><span>Материал в интерьере</span><span>Визуальный пример · авторство объекта не заявлено</span></figcaption>
+        </figure>
       </section>
 
       <section className={`${styles.section} ${styles.aboutMaterials}`} aria-labelledby="about-materials-title">
@@ -61,15 +71,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className={`${styles.section} ${styles.cities}`} aria-labelledby="cities-title">
-        <div><p className={styles.eyebrow}>05 / География</p><h2 id="cities-title">Сургут · Москва</h2></div>
-        <p className={styles.citiesText}>Marmix Flex представлен в Сургуте и Москве.</p>
-      </section>
-
       <section className={styles.closing} aria-labelledby="about-cta">
         <div><p className={styles.eyebrow}>Продолжить выбор</p><h2 id="about-cta">Выберите материал<br />для своего пространства</h2><p>Изображения и подтверждённые сведения о товарах собраны в каталоге.</p></div>
         <Link className={styles.catalogLink} href="/catalog">Перейти в каталог <span aria-hidden="true">↗</span></Link>
       </section>
+      <EditorialContact id="about-contacts-title" />
     </div>
   );
 }
