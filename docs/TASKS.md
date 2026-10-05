@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T057 — DONE, T058–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T058 — DONE, T059–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1331,7 +1331,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T058
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Status и internal note
 - **Goal:** Добавить операционное изменение статуса и приватной заметки.
 - **Why:** Заказ проходит new→in_progress→completed/cancelled.
@@ -1346,6 +1346,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T058): Status и internal note
+
+- **Resolution (2026-10-05):** Owner visual verification PASS on READY Preview for the four permitted transitions (`new→in_progress`, `new→cancelled`, `in_progress→completed`, `in_progress→cancelled`), terminal controls, list/detail refresh, private note save/edit/clear, conflict/error UX, 1440/390, no horizontal overflow and clean console. Separate guarded Server Actions use `requireAdminMutation()`, authenticated cookie/RLS client, strict status/UUID/note validation, status+`updated_at` optimistic compare and only status or `internal_note` update payload; same-status is a checked no-op. `updated_at` is DB-managed. A rollback verification after owner review showed unchanged immutable snapshot, total, contacts and order identity while DB timestamp advanced. Authenticated column privileges allow status/note only; direct commercial/contact UPDATE and anon UPDATE denied, non-admin UPDATE affected zero rows. Internal note is limited to Admin detail and is absent from public order response and Telegram notification. The two synthetic T058 TEST_ONLY orders were deleted by exact IDs after PASS; fresh Preview count for all `order_requests`, TEST_ONLY orders and removed detail IDs is 0. Post-cleanup isolated server render reached the removed-ID 404 and empty list branches; a fresh authenticated browser cookie was unavailable for direct HTTP capture. Targeted actions harness, lint and typecheck PASS; review Vercel build READY. No Secret client or Supabase schema/RLS change. Production unchanged; T058 DONE, T059 not started.
 
 ### T059 — Orders privacy gate
 

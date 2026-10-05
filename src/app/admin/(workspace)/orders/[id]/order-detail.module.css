@@ -36,6 +36,26 @@
 .warning { margin: 18px 0 0; }
 .integrity h2 { color: var(--color-text-primary); margin-bottom: 8px; }
 .integrity p { margin: 0; }
+.management { border-top: 1px solid var(--color-border-warm); margin-top: 48px; padding-top: 26px; }
+.management h2 { margin: 0 0 23px; font-size: 21px; font-weight: 600; }
+.managementGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 40px; }
+.operation { min-width: 0; }
+.operation h3 { margin: 0 0 9px; font-size: 16px; font-weight: 600; }
+.current, .hint, .terminal { margin: 0 0 19px; color: var(--color-text-secondary); font-size: 12px; line-height: 1.6; }
+.operation form { display: flex; flex-direction: column; align-items: flex-start; gap: 11px; }
+.operation label { color: var(--color-text-secondary); font-size: 12px; font-weight: 600; }
+.operation select, .operation textarea { width: 100%; max-width: 520px; border: 1px solid var(--color-border-warm); border-radius: 0; background: var(--color-graphite); color: var(--color-text-primary); font: inherit; font-size: 13px; }
+.operation select { min-height: 44px; padding: 9px 12px; }
+.operation textarea { min-height: 132px; padding: 12px; line-height: 1.5; resize: vertical; }
+.operation select:focus-visible, .operation textarea:focus-visible, .save:focus-visible, .reload:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.save { min-height: 42px; padding: 10px 18px; border: 1px solid var(--color-gold); border-radius: 0; background: transparent; color: var(--color-gold-hover); font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; }
+.save:hover:not(:disabled) { background: var(--color-graphite); }
+.save:disabled { opacity: .55; cursor: wait; }
+.feedback, .success { margin: 6px 0 0; color: var(--color-text-secondary); font-size: 12px; line-height: 1.6; }
+.feedback { color: var(--color-gold-hover); }
+.reload { color: inherit; text-underline-offset: 3px; }
+.success { margin: -6px 0 24px; }
+@media (max-width: 760px) { .managementGrid { grid-template-columns: minmax(0, 1fr); gap: 34px; } }
 @media (max-width: 920px) {
   .tableFrame { border: 0; background: transparent; }
   .tableFrame table, .tableFrame tbody { display: block; width: 100%; }

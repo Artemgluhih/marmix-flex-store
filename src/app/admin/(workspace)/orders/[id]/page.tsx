@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 
 import { requireAdmin } from "@/lib/admin/require-admin";
 import { ORDER_STATUSES, STATUS_LABELS, type OrderStatus } from "../orders-list";
+import { OrderControls } from "./order-controls";
 import { displaySaleUnit, formatStoredRub, parseOrderSnapshot, validMinor, validOrderId } from "./snapshot";
 import styles from "./order-detail.module.css";
 
@@ -29,7 +30,7 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   if (!validOrderId(id)) notFound();
 
   const { data: order, error } = await supabase.from("order_requests")
-    .select("id,created_at,status,name,phone,city,email,comment,items_snapshot,total_minor,currency")
+    .select("id,created_at,updated_at,status,name,phone,city,email,comment,items_snapshot,total_minor,currency,internal_note")
     .eq("id", id).maybeSingle();
   if (error) throw new Error("Не удалось загрузить заявку.");
   if (!order) notFound();
@@ -87,5 +88,8 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
         <p className={styles.currency}>Валюта: {order.currency}</p>
       </section>
     </>}
+    {status && typeof order.updated_at === "string" &&
+      <OrderControls id={order.id} status={status} updatedAt={order.updated_at}
+        note={order.internal_note} />}
   </div>;
 }
