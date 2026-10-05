@@ -51,7 +51,7 @@ export function OrderControls({ id, status, updatedAt, note }: Props) {
           </select>
           <Submit>Изменить статус</Submit>
           <Feedback result={statusResult} />
-        </form> : <p className={styles.terminal}>Заявка завершена. Дальнейшие переходы статуса недоступны.</p>}
+        </form> : <p className={styles.terminal}>Дальнейшие переходы статуса недоступны.</p>}
       </div>
       <div className={styles.operation}>
         <h3>Внутренняя заметка</h3>
