@@ -5,6 +5,12 @@ const ts = require("typescript");
 
 const root = path.resolve(__dirname, "../src");
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
+function loadPure(file) {
+  const code = ts.transpileModule(read(file), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  const moduleRef = { exports: {} };
+  new Function("require", "module", "exports", code)(require, moduleRef, moduleRef.exports);
+  return moduleRef.exports;
+}
 const orderId = "d0590000-0000-4059-8059-000000000001";
 const contact = { name: "TEST_ONLY name", phone: "+7 900 000-00-00", city: "TEST_ONLY city", email: "test@example.test", comment: "TEST_ONLY comment" };
 const snapshot = [{ productId: "d0590000-0000-4059-8059-000000000003", sku: "TEST_ONLY-SKU", name: "TEST_ONLY product", quantity: 3, saleUnit: "sheet", priceMinor: 200000, priceUnit: "м²", lineTotalMinor: 2419680 }];
@@ -101,5 +107,18 @@ const safe = (body) => {
   assert.doesNotMatch(notify, /internal_note|request_hash|idempotency_key|console\./);
   assert.match(actions, /\.update\(\{ status: next \}\)/);
   assert.match(actions, /\.update\(\{ internal_note: note \}\)/);
+  const { parseOrderListParams } = loadPure("app/admin/(workspace)/orders/orders-list.ts");
+  assert.deepEqual(parseOrderListParams({ status: "in_progress", sort: "oldest", page: "2" }),
+    { status: "in_progress", sort: "oldest", page: 2 });
+  assert.deepEqual(parseOrderListParams({ status: "injected", sort: "other", page: "-1" }),
+    { status: "", sort: "newest", page: 1 });
+  const { validOrderId, parseOrderSnapshot } = loadPure("app/admin/(workspace)/orders/[id]/snapshot.ts");
+  assert.equal(validOrderId(orderId), true);
+  assert.equal(validOrderId("not-an-id"), false);
+  assert.equal(parseOrderSnapshot([{
+    product_id: snapshot[0].productId, sku: snapshot[0].sku, name: snapshot[0].name,
+    quantity: 3, sale_unit: "sheet", price_minor: 200000, price_unit: "м²", line_total_minor: 2419680,
+  }])[0].lineTotalMinor, 2419680);
+  assert.equal(parseOrderSnapshot([{ name: "malformed" }]), null);
   console.log("T059 public response and Orders privacy boundary: PASS");
 })().catch((error) => { console.error(error); process.exitCode = 1; });
