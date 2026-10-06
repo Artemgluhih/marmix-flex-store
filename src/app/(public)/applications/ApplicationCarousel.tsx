@@ -17,10 +17,10 @@ export function ApplicationCarousel() {
   const [index, setIndex] = useState(0);
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const current = frames[index];
-  const next = frames[index + 1];
+  const next = frames[(index + 1) % frames.length];
 
   function move(delta: number) {
-    setIndex((value) => Math.max(0, Math.min(frames.length - 1, value + delta)));
+    setIndex((value) => (value + delta + frames.length) % frames.length);
   }
 
   function onKeyDown(event: KeyboardEvent<HTMLElement>) {
@@ -53,7 +53,7 @@ export function ApplicationCarousel() {
         </div>
         <div className={styles.carouselControls}>
           <span className={styles.carouselCounter} aria-live="polite" aria-atomic="true">{String(index + 1).padStart(2, "0")} <span>/</span> {String(frames.length).padStart(2, "0")}</span>
-          <div><button type="button" aria-label="Предыдущее изображение" onClick={() => move(-1)} disabled={index === 0}>←</button><button type="button" aria-label="Следующее изображение" onClick={() => move(1)} disabled={index === frames.length - 1}>→</button></div>
+          <div><button type="button" aria-label="Предыдущее изображение" onClick={() => move(-1)}>←</button><button type="button" aria-label="Следующее изображение" onClick={() => move(1)}>→</button></div>
         </div>
       </div>
     </section>
