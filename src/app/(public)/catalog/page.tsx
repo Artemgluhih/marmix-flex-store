@@ -36,7 +36,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
         <h1 id="catalog-title">Каталог</h1>
       </header>
       <CatalogControls params={params} facets={facets} total={total} />
-      <ProductGrid products={products} emptyMessage={trulyEmpty ? undefined : emptyMessage} emptyKind={trulyEmpty ? "catalog" : "results"} />
+      <ProductGrid products={products} linkToDetail emptyMessage={trulyEmpty ? undefined : emptyMessage} emptyKind={trulyEmpty ? "catalog" : "results"} />
       <CatalogPagination params={params} total={total} pageSize={pageSize} />
     </section>
   );

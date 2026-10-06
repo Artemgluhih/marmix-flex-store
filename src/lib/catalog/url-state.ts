@@ -10,14 +10,14 @@ export function priceInput(minor: number | null): string {
 export function catalogHref(params: CatalogListParams, page = 1): string {
   const url = new URLSearchParams();
   if (params.q) url.set("q", params.q);
-  if (params.categorySlug) url.set("category", params.categorySlug);
   if (params.priceMinMinor !== null) url.set("price_min", priceInput(params.priceMinMinor));
   if (params.priceMaxMinor !== null) url.set("price_max", priceInput(params.priceMaxMinor));
   if (params.status) url.set("status", params.status);
   if (params.sort !== "order") url.set("sort", params.sort);
   if (page > 1) url.set("page", String(page));
   const query = url.toString();
-  return query ? `/catalog?${query}` : "/catalog";
+  const path = params.categorySlug ? `/catalog/${params.categorySlug}` : "/catalog";
+  return query ? `${path}?${query}` : path;
 }
 
 export function hasActiveCatalogParams(params: CatalogListParams): boolean {

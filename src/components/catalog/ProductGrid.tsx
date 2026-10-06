@@ -33,6 +33,8 @@ export function ProductGrid({ products, emptyMessage, emptyKind = "catalog", lin
         return (
         <article className={styles.card} key={product.id}>
           <div className={styles.imageFrame}>
+            {linkToDetail && <Link className={styles.imageLink} href={`/product/${product.slug}`}
+              aria-label={`Подробнее о материале «${product.name}»`} />}
             {product.primaryImage ? (
               <Image
                 src={product.primaryImage.url}
@@ -56,6 +58,8 @@ export function ProductGrid({ products, emptyMessage, emptyKind = "catalog", lin
               <Price product={product} />
               {product.saleUnit === "sheet" && <span className={styles.saleUnit}>Продажа листами</span>}
             </div>
+            {linkToDetail && <Link className={styles.detailLink} href={`/product/${product.slug}`}
+              aria-label={`Подробнее о материале «${product.name}»`}>Подробнее <span aria-hidden="true">→</span></Link>}
           </div>
         </article>
       ); })}

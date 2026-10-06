@@ -3,6 +3,8 @@ import type { CatalogFacets } from "@/lib/catalog/types";
 import type { CatalogListParams } from "@/lib/catalog/query-params";
 import { hasActiveCatalogParams, priceInput } from "@/lib/catalog/url-state";
 import styles from "./CatalogControls.module.css";
+import { CatalogSort } from "./CatalogSort";
+import { CategoryNavigation } from "./CategoryNavigation";
 
 const statusLabels: Record<NonNullable<CatalogListParams["status"]>, string> = {
   in_stock: "В наличии",
@@ -14,11 +16,14 @@ export function CatalogControls({ params, facets, total }: {
 }) {
   const statuses = facets.availabilityStatuses.filter((value): value is keyof typeof statusLabels => value in statusLabels);
   const categoryName = facets.categories.find((item) => item.slug === params.categorySlug)?.name;
-  const active = hasActiveCatalogParams(params) || params.page > 1;
+  const active = hasActiveCatalogParams({ ...params, categorySlug: null }) || params.page > 1;
+  const path = params.categorySlug && categoryName ? `/catalog/${params.categorySlug}` : "/catalog";
 
   return (
     <div className={styles.controls}>
-      <form className={styles.form} method="get" action="/catalog" role="search">
+      <CategoryNavigation categories={facets.categories} params={{ ...params,
+        status: params.status && statuses.includes(params.status) ? params.status : null }} />
+      <form key={JSON.stringify(params)} className={styles.form} method="get" action={path} role="search">
         <div className={styles.searchRow}>
           <label className={styles.field}>
             <span>Поиск по названию или артикулу</span>
@@ -27,15 +32,6 @@ export function CatalogControls({ params, facets, total }: {
           <button className={styles.submit} type="submit">Показать</button>
         </div>
         <div className={styles.filterRow}>
-          {facets.categories.length > 0 && (
-            <label className={styles.field}>
-              <span>Категория</span>
-              <select name="category" defaultValue={categoryName ? params.categorySlug ?? "" : ""}>
-                <option value="">Все товары</option>
-                {facets.categories.map((category) => <option key={category.id} value={category.slug}>{category.name}</option>)}
-              </select>
-            </label>
-          )}
           {facets.fixedPriceMinor && (
             <>
               <label className={styles.field}>
@@ -59,17 +55,13 @@ export function CatalogControls({ params, facets, total }: {
           )}
           <label className={styles.field}>
             <span>Сортировка</span>
-            <select name="sort" defaultValue={params.sort}>
-              <option value="order">По умолчанию</option>
-              <option value="price_asc">Цена: по возрастанию</option>
-              <option value="price_desc">Цена: по убыванию</option>
-            </select>
+            <CatalogSort value={params.sort} />
           </label>
         </div>
       </form>
       <div className={styles.summary}>
         <p>Материалов: {total}</p>
-        {active && <Link href="/catalog">Сбросить</Link>}
+        {active && <Link href={path}>Сбросить</Link>}
       </div>
       {active && (
         <div className={styles.active} aria-label="Активные параметры">

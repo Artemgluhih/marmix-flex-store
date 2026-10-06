@@ -5,7 +5,7 @@ import { CatalogFragment } from "./CatalogFragment";
 import { MotionReveal } from "./MotionReveal";
 import styles from "./page.module.css";
 import fragments from "./homeFragments.module.css";
-import { listPublishedFeaturedProducts } from "@/lib/catalog/queries";
+import { listPublishedCategories, listPublishedFeaturedProducts } from "@/lib/catalog/queries";
 
 export const metadata = createStaticMetadata({
   path: "/",
@@ -17,7 +17,7 @@ export const metadata = createStaticMetadata({
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const featuredProducts = await listPublishedFeaturedProducts();
+  const [featuredProducts, categories] = await Promise.all([listPublishedFeaturedProducts(), listPublishedCategories()]);
   return (
     <>
       <MotionReveal />
@@ -61,6 +61,18 @@ export default async function HomePage() {
         </div>
         <p className={styles.showcaseNote}>Визуализации направления — не фотографии конкретных товаров Marmix Flex.</p>
       </section>
+      {categories.length > 0 && <section className={fragments.categorySection} aria-labelledby="material-categories-title">
+        <div className={fragments.sectionHead}>
+          <div><p className={styles.eyebrow}>Каталог / Навигация</p><h2 id="material-categories-title">Категории<br /><em>материалов.</em></h2></div>
+          <p className={fragments.sectionLead}>Выберите группу и рассмотрите опубликованные материалы в каталоге.</p>
+        </div>
+        <nav className={fragments.categoryList} aria-label="Категории материалов">
+          {categories.map((category, index) => <Link key={category.id} href={`/catalog/${category.slug}`}>
+            <span className={fragments.categoryIndex}>{String(index + 1).padStart(2, "0")}</span>
+            <span className={fragments.categoryName}>{category.name}</span><span aria-hidden="true">↗</span>
+          </Link>)}
+        </nav>
+      </section>}
       <CatalogFragment products={featuredProducts} />
       <section className={fragments.interiors} id="interiors" aria-labelledby="interiors-title">
         <div className={fragments.interiorImage} data-reveal>

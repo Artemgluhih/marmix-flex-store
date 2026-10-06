@@ -287,21 +287,9 @@ async function readFacets(): Promise<CatalogFacets> {
     }
     if (data.length < 500) break;
   }
-  const categories = new Map<string, PublicCategory>();
-  for (let offset = 0; ; offset += 500) {
-    const { data, error } = await client.from("product_categories")
-      .select("categories!inner(id,slug,name,sort_order)")
-      .order("product_id", { ascending: true }).order("category_id", { ascending: true })
-      .range(offset, offset + 499);
-    if (error || !data) failed();
-    for (const row of data) {
-      const category = relatedCategory(row.categories);
-      if (category) categories.set(category.id, category);
-    }
-    if (data.length < 500) break;
-  }
+  const categories = await readPublishedCategories();
   return {
-    categories: [...categories.values()].sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)),
+    categories,
     fixedPriceMinor: prices.length ? { min: Math.min(...prices), max: Math.max(...prices) } : null,
     availabilityStatuses: [...availability].sort(),
   };
@@ -309,6 +297,27 @@ async function readFacets(): Promise<CatalogFacets> {
 
 export async function getCatalogFacets(): Promise<CatalogFacets> {
   return unstable_cache(readFacets, ["catalog-facets"], {
+    revalidate: TTL_SECONDS, tags: [catalogCacheTags.facets, catalogCacheTags.list],
+  })();
+}
+
+// Published category navigation includes empty groups and never requires privileged membership reads.
+async function readPublishedCategories(): Promise<PublicCategory[]> {
+  const client = createPublicSupabaseClient();
+  const categories: PublicCategory[] = [];
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await client.from("categories").select(CATEGORY_FIELDS)
+      .eq("is_published", true).order("sort_order", { ascending: true }).order("id", { ascending: true })
+      .range(offset, offset + 499);
+    if (error || !data) failed();
+    categories.push(...data.map(categoryDto));
+    if (data.length < 500) break;
+  }
+  return categories;
+}
+
+export async function listPublishedCategories(): Promise<PublicCategory[]> {
+  return unstable_cache(readPublishedCategories, ["catalog-published-categories"], {
     revalidate: TTL_SECONDS, tags: [catalogCacheTags.facets, catalogCacheTags.list],
   })();
 }
