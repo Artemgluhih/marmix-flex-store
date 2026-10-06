@@ -16,7 +16,7 @@ vm.runInNewContext(code,{module,exports:module.exports,process,console,URL,URLSe
  const [cats,all,facets,featured]=await Promise.all([listPublishedCategories(),listPublishedProducts(),getCatalogFacets(),listPublishedFeaturedProducts()]);
  assert.equal(cats.length,3);assert.equal(all.total,3);assert.equal(featured.length,0);
  assert.equal(facets.availabilityStatuses.length,0);
- for(const cat of cats){const list=await listPublishedProducts({categorySlug:cat.slug});assert.equal(list.category.slug,cat.slug);assert.equal(list.total,1);assert.ok(list.products.every(p=>p.categories.some(c=>c.id===cat.id)));
+ for(const cat of cats){assert.equal((await listPublishedFeaturedProducts(cat.slug)).length,0);const list=await listPublishedProducts({categorySlug:cat.slug});assert.equal(list.category.slug,cat.slug);assert.equal(list.total,1);assert.ok(list.products.every(p=>p.categories.some(c=>c.id===cat.id)));
  const product=list.products[0];assert.equal(product.availabilityStatus,null);assert.notEqual(evaluateCommerce(product,true)?.commercialStatus,'ready');
  const search=await listPublishedProducts({categorySlug:cat.slug,q:product.sku});assert.equal(search.total,1);
  const none=await listPublishedProducts({categorySlug:cat.slug,q:'no-such-material-zzzz'});assert.equal(none.total,0);assert.equal(none.category.slug,cat.slug);

@@ -18,6 +18,8 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [featuredProducts, categories] = await Promise.all([listPublishedFeaturedProducts(), listPublishedCategories()]);
+  const categoryProducts = Object.fromEntries(await Promise.all(categories.map(async (category) =>
+    [category.slug, await listPublishedFeaturedProducts(category.slug)] as const)));
   return (
     <>
       <MotionReveal />
@@ -61,19 +63,7 @@ export default async function HomePage() {
         </div>
         <p className={styles.showcaseNote}>Визуализации направления — не фотографии конкретных товаров Marmix Flex.</p>
       </section>
-      {categories.length > 0 && <section className={fragments.categorySection} aria-labelledby="material-categories-title">
-        <div className={fragments.sectionHead}>
-          <div><p className={styles.eyebrow}>Каталог / Навигация</p><h2 id="material-categories-title">Категории<br /><em>материалов.</em></h2></div>
-          <p className={fragments.sectionLead}>Выберите группу и рассмотрите опубликованные материалы в каталоге.</p>
-        </div>
-        <nav className={fragments.categoryList} aria-label="Категории материалов">
-          {categories.map((category, index) => <Link key={category.id} href={`/catalog/${category.slug}`}>
-            <span className={fragments.categoryIndex}>{String(index + 1).padStart(2, "0")}</span>
-            <span className={fragments.categoryName}>{category.name}</span><span aria-hidden="true">↗</span>
-          </Link>)}
-        </nav>
-      </section>}
-      <CatalogFragment products={featuredProducts} />
+      <CatalogFragment products={featuredProducts} categories={categories} categoryProducts={categoryProducts} />
       <section className={fragments.interiors} id="interiors" aria-labelledby="interiors-title">
         <div className={fragments.interiorImage} data-reveal>
           <Image src="/images/showroom/hero-room.webp" alt="" fill sizes="(max-width: 800px) 100vw, 55vw" />

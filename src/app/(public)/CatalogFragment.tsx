@@ -1,6 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import type { PublicProduct } from "@/lib/catalog/types";
+import type { PublicCategory, PublicProduct } from "@/lib/catalog/types";
 import { evaluateCommerce } from "@/lib/catalog/commerce";
 import { CardCartAction } from "@/components/catalog/CardCartAction";
 import base from "./page.module.css";
@@ -8,7 +11,11 @@ import styles from "./homeFragments.module.css";
 
 const rubles = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
 
-export function CatalogFragment({ products }: { products: PublicProduct[] }) {
+export function CatalogFragment({ products: allProducts, categories, categoryProducts }: {
+  products: PublicProduct[]; categories: PublicCategory[]; categoryProducts: Record<string, PublicProduct[]>;
+}) {
+  const [active, setActive] = useState<string | null>(null);
+  const products = active ? categoryProducts[active] ?? [] : allProducts;
   return (
     <section className={styles.catalog} id="catalog" aria-labelledby="catalog-title">
       <div className={styles.sectionHead} data-reveal>
@@ -18,8 +25,14 @@ export function CatalogFragment({ products }: { products: PublicProduct[] }) {
         </div>
         <p className={styles.sectionLead}>Рассмотрите фактуры и материалы в каталоге.</p>
       </div>
+      <nav className={styles.featuredCategories} aria-label="Категории избранных материалов">
+        <button type="button" aria-pressed={active === null} onClick={() => setActive(null)}>Все материалы</button>
+        {categories.map((category) => <button type="button" key={category.id} aria-pressed={active === category.slug}
+          onClick={() => setActive(category.slug)}>{category.name}</button>)}
+      </nav>
+      <div aria-live="polite" aria-atomic="false">
       {products.length > 0 ? (
-        <div className={styles.productGrid} data-reveal>
+        <div className={styles.productGrid}>
           {products.map((product, index) => {
             const commerce = evaluateCommerce(product, true);
             return (
@@ -50,10 +63,11 @@ export function CatalogFragment({ products }: { products: PublicProduct[] }) {
           ); })}
         </div>
       ) : (
-        <div className={styles.catalogQuiet} data-reveal>
-          <p>Все опубликованные материалы собраны в каталоге.</p>
+        <div className={styles.catalogQuiet}>
+          <p>{active ? "В этой категории пока нет избранных материалов." : "Избранные материалы пока не добавлены. Все опубликованные материалы собраны в каталоге."}</p>
         </div>
       )}
+      </div>
       <Link className={styles.catalogLink} href="/catalog">Перейти в каталог <span aria-hidden="true">→</span></Link>
     </section>
   );

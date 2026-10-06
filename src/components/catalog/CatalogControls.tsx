@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CatalogFacets } from "@/lib/catalog/types";
 import type { CatalogListParams } from "@/lib/catalog/query-params";
-import { hasActiveCatalogParams, priceInput } from "@/lib/catalog/url-state";
+import { catalogHref, hasActiveCatalogParams, priceInput } from "@/lib/catalog/url-state";
 import styles from "./CatalogControls.module.css";
 import { CatalogSort } from "./CatalogSort";
 import { CategoryNavigation } from "./CategoryNavigation";
@@ -17,13 +17,15 @@ export function CatalogControls({ params, facets, total }: {
   const statuses = facets.availabilityStatuses.filter((value): value is keyof typeof statusLabels => value in statusLabels);
   const categoryName = facets.categories.find((item) => item.slug === params.categorySlug)?.name;
   const active = hasActiveCatalogParams({ ...params, categorySlug: null }) || params.page > 1;
-  const path = params.categorySlug && categoryName ? `/catalog/${params.categorySlug}` : "/catalog";
+  const path = "/catalog";
+  const resetHref = catalogHref({ ...params, q: null, priceMinMinor: null, priceMaxMinor: null, status: null, sort: "order", page: 1 });
 
   return (
     <div className={styles.controls}>
       <CategoryNavigation categories={facets.categories} params={{ ...params,
         status: params.status && statuses.includes(params.status) ? params.status : null }} />
       <form key={JSON.stringify(params)} className={styles.form} method="get" action={path} role="search">
+        {params.categorySlug && categoryName && <input type="hidden" name="category" value={params.categorySlug} />}
         <div className={styles.searchRow}>
           <label className={styles.field}>
             <span>Поиск по названию или артикулу</span>
@@ -61,7 +63,7 @@ export function CatalogControls({ params, facets, total }: {
       </form>
       <div className={styles.summary}>
         <p>Материалов: {total}</p>
-        {active && <Link href={path}>Сбросить</Link>}
+        {active && <Link scroll={false} href={resetHref}>Сбросить</Link>}
       </div>
       {active && (
         <div className={styles.active} aria-label="Активные параметры">

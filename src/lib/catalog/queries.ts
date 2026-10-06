@@ -184,19 +184,34 @@ export async function listPublishedProducts(input: CatalogListInput = {}) {
   })();
 }
 
-async function readFeaturedProducts(): Promise<PublicProduct[]> {
+async function readFeaturedProducts(categorySlug: string | null): Promise<PublicProduct[]> {
   const client = createPublicSupabaseClient();
-  const { data, error } = await client.from("products").select(PRODUCT_FIELDS)
+  let query = client.from("products").select(PRODUCT_FIELDS)
     .eq("catalog_kind", "REAL").eq("is_published", true).is("archived_at", null)
-    .eq("is_featured", true).order("sort_order", { ascending: true })
+    .eq("is_featured", true);
+  if (categorySlug) {
+    const category = await publishedCategory(client, categorySlug);
+    if (!category) return [];
+    const ids = new Set<string>();
+    for (let offset = 0; ; offset += 500) {
+      const { data, error } = await client.from("product_categories").select("product_id")
+        .eq("category_id", category.id).order("product_id", { ascending: true }).range(offset, offset + 499);
+      if (error || !data) failed();
+      for (const row of data) ids.add(row.product_id);
+      if (data.length < 500) break;
+    }
+    if (!ids.size) return [];
+    query = query.in("id", [...ids]);
+  }
+  const { data, error } = await query.order("sort_order", { ascending: true })
     .order("id", { ascending: true }).limit(3);
   if (error || !data) failed();
   const related = await presentation(client, data);
   return data.map((row) => productDto(row, related.get(row.id)!));
 }
 
-export async function listPublishedFeaturedProducts(): Promise<PublicProduct[]> {
-  return unstable_cache(readFeaturedProducts, ["catalog-featured"], {
+export async function listPublishedFeaturedProducts(categorySlug: string | null = null): Promise<PublicProduct[]> {
+  return unstable_cache(() => readFeaturedProducts(categorySlug), ["catalog-featured", categorySlug ?? "all"], {
     revalidate: TTL_SECONDS, tags: [catalogCacheTags.list],
   })();
 }
