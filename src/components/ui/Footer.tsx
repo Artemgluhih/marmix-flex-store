@@ -11,7 +11,7 @@ export function Footer() {
       <nav className={styles.navigation} aria-label="Навигация внизу страницы">
         <Link href="/catalog">Каталог</Link>
         <Link href="/applications">Применение</Link>
-        <Link href="/about">О компании</Link>
+        <Link href="/about">О бренде</Link>
         <Link href="/delivery">Доставка</Link>
         <Link href="/contacts">Контакты</Link>
       </nav>

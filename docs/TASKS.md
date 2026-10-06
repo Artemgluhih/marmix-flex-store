@@ -1379,17 +1379,18 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T060
 - **Priority:** P1
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Applications и About
 - **Goal:** Создать страницы применения и компании на подтверждённом контенте.
 - **Why:** Навигация должна объяснять материал и бренд.
 - **Dependencies:** T059.
-- **Allowed scope:** /applications, /about, реальные фото/подписи.
+- **Allowed scope:** /applications, /about, owner-confirmed content and labeled generated/demonstration imagery.
 - **Forbidden scope:** Ложные кейсы/сертификаты, новый visual language. Не начинать соседнюю TASK.
 - **Source of truth:** docs/CONTENT_AUDIT.md; T008–T010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Контент из T008–T010; реализацию отличать от визуализации.
+- **Implementation notes:** Контент из T008–T010 и последующих прямых owner confirmations; generated imagery явно маркирована как визуализация/демонстрационный образ, не как реализованный объект.
 - **Acceptance criteria:** Страницы доступны/адаптивны, обещания проверены.
 - **Required checks:** content fact check, lint/typecheck, browser smoke.
+- **Resolution:** Owner visual verification PASS for `/about` and `/applications`: six generated architectural carousel frames, manual cyclic last→first and first→last navigation, keyboard/swipe and counter without autoplay; real documentary photos and fake project claims 0. About explains published catalog, confirmed characteristics and request/manager flow without an order/payment promise. Contact block on both pages uses only owner-confirmed г. Сургут, Декабристов 1А; г. Москва, Товарищеский переулок, 13, Офис 4; +7 (346) 299-96-76. 390/768/1024/1440, no overflow, clean app console, lint/typecheck and READY Preview build PASS. T061 not started; Production Content Gate BLOCKED; Production unchanged.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
