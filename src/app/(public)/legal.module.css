@@ -1,0 +1,42 @@
+.page { min-width: 0; background: #10100f; }
+.eyebrow { margin: 0 0 26px; color: var(--color-gold); font-size: 11px; font-weight: 600; letter-spacing: .17em; line-height: 1.6; text-transform: uppercase; }
+.hero { padding: clamp(100px, 10vw, 150px) var(--wide-gutter) 95px; border-bottom: 1px solid #474239; }
+.hero h1 { max-width: 1050px; margin: 0; font: 400 clamp(43px, 6vw, 86px)/1.12 var(--font-display); letter-spacing: -.035em; overflow-wrap: anywhere; text-wrap: balance; }
+.status { display: grid; grid-template-columns: 82px minmax(0, 1fr); gap: 22px; max-width: 760px; margin-top: clamp(72px, 9vw, 130px); padding-top: 26px; border-top: 1px solid #756245; }
+.statusNumber { color: var(--color-gold); font: 400 21px/1.3 var(--font-display); }
+.statusLabel { margin: 0 0 13px; color: var(--color-gold); font-size: 10px; letter-spacing: .16em; line-height: 1.5; text-transform: uppercase; }
+.statusText { margin: 0; color: var(--color-text-primary); font: 400 clamp(23px, 2.7vw, 36px)/1.35 var(--font-display); }
+.body, .pending { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(40px, 8vw, 125px); padding: 100px var(--wide-gutter); border-bottom: 1px solid #34302b; }
+.body h2, .pending h2 { max-width: 490px; margin: 0; font: 400 clamp(34px, 3.8vw, 55px)/1.2 var(--font-display); letter-spacing: -.025em; text-wrap: balance; }
+.bodyCopy { max-width: 640px; }
+.bodyCopy p { margin: 0; color: var(--color-text-secondary); font-size: clamp(16px, 1.35vw, 18px); line-height: 1.85; }
+.bodyCopy .confirmed { margin-top: 30px; padding-top: 27px; border-top: 1px solid #625440; color: var(--color-text-primary); }
+.pending { background: #1b1a18; }
+.pending ol { margin: 0; padding: 0; border-top: 1px solid #625440; list-style: none; }
+.pending li { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 20px; padding: 21px 0; border-bottom: 1px solid #38342f; color: var(--color-text-primary); font-size: clamp(16px, 1.55vw, 20px); line-height: 1.55; }
+.pending li span { color: var(--color-gold); font: 400 20px/1.4 var(--font-display); }
+.next { display: flex; justify-content: space-between; align-items: end; gap: 60px; padding: 76px var(--wide-gutter) 90px; }
+.next p { max-width: 490px; margin: 0; color: var(--color-text-secondary); font-size: 14px; line-height: 1.8; }
+.next > div { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 25px; }
+.next a { display: inline-flex; align-items: center; gap: 24px; padding: 11px 0; border-bottom: 1px solid #aa8960; color: var(--color-text-primary); font-size: 12px; text-decoration: none; }
+.next a:hover { color: var(--color-gold); }
+.next a:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 5px; }
+
+@media (max-width: 800px) {
+  .hero, .body, .pending, .next { padding-inline: var(--outer-compact); }
+  .body, .pending { gap: 45px; }
+  .next { align-items: start; flex-direction: column; gap: 30px; }
+  .next > div { justify-content: flex-start; }
+}
+
+@media (max-width: 620px) {
+  .hero { padding: 78px var(--outer-mobile) 70px; }
+  .hero h1 { font-size: clamp(38px, 10vw, 52px); }
+  .status { grid-template-columns: 42px minmax(0, 1fr); gap: 14px; margin-top: 75px; }
+  .statusNumber { font-size: 17px; }
+  .statusText { font-size: 25px; }
+  .body, .pending { grid-template-columns: 1fr; gap: 32px; padding: 75px var(--outer-mobile); }
+  .body h2, .pending h2 { font-size: 37px; }
+  .pending li { grid-template-columns: 40px minmax(0, 1fr); gap: 12px; }
+  .next { padding: 65px var(--outer-mobile) 80px; }
+}
