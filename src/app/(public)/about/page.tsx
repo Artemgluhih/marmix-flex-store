@@ -23,6 +23,10 @@ export default function AboutPage() {
       </header>
 
       <section className={`${styles.section} ${styles.aboutIntro}`} aria-labelledby="about-intro-title">
+        <figure className={styles.aboutIntroVisual}>
+          <div className={styles.introImage}><Image src="/images/editorial/scene-dark-gallery.webp" alt="Визуализация тёмного архитектурного пространства с фактурной плоскостью" fill sizes="(max-width: 620px) 100vw, 44vw" /></div>
+          <figcaption className={styles.caption}><span>Материал в пространстве</span><span>Архитектурная визуализация · не SKU</span></figcaption>
+        </figure>
         <div className={styles.aboutIntroCopy}>
           <p className={styles.eyebrow}>01 / Знакомство</p>
           <h2 id="about-intro-title">Что такое<br />Marmix Flex</h2>
@@ -31,10 +35,6 @@ export default function AboutPage() {
           <p>Вы можете отправить заявку на расчёт. После её рассмотрения менеджер связывается с вами и уточняет детали. Заявка сама по себе не подтверждает покупку и не резервирует товар.</p>
           <div className={styles.introAside}><span>В каталоге</span><strong>Гибкий мрамор · Травертин · Сопутствующие материалы</strong></div>
         </div>
-        <figure className={styles.aboutIntroVisual}>
-          <div className={styles.introImage}><Image src="/images/editorial/scene-dark-gallery.webp" alt="Визуализация тёмного архитектурного пространства с фактурной плоскостью" fill sizes="(max-width: 620px) 100vw, 44vw" /></div>
-          <figcaption className={styles.caption}><span>Материал в пространстве</span><span>Архитектурная визуализация · не SKU</span></figcaption>
-        </figure>
       </section>
 
       <section className={`${styles.section} ${styles.aboutMaterials}`} aria-labelledby="about-materials-title">
