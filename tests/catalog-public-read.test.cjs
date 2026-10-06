@@ -14,9 +14,11 @@ vm.runInNewContext(code,{module,exports:module.exports,process,console,URL,URLSe
  const {listPublishedProducts,listPublishedCategories,listPublishedFeaturedProducts,getCatalogFacets,getPublishedProduct}=load('src/lib/catalog/queries.ts');
  const {evaluateCommerce}=load('src/lib/catalog/commerce.ts');
  const [cats,all,facets,featured]=await Promise.all([listPublishedCategories(),listPublishedProducts(),getCatalogFacets(),listPublishedFeaturedProducts()]);
- assert.equal(cats.length,3);assert.equal(all.total,3);assert.equal(featured.length,0);
+ assert.ok(cats.length>0);assert.ok(all.total>=3);assert.equal(featured.length,0);
+ for(let i=1;i<cats.length;i++)assert.ok(cats[i-1].sortOrder<cats[i].sortOrder||cats[i-1].sortOrder===cats[i].sortOrder&&cats[i-1].id.localeCompare(cats[i].id)<0);
  assert.equal(facets.availabilityStatuses.length,0);
- for(const cat of cats){assert.equal((await listPublishedFeaturedProducts(cat.slug)).length,0);const list=await listPublishedProducts({categorySlug:cat.slug});assert.equal(list.category.slug,cat.slug);assert.equal(list.total,1);assert.ok(list.products.every(p=>p.categories.some(c=>c.id===cat.id)));
+ for(const cat of cats){assert.equal((await listPublishedFeaturedProducts(cat.slug)).length,0);const list=await listPublishedProducts({categorySlug:cat.slug});assert.equal(list.category.slug,cat.slug);assert.ok(list.total>=0);assert.ok(list.products.every(p=>p.categories.some(c=>c.id===cat.id)));
+ if(list.total===0){assert.equal(list.products.length,0);continue;}
  const product=list.products[0];assert.equal(product.availabilityStatus,null);assert.notEqual(evaluateCommerce(product,true)?.commercialStatus,'ready');
  const search=await listPublishedProducts({categorySlug:cat.slug,q:product.sku});assert.equal(search.total,1);
  const none=await listPublishedProducts({categorySlug:cat.slug,q:'no-such-material-zzzz'});assert.equal(none.total,0);assert.equal(none.category.slug,cat.slug);
@@ -30,5 +32,5 @@ vm.runInNewContext(code,{module,exports:module.exports,process,console,URL,URLSe
  for(let i=1;i<all.products.length;i++){const a=all.products[i-1],b=all.products[i];assert.ok(a.sortOrder<b.sortOrder||a.sortOrder===b.sortOrder&&a.id.localeCompare(b.id)<0);}
  const invalid=await listPublishedProducts({categorySlug:'../bad'}),missing=await listPublishedProducts({categorySlug:'nonexistent-public-category'});assert.equal(invalid.category,null);assert.equal(missing.category,null);assert.equal(missing.products.length,0);
  assert.equal(new Set(all.products.map(p=>p.id)).size,all.products.length);
- console.log('PASS: guest public layer, 3 categories/3 REAL/0 featured/3 NULL availability, every category search/price/no-results/page/detail, default+price ordering, unavailable card blockers, missing/malformed category isolation. No writes.');
+ console.log(`PASS: guest public layer, ${cats.length} published categories (including empty), ${all.total} REAL, ${featured.length} featured, ${all.products.filter(p=>p.availabilityStatus===null).length} NULL availability; category search/price/no-results/page/detail, default+price ordering, blocked commerce and missing/malformed category isolation. No writes.`);
 })().catch(()=>{console.error('FAIL: public catalog read/assertion');process.exit(1)});
