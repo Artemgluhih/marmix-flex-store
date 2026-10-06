@@ -1,9 +1,13 @@
-import type { Metadata } from "next";
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { addressMapUrl, contactLocations, contactPhone } from "../contact-data";
 import styles from "../information.module.css";
 
-export const metadata: Metadata = { title: "Контакты — Marmix Flex" };
+export const metadata = createStaticMetadata({
+  path: "/contacts",
+  title: "Контакты",
+  description: "Контакты Marmix Flex: Сургут, Декабристов 1А; Москва, Товарищеский переулок, 13, Офис 4. Телефон +7 (346) 299-96-76.",
+});
 
 export default function ContactsPage() {
   return (

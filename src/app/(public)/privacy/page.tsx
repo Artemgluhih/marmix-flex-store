@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import { LegalPending } from "../LegalPending";
 
-export const metadata: Metadata = { title: "Политика конфиденциальности — Marmix Flex" };
+export const metadata = createStaticMetadata({
+  path: "/privacy",
+  title: "Политика конфиденциальности",
+  description: "Финальная редакция политики конфиденциальности Marmix Flex и сведения об операторе персональных данных ожидают юридического согласования.",
+  legalPending: true,
+});
 
 export default function PrivacyPage() {
   return <LegalPending

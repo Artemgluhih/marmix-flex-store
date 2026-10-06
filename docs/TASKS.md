@@ -1445,7 +1445,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T063
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Base metadata и canonical
 - **Goal:** Настроить titles/descriptions и canonical статичных страниц.
 - **Why:** Поисковики должны получать точные адреса и сниппеты.
@@ -1460,6 +1460,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T063): Base metadata и canonical
+
+- **Resolution:** Owner SEO verification PASS (2026-10-06). Approved T063 review `6da6f5667590c10dff07d853fc1a8f73026d0931` finalized without further implementation changes. Server-only metadata helper uses validated `SITE_URL` for metadataBase and absolute canonical on `/`, `/applications`, `/about`, `/delivery`, `/contacts`, `/privacy`, `/terms`; homepage absolute title avoids duplicated brand suffix. No request Host, VERCEL_URL, query or Preview origin in canonical; `/about?utm_source=test` normalization PASS. All Preview routes remain noindex/nofollow; controlled production mode permits index/follow only on approved public static pages. Legal-pending Privacy/Terms and Cart/Checkout/Admin retain their own unconditional noindex/nofollow boundary; service routes have no inherited canonical. Unique factual descriptions, 59 targeted checks, rendered READY Preview metadata, lint, typecheck and Preview/controlled-production builds PASS; invented SEO claims and canonical leakage 0. SITE_URL configured only for Preview, including finalized redesign-v2 branch; Production configuration/deployment unchanged. Visuals, catalog/category/product SEO, commerce logic, auth, Supabase and Telegram unchanged. Legal sign-off PENDING; seller/operator, final Privacy, consent and returns/claims unresolved; Production Content Gate BLOCKED. T064 — NOT STARTED.
 
 ### T064 — Dynamic SEO и indexing
 

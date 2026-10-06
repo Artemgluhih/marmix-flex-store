@@ -1,3 +1,4 @@
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import { CatalogFragment } from "./CatalogFragment";
@@ -5,6 +6,13 @@ import { MotionReveal } from "./MotionReveal";
 import styles from "./page.module.css";
 import fragments from "./homeFragments.module.css";
 import { listPublishedFeaturedProducts } from "@/lib/catalog/queries";
+
+export const metadata = createStaticMetadata({
+  path: "/",
+  title: "Marmix Flex — декоративные отделочные материалы",
+  description: "Каталог декоративных материалов Marmix Flex: гибкий мрамор, травертин и сопутствующие материалы. Сургут и Москва.",
+  absoluteTitle: true,
+});
 
 export const dynamic = "force-dynamic";
 

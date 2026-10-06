@@ -1,11 +1,15 @@
-import type { Metadata } from "next";
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../editorial.module.css";
 import { EditorialContact } from "../EditorialContact";
 import { ApplicationCarousel } from "./ApplicationCarousel";
 
-export const metadata: Metadata = { title: "Примеры применения — Marmix Flex" };
+export const metadata = createStaticMetadata({
+  path: "/applications",
+  title: "Примеры применения",
+  description: "Демонстрационные архитектурные визуализации Marmix Flex: восприятие рисунка, фактуры и масштаба поверхности в пространстве.",
+});
 
 export default function ApplicationsPage() {
   return (

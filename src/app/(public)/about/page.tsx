@@ -1,10 +1,15 @@
-import type { Metadata } from "next";
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import styles from "../editorial.module.css";
 import { EditorialContact } from "../EditorialContact";
 
-export const metadata: Metadata = { title: "О Marmix Flex" };
+export const metadata = createStaticMetadata({
+  path: "/about",
+  title: "О Marmix Flex",
+  description: "Marmix Flex — бренд декоративных отделочных материалов. Каталог, выбор материала и заявка на расчёт и связь с менеджером. Сургут и Москва.",
+  absoluteTitle: true,
+});
 
 export default function AboutPage() {
   return (

@@ -1,10 +1,14 @@
-import type { Metadata } from "next";
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import { EditorialContact } from "../EditorialContact";
 import styles from "../information.module.css";
 
-export const metadata: Metadata = { title: "Доставка и самовывоз — Marmix Flex" };
+export const metadata = createStaticMetadata({
+  path: "/delivery",
+  title: "Доставка и самовывоз",
+  description: "Доставка и самовывоз доступны. Способ получения, стоимость и другие детали согласовываются с менеджером после рассмотрения заявки.",
+});
 
 const steps = [
   ["01", "Вы выбираете материалы", "Добавьте нужные позиции в корзину и укажите количество."],
