@@ -1421,7 +1421,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T062
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Privacy и Terms
 - **Goal:** Подготовить маршруты Privacy и Terms в Preview; production тексты только после legal sign-off.
 - **Why:** Форма заявки с PII требует корректных ссылок.
@@ -1431,10 +1431,11 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Source of truth:** docs/CONTENT_AUDIT.md; T008–T010; docs/DESIGN_SYSTEM.md.
 - **Implementation notes:** Пока тексты не утверждены, Preview показывает только Pending owner/legal approval; никакого вымышленного consent/return policy. Production content остаётся BLOCKED.
 - **Acceptance criteria:** Preview маршруты доступны с честным pending state; production checkout consent и legal pages не готовы без проверенной политики и sign-off.
-- **Required checks:** legal sign-off, link/metadata checks.
+- **Required checks:** Pending legal boundary, link/minimal-title checks, lint/typecheck/build, owner visual verification. Final legal sign-off remains PENDING.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
+- **Resolution (2026-10-06):** Technical/pending implementation DONE. `/privacy` and `/terms` are available in READY Preview with explicit Pending owner/legal approval, concise neutral explanations, editorial confirmation lists and minimal page titles. Footer legal links work; Checkout legal pending/consent boundary is unchanged. Owner visual verification PASS for both routes, clear pending status, links, 390/768/1024/1440, no horizontal overflow and clean application console. Invented Privacy/Terms legal claims, seller/operator identity, consent wording and return/guarantee policy: 0. Lint/typecheck/build PASS. Seller/operator identity unresolved; final Privacy text pending; consent text pending; returns/claims pending. Owner visual PASS ≠ legal sign-off; Legal sign-off = PENDING. The three legal T009 groups remain BLOCKED; Production Content Gate = BLOCKED. Production unchanged; T063 — NOT STARTED.
 - **Suggested commit message:** task(T062): Privacy и Terms
 
 

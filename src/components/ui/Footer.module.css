@@ -36,6 +36,9 @@
   gap: 10px 22px;
 }
 
+.linkGroups { display: grid; gap: 14px; }
+.legalNavigation { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 22px; color: #827c73; font-size: 10px; }
+
 .footer a {
   color: inherit;
   text-decoration: none;
@@ -71,6 +74,7 @@
     gap: 12px 18px;
     line-height: 1.6;
   }
+  .legalNavigation { justify-content: flex-start; gap: 12px 18px; line-height: 1.6; }
 }
 
 @media (prefers-reduced-motion: reduce) {
