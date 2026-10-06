@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type { Metadata } from "next";
+import { createPrivateMetadata } from "@/lib/seo/metadata";
 import { CartPageClient } from "./CartPageClient";
 import styles from "./cart.module.css";
 
-export const metadata: Metadata = { title: "Корзина — Marmix Flex", robots: { index: false, follow: false } };
+export const metadata = createPrivateMetadata("Корзина", "Выбранные позиции и количество в корзине Marmix Flex.");
 
 export default function CartPage() {
   return <section className={styles.page} aria-labelledby="cart-title">

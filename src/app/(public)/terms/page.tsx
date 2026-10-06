@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
+import { createStaticMetadata } from "@/lib/seo/metadata";
 import { LegalPending } from "../LegalPending";
 
-export const metadata: Metadata = { title: "Условия использования — Marmix Flex" };
+export const metadata = createStaticMetadata({
+  path: "/terms",
+  title: "Условия использования",
+  description: "Юридические и коммерческие условия Marmix Flex ожидают согласования. Текущая страница показывает статус подготовки документа.",
+  legalPending: true,
+});
 
 export default function TermsPage() {
   return <LegalPending

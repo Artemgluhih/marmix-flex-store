@@ -1,9 +1,9 @@
 import Link from "next/link";
-import type { Metadata } from "next";
+import { createPrivateMetadata } from "@/lib/seo/metadata";
 import { CheckoutPageClient } from "./CheckoutPageClient";
 import styles from "./checkout.module.css";
 
-export const metadata: Metadata = { title: "Заявка — Marmix Flex", robots: { index: false, follow: false } };
+export const metadata = createPrivateMetadata("Оформление заявки", "Проверка состава заявки Marmix Flex и контактная форма для связи с менеджером.");
 
 export default function CheckoutPage() {
   return <section className={styles.page} aria-labelledby="checkout-title">
