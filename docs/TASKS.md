@@ -1463,6 +1463,26 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **Resolution:** Owner SEO verification PASS (2026-10-06). Approved T063 review `6da6f5667590c10dff07d853fc1a8f73026d0931` finalized without further implementation changes. Server-only metadata helper uses validated `SITE_URL` for metadataBase and absolute canonical on `/`, `/applications`, `/about`, `/delivery`, `/contacts`, `/privacy`, `/terms`; homepage absolute title avoids duplicated brand suffix. No request Host, VERCEL_URL, query or Preview origin in canonical; `/about?utm_source=test` normalization PASS. All Preview routes remain noindex/nofollow; controlled production mode permits index/follow only on approved public static pages. Legal-pending Privacy/Terms and Cart/Checkout/Admin retain their own unconditional noindex/nofollow boundary; service routes have no inherited canonical. Unique factual descriptions, 59 targeted checks, rendered READY Preview metadata, lint, typecheck and Preview/controlled-production builds PASS; invented SEO claims and canonical leakage 0. SITE_URL configured only for Preview, including finalized redesign-v2 branch; Production configuration/deployment unchanged. Visuals, catalog/category/product SEO, commerce logic, auth, Supabase and Telegram unchanged. Legal sign-off PENDING; seller/operator, final Privacy, consent and returns/claims unresolved; Production Content Gate BLOCKED. T064 — NOT STARTED.
 
+### T063A — Category navigation, catalog UX и Product Card actions
+
+- **ID:** T063A
+- **Priority:** P0
+- **Status:** TODO
+- **Title:** Category navigation, catalog UX и Product Card actions
+- **Goal:** Published category navigation on homepage and catalog, immediate category/sort changes, full category-scoped controls and discoverable Product Detail/card cart actions.
+- **Why:** Customers need clear material groups, preserved URL state and direct paths to product details and the existing request cart.
+- **Dependencies:** T063.
+- **Allowed scope:** Homepage category section from public reads; catalog/category navigation and controls; immediate category/sort progressive enhancement; scoped search/price/availability-if-real/pagination/reset; Product Card image/title/detail links; existing evaluateCommerce and CardCartAction.
+- **Forbidden scope:** Schema/RLS/Storage, publication/availability/featured data mutations, Admin, cart model, Checkout/Orders/Telegram, legal pages, T063 metadata foundation, dynamic SEO and T064.
+- **Source of truth:** T032A; T039–T041; T043–T050; existing public catalog queries/query params/commerce; Dark Gold Showroom; owner T063A brief.
+- **Implementation notes:** All materials is a system view, never a DB category. Only published categories and REAL published unarchived products. Category URLs /catalog/[slug]; category changes preserve valid q/price/status/sort and reset page. Category reset preserves scope. Server pages remain Server Components; tiny navigation enhancement with semantic links/GET fallback. Card links and cart button stay separate; cart action only commerce-ready; availability NULL remains blocked. Featured selection unchanged.
+- **Acceptance criteria:** Homepage categories and featured regression PASS; immediate category/sort; full scoped controls; query/page/reset/history correctness; image/title/Подробнее detail links; ready-only cart action; hidden category/TEST_ONLY leakage 0; no invented availability/facets/business facts; owner visual/category/product card PASS.
+- **Required checks:** Targeted URL/controls/card/commerce tests; lint/typecheck/build; READY Preview current published categories and REAL products; back/forward/refresh; keyboard; 360–370/390/768/1024/1440/1920; overflow/console; T063 regression.
+- **Recommended model:** GPT-6.1 Sol
+- **Reasoning level:** Medium
+- **Additional agent:** NO
+- **Suggested commit message:** task(T063A): Category navigation и catalog UX
+
 ### T064 — Dynamic SEO и indexing
 
 - **ID:** T064
@@ -1471,7 +1491,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Title:** Dynamic SEO и indexing
 - **Goal:** Добавить товарные/категорийные meta, OG, sitemap, robots.
 - **Why:** Динамический каталог требует согласованной индексации.
-- **Dependencies:** T063.
+- **Dependencies:** T063A.
 - **Allowed scope:** generateMetadata, canonical, Open Graph, опубликованные URL.
 - **Forbidden scope:** Индексация черновиков/Preview и фильтров. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md; docs/CONTENT_FACTS.md (T008–T010).
