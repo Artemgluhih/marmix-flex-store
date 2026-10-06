@@ -1,4 +1,5 @@
 import styles from "./editorial.module.css";
+import { contactLocations, contactPhone } from "./contact-data";
 
 export function EditorialContact({ id }: { id: string }) {
   return (
@@ -17,13 +18,14 @@ export function EditorialContact({ id }: { id: string }) {
         <h2 id={id}>Контакты</h2>
         <p>Marmix Flex представлен в Сургуте и Москве. Чтобы обсудить материал или заявку, позвоните нам.</p>
         <address className={styles.contactAddresses}>
-          <div><span>Сургут</span><p>г. Сургут, Декабристов 1А</p></div>
-          <div><span>Москва</span><p>г. Москва, Товарищеский переулок, 13, Офис 4</p></div>
+          {contactLocations.map(({ city, address }) => (
+            <div key={city}><span>{city}</span><p>{address}</p></div>
+          ))}
         </address>
         <div className={styles.contactPhones}>
-          <a href="tel:+73462999676">+7 (346) 299-96-76</a>
+          <a href={contactPhone.href}>{contactPhone.label}</a>
         </div>
-        <a className={styles.contactAction} href="tel:+73462999676">Позвонить <span aria-hidden="true">↗</span></a>
+        <a className={styles.contactAction} href={contactPhone.href}>Позвонить <span aria-hidden="true">↗</span></a>
       </div>
     </section>
   );

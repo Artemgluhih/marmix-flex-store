@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T059 — DONE, T060–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T061 — DONE, T062–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1400,17 +1400,18 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T061
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Delivery и Contacts
 - **Goal:** Опубликовать проверенные условия и способы связи.
 - **Why:** Перед заявкой посетитель должен понимать получение товара.
 - **Dependencies:** T060.
-- **Allowed scope:** Preview /delivery и /contacts с подтверждёнными телефонами и городами; нейтральное pending состояние для неутверждённых подробностей.
+- **Allowed scope:** Preview /delivery и /contacts с одним подтверждённым телефоном и двумя подтверждёнными контактными адресами; честное объяснение согласования неутверждённых условий.
 - **Forbidden scope:** Непроверенная бесплатная доставка и устаревшие контакты. Не начинать соседнюю TASK.
 - **Source of truth:** docs/CONTENT_AUDIT.md; T008–T010; docs/DESIGN_SYSTEM.md.
-- **Implementation notes:** Условия доставки/самовывоза и адреса не придумывать; их production copy только после owner/legal sign-off.
-- **Acceptance criteria:** Preview показывает два подтверждённых телефона и города, без выдуманного адреса/сроков/стоимости; production copy остаётся pending.
+- **Implementation notes:** Прямое owner confirmation после T060 подтверждает контактные адреса в Сургуте и Москве и только один телефон. Эти адреса не подтверждены как точки самовывоза. Не придумывать тарифы, сроки, географию, перевозчиков или способы оплаты; подробные условия и legal sign-off остаются Production Content Gate blockers.
+- **Acceptance criteria:** Preview показывает один подтверждённый телефон, два подтверждённых контактных адреса и ссылки адресного поиска на карте без выдуманных координат; доставка и самовывоз доступны, детали согласуются после рассмотрения заявки; нет выдуманных сроков, стоимости или адресов самовывоза.
 - **Required checks:** link/contact check, responsive smoke.
+- **Resolution:** Owner visual verification PASS for READY Preview /contacts and /delivery, including hero, four-step request/receipt process, delivery/pickup split, manager clarification, payment, request semantics, FAQ and shared contact block. T060/T061 owner corrections supersede the older two-phone/no-street-address acceptance text: current public contacts are г. Сургут, Декабристов 1А; г. Москва, Товарищеский переулок, 13, Офис 4; +7 (346) 299-96-76 only. Deprecated second phone public occurrences 0. Address panels use external address search without invented coordinates or pickup pins; contact addresses are not asserted as pickup points. No invented delivery geography, tariff, free-delivery, timing, carrier or payment method. Owner verified 390/768/1024/1440, no page overflow and clean console. Lint/typecheck/local production build and T060 contact regression PASS. Production Content Gate remains BLOCKED; Production unchanged; T062 not started.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO

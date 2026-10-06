@@ -59,6 +59,8 @@ No SKU, price, dimensions, availability, or other business fact is changed by th
 
 ## Owner-confirmed order and legal facts
 
+**Later owner correction (T060/T061):** The current public contacts are one phone and two contact street addresses as listed below. This supersedes the 2026-09-26 contact inventory and old-site historical values; it does not identify a pickup location or resolve detailed delivery/legal blockers.
+
 **Owner confirmation applied:** 2026-09-26. T009 = **DONE**; this records confirmed business facts and explicit blockers, not legal approval. Content Gate remains **BLOCKED** by 2 T008 commercial groups and 3 T009 legal groups after C1–C4. T010 media blockers: **0**. The historical source inventory below is preserved and must not override current owner-confirmed facts.
 
 ### Confirmed request and payment baseline
@@ -76,10 +78,10 @@ No SKU, price, dimensions, availability, or other business fact is changed by th
 | Value | Status | Current fact / boundary |
 |---|---|---|
 | Legal seller / operator | BLOCKED / OWNER DATA REQUIRED | Legal entity/sole proprietor, legal name, INN, OGRN/OGRNIP, legal address and personal-data operator are unknown. Marmix Flex is a project/brand name, not a confirmed legal name. Do not borrow another business’s details. |
-| Public phones | OWNER CONFIRMED | `+7 (346) 299-96-76`; `+7 (982) 519-96-76`. Use exactly these two records. |
+| Public phone | OWNER CONFIRMED — T060/T061 correction | `+7 (346) 299-96-76` is the only current public number. The former second phone `+7 (982) 519-96-76` is deprecated and must not be published. |
 | Alternative old phone string | HISTORICAL SOURCE VALUE ONLY | `+7 (3462) 99-96-76` is not a third confirmed number. |
-| Cities of presence | OWNER CONFIRMED | Сургут; Москва. These are cities only, not confirmed street addresses or pickup locations. |
-| Street addresses | MISSING / NOT OWNER-CONFIRMED | Old-site addresses remain historical evidence only; do not present them as current/public/pickup addresses. |
+| Cities of presence | OWNER CONFIRMED | Сургут; Москва. Confirmed contact addresses below are not confirmed pickup locations. |
+| Contact street addresses | OWNER CONFIRMED — T060/T061 correction | г. Сургут, Декабристов 1А; г. Москва, Товарищеский переулок, 13, Офис 4. These are public contact addresses; neither is confirmed as a pickup point. |
 | WhatsApp | OWNER CONFIRMED: NO | Do not add a WhatsApp action. |
 | Public email / business hours | MISSING / NOT YET PROVIDED | No public email or working hours confirmed. The public contact email is distinct from the future checkout email field. Do not invent values. |
 
