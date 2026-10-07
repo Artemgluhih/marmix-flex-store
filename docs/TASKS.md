@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T061 — DONE, T062–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T063 и T063A — DONE; T064–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1467,7 +1467,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T063A
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Category navigation, catalog UX и Product Card actions
 - **Goal:** Published category navigation on homepage and catalog, immediate category/sort changes, full category-scoped controls and discoverable Product Detail/card cart actions.
 - **Why:** Customers need clear material groups, preserved URL state and direct paths to product details and the existing request cart.
@@ -1483,7 +1483,9 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T063A): Category navigation и catalog UX
 
-- **Owner workflow correction / review:** Separate `/admin/products?view=order` uses complete active REAL scope with no search/filter/pagination, normalizes 0..N-1 and invalidates public list cache. Default work list excludes archive; explicit archive retains restore, no hard delete. Editor: active name/SKU, bounded searchable list, sticky desktop/collapsible mobile, previous/next and explicit save-before-switch notice, no autosave. Sequential RLS row updates are not atomic; partial/conflict failures refresh with an explicit message. T063A remains BLOCKED pending owner visual/catalog/Admin workflow verification; T064 NOT STARTED.
+- **Owner workflow correction / review:** Separate `/admin/products?view=order` uses complete active REAL scope with no search/filter/pagination, normalizes 0..N-1 and invalidates public list cache. Default work list excludes archive; explicit archive retains restore, no hard delete. Editor: active name/SKU, bounded searchable list, sticky desktop/collapsible mobile, previous/next and explicit save-before-switch notice, no autosave. Sequential RLS row updates are not atomic; partial/conflict failures refresh with an explicit message. Owner visual/catalog/Admin workflow verification PASS; T063A DONE; T064 NOT STARTED.
+
+- **Resolution:** Owner verification PASS for homepage local categories, Featured max 6 and prominent full-catalog CTA; one-page catalog query category switching; Admin category/product reorder; active/archive separation and restore; product editor navigator, Previous/Next and mobile navigator. Admin status/category/sort apply immediately; search uses 400 ms debounce and Enter, Apply removed, Reset retained, filters remain URL-authoritative with page reset, refresh and Back/Forward. Prominent header action «Изменить порядок товаров» opens the unchanged complete active REAL reorder mode. Only sort_order is persisted by authenticated RLS updates; no schema/RLS or identity/commerce changes, no physical REAL deletion, no autosave. Targeted filter, reorder, archive, catalog/card and metadata regressions, lint/typecheck/build PASS. Owner confirmed 390/768/1024/1440, no horizontal overflow and clean console. Production unchanged; Production Content Gate BLOCKED; Legal sign-off PENDING.
 
 ### T064 — Dynamic SEO и indexing
 
