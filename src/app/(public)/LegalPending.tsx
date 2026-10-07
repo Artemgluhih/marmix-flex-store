@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrackedContactLink } from "@/lib/analytics/TrackedLinks";
 import styles from "./legal.module.css";
 
 type Props = {
@@ -54,7 +55,7 @@ export function LegalPending({ eyebrow, title, status, explanation, items, note,
         <p>Обычные контакты Marmix Flex доступны отдельно. Они не обозначены как юридические контакты продавца или оператора персональных данных.</p>
         <div>
           <Link href={otherHref}>{otherLabel}<span aria-hidden="true">↗</span></Link>
-          <Link href="/contacts">Контакты Marmix Flex<span aria-hidden="true">↗</span></Link>
+          <TrackedContactLink>Контакты Marmix Flex<span aria-hidden="true">↗</span></TrackedContactLink>
         </div>
       </nav>
     </div>

@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T067 и T063A — DONE; T068–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T068 и T063A — DONE; T069–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1583,7 +1583,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T068
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Checkout/contact goals
 - **Goal:** Добавить begin_checkout/order_submit/contact_click/phone_click.
 - **Why:** Завершение заявки и контактные действия важны бизнесу.
@@ -1598,6 +1598,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T068): Checkout/contact goals
+
+- **Resolution (2026-10-07):** Owner checkout/contact goal verification PASS on READY Preview, approved review SHA `608de4638aca0deacd14ca082edc042f563733ec`. The existing production-gated Metrika adapter accepts exactly eight goals: `catalog_view`, `product_view`, `add_to_cart`, `remove_from_cart`, `begin_checkout`, `order_submit`, `contact_click`, `phone_click`, all without params. Reconciled, actionable Cart checkout CTA emits `begin_checkout` once per action; direct Checkout open, unresolved/empty Cart and rapid repeat emit 0. A controlled order-flow helper emits `order_submit` only after 2xx `{submitted:true}` and at most once per client idempotency key; response-loss replay can be the first visible success. Replay duplicates, validation/409/5xx/network false positives, request ID/key and PII payload leakage 0. Header/Footer contact navigation and public phone links emit their respective action goals; map links emit none. Permanent Checkout submit remains disabled pending legal approval; this task did not activate it. Preview Metrika/Yandex/reachGoal 0; T066/T067 regression, targeted tests, lint/typecheck and READY Vercel build PASS. Runtime consent mechanism = NOT PRESENT and remains a Production activation dependency; Legal sign-off = PENDING; Production Content Gate = BLOCKED. Production and Production env unchanged; T069 — NOT STARTED.
 
 
 ## PHASE 16 — Integrated QA
