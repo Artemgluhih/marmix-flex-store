@@ -1547,6 +1547,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Forbidden scope:** Метрика на Preview и cookie PII payload. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md.
 - **Implementation notes:** Малый client island, конфиг из production env.
+- **Production activation dependency:** Runtime consent mechanism and final Privacy/consent legal sign-off are not yet approved. The production environment gate is technical only; do not enable analytics or deploy this integration to Production until the owner/legal decision and Production Content Gate PASS.
 - **Acceptance criteria:** Один pageview на навигацию; Preview не отправляет.
 - **Required checks:** network event smoke, typecheck.
 - **Recommended model:** GPT-6 Sol Medium
