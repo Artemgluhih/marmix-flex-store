@@ -11,6 +11,7 @@ import styles from "./products.module.css";
 import workflow from "./workflow.module.css";
 import { readProductOrder } from "./order-read";
 import { ProductOrderList } from "./ProductOrderList";
+import { ProductFilters } from "./ProductFilters";
 
 export const metadata: Metadata = {
   title: "Товары — Marmix Flex",
@@ -26,7 +27,7 @@ export default async function AdminProductsPage({
   const raw = await searchParams;
   if (raw.view === "order") {
     const products = await readProductOrder(supabase);
-    return <div className={styles.page}><div className={styles.heading}><p className={styles.eyebrow}>Рабочее пространство / Каталог</p><h1>Порядок товаров</h1><Link className={workflow.modeLink} href="/admin/products">← Вернуться к рабочему списку</Link></div><ProductOrderList products={products} /></div>;
+    return <div className={styles.page}><div className={styles.heading}><p className={styles.eyebrow}>Рабочее пространство / Каталог</p><h1>Порядок товаров</h1><Link className={workflow.modeLink} href="/admin/products">← Вернуться к товарам</Link></div><ProductOrderList products={products} /></div>;
   }
   const categories = await getRealCategoryOptions(supabase);
   const params = parseProductListParams(raw, categories);
@@ -41,10 +42,12 @@ export default async function AdminProductsPage({
         <p className={styles.eyebrow}>Рабочее пространство / Каталог</p>
         <h1>Товары</h1>
         <p>Список товаров основного каталога и их текущий статус.</p>
-        <Link className={styles.createLink} href="/admin/products/new">Добавить товар</Link>
-        <Link className={workflow.modeLink} href="/admin/products?view=order">Изменить порядок</Link>
+        <div className={workflow.headerActions}>
+          <Link className={styles.createLink} href="/admin/products/new">Добавить товар</Link>
+          <Link className={workflow.reorderAction} href="/admin/products?view=order">Изменить порядок товаров</Link>
+        </div>
       </div>
-      <form className={styles.filters} action="/admin/products" method="get" role="search">
+      <ProductFilters key={JSON.stringify(params)}>
         <div className={styles.searchControl}>
           <label htmlFor="products-q">Поиск по SKU или названию</label>
           <input id="products-q" name="q" type="search" maxLength={80} defaultValue={params.q} placeholder="Название или SKU" />
@@ -76,10 +79,9 @@ export default async function AdminProductsPage({
           </select>
         </div>
         <div className={styles.filterActions}>
-          <button type="submit">Применить</button>
           <Link href="/admin/products">Сбросить</Link>
         </div>
-      </form>
+      </ProductFilters>
       <p className={styles.resultCount} aria-live="polite">
         {total === 0 ? "Найдено: 0" : `Показаны ${first}–${last} из ${total}`}
       </p>
