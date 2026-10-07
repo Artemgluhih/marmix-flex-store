@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import { catalogMetadata } from "@/lib/seo/dynamic";
+import { getPublishedSeoCategory } from "@/lib/seo/public-catalog";
 import Link from "next/link";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { CatalogControls } from "@/components/catalog/CatalogControls";
@@ -10,6 +13,12 @@ import styles from "./catalog.module.css";
 export const dynamic = "force-dynamic";
 
 type SearchParams = Record<string, string | string[] | undefined>;
+
+export async function generateMetadata({ searchParams }: { searchParams: Promise<SearchParams> }): Promise<Metadata> {
+  const raw = await searchParams;
+  const category = await getPublishedSeoCategory(raw.category);
+  return catalogMetadata(raw, category);
+}
 
 export default async function CatalogPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   const raw = await searchParams;
