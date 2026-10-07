@@ -37,6 +37,9 @@ export type PublicProduct = {
 };
 
 export type PublicProductDetail = PublicProduct & {
+  catalogKind: string;
+  isPublished: boolean;
+  archivedAt: string | null;
   description: string | null;
   widthMm: number | null;
   heightMm: number | null;

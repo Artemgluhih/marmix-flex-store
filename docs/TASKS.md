@@ -1507,13 +1507,13 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T064): Dynamic SEO и indexing
 
-- **Resolution:** Owner SEO / indexing verification PASS on READY Preview, approved review SHA `23fedbee25bc504be193d1d413182715a6ed15ca`. Dynamic catalog/category/product metadata uses verified published reads and SEO-field precedence with factual fallbacks; product OG uses actual primary media/alt, category OG has no invented SKU image. SITE_URL is the sole canonical/OG/sitemap origin (`https://marmixflex.ru`); published category filters canonicalize to clean category routes, other/invalid filters to /catalog. Production clean routes index/follow; catalog/category query variants noindex; Preview globally noindex/nofollow and robots Disallow /. Guest/RLS sitemap matches 6 static URLs + 3 published REAL non-archived products + 3 published categories; TEST_ONLY/draft/archive/hidden/query leakage 0. Preview canonical/OG leakage 0. Targeted indexing/canonical/OG/robots/paginated sitemap tests, actual read-only public-data reconciliation, READY rendered metadata, lint/typecheck/build and T063/T063A regression PASS. Approved implementation unchanged; no UI, Supabase writes, JSON-LD or analytics. Production unchanged; Production Content Gate BLOCKED; Legal sign-off PENDING. T065 — NOT STARTED.
+- **Resolution:** Owner SEO / indexing verification PASS on READY Preview, approved review SHA `23fedbee25bc504be193d1d413182715a6ed15ca`. Dynamic catalog/category/product metadata uses verified published reads and SEO-field precedence with factual fallbacks; product OG uses actual primary media/alt, category OG has no invented SKU image. SITE_URL is the sole canonical/OG/sitemap origin (`https://marmixflex.ru`); published category filters canonicalize to clean category routes, other/invalid filters to /catalog. Production clean routes index/follow; catalog/category query variants noindex; Preview globally noindex/nofollow and robots Disallow /. Guest/RLS sitemap matches 6 static URLs + 3 published REAL non-archived products + 3 published categories; TEST_ONLY/draft/archive/hidden/query leakage 0. Preview canonical/OG leakage 0. Targeted indexing/canonical/OG/robots/paginated sitemap tests, actual read-only public-data reconciliation, READY rendered metadata, lint/typecheck/build and T063/T063A regression PASS. Approved implementation unchanged; no UI, Supabase writes, JSON-LD or analytics. Production unchanged; Production Content Gate BLOCKED; Legal sign-off PENDING. T065 subsequently completed after owner structured data verification PASS.
 
 ### T065 — Structured data
 
 - **ID:** T065
 - **Priority:** P1
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Structured data
 - **Goal:** Добавить Breadcrumb и Product/Offer JSON-LD по фактам.
 - **Why:** Поисковые данные должны совпадать с витриной.
@@ -1528,6 +1528,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T065): Structured data
+
+- **Resolution:** Owner structured data verification PASS on READY Preview, approved review SHA `e15b06571ba38b6d6b1e84f23f83e7d5d31fc05c`. Clean `/catalog`, published `/catalog/[category]`, and published REAL `/product/[slug]` render server-side BreadcrumbList with absolute SITE_URL URLs; filtered catalog/category URLs omit BreadcrumbList, and Product never invents a category parent. Product/Offer JSON-LD requires REAL, published, non-archived guest DTO plus existing evaluateCommerce/exactTotalMinor for confirmed RUB, units, min/step and exact purchasable amount, and `in_stock`. `on_order` schema mapping remains unresolved; availability NULL omits Product/Offer. All three current REAL Preview products have NULL availability, live Product/Offer counts 0/0. In-memory synthetic fixtures verify panel 2000 ₽/м² × 4.0328 м² = 8065.60 ₽/sheet without rounding, accessory 1:1, invalid/missing/TEST_ONLY/draft/archive omission and safe JSON script escaping. Ratings, reviews, seller, shipping, return policy and Preview URL leakage 0. READY HTML Breadcrumb and Preview noindex, targeted structured-data/T063/T064/T063A plus commerce regressions, lint/typecheck and Vercel build PASS. Local build blocked solely by Google Fonts network. No Supabase writes or Production changes; Production Content Gate BLOCKED; Legal sign-off PENDING. T066 — NOT STARTED.
 
 
 ## PHASE 15 — Yandex Metrika

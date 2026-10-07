@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { productMetadata } from "@/lib/seo/dynamic";
+import { productBreadcrumb, productStructuredData } from "@/lib/seo/structured-data";
+import { JsonLd } from "@/lib/seo/JsonLd";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,6 +30,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
   const related = await getRelatedProducts(product);
   // getPublishedProduct only returns REAL, published, unarchived rows through the guest read.
   const quantityModel = evaluateCommerce(product, true);
+  const structuredProduct = productStructuredData(product);
 
   const availability = product.availabilityStatus === "in_stock" ? "В наличии"
     : product.availabilityStatus === "on_order" ? "Под заказ" : null;
@@ -42,6 +45,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <article className={styles.product} aria-labelledby="product-title">
+      <JsonLd data={productBreadcrumb(product.name, product.slug)} />
+      {structuredProduct && <JsonLd data={structuredProduct} />}
       <nav className={styles.breadcrumb} aria-label="Навигационная цепочка">
         <Link href="/">Главная</Link><span aria-hidden="true">/</span>
         <Link href="/catalog">Каталог</Link><span aria-hidden="true">/</span>

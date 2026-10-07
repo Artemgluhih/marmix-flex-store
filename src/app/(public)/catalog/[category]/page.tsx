@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
-import { categoryMetadata, type SeoSearchParams } from "@/lib/seo/dynamic";
+import { categoryMetadata, hasCatalogFilter, type SeoSearchParams } from "@/lib/seo/dynamic";
 import { getPublishedSeoCategory } from "@/lib/seo/public-catalog";
+import { categoryBreadcrumb } from "@/lib/seo/structured-data";
+import { JsonLd } from "@/lib/seo/JsonLd";
 import { notFound } from "next/navigation";
 import { CategoryCatalog } from "@/components/catalog/CategoryCatalog";
 import { getCatalogFacets, listPublishedProducts } from "@/lib/catalog/queries";
@@ -30,6 +32,9 @@ export default async function CategoryPage({ params, searchParams }: {
   if (!category) notFound();
 
   const unfilteredTotal = result.total === 0 ? (await listPublishedProducts({ categorySlug: slug })).total : result.total;
-  return <CategoryCatalog category={category} result={result} facets={facets}
-    params={normalizeCatalogListParams(input)} unfilteredTotal={unfilteredTotal} />;
+  return <>
+    {!hasCatalogFilter(raw) && <JsonLd data={categoryBreadcrumb(category.name, category.slug)} />}
+    <CategoryCatalog category={category} result={result} facets={facets}
+      params={normalizeCatalogListParams(input)} unfilteredTotal={unfilteredTotal} />
+  </>;
 }

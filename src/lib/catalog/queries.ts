@@ -17,7 +17,7 @@ export const catalogCacheTags = {
 } as const;
 
 const PRODUCT_FIELDS = "id,sku,slug,name,series,price_minor,currency,price_unit,sale_unit,min_quantity,quantity_step,area_per_sale_unit_m2,source_price_range,availability_status,is_featured,sort_order";
-const DETAIL_FIELDS = `${PRODUCT_FIELDS},description,width_mm,height_mm,thickness_mm,specifications,seo_title,seo_description`;
+const DETAIL_FIELDS = `${PRODUCT_FIELDS},catalog_kind,is_published,archived_at,description,width_mm,height_mm,thickness_mm,specifications,seo_title,seo_description`;
 const CATEGORY_FIELDS = "id,slug,name,sort_order";
 const IMAGE_FIELDS = "id,product_id,storage_path,alt,role,width,height,is_primary,sort_order";
 type Client = ReturnType<typeof createPublicSupabaseClient>;
@@ -225,7 +225,9 @@ async function readProduct(slug: string): Promise<PublicProductDetail | null> {
   if (!data) return null;
   const related = (await presentation(client, [data], true)).get(data.id)!;
   return {
-    ...productDto(data, related), description: data.description,
+    ...productDto(data, related), catalogKind: data.catalog_kind,
+    isPublished: data.is_published, archivedAt: data.archived_at,
+    description: data.description,
     widthMm: data.width_mm, heightMm: data.height_mm, thicknessMm: data.thickness_mm,
     specifications: data.specifications as Record<string, unknown>,
     seoTitle: data.seo_title, seoDescription: data.seo_description,
