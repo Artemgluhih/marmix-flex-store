@@ -1529,7 +1529,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T065): Structured data
 
-- **Resolution:** Owner structured data verification PASS on READY Preview, approved review SHA `e15b06571ba38b6d6b1e84f23f83e7d5d31fc05c`. Clean `/catalog`, published `/catalog/[category]`, and published REAL `/product/[slug]` render server-side BreadcrumbList with absolute SITE_URL URLs; filtered catalog/category URLs omit BreadcrumbList, and Product never invents a category parent. Product/Offer JSON-LD requires REAL, published, non-archived guest DTO plus existing evaluateCommerce/exactTotalMinor for confirmed RUB, units, min/step and exact purchasable amount, and `in_stock`. `on_order` schema mapping remains unresolved; availability NULL omits Product/Offer. All three current REAL Preview products have NULL availability, live Product/Offer counts 0/0. In-memory synthetic fixtures verify panel 2000 ₽/м² × 4.0328 м² = 8065.60 ₽/sheet without rounding, accessory 1:1, invalid/missing/TEST_ONLY/draft/archive omission and safe JSON script escaping. Ratings, reviews, seller, shipping, return policy and Preview URL leakage 0. READY HTML Breadcrumb and Preview noindex, targeted structured-data/T063/T064/T063A plus commerce regressions, lint/typecheck and Vercel build PASS. Local build blocked solely by Google Fonts network. No Supabase writes or Production changes; Production Content Gate BLOCKED; Legal sign-off PENDING. T066 — NOT STARTED.
+- **Resolution:** Owner structured data verification PASS on READY Preview, approved review SHA `e15b06571ba38b6d6b1e84f23f83e7d5d31fc05c`. Clean `/catalog`, published `/catalog/[category]`, and published REAL `/product/[slug]` render server-side BreadcrumbList with absolute SITE_URL URLs; filtered catalog/category URLs omit BreadcrumbList, and Product never invents a category parent. Product/Offer JSON-LD requires REAL, published, non-archived guest DTO plus existing evaluateCommerce/exactTotalMinor for confirmed RUB, units, min/step and exact purchasable amount, and `in_stock`. `on_order` schema mapping remains unresolved; availability NULL omits Product/Offer. All three current REAL Preview products have NULL availability, live Product/Offer counts 0/0. In-memory synthetic fixtures verify panel 2000 ₽/м² × 4.0328 м² = 8065.60 ₽/sheet without rounding, accessory 1:1, invalid/missing/TEST_ONLY/draft/archive omission and safe JSON script escaping. Ratings, reviews, seller, shipping, return policy and Preview URL leakage 0. READY HTML Breadcrumb and Preview noindex, targeted structured-data/T063/T064/T063A plus commerce regressions, lint/typecheck and Vercel build PASS. Local build blocked solely by Google Fonts network. No Supabase writes or Production changes; Production Content Gate BLOCKED; Legal sign-off PENDING. T066 subsequently completed after owner Metrika/pageview verification PASS.
 
 
 ## PHASE 15 — Yandex Metrika
@@ -1538,7 +1538,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T066
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Metrika adapter и pageviews
 - **Goal:** Подключить production-only adapter и корректный route tracking.
 - **Why:** События SPA нельзя считать повторно.
@@ -1547,12 +1547,15 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Forbidden scope:** Метрика на Preview и cookie PII payload. Не начинать соседнюю TASK.
 - **Source of truth:** docs/ARCHITECTURE.md.
 - **Implementation notes:** Малый client island, конфиг из production env.
+- **Production activation dependency:** Runtime consent mechanism and final Privacy/consent legal sign-off are not yet approved. The production environment gate is technical only; do not enable analytics or deploy this integration to Production until the owner/legal decision and Production Content Gate PASS.
 - **Acceptance criteria:** Один pageview на навигацию; Preview не отправляет.
 - **Required checks:** network event smoke, typecheck.
 - **Recommended model:** GPT-6 Sol Medium
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T066): Metrika adapter и pageviews
+
+- **Resolution:** Owner Metrika/pageview verification PASS on READY Preview, approved review SHA `09c59b6c8125923b8923faa576b19134776e5c54`. Public client island only when `VERCEL_ENV=production` and `YANDEX_METRIKA_ID` is valid; Preview/Development and Admin load no Metrika. `defer: true` disables automatic initial pageview. Manual pathname-only `hit(url, options)` sends once on initial load and each actual path transition including Back/Forward; same-path rerender and query-only changes produce 0 extra hits. Public path allowlist omits search text, PII and private identifiers. `reachGoal` calls 0. Controlled fake-counter harness: init 1, hits `/`, `/catalog`, `/product/azur`, Back `/catalog` = 4. Preview Home/Catalog/Product/Admin script and `ym` absent. Targeted tests, lint/typecheck and READY Vercel build PASS; local build limited by Google Fonts network. Runtime consent mechanism absent; final Privacy/consent legal sign-off PENDING and Production Content Gate BLOCKED. Production activation depends on those approvals; Production and Production env unchanged. T067 — NOT STARTED.
 
 ### T067 — Catalog/product/cart goals
 
