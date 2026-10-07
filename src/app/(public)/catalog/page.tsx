@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { catalogMetadata } from "@/lib/seo/dynamic";
+import { catalogBreadcrumb } from "@/lib/seo/structured-data";
+import { JsonLd } from "@/lib/seo/JsonLd";
 import { getPublishedSeoCategory } from "@/lib/seo/public-catalog";
 import Link from "next/link";
 import { ProductGrid } from "@/components/catalog/ProductGrid";
@@ -37,6 +39,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
 
   return (
     <section className={styles.catalog} aria-labelledby="catalog-title">
+      {Object.keys(raw).length === 0 && <JsonLd data={catalogBreadcrumb()} />}
       <nav className={styles.breadcrumb} aria-label="Навигационная цепочка">
         <Link href="/">Главная</Link><span aria-hidden="true">/</span><span aria-current="page">Каталог</span>
       </nav>
