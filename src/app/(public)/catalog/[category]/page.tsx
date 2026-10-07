@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { categoryMetadata, type SeoSearchParams } from "@/lib/seo/dynamic";
+import { categoryMetadata, hasCatalogFilter, type SeoSearchParams } from "@/lib/seo/dynamic";
 import { getPublishedSeoCategory } from "@/lib/seo/public-catalog";
 import { categoryBreadcrumb } from "@/lib/seo/structured-data";
 import { JsonLd } from "@/lib/seo/JsonLd";
@@ -33,7 +33,7 @@ export default async function CategoryPage({ params, searchParams }: {
 
   const unfilteredTotal = result.total === 0 ? (await listPublishedProducts({ categorySlug: slug })).total : result.total;
   return <>
-    {Object.keys(raw).length === 0 && <JsonLd data={categoryBreadcrumb(category.name, category.slug)} />}
+    {!hasCatalogFilter(raw) && <JsonLd data={categoryBreadcrumb(category.name, category.slug)} />}
     <CategoryCatalog category={category} result={result} facets={facets}
       params={normalizeCatalogListParams(input)} unfilteredTotal={unfilteredTotal} />
   </>;

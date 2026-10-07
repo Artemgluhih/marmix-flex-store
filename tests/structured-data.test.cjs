@@ -25,6 +25,11 @@ function load(file) {
   return module.exports;
 }
 const seo = load('src/lib/seo/structured-data.ts');
+const { hasCatalogFilter } = load('src/lib/seo/dynamic.ts');
+assert.equal(hasCatalogFilter({}), false);
+assert.equal(hasCatalogFilter({ 'x-vercel-protection-bypass': 'technical-preview-access' }), false);
+for (const key of ['category', 'q', 'price_min', 'price_max', 'status', 'sort', 'page'])
+  assert.equal(hasCatalogFilter({ [key]: 'active' }), true);
 const view = load('src/lib/seo/JsonLd.tsx');
 const plain = data => JSON.parse(JSON.stringify(data));
 const image = { url: 'https://example.supabase.co/storage/v1/object/public/product-media/x.png', alt: 'Азур' };
