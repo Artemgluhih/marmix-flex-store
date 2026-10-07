@@ -96,3 +96,6 @@ nav=walk(home()).find(n=>n.type==='nav');walk(nav).find(n=>n.type==='button'&&n.
 const homeSource=fs.readFileSync('src/app/(public)/CatalogFragment.tsx','utf8');assert.doesNotMatch(homeSource,/window\.location|router\.|fetch\(|scrollTo|href=\{.*category/);
 assert.doesNotMatch(fs.readFileSync('src/app/(public)/page.tsx','utf8'),/categorySection|material-categories-title/);
 console.log('PASS: compact homepage buttons, local active state, per-category preverified Featured sets, All restore and inline empty state; no navigation/reload/scroll calls. Component-only fixtures.');
+
+for (const count of [1,2,3,4,5,6]) { homepageActive=null;const markup=renderToStaticMarkup(React.createElement(load('src/app/(public)/CatalogFragment.tsx').CatalogFragment,{...homeProps,products:Array.from({length:count},(_,i)=>({...featured,id:'fixture-'+i,name:'Featured '+i}))}));assert.equal((markup.match(/<article/g)||[]).length,count);assert.match(markup,/Смотреть весь каталог/);assert.match(markup,/Показаны избранные материалы/); }
+const homeCss=fs.readFileSync('src/app/(public)/homeFragments.module.css','utf8');assert.match(homeCss,/repeat\(3, minmax\(0, 1fr\)\)/);assert.match(homeCss,/repeat\(2, minmax\(0, 1fr\)\)/);assert.match(homeCss,/grid-template-columns: 1fr/);

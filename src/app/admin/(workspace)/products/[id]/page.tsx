@@ -6,6 +6,8 @@ import { EditProductForm } from "./EditProductForm";
 import { AssortmentControls } from "./AssortmentControls";
 import { ProductCategoriesForm } from "./ProductCategoriesForm";
 import { MediaUpload } from "./MediaUpload";
+import { ProductNavigator } from "./ProductNavigator";
+import { readProductOrder } from "../order-read";
 import { editValuesFromProduct, validProductId } from "./edit-validation";
 import base from "../new/new-product.module.css";
 import styles from "./edit-product.module.css";
@@ -35,14 +37,16 @@ export default async function EditProductPage({ params, searchParams }: {
   const values = editValuesFromProduct(product);
   if (!values) throw new Error("Характеристики товара требуют проверки перед редактированием.");
   const notice = await searchParams;
+  const navigatorProducts = await readProductOrder(supabase);
 
   return (
-    <div className={base.page}>
+    <div className={`${base.page} ${styles.editorPage}`}>
       <p className={base.eyebrow}>Рабочее пространство / Каталог</p>
       <h1>Редактирование товара</h1>
       <p className={base.intro}>Свойства одного SKU, состояние каталога и изображения товара.</p>
       {product.catalog_kind === "TEST_ONLY" && <p className={styles.fixture}>TEST_ONLY — временный Preview товар. Не относится к реальному каталогу.</p>}
       {(notice.saved === "1" || ["assortment", "publish", "unpublish", "archive", "restore"].includes(notice.state ?? "")) && <p className={styles.success} role="status">Изменения сохранены.</p>}
+      <div className={styles.editorLayout}><div className={styles.editorBody}>
       <section className={styles.identity} aria-label="Идентичность товара">
         <div><span>Название</span><strong>{product.name}</strong></div>
         <div><span>SKU</span><strong>{product.sku}</strong></div>
@@ -59,6 +63,7 @@ export default async function EditProductPage({ params, searchParams }: {
         width: image.width, height: image.height,
         role: image.role, alt: image.alt, sort_order: image.sort_order, is_primary: image.is_primary,
       }))} />
+      </div><ProductNavigator products={navigatorProducts} current={product} /></div>
     </div>
   );
 }

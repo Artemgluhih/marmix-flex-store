@@ -68,7 +68,7 @@ export function CatalogFragment({ products: allProducts, categories, categoryPro
         </div>
       )}
       </div>
-      <Link className={styles.catalogLink} href="/catalog">Перейти в каталог <span aria-hidden="true">→</span></Link>
+      <div className={styles.catalogInvitation}><p>Показаны избранные материалы. Полный ассортимент — в каталоге.</p><Link className={styles.catalogLink} href="/catalog">Смотреть весь каталог <span aria-hidden="true">→</span></Link></div>
     </section>
   );
 }

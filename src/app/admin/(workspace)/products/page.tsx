@@ -8,6 +8,9 @@ import {
 } from "./products-list";
 import { productPrice, productStatus } from "./product-presentation";
 import styles from "./products.module.css";
+import workflow from "./workflow.module.css";
+import { readProductOrder } from "./order-read";
+import { ProductOrderList } from "./ProductOrderList";
 
 export const metadata: Metadata = {
   title: "Товары — Marmix Flex",
@@ -20,8 +23,13 @@ export default async function AdminProductsPage({
   searchParams: Promise<RawProductListParams>;
 }) {
   const { supabase } = await requireAdmin("/admin/products");
+  const raw = await searchParams;
+  if (raw.view === "order") {
+    const products = await readProductOrder(supabase);
+    return <div className={styles.page}><div className={styles.heading}><p className={styles.eyebrow}>Рабочее пространство / Каталог</p><h1>Порядок товаров</h1><Link className={workflow.modeLink} href="/admin/products">← Вернуться к рабочему списку</Link></div><ProductOrderList products={products} /></div>;
+  }
   const categories = await getRealCategoryOptions(supabase);
-  const params = parseProductListParams(await searchParams, categories);
+  const params = parseProductListParams(raw, categories);
   const { products, total, page, catalogEmpty } = await getRealProductsPage(supabase, params);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const first = total === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
@@ -34,6 +42,7 @@ export default async function AdminProductsPage({
         <h1>Товары</h1>
         <p>Список товаров основного каталога и их текущий статус.</p>
         <Link className={styles.createLink} href="/admin/products/new">Добавить товар</Link>
+        <Link className={workflow.modeLink} href="/admin/products?view=order">Изменить порядок</Link>
       </div>
       <form className={styles.filters} action="/admin/products" method="get" role="search">
         <div className={styles.searchControl}>
@@ -43,7 +52,7 @@ export default async function AdminProductsPage({
         <div className={styles.filterControl}>
           <label htmlFor="products-status">Статус</label>
           <select id="products-status" name="status" defaultValue={params.status}>
-            <option value="">Все статусы</option>
+            <option value="">Все активные</option>
             <option value="published">Опубликованы</option>
             <option value="unpublished">Скрыты</option>
             <option value="archived">В архиве</option>
@@ -76,8 +85,8 @@ export default async function AdminProductsPage({
       </p>
       {products.length === 0 ? (
         <section className={styles.empty} aria-labelledby="empty-products">
-          <h2 id="empty-products">{catalogEmpty ? "Товары пока не добавлены" : "По заданным параметрам товары не найдены"}</h2>
-          <p>{catalogEmpty ? "Когда товары появятся в каталоге, они будут видны здесь." : "Измените поисковый запрос или сбросьте фильтры."}</p>
+          <h2 id="empty-products">{catalogEmpty ? "Активных товаров пока нет" : "По заданным параметрам товары не найдены"}</h2>
+          <p>{catalogEmpty ? "Рабочий ассортимент появится здесь. Архивные товары доступны через фильтр «В архиве»." : "Измените поисковый запрос или сбросьте фильтры."}</p>
         </section>
       ) : (
         <div className={styles.tableFrame}>

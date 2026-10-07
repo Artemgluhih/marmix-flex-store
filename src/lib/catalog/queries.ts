@@ -204,7 +204,7 @@ async function readFeaturedProducts(categorySlug: string | null): Promise<Public
     query = query.in("id", [...ids]);
   }
   const { data, error } = await query.order("sort_order", { ascending: true })
-    .order("id", { ascending: true }).limit(3);
+    .order("id", { ascending: true }).limit(6);
   if (error || !data) failed();
   const related = await presentation(client, data);
   return data.map((row) => productDto(row, related.get(row.id)!));

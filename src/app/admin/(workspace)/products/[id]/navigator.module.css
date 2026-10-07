@@ -1,0 +1,19 @@
+.navigator { position: sticky; top: 28px; align-self: start; min-width: 0; padding: 22px; border-left: 1px solid var(--color-border-warm); background: var(--color-graphite); }
+.current { display: grid; gap: 7px; overflow-wrap: anywhere; }
+.current span, .current small { color: var(--color-text-secondary); font-size: 11px; }
+.current strong { font-size: 14px; }
+.notice { margin: 20px 0; color: var(--color-gold); font-size: 12px; line-height: 1.65; }
+.adjacent { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; border-block: 1px solid var(--color-border); }
+.adjacent a, .adjacent span, .archive { display: inline-flex; align-items: center; min-height: 44px; color: var(--color-text-primary); font-size: 12px; text-underline-offset: 4px; }
+.adjacent span { color: var(--color-text-quiet); }
+.desktop h2 { margin: 22px 0 18px; font-size: 18px; }
+.navigator label { display: grid; gap: 8px; color: var(--color-text-secondary); font-size: 11px; }
+.navigator input { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid var(--color-border); background: var(--color-elevated); color: var(--color-text-primary); font: inherit; }
+.navigator ul { margin: 16px 0 0; padding: 0; list-style: none; max-height: min(42vh, 480px); overflow-y: auto; }
+.navigator li a { display: block; padding: 12px 10px; border-bottom: 1px solid var(--color-border-quiet); color: var(--color-text-primary); text-decoration: none; font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }
+.navigator li a[aria-current="page"] { border-left: 2px solid var(--color-gold); color: var(--color-gold); background: var(--color-elevated); }
+.navigator li small { display: block; margin-top: 4px; color: var(--color-text-secondary); font-size: 10px; }
+.navigator a:focus-visible, .navigator input:focus-visible, .navigator summary:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+.mobile { display: none; }
+.archive { margin-top: 16px; }
+@media(max-width:1100px) { .navigator { position: static; border-left: 0; border-block: 1px solid var(--color-border-warm); } .desktop { display: none; } .mobile { display: block; margin-top: 14px; } .mobile summary { min-height: 44px; padding-block: 12px; cursor: pointer; color: var(--color-gold); font-size: 13px; } }

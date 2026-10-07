@@ -235,3 +235,9 @@
 .featuredCategories button:hover { color: var(--color-gold); }
 .featuredCategories button:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
 @media (max-width: 620px) { .featuredCategories { gap: 0 18px; } .featuredCategories button { font-size: 12px; } }
+
+.catalogInvitation { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--color-border-warm); }
+.catalogInvitation p { margin: 0; color: var(--color-text-secondary); font: 13px/1.7 var(--font-ui); }
+.catalogInvitation .catalogLink { align-items: center; justify-content: space-between; gap: 32px; min-height: 56px; max-width: 100%; margin-top: 16px; padding-bottom: 12px; border-bottom-color: var(--color-gold); font: 400 clamp(24px, 2.4vw, 36px)/1.3 var(--font-display); letter-spacing: -.02em; }
+.catalogInvitation .catalogLink span { color: var(--color-gold); }
+.catalogInvitation .catalogLink:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 5px; }

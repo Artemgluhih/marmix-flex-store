@@ -1,0 +1,17 @@
+.modeLink { display: inline-flex; align-items: center; min-height: 44px; margin: 20px 0 0 18px; color: var(--color-gold); text-underline-offset: 4px; font-size: 13px; }
+.order { min-width: 0; }
+.order > p { max-width: 780px; color: var(--color-text-secondary); font-size: 13px; line-height: 1.7; }
+.orderList { margin: 24px 0; padding: 0; list-style: none; max-height: 65vh; overflow-y: auto; border-block: 1px solid var(--color-border); }
+.orderList li { display: grid; grid-template-columns: 32px minmax(0,1fr) auto; align-items: center; gap: 20px; padding: 18px 12px; border-bottom: 1px solid var(--color-border-quiet); }
+.position { color: var(--color-gold); font-variant-numeric: tabular-nums; }
+.product { min-width: 0; }
+.product a { color: var(--color-text-primary); font-size: 14px; text-underline-offset: 4px; overflow-wrap: anywhere; }
+.product small { display: block; margin-top: 6px; color: var(--color-text-secondary); font-size: 11px; overflow-wrap: anywhere; }
+.controls { display: flex; gap: 6px; }
+.controls button, .save { min-width: 44px; min-height: 44px; border: 1px solid var(--color-border-warm); background: var(--color-graphite); color: var(--color-gold); font: inherit; cursor: pointer; }
+.controls button:disabled, .save:disabled { color: var(--color-disabled-text); cursor: default; }
+.dragHandle { cursor: grab !important; }
+.dragged { outline: 1px solid var(--color-gold); }
+.save { padding: 10px 18px; }
+.order a:focus-visible, .order button:focus-visible, .modeLink:focus-visible { outline: 2px solid var(--color-gold); outline-offset: 3px; }
+@media(max-width:700px) { .modeLink { margin-left: 0; display: flex; } .orderList li { gap: 10px; padding-inline: 0; grid-template-columns: 24px minmax(0,1fr); } .controls { grid-column: 2; } .dragHandle { display: none; } }

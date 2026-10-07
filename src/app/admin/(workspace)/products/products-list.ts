@@ -77,6 +77,7 @@ function filteredQuery(supabase: AdminContext["supabase"], params: ProductListPa
   if (params.status === "published") query = query.eq("is_published", true).is("archived_at", null);
   if (params.status === "unpublished") query = query.eq("is_published", false).is("archived_at", null);
   if (params.status === "archived") query = query.not("archived_at", "is", null);
+  else query = query.is("archived_at", null);
   return query;
 }
 
@@ -92,7 +93,7 @@ export async function getRealProductsPage(
       case "newest": query = query.order("created_at", { ascending: false }); break;
       default: query = query.order("sort_order", { ascending: true });
     }
-    return query.order("sku", { ascending: true }).range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
+    return query.order("id", { ascending: true }).range((page - 1) * PAGE_SIZE, page * PAGE_SIZE - 1);
   }
 
   let page = params.page;
