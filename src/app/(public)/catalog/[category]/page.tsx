@@ -7,6 +7,7 @@ import { notFound } from "next/navigation";
 import { CategoryCatalog } from "@/components/catalog/CategoryCatalog";
 import { getCatalogFacets, listPublishedProducts } from "@/lib/catalog/queries";
 import { normalizeCatalogListParams } from "@/lib/catalog/query-params";
+import { MetrikaRouteGoal } from "@/lib/analytics/MetrikaRouteGoal";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,7 @@ export default async function CategoryPage({ params, searchParams }: {
 
   const unfilteredTotal = result.total === 0 ? (await listPublishedProducts({ categorySlug: slug })).total : result.total;
   return <>
+    <MetrikaRouteGoal name="catalog_view" path={`/catalog/${category.slug}`} />
     {!hasCatalogFilter(raw) && <JsonLd data={categoryBreadcrumb(category.name, category.slug)} />}
     <CategoryCatalog category={category} result={result} facets={facets}
       params={normalizeCatalogListParams(input)} unfilteredTotal={unfilteredTotal} />

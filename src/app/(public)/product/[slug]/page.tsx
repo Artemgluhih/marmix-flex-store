@@ -11,6 +11,7 @@ import { ProductGallery } from "./ProductGallery";
 import { evaluateCommerce } from "@/lib/catalog/commerce";
 import { QuantityBlock } from "./QuantityBlock";
 import styles from "./product.module.css";
+import { MetrikaRouteGoal } from "@/lib/analytics/MetrikaRouteGoal";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   return (
     <article className={styles.product} aria-labelledby="product-title">
+      <MetrikaRouteGoal name="product_view" path={`/product/${product.slug}`} />
       <JsonLd data={productBreadcrumb(product.name, product.slug)} />
       {structuredProduct && <JsonLd data={structuredProduct} />}
       <nav className={styles.breadcrumb} aria-label="Навигационная цепочка">

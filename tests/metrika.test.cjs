@@ -67,5 +67,5 @@ const rootLayout = fs.readFileSync('src/app/layout.tsx', 'utf8');
 assert.match(publicLayout, /productionCounterId\(process\.env\.VERCEL_ENV, process\.env\.YANDEX_METRIKA_ID\)/);
 assert.match(publicLayout, /counterId !== null && <MetrikaPageviews/);
 assert.doesNotMatch(rootLayout, /MetrikaPageviews|metrika/);
-assert.doesNotMatch(source + publicLayout, /reachGoal|location\.href|searchParams|NEXT_PUBLIC_YANDEX/);
+assert.doesNotMatch(source + publicLayout, /location\.href|searchParams|NEXT_PUBLIC_YANDEX/);
 console.log('Metrika adapter and pageview harness PASS');

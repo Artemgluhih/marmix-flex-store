@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T063 и T063A — DONE; T064–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T067 и T063A — DONE; T068–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1555,13 +1555,13 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Additional agent:** NO
 - **Suggested commit message:** task(T066): Metrika adapter и pageviews
 
-- **Resolution:** Owner Metrika/pageview verification PASS on READY Preview, approved review SHA `09c59b6c8125923b8923faa576b19134776e5c54`. Public client island only when `VERCEL_ENV=production` and `YANDEX_METRIKA_ID` is valid; Preview/Development and Admin load no Metrika. `defer: true` disables automatic initial pageview. Manual pathname-only `hit(url, options)` sends once on initial load and each actual path transition including Back/Forward; same-path rerender and query-only changes produce 0 extra hits. Public path allowlist omits search text, PII and private identifiers. `reachGoal` calls 0. Controlled fake-counter harness: init 1, hits `/`, `/catalog`, `/product/azur`, Back `/catalog` = 4. Preview Home/Catalog/Product/Admin script and `ym` absent. Targeted tests, lint/typecheck and READY Vercel build PASS; local build limited by Google Fonts network. Runtime consent mechanism absent; final Privacy/consent legal sign-off PENDING and Production Content Gate BLOCKED. Production activation depends on those approvals; Production and Production env unchanged. T067 — NOT STARTED.
+- **Resolution:** Owner Metrika/pageview verification PASS on READY Preview, approved review SHA `09c59b6c8125923b8923faa576b19134776e5c54`. Public client island only when `VERCEL_ENV=production` and `YANDEX_METRIKA_ID` is valid; Preview/Development and Admin load no Metrika. `defer: true` disables automatic initial pageview. Manual pathname-only `hit(url, options)` sends once on initial load and each actual path transition including Back/Forward; same-path rerender and query-only changes produce 0 extra hits. Public path allowlist omits search text, PII and private identifiers. `reachGoal` calls 0. Controlled fake-counter harness: init 1, hits `/`, `/catalog`, `/product/azur`, Back `/catalog` = 4. Preview Home/Catalog/Product/Admin script and `ym` absent. Targeted tests, lint/typecheck and READY Vercel build PASS; local build limited by Google Fonts network. Runtime consent mechanism absent; final Privacy/consent legal sign-off PENDING and Production Content Gate BLOCKED. Production activation depends on those approvals; Production and Production env unchanged. T067 subsequently completed after owner goal verification PASS.
 
 ### T067 — Catalog/product/cart goals
 
 - **ID:** T067
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Catalog/product/cart goals
 - **Goal:** Добавить catalog_view/product_view/add_to_cart/remove_from_cart.
 - **Why:** Воронка выбора должна измеряться без PII.
@@ -1576,6 +1576,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T067): Catalog/product/cart goals
+
+- **Resolution (2026-10-07):** Owner catalog/product/cart goal verification PASS on READY Preview, approved review SHA `65d11de661b57566a212f8da0273b1aba2b72265`. The T066 production-gated central adapter now accepts exactly `catalog_view`, `product_view`, `add_to_cart`, `remove_from_cart` with `reachGoal` and no params. Successfully rendered `/catalog`, published category and published REAL Product routes emit one goal per pathname navigation; query changes and rerenders emit 0, Back/Forward count as new views. CartProvider emits only on accepted absent→present add and explicit present→absent remove; quantity changes, hydration/reconciliation, missing removes and rapid repeats emit 0. Controlled route/cart harness and T066 pageview regression PASS; PII/search payload leakage and Preview goals/Yandex script 0. Lint/typecheck PASS, READY Vercel build PASS; local build limited by Google Fonts network. Runtime consent mechanism remains absent and a Production activation dependency with final Privacy/consent legal sign-off PENDING. Production Content Gate BLOCKED; Production and Production env unchanged. T068 — NOT STARTED.
 
 ### T068 — Checkout/contact goals
 
