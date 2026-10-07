@@ -1,4 +1,8 @@
-type MetrikaCall = [number, "init" | "hit", ...unknown[]];
+type MetrikaCall = [number, "init" | "hit" | "reachGoal", ...unknown[]];
+
+export type MetrikaGoal = "catalog_view" | "product_view" | "add_to_cart" | "remove_from_cart";
+export type RouteGoal = Extract<MetrikaGoal, "catalog_view" | "product_view">;
+const GOALS = new Set<MetrikaGoal>(["catalog_view", "product_view", "add_to_cart", "remove_from_cart"]);
 
 export type MetrikaFunction = ((...args: MetrikaCall) => void) & {
   a?: MetrikaCall[];
@@ -29,6 +33,7 @@ export function publicPageviewPath(pathname: string | null): string | null {
 export function createMetrikaAdapter(counterId: number) {
   let initialized = false;
   let lastTrackedPath: string | null = null;
+  let lastGoalPath: string | null = null;
 
   return {
     start(browser: MetrikaWindow, document: Document): void {
@@ -66,7 +71,52 @@ export function createMetrikaAdapter(counterId: number) {
       if (!initialized || !path || path === lastTrackedPath || !browser.ym) return;
       const referer = lastTrackedPath;
       lastTrackedPath = path;
+      if (lastGoalPath !== path) lastGoalPath = null;
       browser.ym(counterId, "hit", path, referer ? { referer } : {});
     },
+
+    goal(name: MetrikaGoal, browser: MetrikaWindow): void {
+      if (!initialized || !browser.ym || !GOALS.has(name)) return;
+      // No params: no URL, product ID, cart snapshot, search text, or PII.
+      browser.ym(counterId, "reachGoal", name);
+    },
+
+    routeGoal(name: RouteGoal, pathname: string | null, browser: MetrikaWindow): void {
+      const path = publicPageviewPath(pathname);
+      if (!initialized || !browser.ym || !path || lastGoalPath === path) return;
+      if (name === "catalog_view" ? path !== "/catalog" && !path.startsWith("/catalog/")
+        : name !== "product_view" || !path.startsWith("/product/")) return;
+      lastGoalPath = path;
+      browser.ym(counterId, "reachGoal", name);
+    },
   };
+}
+
+// Activated only by the production-gated public layout. Preview never starts a counter.
+let activeAdapter: ReturnType<typeof createMetrikaAdapter> | null = null;
+let activeCounterId: number | null = null;
+let pendingRoute: { name: RouteGoal; path: string } | null = null;
+
+export function trackMetrikaPageview(counterId: number, pathname: string | null, browser: MetrikaWindow, document: Document): void {
+  if (activeCounterId !== counterId) {
+    activeAdapter = createMetrikaAdapter(counterId);
+    activeCounterId = counterId;
+  }
+  activeAdapter?.start(browser, document);
+  activeAdapter?.pageview(pathname, browser);
+  if (pendingRoute?.path === pathname) activeAdapter?.routeGoal(pendingRoute.name, pathname, browser);
+  pendingRoute = null;
+}
+
+export function trackMetrikaRouteGoal(name: RouteGoal, pathname: string | null): void {
+  if (typeof window === "undefined" || !pathname) return;
+  if (!activeAdapter) {
+    pendingRoute = { name, path: pathname };
+    return;
+  }
+  activeAdapter.routeGoal(name, pathname, window);
+}
+
+export function trackMetrikaCartGoal(name: "add_to_cart" | "remove_from_cart"): void {
+  if (typeof window !== "undefined") activeAdapter?.goal(name, window);
 }

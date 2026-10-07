@@ -11,6 +11,7 @@ import { getCatalogFacets, listPublishedProducts } from "@/lib/catalog/queries";
 import { normalizeCatalogListParams } from "@/lib/catalog/query-params";
 import { hasActiveCatalogParams } from "@/lib/catalog/url-state";
 import styles from "./catalog.module.css";
+import { MetrikaRouteGoal } from "@/lib/analytics/MetrikaRouteGoal";
 
 export const dynamic = "force-dynamic";
 
@@ -39,6 +40,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
 
   return (
     <section className={styles.catalog} aria-labelledby="catalog-title">
+      <MetrikaRouteGoal name="catalog_view" path="/catalog" />
       {!hasCatalogFilter(raw) && <JsonLd data={catalogBreadcrumb()} />}
       <nav className={styles.breadcrumb} aria-label="Навигационная цепочка">
         <Link href="/">Главная</Link><span aria-hidden="true">/</span><span aria-current="page">Каталог</span>
