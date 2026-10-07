@@ -1491,7 +1491,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T064
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Dynamic SEO и indexing
 - **Goal:** Добавить товарные/категорийные meta, OG, sitemap, robots.
 - **Why:** Динамический каталог требует согласованной индексации.
@@ -1506,6 +1506,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T064): Dynamic SEO и indexing
+
+- **Resolution:** Owner SEO / indexing verification PASS on READY Preview, approved review SHA `23fedbee25bc504be193d1d413182715a6ed15ca`. Dynamic catalog/category/product metadata uses verified published reads and SEO-field precedence with factual fallbacks; product OG uses actual primary media/alt, category OG has no invented SKU image. SITE_URL is the sole canonical/OG/sitemap origin (`https://marmixflex.ru`); published category filters canonicalize to clean category routes, other/invalid filters to /catalog. Production clean routes index/follow; catalog/category query variants noindex; Preview globally noindex/nofollow and robots Disallow /. Guest/RLS sitemap matches 6 static URLs + 3 published REAL non-archived products + 3 published categories; TEST_ONLY/draft/archive/hidden/query leakage 0. Preview canonical/OG leakage 0. Targeted indexing/canonical/OG/robots/paginated sitemap tests, actual read-only public-data reconciliation, READY rendered metadata, lint/typecheck/build and T063/T063A regression PASS. Approved implementation unchanged; no UI, Supabase writes, JSON-LD or analytics. Production unchanged; Production Content Gate BLOCKED; Legal sign-off PENDING. T065 — NOT STARTED.
 
 ### T065 — Structured data
 

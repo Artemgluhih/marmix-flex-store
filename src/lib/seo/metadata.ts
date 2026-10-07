@@ -46,6 +46,10 @@ export function createStaticMetadata({ path, title, description, absoluteTitle =
     description,
     alternates: { canonical: new URL(path, getSiteUrl()).toString() },
     robots: legalPending ? { ...NO_INDEX } : publicRobots(),
+    ...(!legalPending ? { openGraph: {
+      title: absoluteTitle ? title : `${title} — Marmix Flex`, description,
+      url: new URL(path, getSiteUrl()).toString(), siteName: "Marmix Flex", locale: "ru_RU", type: "website" as const,
+    } } : {}),
   };
 }
 

@@ -1,9 +1,20 @@
+import type { Metadata } from "next";
+import { categoryMetadata, type SeoSearchParams } from "@/lib/seo/dynamic";
+import { getPublishedSeoCategory } from "@/lib/seo/public-catalog";
 import { notFound } from "next/navigation";
 import { CategoryCatalog } from "@/components/catalog/CategoryCatalog";
 import { getCatalogFacets, listPublishedProducts } from "@/lib/catalog/queries";
 import { normalizeCatalogListParams } from "@/lib/catalog/query-params";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params, searchParams }: {
+  params: Promise<{ category: string }>; searchParams: Promise<SeoSearchParams>;
+}): Promise<Metadata> {
+  const category = await getPublishedSeoCategory((await params).category);
+  if (!category) notFound();
+  return categoryMetadata(category, await searchParams);
+}
 
 export default async function CategoryPage({ params, searchParams }: {
   params: Promise<{ category: string }>;

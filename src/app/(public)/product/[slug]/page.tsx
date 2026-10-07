@@ -1,3 +1,5 @@
+import type { Metadata } from "next";
+import { productMetadata } from "@/lib/seo/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,6 +11,12 @@ import { QuantityBlock } from "./QuantityBlock";
 import styles from "./product.module.css";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const product = await getPublishedProduct((await params).slug);
+  if (!product) notFound();
+  return productMetadata(product);
+}
 
 const rubles = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 2 });
 const measure = new Intl.NumberFormat("ru-RU", { maximumFractionDigits: 4 });
