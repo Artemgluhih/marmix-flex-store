@@ -43,7 +43,7 @@ navigate('/product/other', 'product_view');
 navigate('/product/azur', 'product_view');
 adapter.routeGoal('catalog_view', '/admin/orders/private', browser);
 adapter.routeGoal('product_view', '/product/email@example.com', browser);
-adapter.goal('begin_checkout', browser);
+adapter.goal('purchase', browser);
 assert.deepEqual(goals(), ['catalog_view', 'product_view', 'catalog_view',
   'catalog_view', 'product_view', 'product_view']);
 assert.equal(calls().filter(call => call[1] === 'init').length, 1);

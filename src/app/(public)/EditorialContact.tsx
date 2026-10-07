@@ -1,5 +1,6 @@
 import styles from "./editorial.module.css";
 import { contactLocations, contactPhone } from "./contact-data";
+import { TrackedPhoneLink } from "@/lib/analytics/TrackedLinks";
 
 export function EditorialContact({ id }: { id: string }) {
   return (
@@ -23,9 +24,9 @@ export function EditorialContact({ id }: { id: string }) {
           ))}
         </address>
         <div className={styles.contactPhones}>
-          <a href={contactPhone.href}>{contactPhone.label}</a>
+          <TrackedPhoneLink href={contactPhone.href}>{contactPhone.label}</TrackedPhoneLink>
         </div>
-        <a className={styles.contactAction} href={contactPhone.href}>Позвонить <span aria-hidden="true">↗</span></a>
+        <TrackedPhoneLink className={styles.contactAction} href={contactPhone.href}>Позвонить <span aria-hidden="true">↗</span></TrackedPhoneLink>
       </div>
     </section>
   );

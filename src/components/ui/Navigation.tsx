@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import styles from "./Navigation.module.css";
+import { TrackedContactLink } from "@/lib/analytics/TrackedLinks";
 
 const links = [
   { href: "/#materials", label: "Материал" },
@@ -75,7 +76,8 @@ export function Navigation() {
     <>
       <nav className={styles.desktop} aria-label="Основная навигация">
         {links.map(({ href, label }) => (
-          <Link key={href} href={href} aria-current={current(href) ? "page" : undefined}>{label}</Link>
+          href === "/contacts" ? <TrackedContactLink key={href} ariaCurrent={current(href) ? "page" : undefined}>{label}</TrackedContactLink>
+            : <Link key={href} href={href} aria-current={current(href) ? "page" : undefined}>{label}</Link>
         ))}
       </nav>
       <button
@@ -93,7 +95,8 @@ export function Navigation() {
       <div ref={panelRef} id="mobile-navigation" className={styles.panel} role="dialog" aria-modal="true" aria-label="Меню" hidden={!open}>
         <nav aria-label="Мобильная навигация">
           {links.map(({ href, label }) => (
-            <Link key={href} href={href} aria-current={current(href) ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>
+            href === "/contacts" ? <TrackedContactLink key={href} ariaCurrent={current(href) ? "page" : undefined} onClick={() => setOpen(false)}>{label}</TrackedContactLink>
+              : <Link key={href} href={href} aria-current={current(href) ? "page" : undefined} onClick={() => setOpen(false)}>{label}</Link>
           ))}
         </nav>
       </div>

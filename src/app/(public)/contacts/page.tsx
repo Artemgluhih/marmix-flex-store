@@ -2,6 +2,7 @@ import { createStaticMetadata } from "@/lib/seo/metadata";
 import Link from "next/link";
 import { addressMapUrl, contactLocations, contactPhone } from "../contact-data";
 import styles from "../information.module.css";
+import { TrackedPhoneLink } from "@/lib/analytics/TrackedLinks";
 
 export const metadata = createStaticMetadata({
   path: "/contacts",
@@ -19,7 +20,7 @@ export default function ContactsPage() {
         </div>
         <div className={styles.heroAside}>
           <p>Marmix Flex представлен в Сургуте и Москве. Чтобы обсудить материал или заявку, позвоните нам.</p>
-          <a className={styles.heroPhone} href={contactPhone.href}>{contactPhone.label}</a>
+          <TrackedPhoneLink className={styles.heroPhone} href={contactPhone.href}>{contactPhone.label}</TrackedPhoneLink>
         </div>
       </header>
 
@@ -57,7 +58,7 @@ export default function ContactsPage() {
         </div>
         <div className={styles.actions}>
           <Link className={styles.primaryAction} href="/catalog">Перейти в каталог <span aria-hidden="true">↗</span></Link>
-          <a className={styles.textAction} href={contactPhone.href}>Позвонить <span aria-hidden="true">↗</span></a>
+          <TrackedPhoneLink className={styles.textAction} href={contactPhone.href}>Позвонить <span aria-hidden="true">↗</span></TrackedPhoneLink>
         </div>
       </section>
     </div>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Navigation } from "./Navigation";
 import { CartStatus } from "./CartStatus";
+import { TrackedContactLink } from "@/lib/analytics/TrackedLinks";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -14,9 +15,9 @@ export function Header() {
       <CartStatus />
       <div className={styles.end}>
         <span className={styles.location}>Сургут</span>
-        <Link className={styles.contact} href="/contacts">
+        <TrackedContactLink className={styles.contact}>
           Обсудить проект <span aria-hidden="true">↗</span>
-        </Link>
+        </TrackedContactLink>
       </div>
     </header>
   );

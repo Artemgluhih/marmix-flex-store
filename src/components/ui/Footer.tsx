@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrackedContactLink } from "@/lib/analytics/TrackedLinks";
 import styles from "./Footer.module.css";
 
 export function Footer() {
@@ -14,7 +15,7 @@ export function Footer() {
           <Link href="/applications">Применение</Link>
           <Link href="/about">О бренде</Link>
           <Link href="/delivery">Доставка</Link>
-          <Link href="/contacts">Контакты</Link>
+          <TrackedContactLink>Контакты</TrackedContactLink>
         </nav>
         <nav className={styles.legalNavigation} aria-label="Юридические страницы">
           <Link href="/privacy">Политика конфиденциальности</Link>

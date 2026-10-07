@@ -6,6 +6,7 @@ import { exactArea, type QuantityViewModel } from "@/lib/catalog/commerce";
 import type { PublicProduct } from "@/lib/catalog/types";
 import type { CartLine, CartQuantityRule } from "@/lib/cart/model";
 import { reconcileLines, type ReconciledLine } from "@/lib/cart/reconcile";
+import { TrackedCheckoutLink } from "@/lib/analytics/TrackedLinks";
 import styles from "./cart.module.css";
 
 export type CartPhase = "hydrating" | "empty" | "refreshing" | "error" | "ready";
@@ -109,7 +110,7 @@ export function CartContent({ lines, products, phase, onRetry, onUpdate, onRemov
         : <p className={styles.unresolved} role="status">Итог станет доступен после проверки позиций.</p>}
       <p className={styles.note}>Перед отправкой заявки товары и цены будут проверены повторно.</p>
       <button type="button" className={styles.textAction} onClick={onRetry}>Обновить сведения</button>
-      {result.totalMinor !== null && !technical && <Link className={styles.catalogLink} href="/checkout">Перейти к заявке</Link>}
+      {result.totalMinor !== null && !technical && <TrackedCheckoutLink className={styles.catalogLink}>Перейти к заявке</TrackedCheckoutLink>}
     </aside>
   </div>;
 }

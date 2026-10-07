@@ -1,8 +1,13 @@
 type MetrikaCall = [number, "init" | "hit" | "reachGoal", ...unknown[]];
 
-export type MetrikaGoal = "catalog_view" | "product_view" | "add_to_cart" | "remove_from_cart";
+export type MetrikaGoal = "catalog_view" | "product_view" | "add_to_cart" | "remove_from_cart" |
+  "begin_checkout" | "order_submit" | "contact_click" | "phone_click";
 export type RouteGoal = Extract<MetrikaGoal, "catalog_view" | "product_view">;
-const GOALS = new Set<MetrikaGoal>(["catalog_view", "product_view", "add_to_cart", "remove_from_cart"]);
+export type ActionGoal = Extract<MetrikaGoal, "begin_checkout" | "order_submit" | "contact_click" | "phone_click">;
+const GOALS = new Set<MetrikaGoal>([
+  "catalog_view", "product_view", "add_to_cart", "remove_from_cart",
+  "begin_checkout", "order_submit", "contact_click", "phone_click",
+]);
 
 export type MetrikaFunction = ((...args: MetrikaCall) => void) & {
   a?: MetrikaCall[];
@@ -75,10 +80,16 @@ export function createMetrikaAdapter(counterId: number) {
       browser.ym(counterId, "hit", path, referer ? { referer } : {});
     },
 
-    goal(name: MetrikaGoal, browser: MetrikaWindow): void {
-      if (!initialized || !browser.ym || !GOALS.has(name)) return;
+    goal(name: MetrikaGoal, browser: MetrikaWindow): boolean {
+      if (!initialized || !browser.ym || !GOALS.has(name)) return false;
       // No params: no URL, product ID, cart snapshot, search text, or PII.
-      browser.ym(counterId, "reachGoal", name);
+      try {
+        browser.ym(counterId, "reachGoal", name);
+        return true;
+      } catch {
+        // Analytics must never interrupt a customer action.
+        return false;
+      }
     },
 
     routeGoal(name: RouteGoal, pathname: string | null, browser: MetrikaWindow): void {
@@ -119,4 +130,8 @@ export function trackMetrikaRouteGoal(name: RouteGoal, pathname: string | null):
 
 export function trackMetrikaCartGoal(name: "add_to_cart" | "remove_from_cart"): void {
   if (typeof window !== "undefined") activeAdapter?.goal(name, window);
+}
+
+export function trackMetrikaActionGoal(name: ActionGoal): boolean {
+  return typeof window !== "undefined" ? activeAdapter?.goal(name, window) ?? false : false;
 }
