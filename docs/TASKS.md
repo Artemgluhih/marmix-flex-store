@@ -1,6 +1,6 @@
 # Marmix Flex Redesign v2 — Implementation TASK Plan
 
-**Статус:** план утверждён; T001–T068 и T063A — DONE; T069–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
+**Статус:** план утверждён; T001–T069 и T063A — DONE; T070–T074 — TODO; M1 — PASS; M2 — PASS; M3 — PASS; M4 — PASS; M6 — PASS; M7 — PASS; Development Gate — PASS for isolated Preview work; Production Content Gate — BLOCKED: two commercial and three legal groups remain. Media rights/mapping blockers are 0; selected-media visual quality review remains a pre-production requirement. Технический source of truth — [ARCHITECTURE.md](ARCHITECTURE.md), визуальный — [DESIGN_SYSTEM.md](DESIGN_SYSTEM.md). [CONTENT_AUDIT.md](CONTENT_AUDIT.md) фиксирует непроверенные бизнес-данные, [DESIGN_DIRECTIONS.md](DESIGN_DIRECTIONS.md) — историю утверждения, [prototype](../prototype/index.html) — approved visual reference. Этот документ не создаёт приложение, SQL, интеграции или production deployment.
 
 **Порядок работы:** выполнять одну TASK за раз, в указанном порядке; перед ней читать этот пункт и только связанные источники/файлы, а не весь repository. Если нет нужных утверждённых данных — отметить конкретную задачу BLOCKED и запросить их. Если требуется смена архитектуры: остановиться, обосновать минимальную правку, дождаться разрешения, затем изменить ARCHITECTURE.md отдельным согласованным шагом. Если требуется изменение visual language: отдельное явное разрешение на DESIGN_SYSTEM.md и утверждённые компоненты. Никакая TASK не вправе самостоятельно изменять эти source of truth.
 
@@ -1608,7 +1608,7 @@ M1–M7 оценивают Preview реализацию с этими огран
 
 - **ID:** T069
 - **Priority:** P0
-- **Status:** TODO
+- **Status:** DONE
 - **Title:** Public integrated QA
 - **Goal:** Пройти каталог→товар→корзина→заявка с ошибками.
 - **Why:** Разрозненные smoke не проверяют весь MVP.
@@ -1623,6 +1623,8 @@ M1–M7 оценивают Preview реализацию с этими огран
 - **Reasoning level:** Medium
 - **Additional agent:** NO
 - **Suggested commit message:** task(T069): Public integrated QA
+
+- **Resolution (2026-10-08):** Owner public integrated QA verification PASS for the accessible/gated scope on review SHA `8e3427e512ce6265ae2ef24093d0fe77ccfb9344` and matching READY Preview. Local Playwright Chromium matrix across nine routes × 360/390/768/1024/1440/1920 px: 54/54 PASS, browser FAIL/UNVERIFIED 0; HTTP 200, overflow/broken images/JS/hydration/unexpected non-aborted network failures/unexpected HTTP/Yandex requests 0, H1 1, basic Tab focus PASS. 103 `ERR_ABORTED` cancellations were counted separately; individual causes were not verified. QA-01/02/03 targeted fixes accepted. Positive live Product → Cart → Checkout → Submitted Order remains blocked by unconfirmed REAL product availability and disabled permanent submit pending legal sign-off. Cart/validation/order success/retry/replay/idempotency PASS only in controlled synthetic harness, never claimed live E2E. `catalog-public-read.test.cjs` live execution UNVERIFIED without local Preview publishable env. Full accessibility audit and traffic-level PII verification not claimed. See `docs/T069_QA_REVIEW.md`. Production Content Gate BLOCKED; Legal sign-off PENDING; runtime consent NOT PRESENT; permanent Checkout submit DISABLED. T070 NOT STARTED.
 
 ### T070 — Admin integrated security QA
 

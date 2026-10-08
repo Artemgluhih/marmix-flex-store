@@ -1,6 +1,6 @@
 # T069 — Public integrated QA review
 
-**Status:** BLOCKED — OWNER PUBLIC INTEGRATED QA VERIFICATION. T069 is not DONE. Review branch only; `redesign-v2`, `main`, Production, Production env and Supabase schema/RLS/data unchanged.
+**Status:** DONE — technical public QA in owner-approved gated scope. Owner verification PASS for accessible Preview paths and controlled synthetic scenarios on review SHA `8e3427e512ce6265ae2ef24093d0fe77ccfb9344` with matching READY deployment. This is not a live positive order E2E or Production readiness approval. Production, Production env and Supabase schema/RLS/data unchanged; `main` unchanged.
 
 ## Live Preview coverage
 
@@ -14,14 +14,18 @@
 
 ### Browser evidence on the READY review deployment
 
-The browser control surface measured **1363 CSS px** (`innerWidth`), not one of the requested exact widths. At that width, `documentElement.scrollWidth` was 1348–1363 on Homepage, Catalog, Azur Product, Cart, Checkout, Applications, About, Delivery and Contacts: no measured horizontal overflow. Each route had one H1, zero broken completed images, zero `mc.yandex`/Metrika script elements and zero application console errors. The browser logged one Chrome extension metadata error, whose source is `chrome-extension://…/content-script.bundle.js`, outside the application. Keyboard Tab on Contacts focused the skip link then the brand link. These measurements are **not** a responsive PASS for other widths.
+The earlier cloud browser measured **1363 CSS px** only. It saw no overflow or application console errors across nine public routes; its Chrome extension logged metadata errors outside the app. The Owner later ran the local Playwright Chromium matrix and reviewed `report.json` and `report.md` against the matching READY Preview. The Owner attests the following exact-width results; raw local reports are intentionally not committed.
 
-| Requested CSS viewport | Layout/overflow | Console/network |
+| CSS viewport | Routes | Result |
 |---|---|---|
-| 360, 390, 768, 1024, 1440, 1920 px | UNVERIFIED: browser API cannot set viewport; no local Chromium/agent-browser runner is installed, and package registry access is denied. | UNVERIFIED at those widths. |
-| 1363 px (available browser) | No overflow on nine public routes; images completed; basic navigation and focus observed. | Application console errors 0; Metrika script elements 0. Browser API does not expose a network waterfall or resource timing. |
+| 360 px | 9/9 | PASS |
+| 390 px | 9/9 | PASS |
+| 768 px | 9/9 | PASS |
+| 1024 px | 9/9 | PASS |
+| 1440 px | 9/9 | PASS |
+| 1920 px | 9/9 | PASS |
 
-No numerical claim is made for Preview Yandex **network requests**, other failed requests, hydration exceptions outside the captured console, or layout shifts. Static Preview analytics gates and controlled tests are separate evidence.
+Across 54 checks: HTTP 200, overflow 0, completed broken images 0, JavaScript/hydration errors 0, unexpected non-aborted network failures 0, unexpected HTTP 4xx/5xx 0, Yandex requests 0, H1 count 1 and basic Tab focus PASS. Browser FAIL 0; browser UNVERIFIED 0. **103 `ERR_ABORTED` cancellations were counted separately. Their individual causes were not established; do not assert that all were caused by navigation.** This matrix does not establish a full accessibility audit, traffic-level PII absence or layout-shift/performance results.
 
 ## Controlled synthetic coverage (no persistent rows)
 
@@ -45,20 +49,20 @@ No critical/major app defect was observed in the accessible paths. Open confirme
 
 - Browser-positive Product → Cart → Checkout → submitted order is **not available**: current REAL products have unconfirmed availability, and permanent Checkout submit remains disabled for legal sign-off. No real order or TEST_ONLY DB product was created; success/retry/idempotency is synthetic only.
 - Browser validation with filled Checkout form and an eligible cart is synthetic only. No legal consent text or submission was enabled.
-- Exact 360, 390, 768, 1024, 1440 and 1920 viewport checks remain UNVERIFIED. The available browser measures 1363 CSS px but cannot set viewport; local agent-browser/Chromium is absent and network policy denies package installation. Owner or a runner with viewport control must finish this matrix.
+- Exact 360, 390, 768, 1024, 1440 and 1920 viewport browser matrix is 54/54 PASS within the runner's measured scope. Its 103 `ERR_ABORTED` cancellations remain cause-unverified; unexpected non-aborted network failures were 0.
 - `catalog-public-read.test.cjs` requires a Preview publishable environment absent locally; it exits UNVERIFIED (2), never PASS. Its stale fixed Featured/category/price assertions have been removed. Live browser independently showed three published REAL and Featured products, but this does not execute the harness against the Supabase client.
 - Local `next build` could not fetch Prata/Manrope from Google Fonts in the sandbox. Vercel Preview build is the authoritative networked build check for this review commit.
-- The captured browser application console has zero errors on nine public routes at 1363 px. Browser network waterfall, exact failed-request count, Yandex request count and traffic-level PII leakage remain UNVERIFIED; no Metrika script elements were present. Static adapter gates and controlled no-PII tests passed, but these are distinct from live network evidence.
+- Owner's browser matrix recorded JavaScript/hydration errors 0, unexpected HTTP failures 0 and Yandex requests 0. It records counts, not request bodies or traffic-level PII evidence. Traffic-level PII remains UNVERIFIED; controlled no-PII tests are distinct evidence.
 
 ## Review verification after QA-03
 
 - `tests/public-qa-cart.test.cjs`, `tests/notifications.test.cjs`, `tests/order-flow-integration.test.cjs`, `tests/metrika-actions.test.cjs`: PASS.
 - Lint and typecheck: PASS.
-- Local production build: BLOCKED by sandbox egress to Google Fonts (Manrope/Prata). The networked Vercel build state must be verified for this review SHA; the prior READY deployment does not prove the new commit built.
+- Local production build: BLOCKED by sandbox egress to Google Fonts (Manrope/Prata). Matching Vercel deployment for review SHA `8e3427e512ce6265ae2ef24093d0fe77ccfb9344`: READY, owner verified.
 
-## Owner local browser matrix — awaiting results
+## Owner local browser matrix — verified for gated scope
 
-`scripts/t069-browser-qa.mjs` uses Playwright Chromium against the pinned READY Preview origin. It creates separate clean contexts for 360/390/768/1024/1440/1920 CSS px and reads nine public routes. It records route HTTP 200, overflow, H1, completed images, JavaScript/hydration errors, unexpected HTTP 4xx/5xx, failed requests, Yandex Metrika request count and Tab focus. Request cancellation during navigation is classified separately. It neither clicks commerce actions nor submits a form. Reports contain counts, route paths and statuses only; no request URLs, bodies, credentials or PII.
+`scripts/t069-browser-qa.mjs` uses Playwright Chromium against the pinned READY Preview origin. It creates separate clean contexts for 360/390/768/1024/1440/1920 CSS px and reads nine public routes. It records route HTTP 200, overflow, H1, completed images, JavaScript/hydration errors, unexpected HTTP 4xx/5xx, failed requests, Yandex Metrika request count and Tab focus. `ERR_ABORTED` cancellations are counted separately without proving their cause. It neither clicks commerce actions nor submits a form. Reports contain counts, route paths and statuses only; no request URLs, bodies, credentials or PII.
 
 In VS Code Terminal on Windows (PowerShell), from the repository root:
 
@@ -72,6 +76,6 @@ node scripts/t069-browser-qa.mjs
 
 Read `.qa-local\t069\report.md` (also `report.json`). The folder is gitignored. Exit 0 means every row PASS, 1 means at least one FAIL, 2 means at least one UNVERIFIED without a FAIL. To check the report/classification code before opening a browser: `node scripts/t069-browser-qa.mjs --self-test`. Owner can run against a different READY Vercel Preview with `--url https://<deployment>.vercel.app`; Production domains and URLs with query/credentials are rejected.
 
-**Not yet run by Owner.** Exact-width results remain UNVERIFIED. A passing local matrix would cover the recorded checks only, not the blocked live Product → submitted order scenario or a full accessibility audit. Do not mark T069 DONE from this runner alone.
+Owner ran the local matrix: 54/54 PASS, FAIL 0, UNVERIFIED 0. T069 DONE is an explicit owner decision for the accessible public QA and controlled gated scenarios only. Positive live Product → Cart → Checkout → Submitted Order remains blocked by commercial and legal gates; the catalog public-read live harness remains UNVERIFIED without Preview publishable env. No full accessibility or traffic-level PII PASS is claimed. T070 not started.
 
 **Production Content Gate:** BLOCKED. **Legal sign-off:** PENDING. **Runtime consent mechanism:** NOT PRESENT. **Permanent Checkout submit:** DISABLED. T070 not started.
