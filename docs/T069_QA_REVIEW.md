@@ -56,4 +56,22 @@ No critical/major app defect was observed in the accessible paths. Open confirme
 - Lint and typecheck: PASS.
 - Local production build: BLOCKED by sandbox egress to Google Fonts (Manrope/Prata). The networked Vercel build state must be verified for this review SHA; the prior READY deployment does not prove the new commit built.
 
+## Owner local browser matrix — awaiting results
+
+`scripts/t069-browser-qa.mjs` uses Playwright Chromium against the pinned READY Preview origin. It creates separate clean contexts for 360/390/768/1024/1440/1920 CSS px and reads nine public routes. It records route HTTP 200, overflow, H1, completed images, JavaScript/hydration errors, unexpected HTTP 4xx/5xx, failed requests, Yandex Metrika request count and Tab focus. Request cancellation during navigation is classified separately. It neither clicks commerce actions nor submits a form. Reports contain counts, route paths and statuses only; no request URLs, bodies, credentials or PII.
+
+In VS Code Terminal on Windows (PowerShell), from the repository root:
+
+```powershell
+git switch t069-preview-review
+git pull --ff-only origin t069-preview-review
+npm install --no-save --package-lock=false playwright
+npx playwright install chromium
+node scripts/t069-browser-qa.mjs
+```
+
+Read `.qa-local\t069\report.md` (also `report.json`). The folder is gitignored. Exit 0 means every row PASS, 1 means at least one FAIL, 2 means at least one UNVERIFIED without a FAIL. To check the report/classification code before opening a browser: `node scripts/t069-browser-qa.mjs --self-test`. Owner can run against a different READY Vercel Preview with `--url https://<deployment>.vercel.app`; Production domains and URLs with query/credentials are rejected.
+
+**Not yet run by Owner.** Exact-width results remain UNVERIFIED. A passing local matrix would cover the recorded checks only, not the blocked live Product → submitted order scenario or a full accessibility audit. Do not mark T069 DONE from this runner alone.
+
 **Production Content Gate:** BLOCKED. **Legal sign-off:** PENDING. **Runtime consent mechanism:** NOT PRESENT. **Permanent Checkout submit:** DISABLED. T070 not started.
