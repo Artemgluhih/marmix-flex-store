@@ -15,7 +15,7 @@
 
 ## Fixture baseline and safety
 
-Before any T070 writes, Preview had 0 `catalog_kind=TEST_ONLY` products, 0 order rows with TEST_ONLY name, 0 Storage keys containing TEST_ONLY and one active Admin membership. No T070 Auth account, product, category, image, Storage object or order was created by the checks above or the subsequent Admin browser read-only checks. Exact fixture IDs are therefore not applicable yet; cleanup has no T070 fixtures to remove. Do not interpret these narrow counts as a broad scan for every historic test naming convention.
+Before the partial fixture approval, Preview had 4 REAL products, 0 `catalog_kind=TEST_ONLY` products, 0 orders, 3 `product-media` objects and one active Admin membership. The authorized synthetic order existed only within the single rolled-back transaction described below; an independent query confirmed its exact UUID absent afterward. No persistent T070 Auth account, product, category, image, Storage object or order was created. Do not interpret narrow TEST_ONLY counts as a broad scan for every historic test naming convention.
 
 ## Security and privacy observations
 
@@ -29,8 +29,28 @@ Before any T070 writes, Preview had 0 `catalog_kind=TEST_ONLY` products, 0 order
 
 - Active session route sequence: `/admin` → `/admin/products` → REAL product editor/media → `/admin/categories` → `/admin/orders` (0 rows) → refresh Orders → logout → direct Orders denied. No REAL form values were edited or saved.
 - The browser's console exposed repeated `Error sending browser metadata to extension: Object` entries. Their source was the browser extension metadata channel; an app runtime error was not established from those entries. No broad console/network or traffic-level PII claim is made.
-- Fixture plan, **not executed**: preflight exact TEST_ONLY baselines and existing REAL IDs; use a unique T070 label to create an isolated TEST_ONLY product/order and a distinct Storage path; exercise only those IDs with the authenticated RLS boundary; verify order commercial/contact snapshot before and after allowed status/note update; test upload/delete and denial paths; remove Storage object and dependent rows in reverse order; recheck zero T070 artifacts and unchanged REAL rows. Do not alter the sole active Admin membership. Stop if a step lacks a reliable cleanup route. Separate Owner approval is required before risk-bearing writes.
+- Fixture preflight was **partially approved**: one SQL transaction with a synthetic order and mandatory ROLLBACK was executed and independently verified below. No persistent product/order/Auth fixture is approved. The distinct Storage upload/delete was conditionally approved only with an authenticated Admin session; the available Preview browser is currently at `/admin/login`, so that write and its denial checks remain UNVERIFIED. Do not alter the sole active Admin membership. Separate Owner approval is required for any persistent product/order/Auth fixture.
 - Separate signed non-admin/revoked sessions would require safe account provisioning or an existing approved fixture; neither is available. No Auth account or role was created.
+
+## Owner partial fixture approval — transactional order QA (2026-10-08)
+
+Owner authorized one synthetic `public.order_requests` fixture within a single SQL call using explicit `BEGIN` and `ROLLBACK`; no `/api/order-requests` call was made. A read-only role/rollback preflight first confirmed the single-call SQL batch and that a post-rollback query saw 0 orders. Baseline immediately before mutation: REAL products 4, TEST_ONLY products 0, orders 0, Storage objects 3, active Admin memberships 1; exact reserved order UUID had no collision. The fixture used synthetic-only contact values, a nonempty synthetic item snapshot, and a unique idempotency UUID. Neither contact values nor identifiers were sent to analytics or Telegram. Only aggregate assertions, not fixture contact data or Auth identifiers, appear in this report.
+
+| Scope | Observed result | Evidence limit |
+|---|---|---|
+| Anon role | SELECT, UPDATE, DELETE, INSERT each denied by privilege; no order row exposed. | `SET LOCAL ROLE anon` inside the one DB transaction; not an external HTTP request. |
+| Simulated authenticated non-admin | SELECT rows 0; status UPDATE affected 0; INSERT and DELETE denied. | Synthetic nonmember `request.jwt.claim.sub`; not a signed non-admin Auth session. |
+| Simulated active Admin | SELECT saw the one fixture; status/internal_note UPDATE affected exactly 1; updated_at advanced and snapshot fields stayed byte-for-byte equivalent as JSON. Name, phone, total, items_snapshot, idempotency key, request identity and caller-supplied updated_at UPDATE denied by column grants; DELETE denied. | Existing active membership was read only and used as a local claim. This is a SQL role simulation, not live browser/Data API mutation. |
+| Trigger defense in depth | Privileged attempts to change name, phone, total, items_snapshot, idempotency key and request identity each raised snapshot check violation; an attempted caller-supplied updated_at was replaced by DB time. | Privileged trigger tests were confined to the fixture and rolled back. They do not constitute Admin CRUD through a privileged client. |
+| Rollback and independent cleanup verification | The SQL batch explicitly ended in `ROLLBACK`. A separate SQL call confirmed exact fixture UUID absent, total orders 0, REAL products 4, TEST_ONLY products 0, Storage objects 3, active Admin memberships 1. REAL products digest `3e2e545451e7d9a47a2681542169ef95` and REAL product image rows digest `eaebeb4362391e4a17959e53fe6c1455` matched the read-only preflight. | No persistent order fixture or external notification. |
+
+The only `order_requests` trigger found was BEFORE UPDATE snapshot protection; the SQL fixture INSERT did not pass through the application notification function. Telegram notification was not invoked by this transaction. No Production mutation, schema/RLS/grant change, REAL row update, or membership change occurred.
+
+## Owner partial fixture approval — Storage boundary
+
+The condition for the one permitted Storage upload/delete was a safe **authenticated Admin user session**. The available READY Preview browser at `/admin/login` was logged out at this check. No token was requested, extracted or substituted with a Secret/service-role client. Therefore authenticated upload, overwrite/upsert denial, invalid-path denial, anonymous direct upload/delete and authenticated delete remain **UNVERIFIED**; the absence of a signed session must not be reported as an RLS success or failure. Read-only metadata found exact planned path `products/937166d4-fecf-4fac-8d40-3dc74286f557/TEST_ONLY_T070_937166d4.webp` absent, 0 linked image rows and 3 existing `product-media` objects. No T070 Storage object was created; residual T070 Storage objects = 0. Cleanup was unnecessary for Storage.
+
+Timed session expiry/token refresh, separately signed non-admin/revoked accounts, live direct PostgREST mutation attempts, and full Admin mutation E2E remain UNVERIFIED. No confirmed security vulnerability emerged from the completed checks. T070 remains BLOCKED pending Owner integrated security verification; T071 has not started.
 
 ## Build and gate
 
