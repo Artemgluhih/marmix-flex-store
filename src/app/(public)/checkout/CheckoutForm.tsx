@@ -62,6 +62,6 @@ export function CheckoutForm({ technical = false, technicalState = "normal" }: {
       {technical && <button type="button" className={styles.check} onClick={checkAll}>Проверить поля (технически)</button>}
       <button type="submit" className={styles.submit} disabled aria-describedby="checkout-submit-reason">Отправить заявку</button>
     </div>
-    <p id="checkout-submit-reason" className={styles.hint}>Отправка недоступна в Preview: серверная обработка не подключена, юридический текст не утверждён.</p>
+    <p id="checkout-submit-reason" className={styles.hint}>Отправка недоступна: юридический текст согласия ещё не утверждён.</p>
   </form>;
 }
