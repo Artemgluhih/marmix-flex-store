@@ -51,10 +51,15 @@ function countSignals(source) {
   return Object.fromEntries(Object.entries(MARKERS).map(([name, regex]) => [name, [...source.matchAll(regex)].length]));
 }
 
-function headerValue(value) {
+function headerValue(value, kind) {
   if (value == null) return null;
-  const normalized = value.toLowerCase().trim();
-  return /^[a-z0-9 ,=._-]{1,200}$/.test(normalized) ? normalized : "[nonstandard value omitted]";
+  const allowed = kind === "cache"
+    ? /^(?:public|private|no-store|no-cache|must-revalidate|immutable|(?:max-age|s-maxage)=\d+)$/
+    : /^(?:noindex|nofollow|none|all|index|follow|noarchive|nosnippet)$/;
+  return value.toLowerCase().split(",").map((token) => {
+    const directive = token.trim();
+    return allowed.test(directive) ? directive : "[other directive omitted]";
+  }).join(", ");
 }
 
 function publicCache(value) {
@@ -97,8 +102,10 @@ function selfTest() {
   assert.equal(countSignals("sb_publishable_public-example").supabaseSecretCredential, 0);
   assert.equal(publicCache("public, s-maxage=60"), true);
   assert.equal(privateCache("private, no-store"), true);
-  assert.equal(headerValue("sensitive\nvalue"), "[nonstandard value omitted]");
-  assert.equal(headerValue(null), null);
+  assert.equal(headerValue("sensitive\nvalue", "cache"), "[other directive omitted]");
+  assert.equal(headerValue(null, "cache"), null);
+  assert.equal(headerValue("private, s-maxage=30, token=private-value", "cache"),
+    "private, s-maxage=30, [other directive omitted]");
   const bundle = { discovered: 1, fetched: 1, unavailable: 0, failedRequests: 0, signals: emptySignals() };
   assert.equal(bundleStatus(bundle, [{ status: 200 }]), "PASS");
   assert.equal(bundleStatus({ ...bundle, unavailable: 1 }, [{ status: 200 }]), "UNVERIFIED");
@@ -159,13 +166,13 @@ async function inspectAnonymousAdmin(context, origin) {
       const res = await request.response();
       if (!res) continue;
       const headers = await res.allHeaders();
-      chain.push({ status: res.status(), cacheControl: headerValue(headers["cache-control"]),
-        xRobotsTag: headerValue(headers["x-robots-tag"]) });
+      chain.push({ status: res.status(), cacheControl: headerValue(headers["cache-control"], "cache"),
+        xRobotsTag: headerValue(headers["x-robots-tag"], "robots") });
     }
     admin.responses = chain.reverse();
     admin.finalStatus = response?.status() ?? null;
     admin.finalPath = new URL(page.url()).pathname;
-    admin.robotsMeta = headerValue(await page.locator('meta[name="robots"]').first().getAttribute("content").catch(() => null));
+    admin.robotsMeta = headerValue(await page.locator('meta[name="robots"]').first().getAttribute("content").catch(() => null), "robots");
     admin.privateMarkerCount = await page.evaluate((markers) => markers.filter((marker) =>
       document.documentElement.outerHTML.includes(marker)).length, HTML_PRIVATE_MARKERS);
     admin.status = adminStatus(admin);
@@ -208,7 +215,8 @@ try {
   if (options.selfTest) selfTest();
   else if (options.help) console.log("node scripts/t070-readonly-qa.mjs [--url https://marmix-flex-redesign-v2-preview-<id>.vercel.app] | --self-test");
   else await run(options.origin);
-} catch {
+} catch (error) {
+  if (process.argv.includes("--self-test")) throw error;
   console.error("Invalid input. Run with --help for the exact Preview URL format.");
   process.exitCode = 2;
 }
