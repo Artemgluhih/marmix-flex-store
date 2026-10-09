@@ -144,10 +144,6 @@ try {
     const page = await context.newPage();
     const row = { route, status: null, redirectStatuses: [], robots: null };
     page.on("response", response => {
-      if (response.request().resourceType() === "document" &&
-          response.url().startsWith(origin + "/admin")) {
-        if (route === "/admin/orders") row.redirectStatuses.push(response.status());
-      }
       if (response.url().startsWith(origin + "/_next/") &&
           response.url().split("?")[0].endsWith(".js")) scripts.add(response.url());
     });
@@ -159,17 +155,19 @@ try {
     report.routes.push(row);
   }
   const page = await context.newPage();
-  page.on("response", response => {
-    if (response.request().resourceType() !== "document" ||
-        !response.url().startsWith(origin + "/admin")) return;
-    const h = response.headers();
-    (report.admin.responses ??= []).push({
-      status: response.status(), cacheControl: h["cache-control"] ?? null,
-      xRobotsTag: h["x-robots-tag"] ?? null, contentType: h["content-type"] ?? null
-    });
-  });
   const response = await page.goto(origin + "/admin/orders",
     { waitUntil: "domcontentloaded" });
+  const responseTrail = [];
+  for (let request = response?.request(); request; request = request.redirectedFrom()) {
+    const res = await request.response();
+    if (!res) continue;
+    const h = await res.allHeaders();
+    responseTrail.push({
+      status: res.status(), cacheControl: h["cache-control"] ?? null,
+      xRobotsTag: h["x-robots-tag"] ?? null, contentType: h["content-type"] ?? null
+    });
+  }
+  report.admin.responses = responseTrail.reverse();
   report.admin.finalStatus = response?.status() ?? null;
   report.admin.finalPath = new URL(page.url()).pathname;
   report.admin.robots = await page.locator('meta[name="robots"]').first()
