@@ -99,3 +99,112 @@ A read-only Preview DB count after deletion found REAL products 4, TEST_ONLY pro
 | Existing active session | Passive refresh/expiry and private-data traffic inspection | Can be observed read-only without settings changes; exact expiry timing, response headers and network capture tooling must be available before claiming PASS. Do not log cookies/JWT/private bodies. |
 
 No new account, fixture, mutation attempt, schema/RLS/Auth change, production action or T071 work was performed in this follow-up. T070 remains BLOCKED pending separate Owner integrated security verification. Production Content Gate = BLOCKED; Legal sign-off = PENDING; runtime consent mechanism = NOT PRESENT.
+
+
+## Remaining read-only security QA (2026-10-09, current READY Preview)
+
+The exact review HEAD was \`1aa9502f2bbce39ec3311f0da3ec88d6713e0eeb\`; Vercel deployment \`dpl_9MLc4nni8hrnje2e81zvapuXwP3t\` was READY at that SHA. \`redesign-v2\` remained \`0898cd02ef97e529e6aeedb9f850e2c535d8f4b2\` and \`main\` remained \`9927f4c83127b954a647a848d4ed09cc65faaee6\`. Legacy deployment deletion and the earlier SQL/Storage evidence were not repeated.
+
+| Check | Observation | Classification |
+|---|---|---|
+| Anonymous protected route | Direct browser navigation to \`/admin/orders\` ended at \`/admin/login?next=%2Fadmin\`. The final login DOM contained no \`items_snapshot\`, \`internal_note\`, \`order_requests\` marker or private Orders empty-state text. Its rendered robots meta was \`noindex, nofollow\`. | LIVE PASS for this anonymous denial and rendered login noindex only; this does not establish the initial HTTP redirect code or headers. |
+| Published public JS | \`/catalog\` exposed same-origin \`/_next/static/immutable/chunks/*.js\` URLs. Direct cloud-browser navigation to one published chunk returned \`ERR_BLOCKED_BY_CLIENT\`. Local \`curl -I\` could not connect to this execution environment's proxy. No JS bytes were inspected. | UNVERIFIED for deployed bundle secrets/private-data audit. Source inspection is not substituted for deployed artifact inspection. |
+| Admin HTTP cache/privacy | Browser DOM inspection lacks response headers; local direct HTTP failed at the environment proxy. The Vercel protected-fetch connector was rejected by automatic approval review because it can create/reuse a temporary authentication-bypass link. It was not used. | UNVERIFIED for actual \`Cache-Control\`, redirect status and \`X-Robots-Tag\`; source \`force-dynamic\`, \`force-no-store\` and metadata are separate static assertions. |
+| Session | Prior signed Owner Admin login, read-only route traversal, refresh persistence, logout and subsequent denial remain LIVE evidence at the earlier deployment. Current browser was anonymous; this turn did not enter credentials or run a new signed login/logout, token refresh or timed expiry. | Current anonymous denial LIVE PASS; post-deletion signed session and refresh/expiry UNVERIFIED. |
+
+No vulnerability was confirmed by these narrow observations. Bundle audit, actual cache headers and traffic-level private-data inspection remain open. The blocked Vercel connector method must not be used without a separately authorized bypass-link action.
+
+### Owner Windows Playwright continuation — anonymous and read-only
+
+Use the existing local repository checkout and installed Playwright/Chromium. If Playwright is not installed, install it locally without changing \`package.json\` or lockfile: \`npm install --no-save --package-lock=false playwright\`, then \`npx playwright install chromium\`. Do not sign in for this probe. It requests only public routes and an anonymous Admin route on the exact READY Preview. It records counts and selected HTTP headers, never response bodies, cookies, tokens or matched secret values. Run in VS Code PowerShell at the repository root:
+
+\`\`\`powershell
+New-Item -ItemType Directory -Force .qa-local\t070 | Out-Null
+@'
+import { chromium } from "playwright";
+import { writeFile } from "node:fs/promises";
+const origin = "https://marmix-flex-redesign-v2-preview-qgwqllf4w.vercel.app";
+const routes = ["/", "/catalog", "/product/azur", "/cart", "/checkout",
+  "/applications", "/about", "/delivery", "/contacts", "/admin/login"];
+const patterns = {
+  supabaseSecret: /sb_secret_[A-Za-z0-9._-]{12,}/g,
+  serviceRoleMarker: /service_role/g,
+  databaseUrl: /postgres(?:ql)?:\/\/[^\s"'<>]+/g,
+  privateKey: /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/g,
+  orderFieldMarkers: /\b(?:items_snapshot|internal_note|idempotency_key)\b/g,
+};
+const report = { origin, routes: [], admin: {}, bundles: {
+  discovered: 0, fetched: 0, non200: 0, signals: Object.fromEntries(
+    Object.keys(patterns).map(k => [k, 0])) } };
+const browser = await chromium.launch({ headless: true });
+const context = await browser.newContext({ serviceWorkers: "block" });
+const scripts = new Set();
+try {
+  for (const route of routes) {
+    const page = await context.newPage();
+    const row = { route, status: null, redirectStatuses: [], robots: null };
+    page.on("response", response => {
+      if (response.request().resourceType() === "document" &&
+          response.url().startsWith(origin + "/admin")) {
+        if (route === "/admin/orders") row.redirectStatuses.push(response.status());
+      }
+      if (response.url().startsWith(origin + "/_next/") &&
+          response.url().split("?")[0].endsWith(".js")) scripts.add(response.url());
+    });
+    const response = await page.goto(origin + route, { waitUntil: "networkidle" });
+    row.status = response?.status() ?? null;
+    row.robots = await page.locator('meta[name="robots"]').first()
+      .getAttribute("content").catch(() => null);
+    await page.close();
+    report.routes.push(row);
+  }
+  const page = await context.newPage();
+  page.on("response", response => {
+    if (response.request().resourceType() !== "document" ||
+        !response.url().startsWith(origin + "/admin")) return;
+    const h = response.headers();
+    (report.admin.responses ??= []).push({
+      status: response.status(), cacheControl: h["cache-control"] ?? null,
+      xRobotsTag: h["x-robots-tag"] ?? null, contentType: h["content-type"] ?? null
+    });
+  });
+  const response = await page.goto(origin + "/admin/orders",
+    { waitUntil: "domcontentloaded" });
+  report.admin.finalStatus = response?.status() ?? null;
+  report.admin.finalPath = new URL(page.url()).pathname;
+  report.admin.robots = await page.locator('meta[name="robots"]').first()
+    .getAttribute("content").catch(() => null);
+  report.admin.privateMarkerCount = await page.evaluate(() =>
+    ["items_snapshot", "internal_note", "order_requests"]
+      .filter(x => document.documentElement.innerHTML.includes(x)).length);
+  await page.close();
+
+  report.bundles.discovered = scripts.size;
+  for (const url of scripts) {
+    const response = await context.request.get(url);
+    if (response.status() !== 200) { report.bundles.non200++; continue; }
+    const body = await response.text();
+    report.bundles.fetched++;
+    for (const [name, pattern] of Object.entries(patterns)) {
+      report.bundles.signals[name] += [...body.matchAll(pattern)].length;
+    }
+  }
+} finally { await context.close(); await browser.close(); }
+await writeFile(".qa-local/t070/security-readonly.json",
+  JSON.stringify(report, null, 2) + "\n");
+console.log(JSON.stringify(report, null, 2));
+'@ | Set-Content -Encoding UTF8 .qa-local\t070\read-only-audit.mjs
+node .qa-local\t070\read-only-audit.mjs
+\`\`\`
+
+Keep \`.qa-local/t070/security-readonly.json\` local and out of Git. Any nonzero signal count is a **manual-review lead**, not proof of credential exposure; the script deliberately withholds matched values. A zero count covers only JS loaded by those anonymous pages and those patterns, not all deployed chunks, network PII or complete application security. Report bundle and header checks as UNVERIFIED until Owner runs and reviews the local probe; a blocked request or incomplete bundle set is not PASS.
+
+### Proposed isolated signed-session sequence — plan only
+
+One disposable Preview Auth user could be used in sequence: (1) signed non-admin with no \`admin_users\` row; (2) the **same** user with one temporary existing-schema \`admin_users(is_active=true)\` row; (3) the same signed user after that row is set inactive while the token remains valid. This introduces no new role, does not alter the sole REAL Admin membership and uses no REAL personal contact. The proposed identity is a randomly named \`TEST_ONLY_T070\` address under a reserved invalid test domain, subject to Auth accepting it **without sending mail**; if Auth requires a real mailbox or triggers an email, stop and redesign the fixture plan. Owner would generate the password locally and never share it in chat, Git, logs or reports.
+
+Provisioning/deprovisioning requires separate Owner approval and a Preview-only Auth administrative boundary; ordinary Admin CRUD checks would still use the signed user client and RLS, never a Secret client. Record the exact generated Auth UUID privately, establish baseline counts (4 REAL products, 0 TEST_ONLY products, 0 orders, 3 Storage objects, 1 active membership), and verify no UUID collision. Before temporary elevation, assert own membership absent and deny protected routes, Server Actions and direct Data API/Storage writes against isolated nonexistent or approved fixture IDs. Add only the exact temporary membership row, assert active Admin access, then set \`is_active=false\` and verify denial **with the existing token**. No update to the Owner membership. Delete only the exact temporary membership and Auth user by UUID; independently verify \`auth.users\`, \`admin_users\`, identities and application fixture rows absent and baseline counts restored. Auth audit logs or provider delivery logs may persist under retention policies, so “zero residuals” can only cover application/Auth records, not all provider logs. If cleanup fails, stop, retain the exact UUID privately for Owner recovery and do not broadly delete anything.
+
+Persistent product/category/image and order fixtures are **not** covered by this plan's authorization. Active Admin mutation E2E needs a separate disposable TEST_ONLY product and, where required, associated exact image/Storage paths with cleanup of dependent rows; no REAL product IDs or existing media. Signed-session order status/note and snapshot denial need a separate synthetic order, precise UUID, externally inert contacts, and exact-ID cleanup. Direct \`/api/order-requests\` is disallowed for this QA because it may trigger Telegram; DB-only fixture setup would have to be independently confirmed not to notify, while signed Admin mutations use the user RLS boundary. Failure or ambiguity in notification/cleanup behavior blocks persistent fixture creation. Timed expiry cannot be accelerated by changing Auth settings; only passive observation of a naturally expiring session could later be reported. No Auth user, membership, product, order or Storage object was created here.
+
+Separate Owner approval is required for temporary Auth provisioning/elevation/revocation/deletion, signed mutation attempts, and each persistent product/order/media fixture with its exact cleanup plan. Until then: T070 BLOCKED; Production Content Gate BLOCKED; Legal sign-off PENDING; runtime consent mechanism NOT PRESENT; T071 NOT STARTED.
