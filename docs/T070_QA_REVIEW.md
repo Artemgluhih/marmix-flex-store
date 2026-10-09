@@ -336,3 +336,49 @@ Owner superseded only the fixed Storage filename condition: one upload through t
 - The preflight's five published digest values were computed by a prior canonicalization not retained in this execution context; a later differently serialized hash cannot be compared to them. Thus **byte-level before/after REAL digest equality is UNVERIFIED for this attempt**, despite unchanged counts and the narrow exact-ID fixture writes. Do not report digest PASS. The original identity inventory remains in earlier evidence. No REAL record was targeted by either write.
 
 This attempt confirms fixture provisioning, narrow signed Admin edit/persistence and exact fixture cleanup; it does **not** close Product + Media E2E. No public route 404 or raw HTTP status was captured for this product during this attempt, so public exposure is UNVERIFIED here. No confirmed security vulnerability. The earlier completed SQL order, Storage, Category and Auth checks were not repeated. T070 remains **BLOCKED — OWNER PRODUCT + MEDIA MUTATION VERIFICATION**. T071 NOT STARTED. Production Content Gate BLOCKED; Legal sign-off PENDING; runtime consent mechanism NOT PRESENT; permanent checkout submission DISABLED.
+
+## Owner local Media UI handoff — fixture prepared (2026-10-09)
+
+This is a **new, separate** attempt after the prior browser credential-state blocker. Owner authorized exactly one reused TEST_ONLY UUID and will perform the ordinary Admin Media UI steps locally in Windows Chrome/Edge. Work will independently verify after the Owner reports completion. No Work browser login or file chooser was attempted in this stage.
+
+- At preflight the remote branches were `t070-preview-review=5e76a86d96d5a86d02e023240950184a1830d448`, `redesign-v2=0898cd02ef97e529e6aeedb9f850e2c535d8f4b2`, `main=9927f4c83127b954a647a848d4ed09cc65faaee6`. Supabase project `marmix-flex-redesign-v2-preview` (`twuevnwxwqdjbjzwuglm`) was ACTIVE_HEALTHY.
+- Before any write: REAL products 4, TEST_ONLY 0, categories 3, product-category memberships 3, product image rows 3, `product-media` objects 3, orders 0, active Admin memberships 1. Exact product UUID/SKU/slug collision count 0 and the approved product Storage folder object count 0.
+- Baseline hashes below use **one reproducible algorithm**: PostgreSQL `jsonb_agg(to_jsonb(row) ORDER BY stable ID)::text`, then `md5`; empty sets become `[]`. Identity hashes separately aggregate stable IDs (or composite membership keys and Storage ID/path) in the same order. For final cleanup comparison, run the **identical SQL below**, with no alternative serialization. Hashes are evidence of the preflight snapshot; an unrelated concurrent owner edit would need investigation before attributing a mismatch to this fixture.
+
+| Scope | Full-row MD5 | Identity-set MD5 |
+|---|---|---|
+| REAL products | `326c9f26f1bac9b1a5e0ea57dcec26d2` | `00828af0700e500b1b3dfca3533b4ffd` |
+| Product images | `2d6e9be52c0b648db4852d0c9e886347` | `ea75c4e62cbc5ea6a4393a28e13d4511` |
+| Categories | `4db06d1d57bf9df40717512a5de04a7b` | `a0b5bc890eaf664b1589de37bbf75934` |
+| Memberships | `57aa59930bdd8f8cb943698c831d0346` | `57aa59930bdd8f8cb943698c831d0346` |
+| `product-media` objects | `c74295f9f74036461ec83c5e43a7387e` | `23459cec4d862dc680a129742d59ebe0` |
+
+Read-only baseline and final comparison SQL (project must first be verified as Preview):
+
+```sql
+SELECT
+ (SELECT count(*) FROM public.products WHERE catalog_kind='REAL') AS real_products,
+ (SELECT count(*) FROM public.products WHERE catalog_kind='TEST_ONLY') AS test_products,
+ (SELECT count(*) FROM public.categories) AS categories,
+ (SELECT count(*) FROM public.product_categories) AS memberships,
+ (SELECT count(*) FROM public.product_images) AS product_images,
+ (SELECT count(*) FROM storage.objects WHERE bucket_id='product-media') AS storage_objects,
+ (SELECT count(*) FROM public.order_requests) AS orders,
+ (SELECT count(*) FROM public.admin_users WHERE is_active=true) AS active_admins,
+ (SELECT count(*) FROM public.products WHERE id='19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid OR sku='TEST_ONLY-T070-19BBE932' OR slug='t070-qa-product-20261009') AS fixture_collision,
+ (SELECT count(*) FROM storage.objects WHERE bucket_id='product-media' AND name LIKE 'products/19bbe932-ee48-4306-b7f1-d615a5a64a34/%') AS fixture_folder_objects,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(p) ORDER BY p.id)::text FROM public.products p WHERE p.catalog_kind='REAL'),'[]')) AS real_rows_digest,
+ md5(coalesce((SELECT jsonb_agg(p.id ORDER BY p.id)::text FROM public.products p WHERE p.catalog_kind='REAL'),'[]')) AS real_ids_digest,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(i) ORDER BY i.id)::text FROM public.product_images i),'[]')) AS image_rows_digest,
+ md5(coalesce((SELECT jsonb_agg(i.id ORDER BY i.id)::text FROM public.product_images i),'[]')) AS image_ids_digest,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(c) ORDER BY c.id)::text FROM public.categories c),'[]')) AS category_rows_digest,
+ md5(coalesce((SELECT jsonb_agg(c.id ORDER BY c.id)::text FROM public.categories c),'[]')) AS category_ids_digest,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(pc) ORDER BY pc.product_id,pc.category_id)::text FROM public.product_categories pc),'[]')) AS membership_rows_digest,
+ md5(coalesce((SELECT jsonb_agg(jsonb_build_object('product_id',pc.product_id,'category_id',pc.category_id) ORDER BY pc.product_id,pc.category_id)::text FROM public.product_categories pc),'[]')) AS membership_ids_digest,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(o) ORDER BY o.id)::text FROM storage.objects o WHERE o.bucket_id='product-media'),'[]')) AS storage_rows_digest,
+ md5(coalesce((SELECT jsonb_agg(jsonb_build_object('id',o.id,'name',o.name) ORDER BY o.id)::text FROM storage.objects o WHERE o.bucket_id='product-media'),'[]')) AS storage_ids_digest;
+```
+
+The trusted Preview fixture channel inserted only UUID `19bbe932-ee48-4306-b7f1-d615a5a64a34`, SKU `TEST_ONLY-T070-19BBE932`, slug `t070-qa-product-20261009`, name `T070 QA Product`, `catalog_kind=TEST_ONLY`, unpublished/unfeatured, `archived_at=NULL`, availability/price NULL, specifications `{}`. A separate read-only SELECT found exactly that row, category memberships 0, image rows 0 and Storage folder objects 0. Running the identical hash query after INSERT showed all five REAL/full-row and identity hashes **unchanged**, while TEST_ONLY became 1 and fixture collision count 1. This trusted provisioning is not evidence of ordinary Admin Create Product.
+
+**Current handoff state:** the TEST_ONLY product intentionally remains in Preview for Owner's one local WebP upload, metadata and primary-image save via the existing guarded Admin UI. It must remain unpublished. Work will not remove the product or attempt the Media UI until Owner reports the local stage complete. No image was uploaded by Work; actual `product_images.id`, generated Storage path, alt/role/primary persistence and removal remain UNVERIFIED at this checkpoint. Do not record a Media PASS before independent post-upload SELECT. Subsequent exact image cleanup must be completed through the ordinary Admin UI and independently verified before exact product fixture cleanup. No REAL row, schema/RLS, Auth, Production, `redesign-v2` or `main` was changed. **T070 = BLOCKED — AWAITING OWNER LOCAL MEDIA UPLOAD**; T071 NOT STARTED.
