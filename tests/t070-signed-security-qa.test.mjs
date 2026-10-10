@@ -7,7 +7,7 @@ import {
   csrfRequestFromRenderedForm, exactOrigin, parseArgs, parseJwtClaims, privateCache,
   safeHeader, safeResult, tokenIsLive, validateAuthFixture, validateFixtures,
 } from "../scripts/t070-signed-qa-core.mjs";
-import { publicKeyFromAssets, restrictContext, signinHtml, withLocalSignin } from "../scripts/t070-signed-security-qa.mjs";
+import { publicKeyFromAssets, requestBoundary, restrictContext, signinHtml, withLocalSignin } from "../scripts/t070-signed-security-qa.mjs";
 
 const ID = "19bbe932-ee48-4306-b7f1-d615a5a64a34";
 const USER = "01a6213d-85dc-4851-829c-9d2ee0f30af0";
@@ -167,18 +167,31 @@ test("public configuration discovery rejects missing/ambiguous key or project", 
 
 test("browser request guard blocks Production and third-party origins", async () => {
   let handler;
-  let blocked = 0;
-  await restrictContext({ route: async (_pattern, fn) => { handler = fn; } }, () => { blocked++; });
-  const request = (url) => {
+  const blocked = [];
+  await restrictContext({ route: async (_pattern, fn) => { handler = fn; } }, (kind) => { blocked.push(kind); });
+  const request = (url, method = "GET", type = "script") => {
     let result;
-    handler({ request: () => ({ url: () => url }), continue: () => { result = "allowed"; },
+    handler({ request: () => ({ url: () => url, method: () => method, resourceType: () => type }),
+      continue: () => { result = "allowed"; },
       abort: () => { result = "blocked"; } });
     return result;
   };
   assert.equal(request(PREVIEW.origin + "/admin/login"), "allowed");
   assert.equal(request(PREVIEW.supabaseOrigin + "/auth/v1/user"), "allowed");
+  // The exact script is optional but is still aborted, with no new allowed origin.
+  const feedback = "https://vercel.live/_next-live/feedback/feedback.js";
+  assert.equal(request(feedback), "blocked");
+  assert.equal(requestBoundary({ url: () => feedback, method: () => "GET", resourceType: () => "script" }),
+    "optional_feedback");
+  assert.equal(request(feedback + "?token=anything"), "blocked");
+  assert.equal(request(feedback, "POST"), "blocked");
+  assert.equal(request(feedback, "GET", "xhr"), "blocked");
+  assert.equal(request("http://127.0.0.1:45678/signin"), "blocked");
+  assert.equal(requestBoundary({ url: () => "http://127.0.0.1:45678/signin", method: () => "GET",
+    resourceType: () => "document" }), "local_intercept");
   assert.equal(request("https://marmixflex.ru/admin/orders"), "blocked");
   assert.equal(request("https://mc.yandex.ru/metrika/watch.js"), "blocked");
   assert.equal(request("file:///etc/passwd"), "blocked");
-  assert.equal(blocked, 3);
+  assert.deepEqual(blocked, ["optional_feedback", "unsafe_external", "unsafe_external",
+    "unsafe_external", "local_intercept", "unsafe_external", "unsafe_external", "unsafe_external"]);
 });

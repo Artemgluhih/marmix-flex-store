@@ -19,6 +19,8 @@ node scripts/t070-signed-security-qa.mjs --dry-run --review-sha $reviewSha
 
 Dry-run не спрашивает credentials, не создаёт fixtures и не выполняет mutation. Локальный обезличенный результат: `.qa-local/t070/security-signed.json`. При сетевой ошибке либо отсутствии Chromium статус **UNVERIFIED**, код выхода 2. Не запускайте `--execute` и `--observe-expiry` до отдельного согласования Owner и безопасной подготовки всех exact fixtures.
 
+На Windows Preview может добавить необязательный скрипт обратной связи Vercel. Runner **блокирует** его сетевой запрос и считает отдельно в `optional_feedback_blocked`; это не расширяет разрешённые origins. Для успешного dry-run нужны `preview_http_local_csp_cors=PASS`, `preview_config_and_cors=PASS`, `external_requests_blocked=PASS` с нулём неизвестных запросов и `localhost_interception=PASS` с нулём перехватов локальной страницы. Если один из обязательных пунктов UNVERIFIED, сохраните только обезличенный JSON и остановитесь: не вводите credentials.
+
 ## Границы будущего запуска
 
 `--execute` требует отдельного явного разрешения, чистой локальной review-ветки, точного remote HEAD и локального файла `.qa-local/t070/approved-fixtures.json` с одобренными только Preview UUID, путём одного WebP, исходными digest и одноразовым адресом `t070-…@example.invalid`. `--observe-expiry` использует отдельный `.qa-local/t070/approved-auth.json` и не доказывает refresh приложения; его следует рассматривать отдельно. Оба файла не созданы, не коммитятся и не должны содержать пароль или JWT. Строка `OWNER_APPROVED_T070_SIGNED_EXECUTION` в manifest — техническая защита от случайного запуска, **не** заменяет фактическое разрешение Owner или независимый baseline.

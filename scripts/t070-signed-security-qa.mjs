@@ -388,9 +388,9 @@ async function anonymousMarkerCheck(context, marker, key) {
   let absent = true;
   let scanned = 0;
   let unavailable = 0;
-  let blockedExternal = 0;
+  let blockedUnsafe = 0;
   const anonContext = await context.browser().newContext({ serviceWorkers: "block", acceptDownloads: false });
-  await restrictContext(anonContext, () => { blockedExternal++; });
+  await restrictContext(anonContext, (kind) => { if (kind === "unsafe_external") blockedUnsafe++; });
   const page = await anonContext.newPage();
   const pending = [];
   page.on("response", (response) => {
@@ -424,17 +424,29 @@ async function anonymousMarkerCheck(context, marker, key) {
   });
   if (![200, 401, 403].includes(response.status)) throw new Error("Anonymous PostgREST response not classified");
   absent &&= !(await response.text()).includes(marker);
-  return { absent, scanned, complete: scanned > 0 && unavailable === 0 && blockedExternal === 0 };
+  return { absent, scanned, complete: scanned > 0 && unavailable === 0 && blockedUnsafe === 0 };
+}
+
+function requestBoundary(request) {
+  let url;
+  try { url = new URL(request.url()); }
+  catch { return "unsafe_external"; }
+  if (url.username || url.password) return "unsafe_external";
+  if ([PREVIEW.origin, PREVIEW.supabaseOrigin].includes(url.origin)) return "allowed";
+  // The deployed Preview bundle injects this optional Vercel feedback script.
+  // Keep aborting it: this classification never grants a new network origin.
+  if (url.href === "https://vercel.live/_next-live/feedback/feedback.js" &&
+    request.method() === "GET" && request.resourceType() === "script") return "optional_feedback";
+  if (url.protocol === "http:" && url.hostname === "127.0.0.1" &&
+    url.pathname === "/signin" && !url.search && !url.hash) return "local_intercept";
+  return "unsafe_external";
 }
 
 async function restrictContext(context, onBlocked = () => {}) {
   await context.route("**/*", (route) => {
-    let allowed = false;
-    try {
-      const url = new URL(route.request().url());
-      allowed = [PREVIEW.origin, PREVIEW.supabaseOrigin].includes(url.origin);
-    } catch { /* Unsupported URL schemes are denied. */ }
-    if (allowed) route.continue(); else { onBlocked(); route.abort(); }
+    const kind = requestBoundary(route.request());
+    if (kind === "allowed") route.continue();
+    else { onBlocked(kind); route.abort(); }
   });
 }
 
@@ -661,14 +673,20 @@ async function run(options) {
     throw new Error("Chromium unavailable");
   }
   let context;
-  let blockedExternal = 0;
+  let blockedOptional = 0;
+  let blockedLocal = 0;
+  let blockedUnsafe = 0;
   try {
     context = await browser.newContext({ serviceWorkers: "block", acceptDownloads: false });
-    await restrictContext(context, () => { blockedExternal++; });
+    await restrictContext(context, (kind) => {
+      if (kind === "optional_feedback") blockedOptional++;
+      else if (kind === "local_intercept") { blockedLocal++; blockedUnsafe++; }
+      else blockedUnsafe++;
+    });
     const discoveredKey = await discoverPublicConfig(context);
-    if (blockedExternal !== 0) throw new Error("Unexpected external browser request before credential entry");
+    if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request before credential entry");
     const cors = await localPage(context, discoveredKey, { interactive: false });
-    if (blockedExternal !== 0) throw new Error("Unexpected external browser request before credential entry");
+    if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request before credential entry");
     report.results.push(safeResult("preview_config_and_cors", { status: cors ? "PASS" : "UNVERIFIED",
       reason: cors ? null : "network_failure" }));
     if (options.mode !== "dry-run") {
@@ -680,16 +698,22 @@ async function run(options) {
       try {
         if (options.mode === "execute") await runPhases(signed.key, signed.token, signed.userId,
           fixtures, context, report, () => {
-            if (blockedExternal !== 0) throw new Error("Unexpected external browser request");
+            if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
           });
         else await runExpiry(signed.key, signed.token, signed.userId, report);
       } finally { signed.token = undefined; signed.key = undefined; }
     }
   } finally {
+    report.results.push(safeResult("optional_feedback_blocked", { status: "PASS", reason: null },
+      { affectedObjects: blockedOptional }));
+    report.results.push(safeResult("localhost_interception",
+      { status: blockedLocal === 0 ? "PASS" : "UNVERIFIED",
+        reason: blockedLocal === 0 ? null : "network_failure" },
+      { affectedObjects: blockedLocal }));
     report.results.push(safeResult("external_requests_blocked",
-      { status: blockedExternal === 0 ? "PASS" : "UNVERIFIED",
-        reason: blockedExternal === 0 ? null : "network_failure" },
-      { affectedObjects: blockedExternal }));
+      { status: blockedUnsafe === 0 ? "PASS" : "UNVERIFIED",
+        reason: blockedUnsafe === 0 ? null : "network_failure" },
+      { affectedObjects: blockedUnsafe }));
     await context?.close();
     await browser.close();
     await saveReport(report);
@@ -716,4 +740,4 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
 }
 
-export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, restrictContext };
+export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, requestBoundary, restrictContext };
