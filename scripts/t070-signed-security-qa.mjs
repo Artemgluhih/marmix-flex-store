@@ -20,6 +20,8 @@ const FIXTURES = path.join(ROOT, ".qa-local", "t070", "approved-fixtures.json");
 const AUTH_FIXTURE = path.join(ROOT, ".qa-local", "t070", "approved-auth.json");
 const WEBP = Buffer.from("UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAAAA", "base64");
 const ORIGIN_MODES = ["wrong", "missing"];
+const STORAGE_PRODUCT_ID = "19bbe932-ee48-4306-b7f1-d615a5a64a34";
+const STORAGE_PATH = new RegExp(`^products/${STORAGE_PRODUCT_ID}/[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\\.webp$`, "i");
 
 function gitValue(...args) {
   return execFileSync("git", args, { cwd: ROOT, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
@@ -327,11 +329,18 @@ async function updateFixture(key, token, product) {
   return { status: response.status, affectedRows: rows };
 }
 
-async function objectHash(pathValue) {
+async function objectHash(pathValue, request = noRedirect) {
+  if (!STORAGE_PATH.test(pathValue)) throw new Error("Storage path outside exact TEST_ONLY product");
   const url = exactUrl(PREVIEW.supabaseOrigin,
     `/storage/v1/object/public/${PREVIEW.bucket}/${pathValue}`);
-  const response = await noRedirect(url);
-  if (response.status === 404) return null;
+  const response = await request(url);
+  if ([400, 404].includes(response.status)) {
+    // Supabase documents NoSuchKey as 404; this Preview has returned 400 with
+    // that exact code. Do not infer absence from the HTTP status alone.
+    let error;
+    try { error = await response.json(); } catch { /* Unclassified response is not absence. */ }
+    if (error && !Array.isArray(error) && error.code === "NoSuchKey") return null;
+  }
   if (response.status !== 200) throw new Error("Storage object verification unavailable");
   const body = Buffer.from(await response.arrayBuffer());
   if (body.length > 2 * 1024 * 1024) throw new Error("Oversize synthetic object");
@@ -340,7 +349,15 @@ async function objectHash(pathValue) {
 
 async function storageDeniedProbes(key, token, image) {
   const newPath = `products/${image.productId}/${randomUUID()}.webp`;
-  if (await objectHash(newPath) !== null) throw new Error("Upload path collision");
+  try {
+    if (image.productId !== STORAGE_PRODUCT_ID || !STORAGE_PATH.test(image.path)) {
+      throw new Error("Storage fixture outside exact TEST_ONLY product");
+    }
+    if (await objectHash(newPath) !== null) throw new Error("Upload path collision");
+  } catch (error) {
+    error.storageStage = "preflight";
+    throw error;
+  }
   console.log("Exact synthetic upload probe path for private Owner verification:", newPath);
   let upload;
   try {
@@ -348,9 +365,10 @@ async function storageDeniedProbes(key, token, image) {
       `/storage/v1/object/${PREVIEW.bucket}/${newPath}`, {
         method: "POST", headers: { "Content-Type": "image/webp", "x-upsert": "false" }, body: WEBP,
       });
-  } catch {
+  } catch (error) {
     console.error("Unknown upload outcome; exact TEST_ONLY recovery path:", newPath);
-    throw new Error("Upload outcome unknown; independent exact-path inspection required, no retry");
+    error.storageStage = "mutation";
+    throw error;
   }
   const newHash = await objectHash(newPath);
   if (newHash !== null) {
@@ -378,6 +396,15 @@ async function storageDeniedProbes(key, token, image) {
   const after = await objectHash(image.path);
   return { uploadStatus: upload.status, uploadPath: newPath, newHash,
     deleteStatus: deletion.status, before, after };
+}
+
+function storageFailureVerdict(error) {
+  if (error?.securityViolation) return { status: "FAIL", reason: "unexpected_response" };
+  if (error?.storageStage === "preflight") return { status: "UNVERIFIED",
+    reason: ["TimeoutError", "AbortError"].includes(error.name) ? "preflight_timeout" : "preflight_failed" };
+  return { status: "UNVERIFIED",
+    reason: error?.storageStage === "mutation" && ["TimeoutError", "AbortError"].includes(error.name) ?
+      "timeout_unknown" : "outcome_unknown" };
 }
 
 async function ask(prompt, expected) {
@@ -580,8 +607,7 @@ async function runPhases(key, token, userId, fixtures, context, report, assertNe
   let storage;
   try { storage = await storageDeniedProbes(key, token, { ...fixtures.image, productId: fixtures.product.id }); }
   catch (error) {
-    report.results.push(safeResult("nonadmin_storage", { status: error.securityViolation ? "FAIL" : "UNVERIFIED",
-      reason: error.securityViolation ? "unexpected_response" : "timeout_unknown" }));
+    report.results.push(safeResult("nonadmin_storage", storageFailureVerdict(error)));
     throw new Error("Storage outcome unknown or unsafe; no retry");
   }
   const storageVerdict = await storageVerdicts(storage, fixtures.image);
@@ -639,8 +665,7 @@ async function runPhases(key, token, userId, fixtures, context, report, assertNe
   let revokedStorage;
   try { revokedStorage = await storageDeniedProbes(key, token, { ...fixtures.image, productId: fixtures.product.id }); }
   catch (error) {
-    report.results.push(safeResult("revoked_storage", { status: error.securityViolation ? "FAIL" : "UNVERIFIED",
-      reason: error.securityViolation ? "unexpected_response" : "timeout_unknown" }));
+    report.results.push(safeResult("revoked_storage", storageFailureVerdict(error)));
     throw new Error("Revoked Storage outcome unknown or unsafe; no retry");
   }
   const revokedStorageVerdict = await storageVerdicts(revokedStorage, fixtures.image);
@@ -767,4 +792,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
 }
 
-export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, requestBoundary, restrictContext };
+export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, objectHash, storageFailureVerdict,
+  requestBoundary, restrictContext };

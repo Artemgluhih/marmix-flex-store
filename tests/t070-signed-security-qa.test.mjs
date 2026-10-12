@@ -8,7 +8,8 @@ import {
   csrfRequestFromRenderedForm, exactOrigin, parseArgs, parseJwtClaims, privateCache,
   safeHeader, safeResult, tokenIsLive, validateAuthFixture, validateFixtures,
 } from "../scripts/t070-signed-qa-core.mjs";
-import { publicKeyFromAssets, requestBoundary, restrictContext, signinHtml, withLocalSignin } from "../scripts/t070-signed-security-qa.mjs";
+import { objectHash, publicKeyFromAssets, requestBoundary, restrictContext, signinHtml,
+  storageFailureVerdict, withLocalSignin } from "../scripts/t070-signed-security-qa.mjs";
 
 const ID = "19bbe932-ee48-4306-b7f1-d615a5a64a34";
 const USER = "01a6213d-85dc-4851-829c-9d2ee0f30af0";
@@ -79,6 +80,44 @@ test("Storage denial is decided by the existing object's independent persistence
   assert.equal(classifyStorageDenial({ ...base, status: 503 }).status, "UNVERIFIED");
   assert.equal(classifyStorageDenial({ ...base, independentMetadataUnchanged: null }).status, "UNVERIFIED");
   assert.equal(classifyStorageDenial({ ...base, hashAfter: "b" }).status, "FAIL");
+});
+
+test("Storage exact-path absence requires NoSuchKey, never a generic 400 or authorization error", async () => {
+  const bytes = Buffer.from("synthetic WebP bytes");
+  const expected = (await import("node:crypto")).createHash("sha256").update(bytes).digest("hex");
+  const mock = (status, body) => async (url) => {
+    assert.equal(new URL(url).pathname, `/storage/v1/object/public/${PREVIEW.bucket}/${PATH}`);
+    return new Response(body, { status });
+  };
+  assert.equal(await objectHash(PATH, mock(200, bytes)), expected);
+  assert.equal(await objectHash(PATH, mock(404, JSON.stringify({ code: "NoSuchKey" }))), null);
+  assert.equal(await objectHash(PATH, mock(400, JSON.stringify({ code: "NoSuchKey" }))), null);
+  for (const [status, body] of [
+    [400, JSON.stringify({ code: "InvalidKey" })], [400, "not JSON"],
+    [400, JSON.stringify({ message: "NoSuchKey" })], [403, JSON.stringify({ code: "NoSuchKey" })],
+    [500, JSON.stringify({ code: "NoSuchKey" })], [404, "not JSON"],
+  ]) await assert.rejects(objectHash(PATH, mock(status, body)), /Storage object verification unavailable/);
+  await assert.rejects(objectHash(`products/${USER}/test.webp`, mock(400, "{}")), /outside exact TEST_ONLY/);
+  await assert.rejects(objectHash(PATH, async () => { throw Object.assign(new Error("private"),
+    { name: "TimeoutError" }); }), /private/);
+});
+
+test("Storage preflight failures are distinct from mutation timeouts in sanitized verdicts", () => {
+  assert.deepEqual(storageFailureVerdict({ storageStage: "preflight", name: "TimeoutError" }),
+    { status: "UNVERIFIED", reason: "preflight_timeout" });
+  assert.deepEqual(storageFailureVerdict({ storageStage: "preflight", name: "Error" }),
+    { status: "UNVERIFIED", reason: "preflight_failed" });
+  assert.deepEqual(storageFailureVerdict({ storageStage: "mutation", name: "TimeoutError" }),
+    { status: "UNVERIFIED", reason: "timeout_unknown" });
+  assert.deepEqual(storageFailureVerdict({ storageStage: "mutation", name: "Error" }),
+    { status: "UNVERIFIED", reason: "outcome_unknown" });
+  assert.deepEqual(storageFailureVerdict({ securityViolation: true }),
+    { status: "FAIL", reason: "unexpected_response" });
+  for (const reason of ["preflight_timeout", "preflight_failed", "outcome_unknown"]) {
+    const result = safeResult("nonadmin_storage", { status: "UNVERIFIED", reason });
+    assert.equal(result.reason, reason);
+    assert.equal(JSON.stringify(result).includes("private"), false);
+  }
 });
 
 test("revocation requires the same unexpired JWT and Auth confirmation", () => {

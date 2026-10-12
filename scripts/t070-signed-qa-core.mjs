@@ -17,6 +17,7 @@ const REASONS = new Set([
   "not_executed", "missing_fixture", "missing_independent_check", "unexpected_response",
   "network_failure", "expired_token", "auth_not_confirmed", "target_not_present",
   "origin_not_proven", "action_not_captured", "owner_step_pending", "timeout_unknown",
+  "preflight_timeout", "preflight_failed", "outcome_unknown",
   "unsafe_target", "private_cache", "anonymous_marker", "login_unavailable",
   "browser_unavailable",
 ]);
