@@ -143,32 +143,59 @@ function signinHtml(nonce, key, email = "") {
     if (!window.__t070Cors || submit.disabled) return;
     submit.disabled = true;
     let key = form.elements.publishable.value.trim();
+    let password = form.elements.password.value;
+    form.elements.password.value = "";
     if (!/^sb_publishable_[A-Za-z0-9_-]{12,}$/.test(key) || (discoveredKey && key !== discoveredKey)) {
+      password = "";
       state.textContent = "Публичный ключ Preview не подтверждён."; submit.disabled = false; return;
     }
     let email = form.elements.email.value;
-    let password = form.elements.password.value;
-    form.elements.password.value = "";
-    form.elements.email.value = "";
-    form.elements.publishable.value = "";
     try {
       const response = await fetch(origin + "/auth/v1/token?grant_type=password", {
         method: "POST", headers: { apikey: key, "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }), credentials: "omit", cache: "no-store", redirect: "error",
+        signal: AbortSignal.timeout(15000),
       });
-      password = ""; email = "";
-      if (!response.ok) throw Error();
-      const data = await response.json();
+      password = "";
+      if (!response.ok) {
+        const status = Number.isInteger(response.status) && response.status >= 100 && response.status <= 599 ?
+          response.status : "неизвестен";
+        state.textContent = "Supabase Auth отклонил вход (HTTP " + status + "). Проверьте временную запись.";
+        submit.disabled = false;
+        return;
+      }
+      let data;
+      try { data = await response.json(); }
+      catch {
+        state.textContent = "Некорректный ответ Auth. Вход не подтверждён.";
+        submit.disabled = false;
+        return;
+      }
+      if (!data || typeof data !== "object") {
+        state.textContent = "Некорректный ответ Auth. Вход не подтверждён.";
+        submit.disabled = false;
+        return;
+      }
       const token = data.access_token;
       const userId = data.user?.id;
       data.access_token = undefined; data.refresh_token = undefined;
-      if (typeof token !== "string" || typeof userId !== "string") throw Error();
+      if (typeof token !== "string" || typeof userId !== "string") {
+        state.textContent = "Некорректный ответ Auth. Вход не подтверждён.";
+        submit.disabled = false;
+        return;
+      }
+      form.elements.email.value = "";
+      form.elements.publishable.value = "";
       state.textContent = "Signed session получена. Окно будет закрыто.";
-      await window.__t070Deliver({ token, userId, key });
-    } catch {
-      password = ""; email = ""; key = "";
-      state.textContent = "Вход не подтверждён. Проверьте временную запись.";
+      try { await window.__t070Deliver({ token, userId, key }); }
+      catch { state.textContent = "Локальная передача сессии не подтверждена."; }
+    } catch (error) {
+      state.textContent = error?.name === "TimeoutError" || error?.name === "AbortError" ?
+        "Превышено время ожидания Auth. Вход не подтверждён." :
+        "Сетевая ошибка Auth. Вход не подтверждён.";
       submit.disabled = false;
+    } finally {
+      password = ""; email = ""; key = "";
     }
   });
 })();

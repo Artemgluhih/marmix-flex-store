@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import test from "node:test";
+import { runInNewContext } from "node:vm";
 
 import {
   PREVIEW, assertReview, classifyRevocation, classifyRowDenial, classifyStorageDenial,
@@ -142,6 +143,79 @@ test("local credential page is loopback-only, GET-only, CSP-bound and no POST si
   assert.doesNotMatch(html, /localStorage|sessionStorage|storageState|\.trace\(/);
   assert.match(html, /form\.elements\.password\.value = ""/);
   assert.match(html, /data\.refresh_token = undefined/);
+});
+
+async function simulatedSignin(responseFactory, enteredKey) {
+  const publicKey = "sb_publishable_TESTPUBLICKEY123456";
+  const email = "t070-synthetic-test@example.invalid";
+  const fields = {
+    publishable: { value: publicKey },
+    email: { value: email, readOnly: true },
+    password: { value: "temporary-password" },
+  };
+  let onSubmit;
+  let delivered = 0;
+  const state = { textContent: "" };
+  const button = { disabled: true };
+  const form = { elements: fields, addEventListener: (_type, callback) => { onSubmit = callback; } };
+  const document = { getElementById: (id) => ({ state, submit: button, login: form })[id] };
+  const html = signinHtml("nonce", publicKey, email);
+  const inlineScript = html.match(/<script nonce="nonce">([\s\S]*?)<\/script>/)?.[1];
+  assert.ok(inlineScript);
+  const fetch = async (url) => url.endsWith("/auth/v1/health") ?
+    { type: "basic", status: 200 } : responseFactory();
+  runInNewContext(inlineScript, {
+    document, fetch, window: { __t070Deliver: async () => { delivered++; } },
+    AbortSignal, setTimeout, clearTimeout,
+  });
+  await new Promise(setImmediate);
+  assert.equal(button.disabled, false);
+  if (enteredKey) fields.publishable.value = enteredKey;
+  await onSubmit({ preventDefault() {} });
+  return { fields, state: state.textContent, button, delivered, publicKey, email };
+}
+
+test("local Auth failure preserves readonly email and public key, clears password, and classifies status", async () => {
+  const result = await simulatedSignin(() => ({ ok: false, status: 401 }));
+  assert.equal(result.fields.email.value, result.email);
+  assert.equal(result.fields.publishable.value, result.publicKey);
+  assert.equal(result.fields.password.value, "");
+  assert.match(result.state, /HTTP 401/);
+  assert.equal(result.button.disabled, false);
+  assert.equal(result.delivered, 0);
+});
+
+test("local Auth network, timeout, and malformed success show bounded diagnostics", async () => {
+  for (const [response, label] of [
+    [() => Promise.reject(new Error("private response body must never appear")), "Сетевая ошибка"],
+    [() => Promise.reject(Object.assign(new Error("private timeout"), { name: "TimeoutError" })), "Превышено время ожидания"],
+    [() => ({ ok: true, status: 200, json: async () => { throw new Error("private JSON"); } }), "Некорректный ответ Auth"],
+    [() => ({ ok: true, status: 200, json: async () => ({ user: {} }) }), "Некорректный ответ Auth"],
+  ]) {
+    const result = await simulatedSignin(response);
+    assert.match(result.state, new RegExp(label));
+    assert.doesNotMatch(result.state, /private|temporary-password|Bearer|JWT/i);
+    assert.equal(result.fields.email.value, result.email);
+    assert.equal(result.fields.publishable.value, result.publicKey);
+    assert.equal(result.fields.password.value, "");
+    assert.equal(result.delivered, 0);
+  }
+});
+
+test("local Auth clears password before key validation and delivers only a valid session", async () => {
+  const invalid = await simulatedSignin(() => { throw Error("Auth request must not run"); }, "not-a-publishable-key");
+  assert.equal(invalid.fields.password.value, "");
+  assert.equal(invalid.fields.email.value, invalid.email);
+  assert.equal(invalid.fields.publishable.value, "not-a-publishable-key");
+  assert.match(invalid.state, /Публичный ключ Preview не подтверждён/);
+
+  const success = await simulatedSignin(() => ({ ok: true, status: 200,
+    json: async () => ({ access_token: "synthetic-token", refresh_token: "synthetic-refresh",
+      user: { id: USER } }) }));
+  assert.equal(success.delivered, 1);
+  assert.equal(success.fields.password.value, "");
+  assert.equal(success.fields.email.value, "");
+  assert.equal(success.fields.publishable.value, "");
 });
 
 test("report allowlist removes header surprises, rejects secrets and private fields", () => {
