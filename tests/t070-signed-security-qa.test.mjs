@@ -8,8 +8,10 @@ import {
   csrfRequestFromRenderedForm, exactOrigin, parseArgs, parseJwtClaims, privateCache,
   safeHeader, safeResult, tokenIsLive, validateAuthFixture, validateFixtures,
 } from "../scripts/t070-signed-qa-core.mjs";
-import { objectHash, publicKeyFromAssets, requestBoundary, restrictContext, signinHtml,
+import { objectHash, publicKeyFromAssets, reportShell, requestBoundary, restrictContext, signinHtml,
   storageFailureVerdict, withLocalSignin } from "../scripts/t070-signed-security-qa.mjs";
+import { RESUME_EXPECTED_COUNTS, RESUME_EXPECTED_REAL_DIGESTS, runStorageOnly,
+  validateResumeFixtures, validateResumeSnapshot } from "../scripts/t070-storage-resume.mjs";
 
 const ID = "19bbe932-ee48-4306-b7f1-d615a5a64a34";
 const USER = "01a6213d-85dc-4851-829c-9d2ee0f30af0";
@@ -42,8 +44,145 @@ test("exact Preview, project, branch and review SHA fail closed", () => {
   }
   assert.deepEqual(parseArgs(["--dry-run", "--review-sha", "a".repeat(40)]),
     { mode: "dry-run", reviewSha: "a".repeat(40) });
+  assert.deepEqual(parseArgs(["--resume-storage-only", "--review-sha", "a".repeat(40)]),
+    { mode: "resume-storage-only", reviewSha: "a".repeat(40) });
+  assert.throws(() => parseArgs(["--resume-storage-only"]));
+  assert.throws(() => parseArgs(["--resume-storage-only", "--url", "https://marmixflex.ru"]));
+  assert.throws(() => parseArgs(["--resume-storage-only", "--execute", "--review-sha", "a".repeat(40)]));
   assert.throws(() => parseArgs(["--execute"]));
   assert.throws(() => parseArgs(["--dry-run", "--url", "https://marmixflex.ru"]));
+});
+
+test("Storage-only report starts empty and never promotes historical SELECT/UPDATE evidence", () => {
+  const report = reportShell("resume-storage-only", "a".repeat(40));
+  assert.deepEqual(report.results, []);
+  assert.equal(report.liveSignedTestsExecuted, false);
+  assert.equal(report.newFixturesCreatedByRunner, 0);
+  assert.doesNotMatch(JSON.stringify(report), /nonadmin_select|nonadmin_update|Authorization|JWT/);
+});
+
+const resumeManifest = {
+  ...manifest, userId: "ea39d2af-f164-4b2c-a496-502f2464d9af",
+  product: { ...manifest.product, baselineDigest: "5aeff7a1c58c7eea983d018e7818b31c" },
+  image: { id: "2beefa3e-503d-4118-993a-920268f4d07d",
+    path: `products/${ID}/1a01d658-cec9-463a-be9d-53f8a9dd2434.webp`,
+    sha256: "5671091f2ffe373f834f309b1c0947ff4f89e8d5b18ed4be9f57adad3560c80e",
+    metadataDigest: "7a8d0021adff60af6c07bd6d00e68cc4" },
+  order: { ...manifest.order, marker: "T070_QA_SIGNED_20261011" },
+};
+const resumeCounts = RESUME_EXPECTED_COUNTS.join(",");
+const resumeDigests = [resumeManifest.product.baselineDigest, resumeManifest.image.metadataDigest,
+  "cf2f1bbedddcb1d5121f82967c268362", ...RESUME_EXPECTED_REAL_DIGESTS,
+  "e25b0acc05a0dc20ae0e8d6a81b714ce"].join(",");
+const signedToken = (() => {
+  const payload = Buffer.from(JSON.stringify({
+    sub: resumeManifest.userId, exp: Math.floor(Date.now() / 1000) + 1200,
+  })).toString("base64url");
+  return `e30.${payload}.sig`; // Synthetic parse-only token; no Auth request in tests.
+})();
+
+test("Storage resume rejects wrong exact fixtures and an incomplete trusted baseline", () => {
+  assert.equal(validateResumeFixtures(structuredClone(resumeManifest)).userId, resumeManifest.userId);
+  for (const change of [
+    { userId: USER }, { product: { ...resumeManifest.product, id: USER } },
+    { image: { ...resumeManifest.image, id: IMAGE } },
+    { image: { ...resumeManifest.image, path: PATH } },
+    { order: { ...resumeManifest.order, id: USER } },
+  ]) assert.throws(() => validateResumeFixtures({ ...resumeManifest, ...change }));
+  assert.equal(validateResumeSnapshot(resumeCounts, resumeDigests, resumeManifest), true);
+  assert.throws(() => validateResumeSnapshot("", resumeDigests, resumeManifest));
+  assert.throws(() => validateResumeSnapshot(resumeCounts.replace("4,1", "4,0"), resumeDigests, resumeManifest));
+  assert.throws(() => validateResumeSnapshot(resumeCounts, resumeDigests.replace(
+    resumeManifest.image.metadataDigest, "0".repeat(32)), resumeManifest));
+  assert.throws(() => validateResumeSnapshot(resumeCounts, resumeDigests.slice(0, -1), resumeManifest));
+});
+
+function resumeOps(events, overrides = {}) {
+  return {
+    authUser: async () => { events.push("auth"); return true; },
+    ownMembership: async () => { events.push("membership"); return []; },
+    onSigned: () => events.push("signed"),
+    trustedSnapshot: async (stage) => { events.push("snapshot:" + stage); },
+    objectHash: async (path) => {
+      events.push("hash");
+      return path === resumeManifest.image.path ? resumeManifest.image.sha256 : null;
+    },
+    beforeUpload: async (path) => { events.push("upload_approval"); assert.match(path, /^products\/19bbe932-ee48-4306-b7f1-d615a5a64a34\//); },
+    upload: async () => { events.push("upload"); return { status: 403 }; },
+    afterUpload: async () => { events.push("upload_independent"); },
+    beforeDelete: async (path) => { events.push("delete_approval"); assert.equal(path, resumeManifest.image.path); },
+    delete: async () => { events.push("delete"); return { status: 200 }; },
+    afterDelete: async () => { events.push("delete_independent"); },
+    updateFixture: () => { throw Error("PATCH must never be called"); },
+    activateAdmin: () => { throw Error("ACTIVE must never be called"); },
+    ...overrides,
+  };
+}
+
+test("Storage-only phase uses fresh signed identity, separate approvals, and never PATCH/ACTIVE", async () => {
+  const events = [];
+  assert.deepEqual(await runStorageOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: resumeOps(events),
+  }), { uploadStatus: 403, deleteStatus: 200 });
+  assert.deepEqual(events.filter((event) => event !== "hash"), [
+    "auth", "membership", "signed", "snapshot:before_upload", "upload_approval",
+    "upload", "upload_independent", "delete_approval", "delete", "delete_independent",
+  ]);
+  assert.equal(events.includes("PATCH"), false);
+  assert.equal(events.includes("ACTIVE"), false);
+});
+
+test("Storage-only phase stops before any mutation on absent Admin baseline", async () => {
+  const events = [];
+  await assert.rejects(runStorageOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: resumeOps(events, { ownMembership: async () => [{ is_active: true }] }),
+  }), /membership/);
+  assert.equal(events.includes("upload"), false);
+  assert.equal(events.includes("delete"), false);
+});
+
+test("Ambiguous upload outcome never retries or reaches delete; sanitized verdict remains UNVERIFIED", async () => {
+  const events = [];
+  await assert.rejects(runStorageOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: resumeOps(events, { upload: async () => { events.push("upload"); throw Error("private response"); } }),
+  }), (error) => {
+    assert.equal(error.storageStage, "mutation");
+    assert.deepEqual(storageFailureVerdict(error), { status: "UNVERIFIED", reason: "outcome_unknown" });
+    assert.doesNotMatch(JSON.stringify(safeResult("storage_only", storageFailureVerdict(error))), /private/);
+    return true;
+  });
+  assert.equal(events.filter((event) => event === "upload").length, 1);
+  assert.equal(events.includes("delete"), false);
+  assert.equal(events.includes("delete_approval"), false);
+});
+
+test("Unexpected created object is FAIL and prevents delete; changed existing WebP is FAIL", async () => {
+  const created = [];
+  await assert.rejects(runStorageOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: resumeOps(created, { objectHash: async (path) => {
+      created.push("hash");
+      return path === resumeManifest.image.path ? resumeManifest.image.sha256 :
+        created.includes("upload") ? "a".repeat(64) : null;
+    } }),
+  }), (error) => error.securityViolation === true);
+  assert.equal(created.filter((event) => event === "upload").length, 1);
+  assert.equal(created.includes("delete"), false);
+
+  const removed = [];
+  await assert.rejects(runStorageOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: resumeOps(removed, { objectHash: async (path) => {
+      removed.push("hash");
+      return path === resumeManifest.image.path ?
+        removed.includes("delete") ? null : resumeManifest.image.sha256 : null;
+    } }),
+  }), (error) => error.securityViolation === true);
+  assert.equal(removed.filter((event) => event === "delete").length, 1);
+  assert.equal(removed.includes("delete_independent"), false);
 });
 
 test("exact present TEST_ONLY fixture manifest and no arbitrary target", () => {

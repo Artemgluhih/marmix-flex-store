@@ -13,6 +13,7 @@ import {
   csrfRequestFromRenderedForm, parseArgs, parseJwtClaims, privateCache,
   safeResult, tokenIsLive, validateAuthFixture, validateFixtures,
 } from "./t070-signed-qa-core.mjs";
+import { runStorageOnly, validateResumeFixtures, validateResumeSnapshot } from "./t070-storage-resume.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REPORT = path.join(ROOT, ".qa-local", "t070", "security-signed.json");
@@ -422,6 +423,54 @@ async function independentDigest(expected) {
   return true;
 }
 
+async function trustedStorageSnapshot(fixtures, stage) {
+  // Values come from the Owner's independent read-only Preview SQL, not the
+  // non-admin RLS client. Only counts and digests enter process memory.
+  console.log(`Trusted Preview baseline: ${stage}. Use the exact query in docs/T070_SIGNED_QA_RUNNER.md.`);
+  const counts = await ask("Введите только CSV из 18 счётчиков trusted Preview SELECT:");
+  const digests = await ask("Введите только CSV из 14 MD5 trusted Preview SELECT:");
+  validateResumeSnapshot(counts, digests, fixtures);
+}
+
+async function resumeStoragePhase(key, token, userId, fixtures, report, assertNetwork) {
+  const ops = {
+    onSigned: () => { report.liveSignedTestsExecuted = true; },
+    authUser: async () => (await authUser(key, token, userId)).valid,
+    ownMembership: () => ownMembership(key, token, userId),
+    objectHash,
+    trustedSnapshot: (stage) => trustedStorageSnapshot(fixtures, stage),
+    beforeUpload: async (probePath) => {
+      assertNetwork();
+      console.log("Exact TEST_ONLY recovery path (keep privately for Owner):", probePath);
+      await ask("Trusted Preview SELECT: exact generated path absent; введите ABSENT:", "ABSENT");
+      await ask("Отдельное разрешение Owner на ОДНУ отрицательную Storage upload-пробу? Введите UPLOAD_APPROVED:", "UPLOAD_APPROVED");
+    },
+    upload: (probePath) => signedRequest(key, token,
+      `/storage/v1/object/${PREVIEW.bucket}/${probePath}`, {
+        method: "POST", headers: { "Content-Type": "image/webp", "x-upsert": "false" }, body: WEBP,
+      }),
+    afterUpload: async () => {
+      await ask("Trusted Preview SELECT: exact generated path после upload отсутствует (0); введите 0:", "0");
+      await trustedStorageSnapshot(fixtures, "after_upload");
+    },
+    beforeDelete: async () => {
+      assertNetwork();
+      await trustedStorageSnapshot(fixtures, "before_delete");
+      await ask("Отдельное разрешение Owner на ОДНУ отрицательную Storage delete-пробу exact WebP? Введите DELETE_APPROVED:", "DELETE_APPROVED");
+    },
+    delete: (imagePath) => signedRequest(key, token, `/storage/v1/object/${PREVIEW.bucket}`, {
+      method: "DELETE", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prefixes: [imagePath] }),
+    }),
+    afterDelete: () => trustedStorageSnapshot(fixtures, "after_delete"),
+  };
+  const result = await runStorageOnly({ fixtures, token, userId, ops });
+  report.results.push(safeResult("storage_only_upload", { status: "PASS" },
+    { httpStatus: result.uploadStatus, affectedObjects: 0 }));
+  report.results.push(safeResult("storage_only_delete", { status: "PASS" },
+    { httpStatus: result.deleteStatus, unchanged: true }));
+}
+
 async function storageVerdicts(storage, image) {
   const uploadAbsent = storage.newHash === null;
   const metadataUnchanged = await independentDigest(image.metadataDigest);
@@ -744,7 +793,14 @@ async function run(options) {
     if (options.mode !== "dry-run") {
       const fixtures = options.mode === "execute" ?
         validateFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
-        validateAuthFixture(JSON.parse(await readFile(AUTH_FIXTURE, "utf8")));
+        options.mode === "resume-storage-only" ?
+          validateResumeFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
+          validateAuthFixture(JSON.parse(await readFile(AUTH_FIXTURE, "utf8")));
+      if (options.mode === "resume-storage-only") {
+        await trustedStorageSnapshot(fixtures, "before_signin");
+        const before = await objectHash(fixtures.image.path);
+        if (before !== fixtures.image.sha256) throw new Error("Storage fixture byte digest mismatch");
+      }
       await ask("Отдельное Owner approval на signed execution и exact fixtures получено? Введите OWNER_APPROVED:", "OWNER_APPROVED");
       const signed = await localPage(context, discoveredKey, { interactive: true, email: fixtures.userEmail });
       try {
@@ -752,7 +808,16 @@ async function run(options) {
           fixtures, context, report, () => {
             if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
           });
-        else await runExpiry(signed.key, signed.token, signed.userId, report);
+        else if (options.mode === "resume-storage-only") {
+          try { await resumeStoragePhase(signed.key, signed.token, signed.userId,
+            fixtures, report, () => {
+              if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
+            }); }
+          catch (error) {
+            report.results.push(safeResult("storage_only", storageFailureVerdict(error)));
+            throw new Error("Storage-only resume stopped; no mutation retry");
+          }
+        } else await runExpiry(signed.key, signed.token, signed.userId, report);
       } finally { signed.token = undefined; signed.key = undefined; }
     }
   } finally {
@@ -775,7 +840,7 @@ async function run(options) {
   if (report.results.some((entry) => entry.status !== "PASS")) process.exitCode = 2;
 }
 
-const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD>";
+const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD>";
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const options = parseArgs(process.argv.slice(2));
@@ -792,5 +857,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   }
 }
 
-export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, objectHash, storageFailureVerdict,
+export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, reportShell, objectHash, storageFailureVerdict,
   requestBoundary, restrictContext };

@@ -1,6 +1,6 @@
 # T070 — локальный signed-session runner (implementation only)
 
-**Статус:** код и mock-проверки подготовлены; live signed execution, TEST_ONLY fixtures и отрицательные mutation probes **не разрешены и не выполнялись**. T070 BLOCKED, T071 NOT STARTED. Runner привязан к Supabase Preview `twuevnwxwqdjbjzwuglm`, review-ветке `t070-preview-review` и неизменяемому приложению `https://marmix-flex-redesign-v2-preview-efx5iy5ej.vercel.app` (deployment `f0a5522e766a7f203b75d50c0862c2619278161a`). `--review-sha` относится к HEAD с runner; deployment SHA относится к проверяемому приложению. Перед live execution нужен новый Owner approval, проверка актуальности обоих SHA и точный fixture preflight.
+**Текущий статус:** T070 BLOCKED, T071 NOT STARTED. Owner уже подготовил TEST_ONLY fixtures и подтвердил одну signed non-admin SELECT и одну отрицательную PATCH; Storage остаётся UNVERIFIED. Ниже прежняя инструкция dry-run и новая инструкция Storage-only resume. Runner привязан к Supabase Preview `twuevnwxwqdjbjzwuglm`, review-ветке `t070-preview-review` и неизменяемому приложению `https://marmix-flex-redesign-v2-preview-efx5iy5ej.vercel.app` (deployment `f0a5522e766a7f203b75d50c0862c2619278161a`). `--review-sha` относится к HEAD с runner; deployment SHA относится к проверяемому приложению. Новый Storage-only live запуск требует отдельного Owner approval, проверки обоих SHA и exact fixture preflight.
 
 ## VS Code Terminal на Windows (PowerShell)
 
@@ -23,10 +23,89 @@ Dry-run не спрашивает credentials, не создаёт fixtures и �
 
 ## Границы будущего запуска
 
-`--execute` требует отдельного явного разрешения, чистой локальной review-ветки, точного remote HEAD и локального файла `.qa-local/t070/approved-fixtures.json` с одобренными только Preview UUID, путём одного WebP, исходными digest и одноразовым адресом `t070-…@example.invalid`. `--observe-expiry` использует отдельный `.qa-local/t070/approved-auth.json` и не доказывает refresh приложения; его следует рассматривать отдельно. Оба файла не созданы, не коммитятся и не должны содержать пароль или JWT. Строка `OWNER_APPROVED_T070_SIGNED_EXECUTION` в manifest — техническая защита от случайного запуска, **не** заменяет фактическое разрешение Owner или независимый baseline.
+`--execute` повторил бы уже завершённую PATCH и **не должен использоваться для Storage resume**. Локальный `.qa-local/t070/approved-fixtures.json` подготовлен Owner для Windows и не коммитится. `--observe-expiry` использует отдельный `.qa-local/t070/approved-auth.json` и не доказывает refresh приложения; его следует рассматривать отдельно. Эти локальные файлы не должны содержать пароль или JWT. Строка `OWNER_APPROVED_T070_SIGNED_EXECUTION` в manifest — техническая защита от случайного запуска, **не** заменяет фактическое разрешение Owner или независимый baseline.
 
 После будущего согласования Owner вводит пароль только в локальном Chromium окне на `127.0.0.1`. Runner не принимает password/JWT через CLI, env, URL или файл. Он проверяет exact Preview origin, CORS, CSP, Supabase project, review HEAD, fixture IDs, TEST_ONLY/unpublished state из manifest и требует отдельные ручные доверенные baseline/digest checkpoints. Одноразовые denied writes не повторяются после timeout. Обычные probe-запросы используют signed пользовательский bearer, не service_role. Browser context не сохраняется; трассировка, HAR, screenshot, video и storageState не пишутся. На уровне ОС нельзя гарантировать отсутствие paging/crash dump, как указано в [security design](T070_SIGNED_QA_DESIGN.md).
 
 Анонимный маркер проверяется в отдельном browser context. Authenticated Admin route headers наблюдаются в контексте временного Admin, а не выводятся из source assertions. Полный traffic-level PII audit, весь набор JS chunks, естественный refresh приложения и подписанный Create Product workflow этим runner автоматически не подтверждаются. Кандидат на acceptance exception для Admin Create Product: **не создавать REAL ради QA**; штатный Create form → REAL RPC и его error/retry path остаются UNVERIFIED. Это предложение **не принято** до финального решения Owner.
 
 При неопределённом outcome или изменении exact TEST_ONLY target остановить запуск, проверить exact ID/path через доверенный Preview read-only канал и согласовать восстановление. Никакой broad cleanup или повторного mutation запроса. Отчёт содержит только allowlisted status/count/verdict/cache directives и не содержит private response bodies, cookies, токенов, secrets, контактов, UUID fixtures или Storage path.
+
+## Storage-only resume после подтверждённой PATCH (2026-10-12)
+
+Предыдущий Owner Windows signed-run подтвердил non-admin SELECT (0 private rows) и одну отрицательную PATCH (0 affected rows, независимый product digest неизменен). Его локальный отчёт хранится отдельно как `.qa-local/t070/security-signed-before-storage-fix.json`. Эти результаты **исторические**; новый отчёт их не копирует как новые LIVE PASS. Storage тогда остановился на read-only preflight: Preview возвращал HTTP 400/JSON `code=NoSuchKey` для отсутствующего exact объекта. Исправление и mock-тесты сохранены в runner.
+
+`--resume-storage-only` — отдельная ветка исполнения. Она не вызывает `runPhases()`, `updateFixture()`, PATCH, ACTIVE/REVOKED, CSRF, cleanup или `--observe-expiry`. Она использует тот же локальный Chromium sign-in только для временного non-admin и заканчивается после отрицательных Storage upload/delete и независимой проверки. **Режим реализован, но его live запуск пока НЕ разрешён.** Manifest остаётся локально в `.qa-local/t070/approved-fixtures.json`, без пароля или JWT.
+
+После отдельного Owner execution approval Owner сможет запустить на чистой review-ветке:
+
+```powershell
+git switch t070-preview-review
+git pull --ff-only origin t070-preview-review
+$reviewSha = (git rev-parse HEAD).Trim()
+node scripts/t070-signed-security-qa.mjs --self-test
+node scripts/t070-signed-security-qa.mjs --dry-run --review-sha $reviewSha
+# ТОЛЬКО после отдельного разрешения на live Storage mutations:
+node scripts/t070-signed-security-qa.mjs --resume-storage-only --review-sha $reviewSha
+```
+
+При live запуске Owner открывает именно Supabase Preview `twuevnwxwqdjbjzwuglm`, исполняет приведённый ниже **read-only** SQL через trusted Preview channel и вводит только два полученных CSV значения в локальный терминал на каждом checkpoint. Они не сохраняются runner в отчёте. При любом расхождении runner останавливается. Запрос сравнивает 18 счётчиков (включая ровно одну активную основную membership и ноль временных), точные TEST_ONLY IDs/path, 3 fixture digests, 10 прежних REAL full-row/identity digests и зафиксированный в read-only preflight digest основной Admin membership, используя ту же канонизацию, что в `docs/T070_QA_REVIEW.md`. SQL не возвращает контакты, Auth токены, реальные строки товаров или заметки.
+
+```sql
+WITH snapshot AS (
+ SELECT
+ (SELECT count(*) FROM public.products WHERE catalog_kind='REAL') AS real_products,
+ (SELECT count(*) FROM public.products WHERE catalog_kind='TEST_ONLY') AS test_products,
+ (SELECT count(*) FROM public.categories) AS categories,
+ (SELECT count(*) FROM public.product_categories) AS memberships,
+ (SELECT count(*) FROM public.product_images) AS images,
+ (SELECT count(*) FROM storage.objects WHERE bucket_id='product-media') AS objects,
+ (SELECT count(*) FROM public.order_requests) AS orders,
+ (SELECT count(*) FROM auth.users) AS auth_users,
+ (SELECT count(*) FROM public.admin_users WHERE is_active) AS active_admins,
+ (SELECT count(*) FROM public.admin_users WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af'::uuid) AS temp_admin,
+ (SELECT count(*) FROM public.products WHERE id='19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid
+   AND sku='TEST_ONLY-T070-19BBE932' AND slug='t070-qa-product-20261009'
+   AND catalog_kind='TEST_ONLY' AND NOT is_published AND NOT is_featured
+   AND archived_at IS NULL AND availability_status IS NULL) AS exact_product,
+ (SELECT count(*) FROM public.product_images WHERE id='2beefa3e-503d-4118-993a-920268f4d07d'::uuid
+   AND product_id='19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid
+   AND storage_path='products/19bbe932-ee48-4306-b7f1-d615a5a64a34/1a01d658-cec9-463a-be9d-53f8a9dd2434.webp') AS exact_image,
+ (SELECT count(*) FROM storage.objects WHERE bucket_id='product-media'
+   AND name='products/19bbe932-ee48-4306-b7f1-d615a5a64a34/1a01d658-cec9-463a-be9d-53f8a9dd2434.webp') AS exact_object,
+ (SELECT count(*) FROM public.order_requests WHERE id='a8b701e4-7a1c-4f0c-8583-4195ed819278'::uuid
+   AND status='new' AND internal_note IS NULL) AS exact_order,
+ (SELECT count(*) FROM public.admin_users WHERE is_active
+   AND user_id<>'ea39d2af-f164-4b2c-a496-502f2464d9af'::uuid) AS owner_admin,
+ (SELECT count(*) FROM public.product_categories WHERE product_id='19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid) AS fixture_memberships,
+ (SELECT count(*) FROM storage.objects WHERE bucket_id='product-media'
+   AND name LIKE 'products/19bbe932-ee48-4306-b7f1-d615a5a64a34/%') AS fixture_folder,
+ (SELECT count(*) FROM public.product_images WHERE product_id='19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid) AS fixture_images,
+ (SELECT md5(to_jsonb(p)::text) FROM public.products p WHERE id='19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid) AS product_digest,
+ (SELECT md5(to_jsonb(i)::text) FROM public.product_images i WHERE id='2beefa3e-503d-4118-993a-920268f4d07d'::uuid) AS image_digest,
+ (SELECT md5((to_jsonb(o)-'status'-'internal_note'-'updated_at')::text)
+   FROM public.order_requests o WHERE id='a8b701e4-7a1c-4f0c-8583-4195ed819278'::uuid) AS order_digest,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(p) ORDER BY p.id)::text FROM public.products p WHERE p.catalog_kind='REAL'),'[]')) AS real_rows,
+ md5(coalesce((SELECT jsonb_agg(p.id ORDER BY p.id)::text FROM public.products p WHERE p.catalog_kind='REAL'),'[]')) AS real_ids,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(i) ORDER BY i.id)::text FROM public.product_images i WHERE i.product_id<>'19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid),'[]')) AS image_rows,
+ md5(coalesce((SELECT jsonb_agg(i.id ORDER BY i.id)::text FROM public.product_images i WHERE i.product_id<>'19bbe932-ee48-4306-b7f1-d615a5a64a34'::uuid),'[]')) AS image_ids,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(c) ORDER BY c.id)::text FROM public.categories c),'[]')) AS category_rows,
+ md5(coalesce((SELECT jsonb_agg(c.id ORDER BY c.id)::text FROM public.categories c),'[]')) AS category_ids,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(pc) ORDER BY pc.product_id,pc.category_id)::text FROM public.product_categories pc),'[]')) AS membership_rows,
+ md5(coalesce((SELECT jsonb_agg(jsonb_build_object('product_id',pc.product_id,'category_id',pc.category_id) ORDER BY pc.product_id,pc.category_id)::text FROM public.product_categories pc),'[]')) AS membership_ids,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(o) ORDER BY o.id)::text FROM storage.objects o WHERE o.bucket_id='product-media'
+   AND o.name NOT LIKE 'products/19bbe932-ee48-4306-b7f1-d615a5a64a34/%'),'[]')) AS storage_rows,
+ md5(coalesce((SELECT jsonb_agg(jsonb_build_object('id',o.id,'name',o.name) ORDER BY o.id)::text FROM storage.objects o
+   WHERE o.bucket_id='product-media' AND o.name NOT LIKE 'products/19bbe932-ee48-4306-b7f1-d615a5a64a34/%'),'[]')) AS storage_ids,
+ md5(coalesce((SELECT jsonb_agg(to_jsonb(a) ORDER BY a.user_id)::text FROM public.admin_users a
+   WHERE a.user_id<>'ea39d2af-f164-4b2c-a496-502f2464d9af'::uuid),'[]')) AS owner_admin_digest
+)
+SELECT concat_ws(',', real_products,test_products,categories,memberships,images,objects,orders,
+  auth_users,active_admins,temp_admin,exact_product,exact_image,exact_object,exact_order,
+  owner_admin,fixture_memberships,fixture_folder,fixture_images) AS counts_csv,
+ concat_ws(',', product_digest,image_digest,order_digest,real_rows,real_ids,image_rows,image_ids,
+  category_rows,category_ids,membership_rows,membership_ids,storage_rows,storage_ids,owner_admin_digest) AS digests_csv
+FROM snapshot;
+```
+
+Runner повторяет этот trusted checkpoint перед локальным входом, перед upload, после upload, перед delete и после delete. Он также проверяет SHA-256 исходного WebP через публичный exact URL. Для сгенерированного пути Owner отдельно подтверждает отсутствие до upload и число объектов `0` после него по exact-path trusted SELECT. Два разных ввода `UPLOAD_APPROVED` и `DELETE_APPROVED` непосредственно предшествуют каждой одноразовой пробе. HTTP-ответ **сам по себе** не считается доказательством отказа. При timeout/неопределённом результате runner останавливается без retry; exact generated TEST_ONLY path показывается локально для адресного восстановления, но в JSON не записывается. Никакого перехода к ACTIVE, повторной PATCH или автоматического cleanup нет. Сохранённый ранее signed SELECT/UPDATE PASS остаётся только в отдельном историческом отчёте.

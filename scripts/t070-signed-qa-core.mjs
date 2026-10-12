@@ -179,9 +179,9 @@ export function safeResult(name, verdict, details = {}) {
 export function parseArgs(argv) {
   if (argv.length === 1 && argv[0] === "--self-test") return { mode: "self-test" };
   if (argv.length === 1 && argv[0] === "--help") return { mode: "help" };
-  if (argv.length === 3 && ["--dry-run", "--execute", "--observe-expiry"].includes(argv[0]) &&
+  if (argv.length === 3 && ["--dry-run", "--execute", "--observe-expiry", "--resume-storage-only"].includes(argv[0]) &&
     argv[1] === "--review-sha" && SHA.test(argv[2])) {
     return { mode: argv[0].slice(2), reviewSha: argv[2] };
   }
-  throw new Error("Use --self-test, --dry-run/--execute/--observe-expiry --review-sha <40-hex SHA>");
+  throw new Error("Use --self-test, --dry-run/--execute/--observe-expiry/--resume-storage-only --review-sha <40-hex SHA>");
 }
