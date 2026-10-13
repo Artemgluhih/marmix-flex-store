@@ -123,3 +123,34 @@ node scripts/t070-signed-security-qa.mjs --resume-storage-delete-only --review-s
 ```
 
 At `before_signin`, `before_delete` and `after_delete`, run the **same exact read-only SQL above** in the trusted Preview project and enter only its fresh 18-count and 14-MD5 CSV values. The runner separately checks the original WebP SHA-256, the signed temporary Auth identity and zero temporary Admin memberships. Owner enters only the temporary password in local Chromium, and explicitly types `DELETE_APPROVED` at the single mutation checkpoint. No credentials, JWT, cookies, response bodies or private contact data enter the report. A precise JSON `AccessDenied` with HTTP 400 is accepted only after independent exact object persistence and unchanged metadata/baseline; any other 400 is UNVERIFIED. On unknown outcome, stop without retry and independently inspect the exact approved image UUID/path before any later action. The saved report records only new DELETE-only evidence; historical SELECT/PATCH/upload results remain in their separate records. No cleanup occurs.
+
+## Final bounded P0 stage — implementation only (2026-10-13)
+
+`--final-p0` is a **separate** finite execution branch. It never invokes the old `--execute`, `--resume-storage-only` or `--resume-storage-delete-only` branches. It does not repeat the signed non-admin PATCH, upload or DELETE. It does not provision fixtures, change memberships, run a successful Admin CRUD action or perform cleanup. The existing `.qa-local/t070/approved-fixtures.json` remains local and ignored; no new manifest is required. The immutable application Preview remains `https://marmix-flex-redesign-v2-preview-efx5iy5ej.vercel.app` at `f0a5522e766a7f203b75d50c0862c2619278161a`, distinct from the runner review HEAD.
+
+**Current permission is implementation and noncredential dry-run only. Do not run `--final-p0` before a new Owner live-execution approval.** The safe Windows commands now are:
+
+```powershell
+git switch t070-preview-review
+git pull --ff-only origin t070-preview-review
+$reviewSha = (git rev-parse HEAD).Trim()
+node scripts/t070-signed-security-qa.mjs --self-test
+node scripts/t070-signed-security-qa.mjs --dry-run --review-sha $reviewSha
+```
+
+Only after a separate execution decision, the single bounded command would be `node scripts/t070-signed-security-qa.mjs --final-p0 --review-sha $reviewSha`. The Owner enters only the existing temporary password in the localhost Chromium form. No `--execute`, `--observe-expiry`, previous Storage resume, credentials or privileged key is needed. Dry-run contains no signed login or mutations. The local report remains `.qa-local/t070/security-signed.json` and must be retained privately, not committed.
+
+The trusted operator runs the **same exact read-only 18-count/14-MD5 SQL above** immediately at each runner checkpoint. At `before_signin` and initial signed preflight, expected counts are `4,1,3,3,4,4,1,2,1,0,1,1,1,1,1,0,1,1`. At active checkpoints only `active_admins=2`, `temp_admin=1` change; at revoked checkpoints they are `1` and `1`. All 14 digests, including ten REAL digests and Owner membership digest, must stay exactly equal. The WebP SHA-256 is checked before sign-in and at final checkpoint. A mismatch stops the process; no result is inferred from a stale CSV.
+
+| Checkpoint | Operation boundary | Separate Owner action |
+|---|---|---|
+| `before_signin` | Exact Preview/project/review SHA, immutable deployment, fixture digests, zero temporary membership and original WebP bytes. | Supply fresh trusted read-only CSV; no membership write. |
+| `ACTIVE_APPROVED` → `ACTIVE_DONE` | Work/trusted Preview operator may add only the exact temporary UUID membership after explicit Owner approval in a future turn. Runner never writes it. Verify active Admins 2, temp membership 1 and unchanged REAL data. | Separate action-time Owner approval and independent SQL. |
+| `after_active_reads`, `after_privacy` | Frozen signed bearer can see the exact TEST_ONLY product/order and one Storage object through read-only Storage LIST. Browser under the temporary Admin reads actual cache/robots headers; marker appears in authorized order detail, absent from the bounded anonymous pages/chunks/API. | Fresh SQL CSV; no write. The public scan is deliberately bounded and not a full PII audit. |
+| `CSRF_WRONG_APPROVED`, `CSRF_MISSING_APPROVED` | Two **separate**, single-use POST attempts from the actual rendered TEST_ONLY Product Editor form. Node HTTP request uses the in-memory cookie jar, exact wrong Origin or no Origin. The form action is not guessed. The same trusted product/REAL digests are required before and after each. | Separate approval for *each* mutation attempt. Unexpected mutation or unknown response stops without retry. |
+| `REVOKE_APPROVED` → `REVOKE_DONE` | Only temporary membership is deactivated through trusted Preview channel. Runner keeps the original signed token unchanged; Auth user endpoint must still accept it with expiry margin. Direct product/order SELECT and read-only Storage LIST must hide exact fixtures. Admin route must deny. | Separate action-time Owner approval, fresh active=1/temp=1 SQL, same REAL digests. |
+| `final` | Recheck fixtures, WebP SHA-256 and unchanged REAL digests. | No cleanup in this runner. Fixture membership remains inactive pending separate cleanup authorization. |
+
+Storage LIST is a read-only `POST /storage/v1/object/list/product-media` restricted to the exact TEST_ONLY folder. It requires the Storage SELECT policy; the publicly readable WebP bytes are **not** used as revoked-RLS proof. The limited signed traffic scan stores only marker booleans/counts and allowlisted header directives; authorized Admin responses may legitimately contain synthetic order fields, whereas anonymous responses must not contain the synthetic marker. No JWT, cookie, password, request/response body, private contact, HAR, screenshot or storageState is written to Git or the report.
+
+The frozen JWT must remain valid after revocation. A timeout, absent action reference, unexpected HTTP result, incomplete browser traffic, expired original bearer or mismatching baseline leaves the affected verdict UNVERIFIED/FAIL and stops; the runner never retries. If an interruption occurs after activation or revocation, retain the exact UUID in the protected Owner handoff and recheck the membership through trusted Preview SQL. Do **not** restart the whole mode or repeat CSRF probes blindly. Natural expiry/refresh and Admin Create Product remain separate proposed acceptance exceptions, not PASS.

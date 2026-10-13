@@ -15,6 +15,7 @@ import {
 } from "./t070-signed-qa-core.mjs";
 import { runStorageDeleteOnly, runStorageOnly, validateResumeFixtures,
   validateResumeSnapshot } from "./t070-storage-resume.mjs";
+import { runFinalP0, validateP0Snapshot } from "./t070-final-p0.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REPORT = path.join(ROOT, ".qa-local", "t070", "security-signed.json");
@@ -448,6 +449,131 @@ async function trustedStorageSnapshot(fixtures, stage) {
   validateResumeSnapshot(counts, digests, fixtures);
 }
 
+async function trustedP0Snapshot(fixtures, stage, phase) {
+  console.log(`Trusted Preview P0 baseline: ${stage} (${phase}). Use the exact 18-count/14-MD5 query in docs/T070_SIGNED_QA_RUNNER.md.`);
+  const counts = await ask("Введите свежий CSV из 18 счётчиков trusted Preview SELECT:");
+  const digests = await ask("Введите свежий CSV из 14 MD5 trusted Preview SELECT:");
+  return validateP0Snapshot(counts, digests, fixtures, phase);
+}
+
+// Storage LIST is a read-only API operation requiring object SELECT policy.
+// The public WebP download cannot prove revoked Storage RLS, so use the
+// signed list of the exact TEST_ONLY folder; never upload or delete again.
+async function signedFixtureList(key, token, imagePath) {
+  if (!STORAGE_PATH.test(imagePath)) throw new Error("Storage target mismatch");
+  const prefix = imagePath.slice(0, imagePath.lastIndexOf("/") + 1);
+  const response = await signedRequest(key, token, `/storage/v1/object/list/${PREVIEW.bucket}`, {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ prefix, limit: 2, offset: 0 }),
+  });
+  if (response.status !== 200) return { status: response.status, rows: null };
+  const body = await response.json();
+  return { status: 200, rows: Array.isArray(body) ? body.map((entry) => ({ name: entry.name })) : null };
+}
+
+function csrfHeaders(cookie, mode) {
+  if (!cookie || !["wrong", "missing"].includes(mode)) throw new Error("CSRF context unavailable");
+  return mode === "wrong" ? { Cookie: cookie, Origin: "https://t070-invalid-origin.invalid" } : { Cookie: cookie };
+}
+
+async function boundedCsrfProbe(page, product, mode) {
+  const rendered = await page.locator('form:has(textarea[name="description"])').evaluate((form) => ({
+    fields: Array.from(new FormData(form).entries()).map(([name, value]) => [name, String(value)]),
+    actionUrl: location.href, productId: location.pathname.split("/").at(-1),
+  })).catch(() => null);
+  if (!rendered || rendered.productId !== product.id) throw new Error("Rendered TEST_ONLY action unavailable");
+  const description = rendered.fields.find(([name]) => name === "description");
+  if (!description) throw new Error("Rendered edit field unavailable");
+  description[1] = `T070 CSRF negative probe ${randomUUID()}`;
+  const request = csrfRequestFromRenderedForm(rendered, mode);
+  // The cookie jar stays in this process only. Node fetch does not add an
+  // Origin header: wrong and missing are exact, unlike browser fetch.
+  const cookies = await page.context().cookies(PREVIEW.origin);
+  if (!cookies.length || cookies.some(({ domain }) => !PREVIEW.origin.endsWith(domain.replace(/^\./, "")))) {
+    throw new Error("Isolated Admin cookie context unavailable");
+  }
+  const cookie = cookies.map(({ name, value }) => `${name}=${value}`).join("; ");
+  const response = await fetch(request.url, {
+    method: "POST", headers: csrfHeaders(cookie, mode), body: request.multipart,
+    redirect: "manual", cache: "no-store", signal: timeout(),
+  });
+  const location = response.headers.get("location");
+  return { status: response.status,
+    redirectToLogin: [303, 307, 308].includes(response.status) && location !== null &&
+      new URL(location, PREVIEW.origin).origin === PREVIEW.origin &&
+      new URL(location, PREVIEW.origin).pathname === "/admin/login" };
+}
+
+async function signedMarkerCheck(page, marker, orderId) {
+  const response = await page.goto(`${PREVIEW.origin}/admin/orders/${orderId}`, {
+    waitUntil: "networkidle", timeout: 30000,
+  });
+  if (response?.status() !== 200) return false;
+  const bytes = await response.body();
+  if (bytes.length > 2 * 1024 * 1024) return false;
+  return bytes.includes(Buffer.from(marker));
+}
+
+async function finalP0Phase(key, token, userId, fixtures, context, report, assertNetwork) {
+  let adminPage;
+  const record = (name, status, httpStatus) => report.results.push(safeResult(name,
+    { status, reason: status === "PASS" ? null : "unexpected_response" },
+    httpStatus == null ? {} : { httpStatus }));
+  const ops = {
+    onSigned: () => { report.liveSignedTestsExecuted = true; },
+    snapshot: (stage, phase) => trustedP0Snapshot(fixtures, stage, phase),
+    authUser: async (bearer) => (await authUser(key, bearer, userId)).valid,
+    membership: (bearer) => ownMembership(key, bearer, userId),
+    objectHash,
+    read: (bearer, table, id) => selectExact(key, bearer, table, id,
+      table === "products" ? "id,catalog_kind,is_published" : "id"),
+    storageList: (bearer) => signedFixtureList(key, bearer, fixtures.image.path),
+    record,
+    beforeActive: async () => {
+      assertNetwork();
+      await ask("Owner отдельно разрешил exact UUID active membership? Work подтвердил исходный baseline? Введите ACTIVE_APPROVED:", "ACTIVE_APPROVED");
+      console.log("Checkpoint ACTIVE: trusted Preview operator activates only the temporary UUID. Runner does not write membership.");
+      await ask("После независимой проверки active=2, temp=1 введите ACTIVE_DONE:", "ACTIVE_DONE");
+    },
+    adminBrowser: async () => {
+      assertNetwork();
+      const { page, responses } = await adminBrowser(context, fixtures.product.id, fixtures.userEmail);
+      adminPage = page;
+      const headersPass = responses.every((entry) => entry.status === "PASS");
+      report.results.push(...responses);
+      const signedMarkerPresent = await signedMarkerCheck(page, fixtures.order.marker, fixtures.order.id);
+      const anonymous = await anonymousMarkerCheck(context, fixtures.order.marker, key);
+      return { headersPass, signedMarkerPresent, anonymousMarkerAbsent: anonymous.absent,
+        publicChunksComplete: anonymous.complete };
+    },
+    beforeCsrf: async (mode) => {
+      assertNetwork();
+      await adminPage.goto(`${PREVIEW.origin}/admin/products/${fixtures.product.id}`, { waitUntil: "domcontentloaded" });
+      await ask(`Owner отдельно разрешил одну ${mode}-Origin CSRF-пробу? Введите CSRF_${mode.toUpperCase()}_APPROVED:`,
+        `CSRF_${mode.toUpperCase()}_APPROVED`);
+    },
+    csrf: async (mode) => {
+      const result = await boundedCsrfProbe(adminPage, fixtures.product, mode);
+      return result; // The subsequent trusted snapshot proves unchanged or throws.
+    },
+    beforeRevoke: async () => {
+      assertNetwork();
+      await ask("Owner отдельно разрешил exact UUID revocation? Введите REVOKE_APPROVED:", "REVOKE_APPROVED");
+      console.log("Checkpoint REVOKED: trusted Preview operator deactivates only the temporary UUID. Runner does not write membership.");
+      await ask("После независимой проверки active=1, temp=1 введите REVOKE_DONE:", "REVOKE_DONE");
+    },
+    revokedRoute: async () => {
+      const response = await adminPage.goto(PREVIEW.origin + "/admin/orders", { waitUntil: "domcontentloaded" });
+      const denied = new URL(adminPage.url()).pathname === "/admin/login";
+      report.results.push(safeResult("revoked_route_http", { status: denied ? "PASS" : "FAIL",
+        reason: denied ? null : "unexpected_response" }, { httpStatus: response?.status() ?? 0 }));
+      return denied;
+    },
+  };
+  try { await runFinalP0({ fixtures, token, userId, ops }); }
+  finally { await adminPage?.close(); }
+}
+
 async function resumeStoragePhase(key, token, userId, fixtures, report, assertNetwork) {
   const ops = {
     onSigned: () => { report.liveSignedTestsExecuted = true; },
@@ -592,9 +718,18 @@ async function restrictContext(context, onBlocked = () => {}) {
   });
 }
 
-async function adminBrowser(context, productId) {
+async function adminBrowser(context, productId, expectedEmail = null) {
   const page = await context.newPage();
   await page.goto(PREVIEW.origin + "/admin/login", { waitUntil: "domcontentloaded" });
+  if (expectedEmail) {
+    if (new URL(page.url()).pathname !== "/admin/login" ||
+      !/^t070-[a-z0-9-]{6,64}@example\.invalid$/.test(expectedEmail)) {
+      throw new Error("Temporary Admin login boundary unavailable");
+    }
+    const emailField = page.locator('input[name="email"]');
+    await emailField.fill(expectedEmail);
+    await emailField.evaluate((field) => { field.readOnly = true; });
+  }
   console.log("При необходимости войдите в Preview Admin только под временной active Admin записью.");
   await page.waitForURL((url) => url.origin === PREVIEW.origin && url.pathname.startsWith("/admin/") &&
     url.pathname !== "/admin/login", { timeout: 180000 });
@@ -830,7 +965,7 @@ async function run(options) {
     report.results.push(safeResult("preview_config_and_cors", { status: cors ? "PASS" : "UNVERIFIED",
       reason: cors ? null : "network_failure" }));
     if (options.mode !== "dry-run") {
-      const fixtures = options.mode === "execute" ?
+      const fixtures = ["execute", "final-p0"].includes(options.mode) ?
         validateFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
         ["resume-storage-only", "resume-storage-delete-only"].includes(options.mode) ?
           validateResumeFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
@@ -839,6 +974,14 @@ async function run(options) {
         await trustedStorageSnapshot(fixtures, "before_signin");
         const before = await objectHash(fixtures.image.path);
         if (before !== fixtures.image.sha256) throw new Error("Storage fixture byte digest mismatch");
+      }
+      if (options.mode === "final-p0") {
+        // Before credential entry: Owner's trusted, read-only exact Preview
+        // checkpoint and original public bytes must both still match.
+        await trustedP0Snapshot(fixtures, "before_signin", "absent");
+        if (await objectHash(fixtures.image.path) !== fixtures.image.sha256) {
+          throw new Error("Final P0 WebP preflight mismatch");
+        }
       }
       await ask("Отдельное Owner approval на signed execution и exact fixtures получено? Введите OWNER_APPROVED:", "OWNER_APPROVED");
       const signed = await localPage(context, discoveredKey, { interactive: true, email: fixtures.userEmail });
@@ -865,6 +1008,17 @@ async function run(options) {
             report.results.push(safeResult("storage_delete_only", storageFailureVerdict(error)));
             throw new Error("Delete-only resume stopped; no mutation retry");
           }
+        } else if (options.mode === "final-p0") {
+          try {
+            await finalP0Phase(signed.key, signed.token, signed.userId,
+              fixtures, context, report, () => {
+                if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
+              });
+            report.results.push(safeResult("final_p0", { status: "PASS" }));
+          } catch {
+            report.results.push(safeResult("final_p0", { status: "UNVERIFIED", reason: "outcome_unknown" }));
+            throw new Error("Final P0 stopped; do not retry a checkpoint or mutation");
+          }
         } else await runExpiry(signed.key, signed.token, signed.userId, report);
       } finally { signed.token = undefined; signed.key = undefined; }
     }
@@ -888,13 +1042,14 @@ async function run(options) {
   if (report.results.some((entry) => entry.status !== "PASS")) process.exitCode = 2;
 }
 
-const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD> | --resume-storage-delete-only --review-sha <HEAD>";
+const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --final-p0 --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD> | --resume-storage-delete-only --review-sha <HEAD>";
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const options = parseArgs(process.argv.slice(2));
     if (options.mode === "help") console.log(usage);
     else if (options.mode === "self-test") {
-      const result = spawnSync(process.execPath, ["--test", "tests/t070-signed-security-qa.test.mjs"],
+      const result = spawnSync(process.execPath, ["--test", "tests/t070-signed-security-qa.test.mjs",
+        "tests/t070-final-p0.test.mjs"],
         { cwd: ROOT, stdio: "inherit" });
       process.exitCode = result.status === 0 ? 0 : 2;
     } else await run(options);
@@ -906,5 +1061,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 }
 
 export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, reportShell, objectHash, storageFailureVerdict,
-  boundedStorageDenial, requestBoundary, restrictContext };
+  boundedStorageDenial, requestBoundary, restrictContext, csrfHeaders };
 

@@ -48,6 +48,9 @@ test("exact Preview, project, branch and review SHA fail closed", () => {
     { mode: "resume-storage-only", reviewSha: "a".repeat(40) });
   assert.deepEqual(parseArgs(["--resume-storage-delete-only", "--review-sha", "a".repeat(40)]),
     { mode: "resume-storage-delete-only", reviewSha: "a".repeat(40) });
+  assert.deepEqual(parseArgs(["--final-p0", "--review-sha", "a".repeat(40)]),
+    { mode: "final-p0", reviewSha: "a".repeat(40) });
+  assert.throws(() => parseArgs(["--final-p0", "--execute", "--review-sha", "a".repeat(40)]));
   assert.throws(() => parseArgs(["--resume-storage-delete-only", "--execute", "--review-sha", "a".repeat(40)]));
   assert.throws(() => parseArgs(["--resume-storage-only"]));
   assert.throws(() => parseArgs(["--resume-storage-only", "--url", "https://marmixflex.ru"]));
