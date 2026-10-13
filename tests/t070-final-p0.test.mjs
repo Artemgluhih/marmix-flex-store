@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { createServer } from "node:http";
 import { PREVIEW } from "../scripts/t070-signed-qa-core.mjs";
-import { csrfHeaders, reportShell } from "../scripts/t070-signed-security-qa.mjs";
+import { classifyAnonymousOrders, csrfHeaders, reportShell } from "../scripts/t070-signed-security-qa.mjs";
 import { P0_EXPECTED_COUNTS, runFinalP0, validateP0Snapshot } from "../scripts/t070-final-p0.mjs";
 import { RESUME_EXPECTED_REAL_DIGESTS } from "../scripts/t070-storage-resume.mjs";
 
@@ -89,6 +89,16 @@ test("phase counts and all 14 digests fail closed", () => {
   }
   assert.throws(() => validateP0Snapshot(P0_EXPECTED_COUNTS.active.join(","), digests, fixtures, "revoked"));
   assert.throws(() => validateP0Snapshot("", digests, fixtures, "active"));
+});
+
+test("anonymous direct Orders SELECT fails for any row, even if marker is in an unselected field", () => {
+  assert.equal(classifyAnonymousOrders(200, "[]", fixtures.order.marker), true);
+  assert.equal(classifyAnonymousOrders(200, '[{"id":"synthetic"}]', fixtures.order.marker), false);
+  assert.equal(classifyAnonymousOrders(200,
+    JSON.stringify([{ name: fixtures.order.marker }]), fixtures.order.marker), false);
+  assert.equal(classifyAnonymousOrders(200, "{}", fixtures.order.marker), false);
+  assert.throws(() => classifyAnonymousOrders(200, "broken", fixtures.order.marker));
+  assert.throws(() => classifyAnonymousOrders(500, "[]", fixtures.order.marker));
 });
 
 test("final P0 report starts empty and Node CSRF form sends exact Origin modes", async () => {

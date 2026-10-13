@@ -679,7 +679,10 @@ async function anonymousMarkerCheck(context, marker, key) {
   try {
     for (const route of ["/", "/catalog", "/admin/orders"]) {
       const response = await page.goto(PREVIEW.origin + route, { waitUntil: "networkidle", timeout: 30000 });
-      if (!response || response.status() >= 500) throw new Error("Anonymous route unavailable");
+      if (!response || response.status() !== 200 ||
+        (route === "/admin/orders" && new URL(page.url()).pathname !== "/admin/login")) {
+        throw new Error("Anonymous route unavailable or Admin not denied");
+      }
     }
     await Promise.all(pending);
   } finally {
@@ -687,12 +690,24 @@ async function anonymousMarkerCheck(context, marker, key) {
     await anonContext.close();
   }
   const response = await noRedirect(exactUrl(PREVIEW.supabaseOrigin,
-    "/rest/v1/order_requests?select=id,items_snapshot,internal_note"), {
+    "/rest/v1/order_requests?select=*"), {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
   });
   if (![200, 401, 403].includes(response.status)) throw new Error("Anonymous PostgREST response not classified");
-  absent &&= !(await response.text()).includes(marker);
+  if (response.status === 200) {
+    const body = await response.text();
+    absent &&= classifyAnonymousOrders(response.status, body, marker);
+  }
   return { absent, scanned, complete: scanned > 0 && unavailable === 0 && blockedUnsafe === 0 };
+}
+
+function classifyAnonymousOrders(status, body, marker) {
+  if (status !== 200 || typeof body !== "string" || body.length > 2 * 1024 * 1024) {
+    throw new Error("Anonymous order response unavailable");
+  }
+  let rows;
+  try { rows = JSON.parse(body); } catch { throw new Error("Anonymous order response unavailable"); }
+  return Array.isArray(rows) && rows.length === 0 && !body.includes(marker);
 }
 
 function requestBoundary(request) {
@@ -1061,5 +1076,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 }
 
 export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, reportShell, objectHash, storageFailureVerdict,
-  boundedStorageDenial, requestBoundary, restrictContext, csrfHeaders };
+  boundedStorageDenial, requestBoundary, restrictContext, csrfHeaders, classifyAnonymousOrders };
 
