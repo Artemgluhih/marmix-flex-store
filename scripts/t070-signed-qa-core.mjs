@@ -19,7 +19,7 @@ const REASONS = new Set([
   "origin_not_proven", "action_not_captured", "owner_step_pending", "timeout_unknown",
   "preflight_timeout", "preflight_failed", "outcome_unknown",
   "unsafe_target", "private_cache", "anonymous_marker", "login_unavailable",
-  "browser_unavailable",
+  "browser_unavailable", "insufficient_lifetime",
 ]);
 
 export function exactOrigin(value, expected) {
@@ -82,7 +82,7 @@ export function parseJwtClaims(token) {
   try { claims = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString("utf8")); }
   catch { throw new Error("Invalid access token"); }
   if (!UUID.test(claims.sub ?? "") || !Number.isSafeInteger(claims.exp)) throw new Error("Invalid access token");
-  return { sub: claims.sub, exp: claims.exp, role: claims.role };
+  return { sub: claims.sub, exp: claims.exp, role: claims.role, iss: claims.iss, aud: claims.aud };
 }
 
 export function tokenIsLive(claims, now = Date.now(), marginSeconds = 90) {
@@ -159,16 +159,16 @@ export function privateCache(value) {
 }
 
 export function safeResult(name, verdict, details = {}) {
-  const allowedName = /^[a-z_]{3,50}$/.test(name) || name === "final_p0" || /^p0_[a-z_]{3,45}$/.test(name);
+  const allowedName = /^[a-z_]{3,50}$/.test(name) || ["final_p0", "resume_final_p0"].includes(name) || /^p0_[a-z_]{3,45}$/.test(name);
   if (!allowedName || !STATES.has(verdict.status)) throw new Error("Unsafe verdict");
   if (verdict.reason != null && !REASONS.has(verdict.reason)) throw new Error("Unsafe reason");
   const allowed = {};
   for (const [key, value] of Object.entries(details)) {
     if (!["httpStatus", "affectedRows", "affectedObjects", "responsesScanned", "unchanged", "cacheControl", "xRobotsTag",
-      "robotsMeta", "markerAbsent", "tokenLive"].includes(key)) throw new Error("Unsafe report field");
-    if (["httpStatus", "affectedRows", "affectedObjects", "responsesScanned"].includes(key)) {
+      "robotsMeta", "markerAbsent", "tokenLive", "remainingSeconds", "requiredSeconds", "recoveryRequired"].includes(key)) throw new Error("Unsafe report field");
+    if (["httpStatus", "affectedRows", "affectedObjects", "responsesScanned", "remainingSeconds", "requiredSeconds"].includes(key)) {
       if (!Number.isInteger(value) || value < 0 || value > 9999) throw new Error("Unsafe count");
-    } else if (["unchanged", "markerAbsent", "tokenLive"].includes(key)) {
+    } else if (["unchanged", "markerAbsent", "tokenLive", "recoveryRequired"].includes(key)) {
       if (typeof value !== "boolean") throw new Error("Unsafe boolean");
     } else if (value !== null && typeof value !== "string") throw new Error("Unsafe header");
     allowed[key] = key === "cacheControl" ? safeHeader(value, "cache") :
@@ -181,10 +181,10 @@ export function parseArgs(argv) {
   if (argv.length === 1 && argv[0] === "--self-test") return { mode: "self-test" };
   if (argv.length === 1 && argv[0] === "--help") return { mode: "help" };
   if (argv.length === 3 && ["--dry-run", "--execute", "--observe-expiry", "--resume-storage-only",
-    "--resume-storage-delete-only", "--final-p0"].includes(argv[0]) &&
+    "--resume-storage-delete-only", "--final-p0", "--resume-final-p0"].includes(argv[0]) &&
     argv[1] === "--review-sha" && SHA.test(argv[2])) {
     return { mode: argv[0].slice(2), reviewSha: argv[2] };
   }
-  throw new Error("Use --self-test, --dry-run/--execute/--observe-expiry/--resume-storage-only/--resume-storage-delete-only/--final-p0 --review-sha <40-hex SHA>");
+  throw new Error("Use --self-test, --dry-run/--execute/--observe-expiry/--resume-storage-only/--resume-storage-delete-only/--final-p0/--resume-final-p0 --review-sha <40-hex SHA>");
 }
 

@@ -15,7 +15,7 @@ import {
 } from "./t070-signed-qa-core.mjs";
 import { runStorageDeleteOnly, runStorageOnly, validateResumeFixtures,
   validateResumeSnapshot } from "./t070-storage-resume.mjs";
-import { p0FailureResult, runFinalP0, validateP0Snapshot } from "./t070-final-p0.mjs";
+import { p0FailureResult, runFinalP0, runResumeFinalP0, validateP0Snapshot } from "./t070-final-p0.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REPORT = path.join(ROOT, ".qa-local", "t070", "security-signed.json");
@@ -59,7 +59,7 @@ async function saveReport(report) {
   if (Object.keys(report).some((key) => !allowedTop.includes(key)) ||
     report.results.some((entry) => Object.keys(entry).some((key) =>
       !["name", "status", "reason", "httpStatus", "affectedRows", "affectedObjects", "responsesScanned", "unchanged",
-        "cacheControl", "xRobotsTag", "robotsMeta", "markerAbsent", "tokenLive"].includes(key)))) {
+        "cacheControl", "xRobotsTag", "robotsMeta", "markerAbsent", "tokenLive", "remainingSeconds", "requiredSeconds", "recoveryRequired"].includes(key)))) {
     throw new Error("Unsafe report schema");
   }
   await mkdir(path.dirname(REPORT), { recursive: true, mode: 0o700 });
@@ -520,7 +520,7 @@ async function signedMarkerCheck(page, marker, orderId) {
   return bytes.includes(Buffer.from(marker));
 }
 
-async function finalP0Phase(key, token, userId, fixtures, context, report, assertNetwork) {
+async function finalP0Phase(key, token, userId, fixtures, context, report, assertNetwork, resume = false) {
   let adminPage;
   const record = (name, status, httpStatus) => report.results.push(safeResult(name,
     { status, reason: status === "PASS" ? null : "unexpected_response" },
@@ -529,16 +529,24 @@ async function finalP0Phase(key, token, userId, fixtures, context, report, asser
     onSigned: () => { report.liveSignedTestsExecuted = true; },
     snapshot: (stage, phase) => trustedP0Snapshot(fixtures, stage, phase),
     authUser: async (bearer) => (await authUser(key, bearer, userId)).valid,
+    authUserResponse: (bearer) => authUser(key, bearer, userId),
     membership: (bearer) => ownMembershipResponse(key, bearer, userId),
     objectHash,
     read: (bearer, table, id) => selectExact(key, bearer, table, id,
       table === "products" ? "id,catalog_kind,is_published" : "id"),
     storageList: (bearer) => signedFixtureList(key, bearer, fixtures.image.path),
     record,
-    beforeActive: async () => {
+    recordResult: (result) => {
+      report.results.push(result);
+      if (result.remainingSeconds != null) console.log(
+        `${result.name}: remaining=${result.remainingSeconds}s; required>${result.requiredSeconds}s`);
+    },
+    beforeActive: async (verifyBudget) => {
       assertNetwork();
       await ask("Owner отдельно разрешил exact UUID active membership? Work подтвердил исходный baseline? Введите ACTIVE_APPROVED:", "ACTIVE_APPROVED");
-      console.log("Checkpoint ACTIVE: trusted Preview operator activates only the temporary UUID. Runner does not write membership.");
+      verifyBudget?.();
+      console.log(resume ? "Checkpoint ACTIVE: trusted Preview operator conditionally updates ONLY existing inactive temporary membership; no INSERT." : "Checkpoint ACTIVE: trusted Preview operator activates only the temporary UUID. Runner does not write membership.");
+      console.log("If interrupted after activation: stop probes and ask trusted operator to verify/deactivate ONLY ea39d2af-f164-4b2c-a496-502f2464d9af; never rerun.");
       await ask("После независимой проверки active=2, temp=1 введите ACTIVE_DONE:", "ACTIVE_DONE");
     },
     adminBrowser: async () => {
@@ -562,9 +570,10 @@ async function finalP0Phase(key, token, userId, fixtures, context, report, asser
       const result = await boundedCsrfProbe(adminPage, fixtures.product, mode);
       return result; // The subsequent trusted snapshot proves unchanged or throws.
     },
-    beforeRevoke: async () => {
+    beforeRevoke: async (verifyBudget) => {
       assertNetwork();
       await ask("Owner отдельно разрешил exact UUID revocation? Введите REVOKE_APPROVED:", "REVOKE_APPROVED");
+      verifyBudget?.();
       console.log("Checkpoint REVOKED: trusted Preview operator deactivates only the temporary UUID. Runner does not write membership.");
       await ask("После независимой проверки active=1, temp=1 введите REVOKE_DONE:", "REVOKE_DONE");
     },
@@ -576,8 +585,8 @@ async function finalP0Phase(key, token, userId, fixtures, context, report, asser
       return denied;
     },
   };
-  try { await runFinalP0({ fixtures, token, userId, ops }); }
-  finally { await adminPage?.close(); }
+  try { await (resume ? runResumeFinalP0 : runFinalP0)({ fixtures, token, userId, ops }); }
+  finally { await adminPage?.close().catch(() => {}); }
 }
 
 async function resumeStoragePhase(key, token, userId, fixtures, report, assertNetwork) {
@@ -986,7 +995,7 @@ async function run(options) {
     report.results.push(safeResult("preview_config_and_cors", { status: cors ? "PASS" : "UNVERIFIED",
       reason: cors ? null : "network_failure" }));
     if (options.mode !== "dry-run") {
-      const fixtures = ["execute", "final-p0"].includes(options.mode) ?
+      const fixtures = ["execute", "final-p0", "resume-final-p0"].includes(options.mode) ?
         validateFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
         ["resume-storage-only", "resume-storage-delete-only"].includes(options.mode) ?
           validateResumeFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
@@ -996,10 +1005,10 @@ async function run(options) {
         const before = await objectHash(fixtures.image.path);
         if (before !== fixtures.image.sha256) throw new Error("Storage fixture byte digest mismatch");
       }
-      if (options.mode === "final-p0") {
+      if (["final-p0", "resume-final-p0"].includes(options.mode)) {
         // Before credential entry: Owner's trusted, read-only exact Preview
         // checkpoint and original public bytes must both still match.
-        await trustedP0Snapshot(fixtures, "before_signin", "absent");
+        await trustedP0Snapshot(fixtures, "before_signin", options.mode === "resume-final-p0" ? "inactive" : "absent");
         if (await objectHash(fixtures.image.path) !== fixtures.image.sha256) {
           throw new Error("Final P0 WebP preflight mismatch");
         }
@@ -1029,19 +1038,21 @@ async function run(options) {
             report.results.push(safeResult("storage_delete_only", storageFailureVerdict(error)));
             throw new Error("Delete-only resume stopped; no mutation retry");
           }
-        } else if (options.mode === "final-p0") {
+        } else if (["final-p0", "resume-final-p0"].includes(options.mode)) {
           try {
             await finalP0Phase(signed.key, signed.token, signed.userId,
               fixtures, context, report, () => {
                 if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
-              });
-            report.results.push(safeResult("final_p0", { status: "PASS" }));
+              }, options.mode === "resume-final-p0");
+            report.results.push(safeResult(options.mode === "resume-final-p0" ? "resume_final_p0" : "final_p0", { status: "PASS" }));
           } catch (error) {
             const failure = p0FailureResult(error);
             report.results.push(failure);
-            report.results.push(safeResult("final_p0", { status: "UNVERIFIED", reason: failure.reason }));
+            report.results.push(safeResult(options.mode === "resume-final-p0" ? "resume_final_p0" : "final_p0", { status: failure.status, reason: failure.reason }));
             console.error(`${failure.name}=${failure.status}; reason=${failure.reason}` +
               (failure.httpStatus == null ? "" : `; HTTP=${failure.httpStatus}`));
+            if (failure.recoveryRequired === true) console.error(
+              "RECOVERY REQUIRED: trusted Preview operator must verify/revoke ONLY ea39d2af-f164-4b2c-a496-502f2464d9af; no runner retry or cleanup.");
             throw new Error("Final P0 stopped; do not retry a checkpoint or mutation");
           }
         } else await runExpiry(signed.key, signed.token, signed.userId, report);
@@ -1067,7 +1078,7 @@ async function run(options) {
   if (report.results.some((entry) => entry.status !== "PASS")) process.exitCode = 2;
 }
 
-const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --final-p0 --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD> | --resume-storage-delete-only --review-sha <HEAD>";
+const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --final-p0 --review-sha <HEAD> | --resume-final-p0 --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD> | --resume-storage-delete-only --review-sha <HEAD>";
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const options = parseArgs(process.argv.slice(2));

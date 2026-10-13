@@ -160,3 +160,113 @@ The frozen JWT must remain valid after revocation. A timeout, absent action refe
 The terminated Owner run encountered HTTP 401 on its own membership GET because the original frozen JWT had expired. Positive active product/order/Storage reads were not reached. The diagnostic patch checks token lifetime before the activation request and immediately after `after_active`, preserves the membership HTTP status, records bounded `p0_active_token`/`p0_active_membership` and per-read failure reasons, and fixes sanitizer rejection of the `final_p0` label. It does not refresh the token or authorize another run.
 
 Emergency recovery left **one inactive temporary membership**, with one active Owner membership and unchanged fixture/REAL digests. `--final-p0` still expects an absent temporary row, so **do not rerun it** in this state. A separately reviewed/approved bounded continuation from inactive state and a fresh Owner-local token is required; no continuation mode is added by this patch. Preserve the stopped run's local report separately. The stage diagnostics contain no password, JWT, cookies, private response body or raw exception text.
+
+## Bounded continuation from retained inactive membership (2026-10-13)
+
+`--resume-final-p0` is the sole continuation for the **existing inactive** temporary membership. It does not call the absent-state mode, recreate the row, repeat historical non-admin SELECT/PATCH/Storage mutations, or clean up fixtures. This delivery authorizes implementation and dry-run only; a new Owner execution approval is still required. The existing `.qa-local/t070/approved-fixtures.json` is unchanged and remains excluded from Git. Preserve earlier local reports separately before another dry-run overwrites `security-signed.json`.
+
+### Exact starting contract
+
+Repository/branch/local/remote SHA must match the supplied `--review-sha`. The immutable application origin remains `https://marmix-flex-redesign-v2-preview-efx5iy5ej.vercel.app` at `f0a5522e766a7f203b75d50c0862c2619278161a`; it deliberately differs from the runner review SHA. Trusted Work must independently confirm that deployment is READY and belongs to the Preview project before execution. The runner retains the hard-pinned origin/project/manifest and browser request guards; it does not permit arbitrary URLs or verify deployment metadata using credentials.
+
+Before credentials, and again immediately after local sign-in, use the **unchanged exact SQL above**. Inactive and revoked phases expect:
+
+`4,1,3,3,4,4,1,2,1,1,1,1,1,1,1,0,1,1`
+
+Active phase expects:
+
+`4,1,3,3,4,4,1,2,2,1,1,1,1,1,1,0,1,1`
+
+All fourteen original MD5 values, including ten REAL full-row/identity digests and the Owner membership digest, must match. The existing exact product/image/order/path/manifest validations are reused. The public synthetic WebP must still hash to `5671091f2ffe373f834f309b1c0947ff4f89e8d5b18ed4be9f57adad3560c80e`. An extra trusted read must distinguish inactive from active, since the 18-count query counts the temporary row independently of its flag:
+
+```sql
+SELECT
+ count(*) FILTER (WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af') AS temporary_rows,
+ count(*) FILTER (WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af' AND NOT is_active) AS temporary_inactive,
+ count(*) FILTER (WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af' AND is_active) AS temporary_active,
+ count(*) FILTER (WHERE user_id<>'ea39d2af-f164-4b2c-a496-502f2464d9af' AND is_active) AS owner_active
+FROM public.admin_users;
+```
+
+Expected inactive/revoked result: `1,1,0,1`; active: `1,0,1,1`. The signed own-membership response must also contain exactly one approved temporary UUID with the expected boolean. An absent or already active starting row stops before activation.
+
+### Fresh token and finite time budget
+
+Owner enters only the temporary password in the existing ephemeral local Chromium form. A fresh access token is held in process memory, never loaded from the terminated run, refreshed, replaced or persisted. The decoded subject/role must match the temporary authenticated user, issuer the exact Preview `/auth/v1` URL, and audience `authenticated` (string or a single-element array). Decoding is a boundary check, **not signature verification**; the actual Preview Auth `/auth/v1/user` response must independently return HTTP 200 with the exact UUID. The original token is frozen for every direct API request and the post-revocation Auth check. The application cookie session is separately established using that same temporary account; route/header checks are explicitly browser-cookie evidence, not proof that its cookie contains the frozen API token.
+
+| Gate | Minimum remaining JWT time (strictly greater) | Reason |
+|---|---:|---|
+| Before activation and after `ACTIVE_APPROVED` | 1,800 seconds | Reserve 30 minutes: activation/SQL 5 min, temporary app login 3 min, privacy/SQL 3 min, two CSRF approval/SQL groups 10 min, revoke/SQL 3 min, 6 min buffer. |
+| After `after_active` | 900 seconds | Do not start positive reads after a prolonged activation pause. |
+| Wrong-Origin, after independent SQL and again after approval | 900 seconds | Reserve both CSRF checks and revocation. |
+| Missing-Origin, after independent SQL and again after approval | 600 seconds | Reserve the remaining probe and revocation. |
+| Before revocation and after `REVOKE_APPROVED` | 300 seconds | Leave time for trusted deactivation and SQL. |
+| After `after_revoked` and before each revoked resource read | 90 seconds | Confirm same still-valid token with Auth and complete bounded reads. |
+
+These budgets do not guarantee that an indefinitely delayed checkpoint will finish. Every critical post-pause check fails closed, without changing Auth TTL/settings or system clocks. Only bounded remaining/required seconds, `tokenLive` and `recoveryRequired` may enter the report; no JWT expiry timestamp or claim values do. With insufficient time **before activation**, stop without any write. With expiry/insufficient time after activation, stop probes and request exact temporary membership recovery through the trusted Preview channel. A terminated process cannot be used for valid-token revocation evidence.
+
+### One finite sequence and approvals
+
+1. `before_signin (inactive)` trusted CSV + WebP hash; `OWNER_APPROVED`; fresh local sign-in; second `before_signin (inactive)` trusted CSV; signed Auth/own inactive membership; time budget.
+2. `ACTIVE_APPROVED`: separately approved trusted operator conditionally changes only the existing temporary UUID `false → true`. The runner makes **no membership write**. `ACTIVE_DONE` and `after_active (active)` CSV. Separate HTTP verdicts for own membership, exact TEST_ONLY Product SELECT, synthetic Order SELECT and exact-folder Storage LIST. No PATCH/upload/delete.
+3. `after_active_reads (active)` CSV; Owner logs the temporary user into Preview Admin locally. Actual Orders/Product responses each record HTTP status, allowlisted Cache-Control and robots directives. Authorized synthetic order detail must contain the synthetic marker; bounded separate anonymous page/JS/Data API observations must not expose it. This is a limited synthetic-marker check, not exhaustive PII/chunk analysis. `after_privacy (active)` CSV.
+4. `before_csrf_wrong (active)` CSV; `CSRF_WRONG_APPROVED`; recheck lifetime; exactly one POST derived from the rendered TEST_ONLY form. `after_csrf_wrong (active)` CSV must prove unchanged product and REAL data.
+5. `before_csrf_missing (active)` CSV; `CSRF_MISSING_APPROVED`; recheck lifetime; exactly one missing-Origin POST; `after_csrf_missing (active)` CSV. If a request times out/throws, perform only `after_csrf_<mode>_unknown` read-only SQL, classify `outcome_unknown`, stop and never retry. An unchanged digest plus an unexpected HTTP response does not manufacture PASS.
+6. `REVOKE_APPROVED`: separately approved trusted operator conditionally changes the **same** row `true → false`; runner does not refresh/logout/delete or write membership. `REVOKE_DONE`; `after_revoked (revoked)` CSV; confirm the **same frozen** bearer via Auth. Separate HTTP verdicts for own inactive membership, Product/Order denial and Storage LIST denial; separate application-cookie route denial. Storage LIST is read-only and does not retest mutation denial.
+7. `final (revoked)` CSV + original WebP SHA-256. Temporary membership inactive, Owner unchanged, all 14/14 and REAL 10/10 digests unchanged. No cleanup.
+
+No fixture or mutation probe loop exists. A historical PASS is never imported as new live evidence. New phase results use their own sanitized status/reason/HTTP code; a returned revoked private row is FAIL, an expired/unknown phase UNVERIFIED. Overall resume status preserves a confirmed FAIL rather than relabelling it PASS. The old `--final-p0` remains available for its old absent contract but must **not** be used in this retained-row state.
+
+### Trusted transition/recovery procedure (not execution authorization)
+
+Immediately before either transition, verify project `twuevnwxwqdjbjzwuglm`, review SHA, fresh 18/14 CSV, flag query and explicit Owner approval. Use a transaction and lock the exact temporary row. Condition the UPDATE on the expected old flag; preserve user ID and creation timestamp. Validate `RETURNING user_id` and exactly one affected row within the transaction; rollback on any mismatch. The following **activation template** is for a separately approved trusted Preview operator; the local runner never executes it:
+
+```sql
+BEGIN;
+DO $$
+DECLARE changed_uuid uuid; affected integer;
+BEGIN
+ PERFORM 1 FROM public.admin_users
+  WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af' AND NOT is_active FOR UPDATE;
+ IF NOT FOUND OR
+    (SELECT count(*) FROM public.admin_users WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af') <> 1 OR
+    (SELECT count(*) FROM public.admin_users WHERE is_active AND user_id<>'ea39d2af-f164-4b2c-a496-502f2464d9af') <> 1 OR
+    (SELECT md5(coalesce(jsonb_agg(to_jsonb(a) ORDER BY a.user_id)::text,'[]'))
+     FROM public.admin_users a WHERE a.user_id<>'ea39d2af-f164-4b2c-a496-502f2464d9af') <> 'e25b0acc05a0dc20ae0e8d6a81b714ce' OR
+    (SELECT count(*) FROM auth.users WHERE id='ea39d2af-f164-4b2c-a496-502f2464d9af') <> 1
+ THEN RAISE EXCEPTION 'T070 exact transition precondition mismatch'; END IF;
+ UPDATE public.admin_users SET is_active=true
+  WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af' AND is_active=false
+  RETURNING user_id INTO changed_uuid;
+ GET DIAGNOSTICS affected = ROW_COUNT;
+ IF affected <> 1 OR changed_uuid IS DISTINCT FROM 'ea39d2af-f164-4b2c-a496-502f2464d9af'::uuid
+ THEN RAISE EXCEPTION 'T070 exact transition row mismatch'; END IF;
+END $$;
+SELECT user_id,is_active FROM public.admin_users
+ WHERE user_id='ea39d2af-f164-4b2c-a496-502f2464d9af';
+COMMIT;
+```
+
+For separately approved **revocation**, use the same guarded transaction with the initial locked-row predicate `AND is_active`, and only the UPDATE reversed to `SET is_active=false ... AND is_active=true`. Require the identical exact RETURNING UUID/one-row assertion. Run an independent new read-only 18/14 query and flag query after COMMIT. Do not change an already inactive row, INSERT another row, broaden the UUID filter, or touch the Owner. If a statement fails, issue ROLLBACK; do not retry with weaker conditions. This transition SQL is a provisioning/recovery boundary and never signed-session RLS evidence.
+
+If execution ends after activation or the revocation checkpoint is uncertain, retain fixtures, stop all probes and check the exact temporary flag independently. If active, seek action-time Owner emergency recovery approval and apply only the guarded exact `true → false` transaction. If inactive, make no UPDATE. Verify active Admins=1, temporary row=1 inactive, Owner digest, 18 counts, 14 MD5 and WebP hash. The runner prints the exact recovery UUID and records `recoveryRequired` on caught failures; it never performs privileged rollback/recovery. On Ctrl+C/process termination the report may be incomplete, so do not infer membership state from a missing flag. Do not restart the process or repeat CSRF; preserve sanitized diagnostics and seek Owner decision.
+
+### Windows preflight now; execution later
+
+Use the existing repository/Playwright/manifest. Fetch only the review branch and require fast-forward; do not reset/rebase. Preserve historical local QA reports before dry-run. No credentials/fixtures are needed for dry-run:
+
+```powershell
+git switch t070-preview-review
+git pull --ff-only origin t070-preview-review
+$reviewSha = (git rev-parse HEAD).Trim()
+node scripts/t070-signed-security-qa.mjs --self-test
+node scripts/t070-signed-security-qa.mjs --dry-run --review-sha $reviewSha
+```
+
+Only after Windows preflight **and separate Owner live execution approval**, the one continuation command is:
+
+```powershell
+node scripts/t070-signed-security-qa.mjs --resume-final-p0 --review-sha $reviewSha
+```
+
+Do not execute it under this implementation-only approval. No new provisioning, password update, manifest recreation, historical probe, expiry observation or cleanup is part of this delivery. Natural token expiry/refresh, full REAL-creating Admin Create, exhaustive traffic/chunk audit and revoked Storage **mutation** denial remain separately UNVERIFIED/Owner acceptance decisions.
