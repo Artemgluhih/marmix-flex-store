@@ -97,6 +97,8 @@ test("anonymous direct Orders SELECT fails for any row, even if marker is in an 
   assert.equal(classifyAnonymousOrders(200,
     JSON.stringify([{ name: fixtures.order.marker }]), fixtures.order.marker), false);
   assert.equal(classifyAnonymousOrders(200, "{}", fixtures.order.marker), false);
+  assert.equal(classifyAnonymousOrders(403, "denied", fixtures.order.marker), true);
+  assert.equal(classifyAnonymousOrders(401, fixtures.order.marker, fixtures.order.marker), false);
   assert.throws(() => classifyAnonymousOrders(200, "broken", fixtures.order.marker));
   assert.throws(() => classifyAnonymousOrders(500, "[]", fixtures.order.marker));
 });

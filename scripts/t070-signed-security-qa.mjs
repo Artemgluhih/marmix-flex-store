@@ -694,20 +694,20 @@ async function anonymousMarkerCheck(context, marker, key) {
     headers: { apikey: key, Authorization: `Bearer ${key}` },
   });
   if (![200, 401, 403].includes(response.status)) throw new Error("Anonymous PostgREST response not classified");
-  if (response.status === 200) {
-    const body = await response.text();
-    absent &&= classifyAnonymousOrders(response.status, body, marker);
-  }
+  const body = await response.text();
+  absent &&= classifyAnonymousOrders(response.status, body, marker);
   return { absent, scanned, complete: scanned > 0 && unavailable === 0 && blockedUnsafe === 0 };
 }
 
 function classifyAnonymousOrders(status, body, marker) {
-  if (status !== 200 || typeof body !== "string" || body.length > 2 * 1024 * 1024) {
+  if (![200, 401, 403].includes(status) || typeof body !== "string" || body.length > 2 * 1024 * 1024) {
     throw new Error("Anonymous order response unavailable");
   }
+  if (body.includes(marker)) return false;
+  if (status !== 200) return true;
   let rows;
   try { rows = JSON.parse(body); } catch { throw new Error("Anonymous order response unavailable"); }
-  return Array.isArray(rows) && rows.length === 0 && !body.includes(marker);
+  return Array.isArray(rows) && rows.length === 0;
 }
 
 function requestBoundary(request) {
