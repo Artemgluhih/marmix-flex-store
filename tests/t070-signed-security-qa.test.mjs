@@ -8,9 +8,9 @@ import {
   csrfRequestFromRenderedForm, exactOrigin, parseArgs, parseJwtClaims, privateCache,
   safeHeader, safeResult, tokenIsLive, validateAuthFixture, validateFixtures,
 } from "../scripts/t070-signed-qa-core.mjs";
-import { objectHash, publicKeyFromAssets, reportShell, requestBoundary, restrictContext, signinHtml,
+import { boundedStorageDenial, objectHash, publicKeyFromAssets, reportShell, requestBoundary, restrictContext, signinHtml,
   storageFailureVerdict, withLocalSignin } from "../scripts/t070-signed-security-qa.mjs";
-import { RESUME_EXPECTED_COUNTS, RESUME_EXPECTED_REAL_DIGESTS, runStorageOnly,
+import { RESUME_EXPECTED_COUNTS, RESUME_EXPECTED_REAL_DIGESTS, runStorageDeleteOnly, runStorageOnly,
   validateResumeFixtures, validateResumeSnapshot } from "../scripts/t070-storage-resume.mjs";
 
 const ID = "19bbe932-ee48-4306-b7f1-d615a5a64a34";
@@ -46,6 +46,9 @@ test("exact Preview, project, branch and review SHA fail closed", () => {
     { mode: "dry-run", reviewSha: "a".repeat(40) });
   assert.deepEqual(parseArgs(["--resume-storage-only", "--review-sha", "a".repeat(40)]),
     { mode: "resume-storage-only", reviewSha: "a".repeat(40) });
+  assert.deepEqual(parseArgs(["--resume-storage-delete-only", "--review-sha", "a".repeat(40)]),
+    { mode: "resume-storage-delete-only", reviewSha: "a".repeat(40) });
+  assert.throws(() => parseArgs(["--resume-storage-delete-only", "--execute", "--review-sha", "a".repeat(40)]));
   assert.throws(() => parseArgs(["--resume-storage-only"]));
   assert.throws(() => parseArgs(["--resume-storage-only", "--url", "https://marmixflex.ru"]));
   assert.throws(() => parseArgs(["--resume-storage-only", "--execute", "--review-sha", "a".repeat(40)]));
@@ -59,6 +62,13 @@ test("Storage-only report starts empty and never promotes historical SELECT/UPDA
   assert.equal(report.liveSignedTestsExecuted, false);
   assert.equal(report.newFixturesCreatedByRunner, 0);
   assert.doesNotMatch(JSON.stringify(report), /nonadmin_select|nonadmin_update|Authorization|JWT/);
+});
+
+test("Delete-only report contains no historical upload or PATCH PASS", () => {
+  const report = reportShell("resume-storage-delete-only", "a".repeat(40));
+  assert.deepEqual(report.results, []);
+  assert.equal(report.liveSignedTestsExecuted, false);
+  assert.doesNotMatch(JSON.stringify(report), /nonadmin_update|storage_only_upload/);
 });
 
 const resumeManifest = {
@@ -76,7 +86,7 @@ const resumeDigests = [resumeManifest.product.baselineDigest, resumeManifest.ima
   "e25b0acc05a0dc20ae0e8d6a81b714ce"].join(",");
 const signedToken = (() => {
   const payload = Buffer.from(JSON.stringify({
-    sub: resumeManifest.userId, exp: Math.floor(Date.now() / 1000) + 1200,
+    sub: resumeManifest.userId, role: "authenticated", exp: Math.floor(Date.now() / 1000) + 1200,
   })).toString("base64url");
   return `e30.${payload}.sig`; // Synthetic parse-only token; no Auth request in tests.
 })();
@@ -118,6 +128,116 @@ function resumeOps(events, overrides = {}) {
     ...overrides,
   };
 }
+
+function deleteOps(events, overrides = {}) {
+  return {
+    authUser: async () => { events.push("auth"); return true; },
+    ownMembership: async () => { events.push("membership"); return []; },
+    onSigned: () => events.push("signed"),
+    trustedSnapshot: async (stage) => {
+      events.push("snapshot:" + stage);
+      validateResumeSnapshot(resumeCounts, resumeDigests, resumeManifest);
+    },
+    objectHash: async (path) => {
+      events.push("hash");
+      assert.equal(path, resumeManifest.image.path);
+      return resumeManifest.image.sha256;
+    },
+    beforeDelete: async (path) => {
+      events.push("delete_approval");
+      assert.equal(path, resumeManifest.image.path);
+    },
+    delete: async (path) => {
+      events.push("delete");
+      assert.equal(path, resumeManifest.image.path);
+      return { status: 400, accessDenied: true };
+    },
+    afterDelete: async () => { events.push("delete_independent"); },
+    upload: () => { throw Error("Upload must never be called"); },
+    updateFixture: () => { throw Error("PATCH must never be called"); },
+    activateAdmin: () => { throw Error("ACTIVE must never be called"); },
+    ...overrides,
+  };
+}
+
+test("Delete-only uses fresh signed non-admin and exact fixture without upload/PATCH/ACTIVE", async () => {
+  const events = [];
+  assert.deepEqual(await runStorageDeleteOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: deleteOps(events),
+  }), { deleteStatus: 400 });
+  assert.deepEqual(events.filter((event) => event !== "hash"), [
+    "auth", "membership", "signed", "snapshot:before_delete",
+    "delete_approval", "delete", "delete_independent",
+  ]);
+});
+
+test("Delete-only fails closed for wrong fixture, admin membership, bad role or baseline", async () => {
+  for (const input of [
+    { fixtures: { ...resumeManifest, image: { ...resumeManifest.image, path: PATH } },
+      ops: deleteOps([]) },
+    { fixtures: resumeManifest, ops: deleteOps([], { ownMembership: async () => [{ is_active: false }] }) },
+    { fixtures: resumeManifest, ops: deleteOps([], { trustedSnapshot: async () => {
+      validateResumeSnapshot(resumeCounts.replace("4,1", "4,0"), resumeDigests, resumeManifest);
+    } }) },
+  ]) {
+    const events = [];
+    await assert.rejects(runStorageDeleteOnly({
+      fixtures: input.fixtures, token: signedToken, userId: resumeManifest.userId,
+      ops: { ...input.ops, delete: async () => { events.push("delete"); } },
+    }));
+    assert.equal(events.length, 0);
+  }
+  const wrongRole = `e30.${Buffer.from(JSON.stringify({
+    sub: resumeManifest.userId, role: "service_role", exp: Math.floor(Date.now() / 1000) + 1200,
+  })).toString("base64url")}.sig`;
+  await assert.rejects(runStorageDeleteOnly({
+    fixtures: resumeManifest, token: wrongRole, userId: resumeManifest.userId, ops: deleteOps([]),
+  }), /identity/);
+});
+
+test("Delete-only never retries an unknown outcome, and detects a removed or changed object", async () => {
+  const events = [];
+  await assert.rejects(runStorageDeleteOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: deleteOps(events, { delete: async () => { events.push("delete"); throw Error("private"); } }),
+  }), (error) => {
+    assert.deepEqual(storageFailureVerdict(error), { status: "UNVERIFIED", reason: "outcome_unknown" });
+    assert.doesNotMatch(JSON.stringify(safeResult("storage_delete_only", storageFailureVerdict(error))), /private/);
+    return true;
+  });
+  assert.equal(events.filter((event) => event === "delete").length, 1);
+  assert.equal(events.includes("delete_independent"), false);
+  const changed = [];
+  await assert.rejects(runStorageDeleteOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: deleteOps(changed, { objectHash: async () => {
+      changed.push("hash");
+      return changed.includes("delete") ? null : resumeManifest.image.sha256;
+    } }),
+  }), (error) => error.securityViolation === true);
+  assert.equal(changed.filter((event) => event === "delete").length, 1);
+});
+
+test("Only exact legacy 400 AccessDenied is a bounded denial, never generic 400", async () => {
+  const response = (code, status = 400) => new Response(JSON.stringify({ code }), {
+    status, headers: { "content-type": "application/json" },
+  });
+  assert.deepEqual(await boundedStorageDenial(response("AccessDenied")),
+    { status: 400, accessDenied: true });
+  for (const r of [response("NoSuchKey"), response("InvalidKey"),
+    new Response("AccessDenied", { status: 400 }), response("AccessDenied", 403)]) {
+    assert.equal((await boundedStorageDenial(r)).accessDenied, false);
+  }
+  const events = [];
+  await assert.rejects(runStorageDeleteOnly({
+    fixtures: resumeManifest, token: signedToken, userId: resumeManifest.userId,
+    ops: deleteOps(events, { delete: async () => {
+      events.push("delete"); return { status: 400, accessDenied: false };
+    } }),
+  }));
+  assert.equal(events.filter((event) => event === "delete").length, 1);
+});
 
 test("Storage-only phase uses fresh signed identity, separate approvals, and never PATCH/ACTIVE", async () => {
   const events = [];
@@ -447,3 +567,4 @@ test("browser request guard blocks Production and third-party origins", async ()
   assert.deepEqual(blocked, ["optional_feedback", "unsafe_external", "unsafe_external",
     "unsafe_external", "local_intercept", "unsafe_external", "unsafe_external", "unsafe_external"]);
 });
+

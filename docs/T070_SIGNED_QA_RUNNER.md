@@ -109,3 +109,17 @@ FROM snapshot;
 ```
 
 Runner повторяет этот trusted checkpoint перед локальным входом, перед upload, после upload, перед delete и после delete. Он также проверяет SHA-256 исходного WebP через публичный exact URL. Для сгенерированного пути Owner отдельно подтверждает отсутствие до upload и число объектов `0` после него по exact-path trusted SELECT. Два разных ввода `UPLOAD_APPROVED` и `DELETE_APPROVED` непосредственно предшествуют каждой одноразовой пробе. HTTP-ответ **сам по себе** не считается доказательством отказа. При timeout/неопределённом результате runner останавливается без retry; exact generated TEST_ONLY path показывается локально для адресного восстановления, но в JSON не записывается. Никакого перехода к ACTIVE, повторной PATCH или автоматического cleanup нет. Сохранённый ранее signed SELECT/UPDATE PASS остаётся только в отдельном историческом отчёте.
+
+
+## DELETE-only continuation after Owner-verified upload denial
+
+The prior upload's live evidence is documented in `docs/T070_QA_REVIEW.md`; its runner verdict remained UNVERIFIED because that version accepted only HTTP 401/403. **Do not rerun `--resume-storage-only` or `--execute` to reach DELETE.** The isolated `--resume-storage-delete-only` never calls upload, PATCH or the ACTIVE/REVOKED/CSRF phases. Implementation and mock tests do not authorize a live DELETE; obtain separate Owner approval before executing it.
+
+After that approval, in the existing Windows repository, verify the new review HEAD, retain the approved local manifest, run `--self-test` and `--dry-run`, then launch only:
+
+```powershell
+$reviewSha = (git rev-parse HEAD).Trim()
+node scripts/t070-signed-security-qa.mjs --resume-storage-delete-only --review-sha $reviewSha
+```
+
+At `before_signin`, `before_delete` and `after_delete`, run the **same exact read-only SQL above** in the trusted Preview project and enter only its fresh 18-count and 14-MD5 CSV values. The runner separately checks the original WebP SHA-256, the signed temporary Auth identity and zero temporary Admin memberships. Owner enters only the temporary password in local Chromium, and explicitly types `DELETE_APPROVED` at the single mutation checkpoint. No credentials, JWT, cookies, response bodies or private contact data enter the report. A precise JSON `AccessDenied` with HTTP 400 is accepted only after independent exact object persistence and unchanged metadata/baseline; any other 400 is UNVERIFIED. On unknown outcome, stop without retry and independently inspect the exact approved image UUID/path before any later action. The saved report records only new DELETE-only evidence; historical SELECT/PATCH/upload results remain in their separate records. No cleanup occurs.

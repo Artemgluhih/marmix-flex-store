@@ -82,7 +82,7 @@ export function parseJwtClaims(token) {
   try { claims = JSON.parse(Buffer.from(token.split(".")[1], "base64url").toString("utf8")); }
   catch { throw new Error("Invalid access token"); }
   if (!UUID.test(claims.sub ?? "") || !Number.isSafeInteger(claims.exp)) throw new Error("Invalid access token");
-  return { sub: claims.sub, exp: claims.exp };
+  return { sub: claims.sub, exp: claims.exp, role: claims.role };
 }
 
 export function tokenIsLive(claims, now = Date.now(), marginSeconds = 90) {
@@ -179,9 +179,11 @@ export function safeResult(name, verdict, details = {}) {
 export function parseArgs(argv) {
   if (argv.length === 1 && argv[0] === "--self-test") return { mode: "self-test" };
   if (argv.length === 1 && argv[0] === "--help") return { mode: "help" };
-  if (argv.length === 3 && ["--dry-run", "--execute", "--observe-expiry", "--resume-storage-only"].includes(argv[0]) &&
+  if (argv.length === 3 && ["--dry-run", "--execute", "--observe-expiry", "--resume-storage-only",
+    "--resume-storage-delete-only"].includes(argv[0]) &&
     argv[1] === "--review-sha" && SHA.test(argv[2])) {
     return { mode: argv[0].slice(2), reviewSha: argv[2] };
   }
-  throw new Error("Use --self-test, --dry-run/--execute/--observe-expiry/--resume-storage-only --review-sha <40-hex SHA>");
+  throw new Error("Use --self-test, --dry-run/--execute/--observe-expiry/--resume-storage-only/--resume-storage-delete-only --review-sha <40-hex SHA>");
 }
+

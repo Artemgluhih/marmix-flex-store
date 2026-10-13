@@ -13,7 +13,8 @@ import {
   csrfRequestFromRenderedForm, parseArgs, parseJwtClaims, privateCache,
   safeResult, tokenIsLive, validateAuthFixture, validateFixtures,
 } from "./t070-signed-qa-core.mjs";
-import { runStorageOnly, validateResumeFixtures, validateResumeSnapshot } from "./t070-storage-resume.mjs";
+import { runStorageDeleteOnly, runStorageOnly, validateResumeFixtures,
+  validateResumeSnapshot } from "./t070-storage-resume.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REPORT = path.join(ROOT, ".qa-local", "t070", "security-signed.json");
@@ -348,6 +349,21 @@ async function objectHash(pathValue, request = noRedirect) {
   return createHash("sha256").update(body).digest("hex");
 }
 
+async function boundedStorageDenial(response) {
+  if (response.status !== 400) return { status: response.status, accessDenied: false };
+  if (!/application\/json/i.test(response.headers.get("content-type") ?? "") ||
+    Number(response.headers.get("content-length") ?? 0) > 4096) {
+    return { status: 400, accessDenied: false };
+  }
+  try {
+    const body = await response.text();
+    if (body.length > 4096) return { status: 400, accessDenied: false };
+    const error = JSON.parse(body);
+    return { status: 400, accessDenied: Boolean(error && !Array.isArray(error) &&
+      error.code === "AccessDenied") };
+  } catch { return { status: 400, accessDenied: false }; }
+}
+
 async function storageDeniedProbes(key, token, image) {
   const newPath = `products/${image.productId}/${randomUUID()}.webp`;
   try {
@@ -468,6 +484,29 @@ async function resumeStoragePhase(key, token, userId, fixtures, report, assertNe
   report.results.push(safeResult("storage_only_upload", { status: "PASS" },
     { httpStatus: result.uploadStatus, affectedObjects: 0 }));
   report.results.push(safeResult("storage_only_delete", { status: "PASS" },
+    { httpStatus: result.deleteStatus, unchanged: true }));
+}
+
+async function resumeStorageDeletePhase(key, token, userId, fixtures, report, assertNetwork) {
+  const ops = {
+    onSigned: () => { report.liveSignedTestsExecuted = true; },
+    authUser: async () => (await authUser(key, token, userId)).valid,
+    ownMembership: () => ownMembership(key, token, userId),
+    objectHash,
+    trustedSnapshot: (stage) => trustedStorageSnapshot(fixtures, stage),
+    beforeDelete: async () => {
+      assertNetwork();
+      await ask("Отдельное разрешение Owner на ОДНУ отрицательную Storage delete-пробу exact WebP? Введите DELETE_APPROVED:", "DELETE_APPROVED");
+    },
+    delete: async (imagePath) => boundedStorageDenial(await signedRequest(key, token,
+      `/storage/v1/object/${PREVIEW.bucket}`, {
+        method: "DELETE", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prefixes: [imagePath] }),
+      })),
+    afterDelete: () => trustedStorageSnapshot(fixtures, "after_delete"),
+  };
+  const result = await runStorageDeleteOnly({ fixtures, token, userId, ops });
+  report.results.push(safeResult("storage_delete_only", { status: "PASS" },
     { httpStatus: result.deleteStatus, unchanged: true }));
 }
 
@@ -793,10 +832,10 @@ async function run(options) {
     if (options.mode !== "dry-run") {
       const fixtures = options.mode === "execute" ?
         validateFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
-        options.mode === "resume-storage-only" ?
+        ["resume-storage-only", "resume-storage-delete-only"].includes(options.mode) ?
           validateResumeFixtures(JSON.parse(await readFile(FIXTURES, "utf8"))) :
           validateAuthFixture(JSON.parse(await readFile(AUTH_FIXTURE, "utf8")));
-      if (options.mode === "resume-storage-only") {
+      if (["resume-storage-only", "resume-storage-delete-only"].includes(options.mode)) {
         await trustedStorageSnapshot(fixtures, "before_signin");
         const before = await objectHash(fixtures.image.path);
         if (before !== fixtures.image.sha256) throw new Error("Storage fixture byte digest mismatch");
@@ -816,6 +855,15 @@ async function run(options) {
           catch (error) {
             report.results.push(safeResult("storage_only", storageFailureVerdict(error)));
             throw new Error("Storage-only resume stopped; no mutation retry");
+          }
+        } else if (options.mode === "resume-storage-delete-only") {
+          try { await resumeStorageDeletePhase(signed.key, signed.token, signed.userId,
+            fixtures, report, () => {
+              if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
+            }); }
+          catch (error) {
+            report.results.push(safeResult("storage_delete_only", storageFailureVerdict(error)));
+            throw new Error("Delete-only resume stopped; no mutation retry");
           }
         } else await runExpiry(signed.key, signed.token, signed.userId, report);
       } finally { signed.token = undefined; signed.key = undefined; }
@@ -840,7 +888,7 @@ async function run(options) {
   if (report.results.some((entry) => entry.status !== "PASS")) process.exitCode = 2;
 }
 
-const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD>";
+const usage = "node scripts/t070-signed-security-qa.mjs --self-test | --dry-run --review-sha <HEAD> | --execute --review-sha <HEAD> | --observe-expiry --review-sha <HEAD> | --resume-storage-only --review-sha <HEAD> | --resume-storage-delete-only --review-sha <HEAD>";
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const options = parseArgs(process.argv.slice(2));
@@ -858,4 +906,5 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
 }
 
 export { signinHtml, withLocalSignin, publicKeyFromAssets, localReview, reportShell, objectHash, storageFailureVerdict,
-  requestBoundary, restrictContext };
+  boundedStorageDenial, requestBoundary, restrictContext };
+

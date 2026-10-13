@@ -111,5 +111,42 @@ export async function runStorageOnly({ fixtures, token, userId, ops }) {
   return { uploadStatus: upload.status, deleteStatus: deletion.status };
 }
 
+// A separate continuation after the Owner's independently verified denied
+// upload. This path never generates an upload key or calls an upload/PATCH op.
+export async function runStorageDeleteOnly({ fixtures, token, userId, ops }) {
+  validateResumeFixtures(fixtures);
+  const claims = parseJwtClaims(token);
+  if (claims.sub !== USER_ID || userId !== USER_ID || claims.role !== "authenticated" ||
+    !tokenIsLive(claims)) stop("Temporary signed Auth identity mismatch");
+  if (!(await checked("preflight", () => ops.authUser()))) stop("Signed Auth user not confirmed");
+  const membership = await checked("preflight", () => ops.ownMembership());
+  if (!Array.isArray(membership) || membership.length !== 0) stop("Temporary Admin membership is present");
+  ops.onSigned?.();
+  await checked("preflight", () => ops.trustedSnapshot("before_delete"));
+  if (await checked("preflight", () => ops.objectHash(IMAGE_PATH)) !== fixtures.image.sha256) {
+    stop("Existing WebP mismatch");
+  }
+  await checked("preflight", () => ops.beforeDelete(IMAGE_PATH));
+  if (!tokenIsLive(claims)) stop("Frozen JWT expired before delete");
+  let deletion;
+  try { deletion = await ops.delete(IMAGE_PATH); }
+  catch { stop("Delete outcome unknown; exact path inspection required, no retry", "mutation"); }
+  let after;
+  try { after = await ops.objectHash(IMAGE_PATH); }
+  catch { stop("Delete verification unavailable; exact path inspection required, no retry", "mutation"); }
+  if (after !== fixtures.image.sha256) stop("Denied delete changed the fixture", "mutation", true);
+  await checked("mutation", () => ops.afterDelete(IMAGE_PATH));
+  // Legacy Storage can report a precise AccessDenied as HTTP 400. A generic
+  // 400 is never accepted; the signed identity and independent object checks
+  // above are also required.
+  const acceptedStatus = deletion.status === 400 && deletion.accessDenied === true ? 403 : deletion.status;
+  const verdict = classifyStorageDenial({ targetPresentBefore: true, targetPresentAfter: true,
+    hashBefore: fixtures.image.sha256, hashAfter: after, affectedObjects: 0,
+    status: acceptedStatus, independentMetadataUnchanged: true });
+  if (verdict.status !== "PASS") stop("Delete denial not confirmed", "mutation");
+  return { deleteStatus: deletion.status };
+}
+
 export const RESUME_EXPECTED_COUNTS = COUNTS;
 export const RESUME_EXPECTED_REAL_DIGESTS = REAL_DIGESTS;
+
