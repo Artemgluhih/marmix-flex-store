@@ -1,4 +1,4 @@
-import { PREVIEW, parseJwtClaims, tokenIsLive, validateFixtures } from "./t070-signed-qa-core.mjs";
+import { PREVIEW, parseJwtClaims, safeResult, tokenIsLive, validateFixtures } from "./t070-signed-qa-core.mjs";
 import { RESUME_EXPECTED_COUNTS, validateResumeFixtures, validateResumeSnapshot } from "./t070-storage-resume.mjs";
 
 const TEMP_USER = "ea39d2af-f164-4b2c-a496-502f2464d9af";
@@ -28,8 +28,44 @@ function expectRows(value, count) {
 }
 
 function expectMembership(value, active) {
-  return Array.isArray(value) && value.length === 1 &&
-    value[0].user_id === TEMP_USER && value[0].is_active === active;
+  return expectRows(value, 1) && value.rows[0].user_id === TEMP_USER && value.rows[0].is_active === active;
+}
+
+class P0StepError extends Error {
+  constructor(result) {
+    super("T070 P0 step stopped safely");
+    this.result = result;
+  }
+}
+
+function stopStep(name, reason, details = {}) {
+  throw new P0StepError(safeResult(name, { status: "UNVERIFIED", reason }, details));
+}
+
+export function p0FailureResult(error) {
+  // Only internally constructed allowlisted data can reach logs/reports.
+  // Never serialize an exception message, response body, token or header.
+  return error instanceof P0StepError ? error.result :
+    safeResult("p0_preflight", { status: "UNVERIFIED", reason: "preflight_failed" });
+}
+
+async function observed(name, action) {
+  try { return await action(); }
+  catch (error) {
+    if (error instanceof P0StepError) throw error;
+    stopStep(name, ["TimeoutError", "AbortError"].includes(error?.name) ?
+      "preflight_timeout" : "network_failure");
+  }
+}
+
+function requireRead(name, response, valid) {
+  if (valid) return;
+  const details = {};
+  if (Number.isInteger(response?.status) && response.status >= 100 && response.status <= 599) {
+    details.httpStatus = response.status;
+  }
+  if (Array.isArray(response?.rows)) details.affectedRows = response.rows.length;
+  stopStep(name, [401, 403].includes(response?.status) ? "auth_not_confirmed" : "unexpected_response", details);
 }
 
 // All operations are injected to allow a network-free self-test. This finite
@@ -43,31 +79,36 @@ export async function runFinalP0({ fixtures, token, userId, ops }) {
     throw new Error("Temporary signed identity or lifetime mismatch");
   }
   const checkpoint = async (stage, phase) => {
-    if (await ops.snapshot(stage, phase) !== true) throw new Error("Independent baseline not confirmed");
+    try {
+      if (await ops.snapshot(stage, phase) !== true) stopStep(`p0_${stage}`, "preflight_failed");
+    } catch (error) {
+      if (error instanceof P0StepError) throw error;
+      stopStep(`p0_${stage}`, "preflight_failed");
+    }
   };
   await checkpoint("before_signin", "absent");
   if (!(await ops.authUser(frozenToken))) throw new Error("Signed identity not confirmed");
   const baselineMembership = await ops.membership(frozenToken);
-  if (!Array.isArray(baselineMembership) || baselineMembership.length !== 0) {
-    throw new Error("Temporary Admin membership already present");
-  }
+  requireRead("p0_initial_membership", baselineMembership, expectRows(baselineMembership, 0));
   if (await ops.objectHash(fixtures.image.path) !== fixtures.image.sha256) throw new Error("WebP mismatch");
   ops.onSigned?.();
 
+  if (!tokenIsLive(claims)) stopStep("p0_before_activation", "expired_token", { tokenLive: false });
   await ops.beforeActive(); // Owner-approved trusted Preview provisioning is external.
   await checkpoint("after_active", "active");
-  if (!expectMembership(await ops.membership(frozenToken), true)) throw new Error("Active own membership not confirmed");
-  if (!tokenIsLive(claims)) throw new Error("Frozen JWT expired before positive reads");
-  const product = await ops.read(frozenToken, "products", fixtures.product.id);
-  const order = await ops.read(frozenToken, "order_requests", fixtures.order.id);
-  const storage = await ops.storageList(frozenToken);
-  if (!expectRows(product, 1) || product.rows[0].id !== fixtures.product.id ||
-    product.rows[0].catalog_kind !== "TEST_ONLY" || product.rows[0].is_published !== false ||
-    !expectRows(order, 1) || order.rows[0].id !== fixtures.order.id ||
-    !expectRows(storage, 1) || ![fixtures.image.path, fixtures.image.path.split("/").at(-1)]
-      .includes(storage.rows[0].name)) {
-    throw new Error("Signed active Admin exact resource visibility not confirmed");
-  }
+  // Manual checkpoints may outlast the original JWT. Stop BEFORE making
+  // the membership request; never refresh or silently replace that token.
+  if (!tokenIsLive(claims)) stopStep("p0_active_token", "expired_token", { tokenLive: false });
+  const membership = await observed("p0_active_membership", () => ops.membership(frozenToken));
+  requireRead("p0_active_membership", membership, expectMembership(membership, true));
+  const product = await observed("p0_active_product", () => ops.read(frozenToken, "products", fixtures.product.id));
+  requireRead("p0_active_product", product, expectRows(product, 1) && product.rows[0].id === fixtures.product.id &&
+    product.rows[0].catalog_kind === "TEST_ONLY" && product.rows[0].is_published === false);
+  const order = await observed("p0_active_order", () => ops.read(frozenToken, "order_requests", fixtures.order.id));
+  requireRead("p0_active_order", order, expectRows(order, 1) && order.rows[0].id === fixtures.order.id);
+  const storage = await observed("p0_active_storage", () => ops.storageList(frozenToken));
+  requireRead("p0_active_storage", storage, expectRows(storage, 1) &&
+    [fixtures.image.path, fixtures.image.path.split("/").at(-1)].includes(storage.rows[0].name));
   ops.record("active_admin_reads", "PASS");
   await checkpoint("after_active_reads", "active");
   const browser = await ops.adminBrowser();
@@ -103,8 +144,7 @@ export async function runFinalP0({ fixtures, token, userId, ops }) {
     throw new Error("Same frozen JWT is no longer valid; revocation UNVERIFIED");
   }
   const revokedMembership = await ops.membership(frozenToken);
-  if (!Array.isArray(revokedMembership) ||
-    (revokedMembership.length !== 0 && !expectMembership(revokedMembership, false))) {
+  if (!expectRows(revokedMembership, 0) && !expectMembership(revokedMembership, false)) {
     throw new Error("Revoked own membership state unclear");
   }
   const deniedProduct = await ops.read(frozenToken, "products", fixtures.product.id);

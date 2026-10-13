@@ -15,7 +15,7 @@ import {
 } from "./t070-signed-qa-core.mjs";
 import { runStorageDeleteOnly, runStorageOnly, validateResumeFixtures,
   validateResumeSnapshot } from "./t070-storage-resume.mjs";
-import { runFinalP0, validateP0Snapshot } from "./t070-final-p0.mjs";
+import { p0FailureResult, runFinalP0, validateP0Snapshot } from "./t070-final-p0.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const REPORT = path.join(ROOT, ".qa-local", "t070", "security-signed.json");
@@ -311,11 +311,17 @@ async function selectExact(key, token, table, id, columns) {
 }
 
 async function ownMembership(key, token, userId) {
+  const result = await ownMembershipResponse(key, token, userId);
+  return result.rows;
+}
+
+async function ownMembershipResponse(key, token, userId) {
   const response = await signedRequest(key, token,
     `/rest/v1/admin_users?user_id=eq.${userId}&select=user_id,is_active`);
-  if (response.status !== 200) return null;
-  const rows = await response.json();
-  return Array.isArray(rows) ? rows : null;
+  if (response.status !== 200) return { status: response.status, rows: null };
+  let rows;
+  try { rows = await response.json(); } catch { rows = null; }
+  return { status: response.status, rows: Array.isArray(rows) ? rows : null };
 }
 
 async function updateFixture(key, token, product) {
@@ -523,7 +529,7 @@ async function finalP0Phase(key, token, userId, fixtures, context, report, asser
     onSigned: () => { report.liveSignedTestsExecuted = true; },
     snapshot: (stage, phase) => trustedP0Snapshot(fixtures, stage, phase),
     authUser: async (bearer) => (await authUser(key, bearer, userId)).valid,
-    membership: (bearer) => ownMembership(key, bearer, userId),
+    membership: (bearer) => ownMembershipResponse(key, bearer, userId),
     objectHash,
     read: (bearer, table, id) => selectExact(key, bearer, table, id,
       table === "products" ? "id,catalog_kind,is_published" : "id"),
@@ -1030,8 +1036,12 @@ async function run(options) {
                 if (blockedUnsafe !== 0) throw new Error("Unexpected external browser request");
               });
             report.results.push(safeResult("final_p0", { status: "PASS" }));
-          } catch {
-            report.results.push(safeResult("final_p0", { status: "UNVERIFIED", reason: "outcome_unknown" }));
+          } catch (error) {
+            const failure = p0FailureResult(error);
+            report.results.push(failure);
+            report.results.push(safeResult("final_p0", { status: "UNVERIFIED", reason: failure.reason }));
+            console.error(`${failure.name}=${failure.status}; reason=${failure.reason}` +
+              (failure.httpStatus == null ? "" : `; HTTP=${failure.httpStatus}`));
             throw new Error("Final P0 stopped; do not retry a checkpoint or mutation");
           }
         } else await runExpiry(signed.key, signed.token, signed.userId, report);

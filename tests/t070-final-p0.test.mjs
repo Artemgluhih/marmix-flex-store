@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createServer } from "node:http";
-import { PREVIEW } from "../scripts/t070-signed-qa-core.mjs";
+import { PREVIEW, safeResult } from "../scripts/t070-signed-qa-core.mjs";
 import { classifyAnonymousOrders, csrfHeaders, reportShell } from "../scripts/t070-signed-security-qa.mjs";
-import { P0_EXPECTED_COUNTS, runFinalP0, validateP0Snapshot } from "../scripts/t070-final-p0.mjs";
+import { P0_EXPECTED_COUNTS, p0FailureResult, runFinalP0, validateP0Snapshot } from "../scripts/t070-final-p0.mjs";
 import { RESUME_EXPECTED_REAL_DIGESTS } from "../scripts/t070-storage-resume.mjs";
 
 const user = "ea39d2af-f164-4b2c-a496-502f2464d9af";
@@ -35,7 +35,8 @@ function operations(events, changes = {}) {
       return validateP0Snapshot(P0_EXPECTED_COUNTS[phase].join(","), digests, fixtures, requested);
     },
     authUser: async (bearer) => { events.push("auth"); assert.equal(bearer, token); return true; },
-    membership: async () => phase === "absent" ? [] : [{ user_id: user, is_active: phase === "active" }],
+    membership: async () => ({ status: 200, rows: phase === "absent" ? [] :
+      [{ user_id: user, is_active: phase === "active" }] }),
     objectHash: async (key) => { assert.equal(key, path); return fixtures.image.sha256; },
     onSigned: () => events.push("signed"),
     beforeActive: async () => { events.push("active_checkpoint"); phase = "active"; },
@@ -161,4 +162,63 @@ test("invalid signed identity, absent Owner baseline, incomplete privacy and inv
   }
   await assert.rejects(runFinalP0({ fixtures, token, userId: "01a6213d-85dc-4851-829c-9d2ee0f30af0",
     ops: operations([]) }));
+});
+
+test("JWT expiring during ACTIVE checkpoint stops before membership/read requests without refresh", async (t) => {
+  const events = [];
+  let now = Date.now();
+  t.mock.method(Date, "now", () => now);
+  const ops = operations(events);
+  const originalActive = ops.beforeActive;
+  ops.beforeActive = async () => { await originalActive(); now += 2 * 60 * 60 * 1000; };
+  await assert.rejects(runFinalP0({ fixtures, token, userId: user, ops }), (error) => {
+    assert.deepEqual(p0FailureResult(error), {
+      name: "p0_active_token", status: "UNVERIFIED", reason: "expired_token", tokenLive: false,
+    });
+    return true;
+  });
+  assert.equal(events.some((value) => value.startsWith("read:") || value.startsWith("list:")), false);
+  assert.equal(events.includes("csrf_approval:wrong"), false);
+});
+
+test("membership HTTP failure retains bounded phase/status rather than null or timeout_unknown", async () => {
+  const events = [];
+  let membershipCalls = 0;
+  const ops = operations(events, { membership: async () => ++membershipCalls === 1 ?
+    { status: 200, rows: [] } : { status: 401, rows: null } });
+  await assert.rejects(runFinalP0({ fixtures, token, userId: user, ops }), (error) => {
+    assert.deepEqual(p0FailureResult(error), {
+      name: "p0_active_membership", status: "UNVERIFIED", reason: "auth_not_confirmed", httpStatus: 401,
+    });
+    return true;
+  });
+  assert.equal(membershipCalls, 2);
+  assert.equal(events.some((value) => value.startsWith("read:") || value.startsWith("list:")), false);
+  assert.doesNotMatch(JSON.stringify(p0FailureResult(new Error("JWT=private; Cookie=secret"))), /private|secret|JWT|Cookie/);
+});
+
+test("final P0 report label and bounded P0 stage labels pass sanitizer without permitting arbitrary identifiers", () => {
+  assert.equal(safeResult("final_p0", { status: "UNVERIFIED", reason: "expired_token" }).name, "final_p0");
+  assert.equal(safeResult("p0_active_token", { status: "UNVERIFIED", reason: "expired_token" }).name, "p0_active_token");
+  assert.throws(() => safeResult("JWT_123_private", { status: "PASS" }));
+  assert.throws(() => safeResult("p0_http_401", { status: "PASS" }));
+});
+
+test("active product/order/Storage shape failures identify exact phase and stop later requests", async () => {
+  for (const [phase, target] of [["p0_active_product", "products"], ["p0_active_order", "order_requests"],
+    ["p0_active_storage", "storage"]]) {
+    const events = [];
+    const ops = operations(events);
+    const originalRead = ops.read;
+    ops.read = async (bearer, table, id) => table === target ?
+      { status: 200, rows: [] } : originalRead(bearer, table, id);
+    if (target === "storage") ops.storageList = async () => ({ status: 400, rows: null });
+    await assert.rejects(runFinalP0({ fixtures, token, userId: user, ops }), (error) => {
+      assert.equal(p0FailureResult(error).name, phase);
+      assert.equal(p0FailureResult(error).reason, "unexpected_response");
+      return true;
+    });
+    assert.equal(events.includes("privacy"), false);
+    assert.equal(events.includes("revoke_checkpoint"), false);
+  }
 });

@@ -159,7 +159,8 @@ export function privateCache(value) {
 }
 
 export function safeResult(name, verdict, details = {}) {
-  if (!/^[a-z_]{3,50}$/.test(name) || !STATES.has(verdict.status)) throw new Error("Unsafe verdict");
+  const allowedName = /^[a-z_]{3,50}$/.test(name) || name === "final_p0" || /^p0_[a-z_]{3,45}$/.test(name);
+  if (!allowedName || !STATES.has(verdict.status)) throw new Error("Unsafe verdict");
   if (verdict.reason != null && !REASONS.has(verdict.reason)) throw new Error("Unsafe reason");
   const allowed = {};
   for (const [key, value] of Object.entries(details)) {
