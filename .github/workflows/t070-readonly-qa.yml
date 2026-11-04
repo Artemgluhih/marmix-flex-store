@@ -1,0 +1,75 @@
+name: T070 Preview read-only QA
+
+on:
+  push:
+    branches:
+      - t070-preview-review
+    paths:
+      - .github/workflows/t070-readonly-qa.yml
+      - scripts/t070-signed-security-qa.mjs
+      - scripts/t070-signed-qa-core.mjs
+      - scripts/t070-final-p0.mjs
+      - tests/t070-signed-security-qa.test.mjs
+      - tests/t070-final-p0.test.mjs
+
+permissions:
+  contents: read
+
+concurrency:
+  group: t070-readonly-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  preview-preflight:
+    if: github.repository == 'Artemgluhih/marmix-flex-store' && github.ref == 'refs/heads/t070-preview-review' && github.event_name == 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact review branch
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: t070-preview-review
+          persist-credentials: false
+
+      - name: Fail closed on branch or event SHA drift
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git branch --show-current)" = 't070-preview-review'
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          git remote set-url origin https://github.com/Artemgluhih/marmix-flex-store.git
+          test "$(git ls-remote origin refs/heads/t070-preview-review | cut -f1)" = "$GITHUB_SHA"
+
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Install locked application dependencies and pinned Playwright
+        run: |
+          npm ci --ignore-scripts
+          npm install --no-save --package-lock=false --ignore-scripts playwright@1.62.1
+
+      - name: Install Chromium and system dependencies
+        run: npx --no-install playwright install --with-deps chromium
+
+      - name: Run signed-runner mock and browser self-tests
+        run: node scripts/t070-signed-security-qa.mjs --self-test
+
+      - name: Run anonymous Preview HTTP, CSP, CORS, and browser dry-run
+        run: node scripts/t070-signed-security-qa.mjs --dry-run --review-sha "$GITHUB_SHA"
+
+      - name: Verify dry-run report contains no live execution
+        shell: bash
+        run: |
+          node --input-type=module -e '
+            import { readFileSync } from "node:fs";
+            const report = JSON.parse(readFileSync(".qa-local/t070/security-signed.json", "utf8"));
+            const required = ["preview_http_local_csp_cors", "preview_config_and_cors", "optional_feedback_blocked", "localhost_interception", "external_requests_blocked"];
+            if (report.mode !== "dry-run" || report.reviewSha !== process.env.GITHUB_SHA ||
+                report.liveSignedTestsExecuted !== false || report.newFixturesCreatedByRunner !== 0 ||
+                required.some((name) => report.results.find((x) => x.name === name)?.status !== "PASS")) {
+              throw new Error("T070 dry-run verdict mismatch");
+            }
+            console.log("T070 read-only CI: 5/5 PASS; signed execution false; fixtures created 0");
+          '
