@@ -1,0 +1,97 @@
+# Proposed file in main: .github/workflows/t070-manual-readonly.yml
+# Stage 1 only: NO environment, NO secrets, NO live signed tests or mutations.
+name: T070 Manual read-only preflight (LIVE DISABLED)
+run-name: T070 read-only preflight ${{ inputs.review_sha }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      review_sha:
+        description: 'Full 40-character SHA of t070-preview-review (not a secret)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: t070-manual-readonly
+  cancel-in-progress: false
+
+jobs:
+  safe-preflight:
+    if: >-
+      github.repository == 'Artemgluhih/marmix-flex-store' &&
+      github.event_name == 'workflow_dispatch' &&
+      github.ref == 'refs/heads/main' &&
+      github.actor == 'Artemgluhih'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Validate explicit review SHA
+        shell: bash
+        env:
+          EXPECTED_REVIEW_SHA: ${{ inputs.review_sha }}
+        run: |
+          set -euo pipefail
+          [[ "$EXPECTED_REVIEW_SHA" =~ ^[0-9a-f]{40}$ ]] || { echo 'Invalid review SHA'; exit 1; }
+          echo 'T070 read-only only; live signed execution is disabled.'
+
+      - name: Checkout exact review commit without persisting Git credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ inputs.review_sha }}
+          persist-credentials: false
+
+      - name: Fail closed on review SHA or remote HEAD mismatch
+        shell: bash
+        env:
+          EXPECTED_REVIEW_SHA: ${{ inputs.review_sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_REVIEW_SHA"
+          REMOTE_SHA="$(git ls-remote https://github.com/Artemgluhih/marmix-flex-store.git refs/heads/t070-preview-review | cut -f1)"
+          test "$REMOTE_SHA" = "$EXPECTED_REVIEW_SHA" || { echo 'Review HEAD mismatch'; exit 1; }
+
+      - name: Set up Node 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+
+      - name: Install dependencies and pinned Playwright
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm install --no-save --package-lock=false --ignore-scripts playwright@1.62.1
+          npx --no-install playwright install --with-deps chromium
+
+      - name: Run mock and browser self-tests (no secrets)
+        run: node scripts/t070-signed-security-qa.mjs --self-test
+
+      - name: Run anonymous dry-run only
+        shell: bash
+        env:
+          EXPECTED_REVIEW_SHA: ${{ inputs.review_sha }}
+        run: node scripts/t070-signed-security-qa.mjs --dry-run --review-sha "$EXPECTED_REVIEW_SHA"
+
+      - name: Verify safe, complete preflight verdict
+        shell: bash
+        env:
+          EXPECTED_REVIEW_SHA: ${{ inputs.review_sha }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const report = JSON.parse(readFileSync('.qa-local/t070/security-signed.json', 'utf8'));
+          const required = [
+            'preview_http_local_csp_cors', 'preview_config_and_cors',
+            'optional_feedback_blocked', 'localhost_interception',
+            'external_requests_blocked'
+          ];
+          if (report.mode !== 'dry-run' || report.reviewSha !== process.env.EXPECTED_REVIEW_SHA ||
+              report.liveSignedTestsExecuted !== false || report.newFixturesCreatedByRunner !== 0 ||
+              required.some(name => report.results.find(r => r.name === name)?.status !== 'PASS')) {
+            throw new Error('T070 read-only verdict mismatch');
+          }
+          console.log('T070: 5/5 read-only PASS; no live signed tests; zero fixtures created');
+          NODE
